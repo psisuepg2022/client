@@ -1,7 +1,6 @@
 import React from 'react';
 
-const App = () => {
-
+const App = (): JSX.Element => {
   return (
     <div>
       <h1>PSIS</h1>

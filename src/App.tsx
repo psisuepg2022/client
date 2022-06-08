@@ -1,9 +1,12 @@
+import { Typography } from '@mui/material';
 import React from 'react';
 
 const App = (): JSX.Element => {
   return (
     <div>
-      <h1>PSIS</h1>
+      <Typography variant="h1" fontSize="5rem">
+        PSIS
+      </Typography>
     </div>
   );
 };

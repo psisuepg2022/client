@@ -52,11 +52,14 @@ export const IntroTextBold = styled('span')`
   color: #fff;
 `;
 
+/***************************************************************** LEFT SIDE *********************************************************************/
+
 export const LeftContainer = styled('div')`
   background: #fff;
   height: 100%;
   width: 55%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
@@ -76,4 +79,25 @@ export const TitleThin = styled(Typography)`
 export const SubTitleRegular = styled(Typography)`
   color: ${colors.PRIMARY};
   font-size: 1.6rem;
+`;
+
+export const InputsContainer = styled('form')`
+  width: 40%;
+  height: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+
+export const CodeAndUser = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 1rem;
+`;
+
+export const PasswordBox = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
 `;

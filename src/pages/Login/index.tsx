@@ -1,11 +1,14 @@
 import React from 'react';
 import {
+  CodeAndUser,
   Container,
   ImageLogo,
+  InputsContainer,
   IntroText,
   IntroTextBold,
   LeftContainer,
   LogoAndTitle,
+  PasswordBox,
   RightContainer,
   SubTitleRegular,
   TitleAndSubTitle,
@@ -14,8 +17,13 @@ import {
 } from './styles';
 
 import LogoPSIS from '../../assets/PSIS-Logo-Transparente.png';
+import { FormProvider, useForm } from 'react-hook-form';
+import ControlledInput from '../../components/ControlledInput';
 
 const Login = (): JSX.Element => {
+  const formMethods = useForm();
+  const { handleSubmit } = formMethods;
+
   return (
     <Container>
       <LeftContainer>
@@ -23,6 +31,24 @@ const Login = (): JSX.Element => {
           <TitleThin>PSIS</TitleThin>
           <SubTitleRegular>Acesse o painel da sua clínica</SubTitleRegular>
         </TitleAndSubTitle>
+
+        <FormProvider {...formMethods}>
+          <InputsContainer>
+            <CodeAndUser>
+              <ControlledInput name="code" label="Código" required />
+              <ControlledInput name="username" label="Usuário" required />
+            </CodeAndUser>
+
+            <PasswordBox>
+              <ControlledInput
+                type="password"
+                name="password"
+                label="Senha"
+                required
+              />
+            </PasswordBox>
+          </InputsContainer>
+        </FormProvider>
       </LeftContainer>
       <RightContainer>
         <LogoAndTitle>

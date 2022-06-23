@@ -19,6 +19,7 @@ import {
 import LogoPSIS from '../../assets/PSIS-Logo-Transparente.png';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
+import Button from '../../components/Button';
 
 const Login = (): JSX.Element => {
   const formMethods = useForm();
@@ -47,6 +48,8 @@ const Login = (): JSX.Element => {
                 required
               />
             </PasswordBox>
+
+            <Button name="ENTRAR" />
           </InputsContainer>
         </FormProvider>
       </LeftContainer>

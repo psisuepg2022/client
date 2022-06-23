@@ -83,7 +83,7 @@ export const SubTitleRegular = styled(Typography)`
 
 export const InputsContainer = styled('form')`
   width: 40%;
-  height: 20%;
+  height: 25%;
   display: flex;
   flex-direction: column;
   align-items: center;

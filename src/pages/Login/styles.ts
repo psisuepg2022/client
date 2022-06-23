@@ -43,7 +43,13 @@ export const IntroText = styled(Typography)`
   font-weight: 300;
   color: #fff;
   text-align: center;
-  padding: 0 10rem;
+  padding: 0 9rem;
+`;
+
+export const IntroTextBold = styled('span')`
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #fff;
 `;
 
 export const LeftContainer = styled('div')`

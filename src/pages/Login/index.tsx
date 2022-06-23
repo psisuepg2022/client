@@ -3,6 +3,7 @@ import {
   Container,
   ImageLogo,
   IntroText,
+  IntroTextBold,
   LeftContainer,
   LogoAndTitle,
   RightContainer,
@@ -30,8 +31,11 @@ const Login = (): JSX.Element => {
         </LogoAndTitle>
 
         <IntroText>
-          Aumente a produtividade através do agendamento 100% online.
-          Rastreabilidade completa de funcionários e pacientes.
+          Aumente a <IntroTextBold>produtividade</IntroTextBold> da sua clínica
+          através do agendamento <IntroTextBold>online</IntroTextBold>.
+          <br />
+          <IntroTextBold>Rastreabilidade</IntroTextBold> completa de
+          funcionários e pacientes.
         </IntroText>
       </RightContainer>
     </Container>

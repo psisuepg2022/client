@@ -23,12 +23,29 @@ export const LogoAndTitle = styled('div')`
   align-items: center;
   justify-content: space-between;
   padding: 0 5rem;
+
+  @media (max-width: 1366px) {
+    padding: 0 4rem;
+  }
 `;
 
 export const ImageLogo = styled('img')`
   width: auto;
   max-height: 7rem;
   padding-right: 3rem;
+
+  @media (max-width: 1700px) {
+    max-height: 6rem;
+    padding-right: 2.5rem;
+  }
+  @media (max-width: 1440px) {
+    max-height: 5.5rem;
+    padding-right: 2.2rem;
+  }
+  @media (max-width: 1024px) {
+    max-height: 10rem;
+    padding-right: 2rem;
+  }
 `;
 
 export const TitleExtense = styled(Typography)`
@@ -36,6 +53,16 @@ export const TitleExtense = styled(Typography)`
   color: #fff;
   font-size: 3rem;
   text-align: left;
+
+  @media (max-width: 1700px) {
+    font-size: 2.3rem;
+  }
+  @media (max-width: 1440px) {
+    font-size: 2rem;
+  }
+  @media (max-width: 1366px) {
+    font-size: 2rem;
+  }
 `;
 
 export const IntroText = styled(Typography)`
@@ -44,12 +71,28 @@ export const IntroText = styled(Typography)`
   color: #fff;
   text-align: center;
   padding: 0 9rem;
+
+  @media (max-width: 1440px) {
+    font-size: 1.6rem;
+    padding: 0 5rem;
+  }
+  @media (max-width: 1366px) {
+    font-size: 1.5rem;
+    padding: 0 4rem;
+  }
 `;
 
 export const IntroTextBold = styled('span')`
   font-size: 1.8rem;
   font-weight: 600;
   color: #fff;
+
+  @media (max-width: 1440px) {
+    font-size: 1.6rem;
+  }
+  @media (max-width: 1366px) {
+    font-size: 1.5rem;
+  }
 `;
 
 /***************************************************************** LEFT SIDE *********************************************************************/
@@ -79,6 +122,10 @@ export const TitleThin = styled(Typography)`
 export const SubTitleRegular = styled(Typography)`
   color: ${colors.PRIMARY};
   font-size: 1.6rem;
+
+  @media (max-width: 1440px) {
+    font-size: 1.4rem;
+  }
 `;
 
 export const InputsContainer = styled('form')`
@@ -88,6 +135,16 @@ export const InputsContainer = styled('form')`
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+
+  @media (max-width: 1440px) {
+    width: 50%;
+  }
+  @media (max-width: 1366px) {
+    width: 55%;
+  }
+  @media (max-width: 1024px) {
+    width: 70%;
+  }
 `;
 
 export const CodeAndUser = styled('div')`

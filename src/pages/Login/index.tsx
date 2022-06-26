@@ -10,6 +10,7 @@ import {
   LogoAndTitle,
   PasswordBox,
   RightContainer,
+  StyledButton,
   SubTitleRegular,
   TitleAndSubTitle,
   TitleExtense,
@@ -19,11 +20,9 @@ import {
 import LogoPSIS from '../../assets/PSIS-Logo-Transparente.png';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
-import Button from '../../components/Button';
 
 const Login = (): JSX.Element => {
   const formMethods = useForm();
-  const { handleSubmit } = formMethods;
 
   return (
     <Container>
@@ -49,7 +48,7 @@ const Login = (): JSX.Element => {
               />
             </PasswordBox>
 
-            <Button name="ENTRAR" />
+            <StyledButton>ENTRAR</StyledButton>
           </InputsContainer>
         </FormProvider>
       </LeftContainer>

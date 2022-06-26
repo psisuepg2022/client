@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { colors } from '../../global/colors';
 
@@ -100,4 +100,18 @@ export const PasswordBox = styled('div')`
   display: grid;
   grid-template-columns: 1fr;
   width: 100%;
+`;
+
+export const StyledButton = styled(Button)`
+  background-color: ${colors.PRIMARY};
+  color: #fff;
+  transition: 300ms;
+  width: 100%;
+  font-weight: 400;
+  font-size: 1rem;
+  height: 50px;
+
+  :hover {
+    background-color: ${colors.SECONDARY};
+  }
 `;

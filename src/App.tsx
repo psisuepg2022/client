@@ -3,7 +3,7 @@ import React from 'react';
 
 const App = (): JSX.Element => {
   return (
-    <div>
+    <div style={{ display: 'flex' }}>
       <Typography variant="h1" fontSize="5rem">
         PSIS
       </Typography>

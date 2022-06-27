@@ -1,6 +1,7 @@
 export const colors = {
   PRIMARY: '#419D78',
   SECONDARY: '#009686',
+  DARKER: '#017D6F',
   SCHEDULED: '#D5E2D1',
   CONFIRMED: '#8BB282',
   CONCLUDED: '#419d78e6',

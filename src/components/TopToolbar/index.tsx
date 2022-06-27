@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  FormControl,
-  IconButton,
-  InputLabel,
-  menuItemClasses,
-  SelectChangeEvent,
-  Typography,
-} from '@mui/material';
+import { IconButton } from '@mui/material';
 import {
   ClinicTitle,
   Container,
@@ -15,13 +8,15 @@ import {
   LatterContent,
   MiddleContent,
   StyledMenuItem,
-  StyledSelect,
   TodayButton,
 } from './styles';
-import { AiOutlineUser } from 'react-icons/ai';
+import { AiOutlineUser, AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { FormProvider, useForm } from 'react-hook-form';
+import ControlledSelect from '../ControlledSelect';
 
 const TopToolbar = (): JSX.Element => {
-  console.log('MENU', menuItemClasses);
+  const formMethods = useForm();
+  const {} = formMethods;
   const [value, setValue] = useState<number>(0);
 
   return (
@@ -31,44 +26,25 @@ const TopToolbar = (): JSX.Element => {
       </EarlyContent>
 
       <MiddleContent>
+        <IconButton>
+          <AiOutlineLeft style={{ color: '#FFF', fontSize: 30 }} />
+        </IconButton>
         <DayTitle>6 de junho de 2022</DayTitle>
+        <IconButton>
+          <AiOutlineRight style={{ color: '#FFF', fontSize: 30 }} />
+        </IconButton>
       </MiddleContent>
 
       <LatterContent>
         <TodayButton variant="outlined">Hoje</TodayButton>
 
-        <FormControl>
-          <InputLabel id="select-label" style={{ color: '#FFF' }}>
-            Modo
-          </InputLabel>
-          <StyledSelect
-            label="Modo"
-            value={value}
-            defaultValue={0}
-            onChange={(e: SelectChangeEvent<unknown>) =>
-              setValue(e.target.value as number)
-            }
-            size="small"
-            labelId="select-label"
-            sx={{
-              borderColor: '#FFF',
-              '& .MuiSvgIcon-root': {
-                color: '#FFF',
-              },
-            }}
-            MenuProps={{
-              sx: {
-                '&& .Mui-selected': {
-                  backgroundColor: '#d4d4d4',
-                },
-              },
-            }}
-          >
+        <FormProvider {...formMethods}>
+          <ControlledSelect name="mode" label="Modo" defaultValue={0}>
             <StyledMenuItem value={0}>Dia</StyledMenuItem>
             <StyledMenuItem value={1}>Semana</StyledMenuItem>
             <StyledMenuItem value={2}>Mês</StyledMenuItem>
-          </StyledSelect>
-        </FormControl>
+          </ControlledSelect>
+        </FormProvider>
 
         <IconButton>
           <AiOutlineUser style={{ fontSize: 40, color: '#FFF' }} />

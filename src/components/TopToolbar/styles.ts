@@ -4,6 +4,7 @@ import {
   outlinedInputClasses,
   Button,
   Typography,
+  selectClasses,
 } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -24,11 +25,13 @@ export const EarlyContent = styled('div')`
 export const MiddleContent = styled('div')`
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
 export const DayTitle = styled(Typography)`
   font-size: 1.5rem;
   color: #fff;
+  padding: 0 1rem;
 `;
 
 export const LatterContent = styled('div')`
@@ -53,6 +56,8 @@ export const StyledSelect = styled(Select)`
   }
   & .${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline} {
     border-color: #fff;
+  }
+  &:focus .${selectClasses.outlined} {
   }
 `;
 

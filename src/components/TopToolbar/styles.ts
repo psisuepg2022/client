@@ -5,6 +5,7 @@ import {
   Button,
   Typography,
   selectClasses,
+  menuItemClasses,
 } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -50,29 +51,12 @@ export const LatterContent = styled('div')`
   align-items: center;
 `;
 
-export const StyledSelect = styled(Select)`
-  color: #fff;
-  width: 150px;
-  height: 40px;
-  padding-top: 0;
-  padding-bottom: 0;
-  border-color: #fff;
-
-  & .${outlinedInputClasses.notchedOutline} {
-    border-color: #fff;
-  }
-  &:hover .${outlinedInputClasses.notchedOutline} {
-    border-color: #fff;
-  }
-  & .${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline} {
-    border-color: #fff;
-  }
-  &:focus .${selectClasses.outlined} {
-  }
-`;
-
 export const StyledMenuItem = styled(MenuItem)`
   transition: 300ms;
+
+  &.${menuItemClasses.selected} {
+    background-color: #d0d0d0;
+  }
 `;
 
 export const TodayButton = styled(Button)`

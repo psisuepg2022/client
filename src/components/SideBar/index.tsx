@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { CloseSharp, Person, ChevronRightSharp } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import {
   Container,
@@ -13,6 +12,7 @@ import {
 } from './styles';
 import { sideBarLinks } from './SideBarLinks';
 import { colors } from '../../global/colors';
+import { AiOutlineRight, AiOutlineClose } from 'react-icons/ai';
 
 const SideBar = (): JSX.Element => {
   const [expanded, setExpanded] = useState<boolean>(true);
@@ -22,7 +22,7 @@ const SideBar = (): JSX.Element => {
       <CollapsedContainer>
         <CollapsedHeader>
           <IconButton size="small" onClick={() => setExpanded(true)}>
-            <ChevronRightSharp style={{ color: '#FFF', fontSize: 50 }} />
+            <AiOutlineRight style={{ color: '#FFF', fontSize: 35 }} />
           </IconButton>
         </CollapsedHeader>
         {sideBarLinks.map((item) => (
@@ -44,7 +44,7 @@ const SideBar = (): JSX.Element => {
     <Container>
       <Header>
         <IconButton size="small" onClick={() => setExpanded(false)}>
-          <CloseSharp style={{ color: '#FFF', fontSize: 40 }} />
+          <AiOutlineClose style={{ color: '#FFF', fontSize: 35 }} />
         </IconButton>
       </Header>
       <Content>

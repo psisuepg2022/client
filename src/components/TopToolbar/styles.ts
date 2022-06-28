@@ -15,6 +15,9 @@ export const Container = styled('div')`
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
+  z-index: 99999; // FOR SIDEBAR BOX-SHADOW ONLY
+  position: relative; // FOR SIDEBAR BOX-SHADOW ONLY
+  box-shadow: 5px 2px 5px rgba(0, 0, 0, 0.48);
 `;
 
 export const EarlyContent = styled('div')`

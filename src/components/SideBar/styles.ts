@@ -14,6 +14,7 @@ export const Container = styled('div')`
   left: 0;
   transition: 850ms;
   background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
+  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.48);
 `;
 
 export const CollapsedContainer = styled('div')`
@@ -27,6 +28,7 @@ export const CollapsedContainer = styled('div')`
   left: 0;
   transition: 850ms;
   background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
+  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.48);
 `;
 
 export const Header = styled('div')`
@@ -82,7 +84,7 @@ export const CollapsedNavItem = styled(NavLink)`
 
 export const NavItemTitle = styled(Typography)`
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 400;
   padding-left: 2rem;
 `;

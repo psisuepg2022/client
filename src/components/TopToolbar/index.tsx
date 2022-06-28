@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { IconButton } from '@mui/material';
 import {
   ClinicTitle,
@@ -17,7 +17,6 @@ import ControlledSelect from '../ControlledSelect';
 const TopToolbar = (): JSX.Element => {
   const formMethods = useForm();
   const {} = formMethods;
-  const [value, setValue] = useState<number>(0);
 
   return (
     <Container>

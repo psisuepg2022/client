@@ -6,7 +6,7 @@ const App = (): JSX.Element => {
   return (
     <div style={{ width: '100%' }}>
       <TopToolbar />
-      <div style={{ height: '100vh', overflowY: 'scroll' }}>
+      <div>
         <Typography variant="h1" fontSize="5rem">
           PSIS
         </Typography>

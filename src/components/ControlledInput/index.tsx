@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { CustomTextField } from './styles';
+import { MdOutlineVisibility, MdOutlineVisibilityOff } from 'react-icons/md';
 
 type ControlledInputProps = {
   name: string;
@@ -45,7 +45,11 @@ const ControlledInput = ({
           InputProps={{
             endAdornment: type === 'password' && (
               <IconButton onClick={() => setVisibility((prev) => !prev)}>
-                {visibility ? <Visibility /> : <VisibilityOff />}
+                {visibility ? (
+                  <MdOutlineVisibility />
+                ) : (
+                  <MdOutlineVisibilityOff />
+                )}
               </IconButton>
             ),
           }}

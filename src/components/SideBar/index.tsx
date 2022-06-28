@@ -33,7 +33,7 @@ const SideBar = (): JSX.Element => {
               backgroundColor: isActive ? colors.SECONDARY : colors.PRIMARY,
             })}
           >
-            <Person style={{ color: '#FFF', fontSize: 35 }} />
+            {item.icon}
           </CollapsedNavItem>
         ))}
       </CollapsedContainer>
@@ -56,7 +56,7 @@ const SideBar = (): JSX.Element => {
               backgroundColor: isActive ? colors.SECONDARY : colors.PRIMARY,
             })}
           >
-            <Person style={{ color: '#FFF', fontSize: 35 }} />
+            {item.icon}
             <NavItemTitle>{item.title}</NavItemTitle>
           </NavItem>
         ))}

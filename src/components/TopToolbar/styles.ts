@@ -17,7 +17,7 @@ export const Container = styled('div')`
   align-items: center;
   z-index: 99999; // FOR SIDEBAR BOX-SHADOW ONLY
   position: relative; // FOR SIDEBAR BOX-SHADOW ONLY
-  box-shadow: 5px 2px 5px rgba(0, 0, 0, 0.48);
+  box-shadow: 4px 2px 5px rgba(0, 0, 0, 0.48);
 `;
 
 export const EarlyContent = styled('div')`
@@ -35,6 +35,13 @@ export const DayTitle = styled(Typography)`
   font-size: 1.5rem;
   color: #fff;
   padding: 0 1rem;
+
+  @media (max-width: 1080px) {
+    font-size: 1.2rem;
+  }
+  @media (max-width: 990px) {
+    font-size: 1rem;
+  }
 `;
 
 export const LatterContent = styled('div')`

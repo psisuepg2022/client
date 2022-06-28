@@ -6,8 +6,10 @@ export const CustomTextField = styled(TextField)`
     border-color: ${colors.PRIMARY};
   }
   &:hover .${outlinedInputClasses.notchedOutline} {
-    border-color: ${colors.SECONDARY};
+    border-color: ${colors.SECONDARY} !important;
+    border-width: 2px;
   }
+
   &.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline} {
     border-color: ${colors.SECONDARY};
   }

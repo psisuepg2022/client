@@ -9,4 +9,5 @@ export const colors = {
   BACKGREY: '#EEEEEE',
   DANGER: '#AD2626',
   WARNING: '#D86F51',
+  TEXT: '#303030',
 };

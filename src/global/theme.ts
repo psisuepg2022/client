@@ -23,5 +23,8 @@ export const theme = createTheme({
     fontWeightMedium: '500',
     fontWeightRegular: '400',
     htmlFontSize: 16,
+    allVariants: {
+      color: colors.TEXT,
+    },
   },
 });

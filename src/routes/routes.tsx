@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import App from '../App';
 import SideBar from '../components/SideBar';
 import Login from '../pages/Login';
+import Profile from '../pages/Profile';
 
 const AppRoutes = () => {
   return (
@@ -53,6 +54,9 @@ const AppRoutes = () => {
           }
         />
       </Route>
+
+      {/* PROFILE */}
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 };

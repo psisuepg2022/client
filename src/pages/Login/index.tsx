@@ -36,7 +36,12 @@ const Login = (): JSX.Element => {
           <InputsContainer>
             <CodeAndUser>
               <ControlledInput name="code" label="Código" required />
-              <ControlledInput name="username" label="Usuário" required />
+              <ControlledInput
+                autoComplete="username"
+                name="username"
+                label="Usuário"
+                required
+              />
             </CodeAndUser>
 
             <PasswordBox>
@@ -45,6 +50,7 @@ const Login = (): JSX.Element => {
                 name="password"
                 label="Senha"
                 required
+                autoComplete="current-password"
               />
             </PasswordBox>
 

@@ -9,9 +9,6 @@ import {
   Header,
   PersonalInfo,
   PersonalInfoHalf,
-  SectionBar,
-  SectionHeader,
-  SectionTitle,
   StyledButton,
 } from './styles';
 import { AiOutlineLeft } from 'react-icons/ai';
@@ -19,6 +16,7 @@ import { colors } from '../../global/colors';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledDatePicker from '../../components/ControlledDatePicker';
 import ControlledInput from '../../components/ControlledInput';
+import SectionDivider from '../../components/SectionDivider';
 
 const Profile = (): JSX.Element => {
   const formMethods = useForm();
@@ -39,10 +37,7 @@ const Profile = (): JSX.Element => {
 
           <FormProvider {...formMethods}>
             <Form id="form" onSubmit={handleSubmit(onSubmit)}>
-              <SectionHeader>
-                <SectionTitle>Dados da Clínica</SectionTitle>
-                <SectionBar />
-              </SectionHeader>
+              <SectionDivider>Dados da Clínica</SectionDivider>
 
               <PersonalInfo>
                 <ControlledInput
@@ -58,10 +53,7 @@ const Profile = (): JSX.Element => {
                 />
               </PersonalInfo>
 
-              <SectionHeader>
-                <SectionTitle>Dados do Responsável</SectionTitle>
-                <SectionBar />
-              </SectionHeader>
+              <SectionDivider>Dados do Responsável</SectionDivider>
 
               <PersonalInfo>
                 <ControlledInput

@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { CustomTextField } from './styles';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { ptBR } from 'date-fns/locale';
 
 type ControlledDatePickerProps = {
   name: string;
@@ -29,7 +30,7 @@ const ControllerDatePicker = ({
       defaultValue={defaultValue}
       control={control}
       render={({ field: { value, onChange } }) => (
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider adapterLocale={ptBR} dateAdapter={AdapterDateFns}>
           <DatePicker
             {...rest}
             label={label}
@@ -37,6 +38,7 @@ const ControllerDatePicker = ({
             onChange={onChange}
             renderInput={(params) => <CustomTextField {...params} />}
             disabled={disabled}
+            inputFormat="dd/MM/yyyy"
           />
         </LocalizationProvider>
       )}

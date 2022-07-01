@@ -1,13 +1,32 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { Box, Container, Content, Header } from './styles';
+import {
+  Box,
+  ButtonContainer,
+  Container,
+  Content,
+  Form,
+  Header,
+  PersonalInfo,
+  PersonalInfoHalf,
+  SectionBar,
+  SectionHeader,
+  SectionTitle,
+  StyledButton,
+} from './styles';
 import { AiOutlineLeft } from 'react-icons/ai';
 import { colors } from '../../global/colors';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledDatePicker from '../../components/ControlledDatePicker';
+import ControlledInput from '../../components/ControlledInput';
 
 const Profile = (): JSX.Element => {
   const formMethods = useForm();
+  const { handleSubmit } = formMethods;
+
+  const onSubmit = (data: any): void => {
+    console.log('DATA', data);
+  };
 
   return (
     <Container>
@@ -19,13 +38,89 @@ const Profile = (): JSX.Element => {
           </Header>
 
           <FormProvider {...formMethods}>
-            <form>
-              <ControlledDatePicker
-                name="birthday"
-                label="Data de nascimento"
-              />
-            </form>
+            <Form id="form" onSubmit={handleSubmit(onSubmit)}>
+              <SectionHeader>
+                <SectionTitle>Dados da Clínica</SectionTitle>
+                <SectionBar />
+              </SectionHeader>
+
+              <PersonalInfo>
+                <ControlledInput
+                  name="clinicName"
+                  label="Nome"
+                  required
+                  defaultValue="KLINIK"
+                />
+                <ControlledInput
+                  name="clinicEmail"
+                  label="Email"
+                  defaultValue="klinik@email.com"
+                />
+              </PersonalInfo>
+
+              <SectionHeader>
+                <SectionTitle>Dados do Responsável</SectionTitle>
+                <SectionBar />
+              </SectionHeader>
+
+              <PersonalInfo>
+                <ControlledInput
+                  name="name"
+                  label="Nome"
+                  required
+                  defaultValue="Peter Doppler"
+                />
+                <ControlledInput
+                  name="email"
+                  label="Email"
+                  defaultValue="peter.doppler@email.com"
+                />
+
+                <PersonalInfoHalf>
+                  <ControlledInput
+                    name="cpf"
+                    label="CPF"
+                    required
+                    defaultValue="00000000000"
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1-$2')
+                        .replace(/(-\d{2})\d+?$/, '$1')}`
+                    }
+                  />
+                  <ControlledDatePicker
+                    name="birthday"
+                    label="Data de nascimento"
+                  />
+                </PersonalInfoHalf>
+
+                <PersonalInfoHalf>
+                  <ControlledInput
+                    name="phone"
+                    label="Telefone"
+                    required
+                    defaultValue="00000000000"
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{2})(\d)/, '($1) $2')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{4})\d+?$/, '$1')}`
+                    }
+                  />
+                </PersonalInfoHalf>
+              </PersonalInfo>
+            </Form>
           </FormProvider>
+          <ButtonContainer>
+            <div />
+            <StyledButton type="submit" form="form">
+              SALVAR
+            </StyledButton>
+          </ButtonContainer>
         </Content>
       </Box>
     </Container>

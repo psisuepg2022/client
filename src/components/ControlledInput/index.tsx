@@ -11,6 +11,7 @@ type ControlledInputProps = {
   disabled?: boolean;
   defaultValue?: string | number;
   type?: string;
+  mask?: (value: string) => string;
 } & TextFieldProps;
 
 const ControlledInput = ({
@@ -20,6 +21,7 @@ const ControlledInput = ({
   disabled,
   defaultValue,
   type = 'text',
+  mask,
   ...rest
 }: ControlledInputProps): JSX.Element => {
   const {
@@ -37,7 +39,7 @@ const ControlledInput = ({
         <CustomTextField
           {...rest}
           onChange={onChange}
-          value={value || ''}
+          value={mask ? mask(value || '') : value || ''}
           required={required}
           disabled={disabled}
           label={label}

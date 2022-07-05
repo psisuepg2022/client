@@ -1,9 +1,13 @@
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { getDay } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { Event } from 'react-big-calendar';
 import Schedule from '../../components/Schedule';
 import { api } from '../../service';
 import { AgendaHours } from '../../types';
+import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
+import { LogoContainer } from './styles';
+import CircularProgressWithContent from '../../components/CircularProgressWithContent';
 
 const Agenda = (): JSX.Element => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -105,7 +109,23 @@ const Agenda = (): JSX.Element => {
     })();
   }, []);
 
-  if (loading) return <h1>Carregando...</h1>;
+  if (loading)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <CircularProgressWithContent
+          content={<LogoContainer src={logoPSIS} />}
+          size={200}
+        />
+      </div>
+    );
 
   return <Schedule givenEvents={events} weekAgenda={weekAgenda} />;
 };

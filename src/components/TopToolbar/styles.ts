@@ -1,13 +1,12 @@
-import {
-  MenuItem,
-  Select,
-  outlinedInputClasses,
-  Button,
-  Typography,
-  selectClasses,
-  menuItemClasses,
-} from '@mui/material';
+import { MenuItem, Button, Typography, menuItemClasses } from '@mui/material';
 import { styled } from '@mui/system';
+import {
+  InputLabel,
+  Select,
+  inputLabelClasses,
+  selectClasses,
+  outlinedInputClasses,
+} from '@mui/material';
 
 export const Container = styled('div')`
   width: 100%;
@@ -16,7 +15,7 @@ export const Container = styled('div')`
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
-  z-index: 99999; // FOR SIDEBAR BOX-SHADOW ONLY
+  z-index: 99; // FOR SIDEBAR BOX-SHADOW ONLY
   position: relative; // FOR SIDEBAR BOX-SHADOW ONLY
   box-shadow: 4px 2px 5px rgba(0, 0, 0, 0.48);
 `;
@@ -74,4 +73,36 @@ export const ClinicTitle = styled(Typography)`
   font-size: 2rem;
   text-transform: capitalize;
   color: #fff;
+`;
+
+export const StyledSelect = styled(Select)`
+  width: 150px;
+  height: 40px;
+  color: #fff;
+  border-color: #fff;
+
+  & .${selectClasses.icon} {
+    color: #fff;
+  }
+
+  & .${outlinedInputClasses.notchedOutline} {
+    border-color: #fff;
+  }
+  &:hover .${outlinedInputClasses.notchedOutline} {
+    border-color: #fff;
+  }
+
+  &.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline} {
+    // MUITO IMPORTANTE NÃO DEIXAR ESPAÇO ENTRE O '&' E O '.'
+    border-color: #fff !important;
+  }
+`;
+
+export const StyledInputLabel = styled(InputLabel)`
+  color: #fff;
+
+  &.${inputLabelClasses.focused} {
+    // MUITO IMPORTANTE NÃO DEIXAR ESPAÇO ENTRE O '&' E O '.'
+    color: #fff !important;
+  }
 `;

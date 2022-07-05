@@ -1,20 +1,16 @@
-.calendar {
-  width: 100%
-}
-
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  border-radius: 5px;
+  border-radius: 0px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #2991f0;
-  border-radius: 5px;
+  background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
+  border-radius: 2px;
 }
 
 .rbc-allday-cell {

@@ -108,16 +108,21 @@ const TopToolbar = ({
         </MiddleContent>
 
         <LatterContent>
-          <TodayButton onClick={goToCurrent} variant="outlined">
-            Hoje
-          </TodayButton>
+          {(date.getDate() !== new Date().getDate() ||
+            date.getMonth() !== new Date().getMonth() ||
+            date.getFullYear() !== new Date().getFullYear()) && (
+            <TodayButton onClick={goToCurrent} variant="outlined">
+              Hoje
+            </TodayButton>
+          )}
 
           <FormProvider {...formMethods}>
             <FormControl>
-              <StyledInputLabel>Modo</StyledInputLabel>
+              <StyledInputLabel shrink>Modo</StyledInputLabel>
               <StyledSelect
                 name="mode"
                 label="Modo"
+                notched
                 defaultValue={0}
                 onChange={(e: SelectChangeEvent<unknown>) =>
                   handleViewChange(e.target.value as number)

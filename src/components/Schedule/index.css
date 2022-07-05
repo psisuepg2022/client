@@ -1,0 +1,45 @@
+.calendar {
+  width: 100%
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #2991f0;
+  border-radius: 5px;
+}
+
+.rbc-allday-cell {
+  display: none;
+}
+.rbc-time-view .rbc-header {
+  border-bottom: none;
+}
+
+.rbc-current-time-indicator { /* BARRINHA DE TEMPO */
+  background-color: #228D7D;
+  height: 2px;
+  opacity: 0.7;
+}
+
+.rbc-day-slot .rbc-events-container {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  margin-right: 0px;  /* PREVIOUSLY AS 10PX, RESULTING IN A WHITE BORDER*/
+  top: 0;
+}
+
+.slot-non-click {
+  pointer-events: none !important;
+  background-color: #031926;
+}

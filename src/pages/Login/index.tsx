@@ -17,7 +17,7 @@ import {
   TitleThin,
 } from './styles';
 
-import LogoPSIS from '../../assets/PSIS-Logo-Transparente.png';
+import logoPSIS from '../../assets/PSIS-Logo-Transparente.png';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
 
@@ -60,7 +60,7 @@ const Login = (): JSX.Element => {
       </LeftContainer>
       <RightContainer>
         <LogoAndTitle>
-          <ImageLogo src={LogoPSIS} />
+          <ImageLogo src={logoPSIS} />
           <TitleExtense>Patient And Scheduling Information System</TitleExtense>
         </LogoAndTitle>
 

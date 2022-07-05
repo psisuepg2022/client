@@ -1,0 +1,113 @@
+{
+  "events": [
+    { "id": 1, "title": "Renato Ruppel", "start": "2022-06-01T14:00:00.511Z", "end": "2022-06-01T15:00:00.511Z" },
+    { "id": 2, "title": "Renato Ruppel", "start": "2022-06-02T14:00:00.511Z", "end": "2022-06-02T15:00:00.511Z" },
+    { "id": 3, "title": "Marcos Krul", "start": "2022-06-03T14:00:00.511Z", "end": "2022-06-03T15:00:00.511Z" }
+  ],
+  "horarios": [
+    {
+      "id": 1,
+      "dayOfTheWeek": 0,
+      "start": "8:00",
+      "end": "17:00",
+      "restrictions": [{
+        "id": 1,
+        "start": "12:00",
+        "end": "13:00"
+      }]
+    }, 
+    {
+      "id": 2,
+      "dayOfTheWeek": 1,
+      "start": "9:00",
+      "end": "18:00",
+      "restrictions": [{
+        "id": 1,
+        "start": "12:00",
+        "end": "13:00"
+      }]
+    }, 
+    {
+      "id": 3,
+      "dayOfTheWeek": 2,
+      "start": "8:00",
+      "end": "17:00",
+      "restrictions": [{
+        "id": 1,
+        "start": "12:00",
+        "end": "13:00"
+      }]
+    }, 
+    {
+      "id": 4,
+      "dayOfTheWeek": 3,
+      "start": "8:00",
+      "end": "16:00",
+      "restrictions": [{
+        "id": 1,
+        "start": "12:00",
+        "end": "13:00"
+      }]
+    }, 
+    {
+      "id": 5,
+      "dayOfTheWeek": 4,
+      "start": "8:00",
+      "end": "16:00",
+      "restrictions": [{
+        "id": 1,
+        "start": "12:00",
+        "end": "13:00"
+      }]
+    }, 
+    {
+      "id": 6,
+      "dayOfTheWeek": 5,
+      "start": "8:00",
+      "end": "16:00",
+      "restrictions": [{
+        "id": 1,
+        "start": "12:00",
+        "end": "13:00"
+      }]
+    }, 
+    {
+      "id": 7,
+      "dayOfTheWeek": 6,
+      "start": "8:00",
+      "end": "16:00",
+      "restrictions": [{
+        "id": 1,
+        "start": "12:00",
+        "end": "13:00"
+      }]
+    }
+  ],
+  "patients": [
+    {
+      "id": 1,
+      "name": "Renato Ruppel",
+      "age": 22
+    },
+    {
+      "id": 2,
+      "name": "Marcos Krul",
+      "age": 21
+    },
+    {
+      "id": 3,
+      "name": "Renata Ruppel",
+      "age": 26
+    },
+    {
+      "id": 4,
+      "name": "Thiago Pankievicz",
+      "age": 20
+    },
+    {
+      "id": 5,
+      "name": "Egon Tiedemann",
+      "age": 63
+    }
+  ]
+}

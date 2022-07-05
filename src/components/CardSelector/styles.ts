@@ -8,7 +8,7 @@ export const Container = styled(ButtonBase)`
   justify-content: center;
   align-items: center;
   margin-bottom: 0.5rem;
-  padding: 0.8rem;
+  padding: 0.6rem;
 `;
 
 export const CardName = styled(Typography)`

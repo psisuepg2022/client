@@ -6,10 +6,6 @@ import {
   View,
   Messages,
   ToolbarProps,
-  HeaderProps,
-  EventProps,
-  DateHeaderProps,
-  SlotPropGetter,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';

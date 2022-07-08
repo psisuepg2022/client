@@ -1,8 +1,8 @@
 {
   "events": [
-    { "id": 1, "title": "Renato Ruppel", "start": "2022-06-01T14:00:00.511Z", "end": "2022-06-01T15:00:00.511Z" },
-    { "id": 2, "title": "Renato Ruppel", "start": "2022-06-02T14:00:00.511Z", "end": "2022-06-02T15:00:00.511Z" },
-    { "id": 3, "title": "Marcos Krul", "start": "2022-06-03T14:00:00.511Z", "end": "2022-06-03T15:00:00.511Z" }
+    { "id": 1, "title": "Renato Ruppel", "start": "2022-06-01T14:00:00.511Z", "end": "2022-06-01T15:00:00.511Z", "resource": "SCHEDULED" },
+    { "id": 2, "title": "Renato Ruppel", "start": "2022-06-02T14:00:00.511Z", "end": "2022-06-02T15:00:00.511Z", "resource": "CONFIRMED" },
+    { "id": 3, "title": "Marcos Krul", "start": "2022-06-03T14:00:00.511Z", "end": "2022-06-03T15:00:00.511Z", "resource": "CONCLUDED" }
   ],
   "horarios": [
     {

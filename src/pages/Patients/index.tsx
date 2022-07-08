@@ -7,31 +7,31 @@ import PatientsTable from './table';
 
 const columns: Column[] = [
   {
-    id: 'name',
+    id: 0,
     label: 'Nome',
   },
   {
-    id: 'email',
+    id: 1,
     label: 'Email',
   },
   {
-    id: 'phone',
+    id: 2,
     label: 'Telefone',
   },
   {
-    id: 'birthdate',
+    id: 3,
     label: 'Data de nascimento',
   },
   {
-    id: 'CPF',
+    id: 4,
     label: 'CPF',
   },
   {
-    id: 'maritalStatus',
+    id: 5,
     label: 'Estado civil',
   },
   {
-    id: 'sex',
+    id: 6,
     label: 'Sexo',
   },
 ];

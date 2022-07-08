@@ -24,15 +24,7 @@ export type Patient = {
 };
 
 export type Column = {
-  id:
-    | 'id'
-    | 'name'
-    | 'email'
-    | 'phone'
-    | 'CPF'
-    | 'birthdate'
-    | 'maritalStatus'
-    | 'sex';
+  id: number;
   label: string;
   minWidth?: number;
   align?: 'right';

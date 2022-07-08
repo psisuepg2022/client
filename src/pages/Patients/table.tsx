@@ -46,7 +46,7 @@ const PatientsTable = ({
             </TableRow>
           </TableHead>
           <TableBody sx={{ minHeight: '100%', flexGrow: 1 }}>
-            {patients.slice(0 * 12, 0 * 12 + 12).map((row) => {
+            {patients.slice(0 * 10, 0 * 10 + 10).map((row) => {
               return (
                 <TableRow sx={{ height: 10 }} hover key={row.id}>
                   <TableCell>{row.name}</TableCell>
@@ -66,7 +66,7 @@ const PatientsTable = ({
         rowsPerPageOptions={[]}
         component="div"
         count={patients.length}
-        rowsPerPage={12}
+        rowsPerPage={10}
         page={0}
         onPageChange={() => 1}
         onRowsPerPageChange={() => 0}

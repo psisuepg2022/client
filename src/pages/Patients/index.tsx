@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import { api } from '../../service';
 import { Column, Patient } from '../../types';
-import { Container, Content, CustomBox } from './styles';
+import { BoxHeader, Container, Content, CustomBox, PageTitle } from './styles';
 import PatientsTable from './table';
 
 const columns: Column[] = [
@@ -52,6 +52,9 @@ const Patients = (): JSX.Element => {
       <AlterTopToolbar />
       <Content>
         <CustomBox>
+          <BoxHeader>
+            <PageTitle>Lista de Pacientes</PageTitle>
+          </BoxHeader>
           <PatientsTable patients={patients} columns={columns} />
         </CustomBox>
       </Content>

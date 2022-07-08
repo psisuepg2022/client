@@ -21,7 +21,7 @@ export const Content = styled('div')`
 
 export const CustomBox = styled('div')`
   background-color: #fff;
-  height: 90%;
+  height: 85%;
   width: 90%;
   border-radius: 5px;
   border: 1px rgba(0, 0, 0, 0.2) solid;

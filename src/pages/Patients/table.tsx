@@ -37,28 +37,28 @@ const PatientsTable = ({
           size={'medium'}
         >
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ height: 10 }}>
               {columns.map((column) => (
-                <TableCell key={column.id}>{column.label}</TableCell>
+                <TableCell sx={{ height: 10 }} key={column.id}>
+                  {column.label}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody sx={{ minHeight: '100%', flexGrow: 1 }}>
-            {patients
-              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" key={row.id}>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                    <TableCell>{row.birthdate}</TableCell>
-                    <TableCell>{row.CPF}</TableCell>
-                    <TableCell>{row.maritalStatus}</TableCell>
-                    <TableCell>{row.sex}</TableCell>
-                  </TableRow>
-                );
-              })}
+            {patients.slice(0 * 12, 0 * 12 + 12).map((row) => {
+              return (
+                <TableRow sx={{ height: 10 }} hover key={row.id}>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.phone}</TableCell>
+                  <TableCell>{row.birthdate}</TableCell>
+                  <TableCell>{row.CPF}</TableCell>
+                  <TableCell>{row.maritalStatus}</TableCell>
+                  <TableCell>{row.sex}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -66,7 +66,7 @@ const PatientsTable = ({
         rowsPerPageOptions={[]}
         component="div"
         count={patients.length}
-        rowsPerPage={25}
+        rowsPerPage={12}
         page={0}
         onPageChange={() => 1}
         onRowsPerPageChange={() => 0}

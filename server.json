@@ -87,27 +87,47 @@
     {
       "id": 1,
       "name": "Renato Ruppel",
-      "age": 22
+      "matiralStatus": 0,
+      "sex": "M",
+      "CPF": "000.000.000-00",
+      "phone": "(42) 00000-0000",
+      "birthdate": "1996-06-01"
     },
     {
       "id": 2,
       "name": "Marcos Krul",
-      "age": 21
+      "matiralStatus": 1,
+      "sex": "M",
+      "CPF": "000.000.000-00",
+      "phone": "(42) 00000-0000",
+      "birthdate": "1996-06-01"
     },
     {
       "id": 3,
       "name": "Renata Ruppel",
-      "age": 26
+      "matiralStatus": 2,
+      "sex": "F",
+      "CPF": "000.000.000-00",
+      "phone": "(42) 00000-0000",
+      "birthdate": "1996-06-01"
     },
     {
       "id": 4,
       "name": "Thiago Pankievicz",
-      "age": 20
+      "matiralStatus": 3,
+      "sex": "I",
+      "CPF": "000.000.000-00",
+      "phone": "(42) 00000-0000",
+      "birthdate": "1996-06-01"
     },
     {
       "id": 5,
       "name": "Egon Tiedemann",
-      "age": 63
+      "matiralStatus": 0,
+      "sex": "M",
+      "CPF": "000.000.000-00",
+      "phone": "(42) 00000-0000",
+      "birthdate": "1996-06-01"
     }
   ]
 }

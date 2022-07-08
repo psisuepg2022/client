@@ -23,7 +23,16 @@ import {
 } from 'date-fns';
 import { AgendaHours } from '../../types';
 import TopToolbar from '../TopToolbar';
-import { CustomDateHeaderContainer } from './styles';
+import {
+  CustomDateHeader,
+  CustomEventMonth,
+  CustomEventWrapper,
+  CustomHeaderMonth,
+  CustomHeaderWeek,
+  dayPropGetter,
+  eventStyleGetter,
+  slotPropGetter,
+} from './customComponents';
 
 const locales = {
   'pt-BR': ptBR,
@@ -82,7 +91,6 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
 
         const locks: Event[] = [];
         const hours: Event[] = [];
-        //console.log('EACH DAYS: ', eachDay)
 
         eachDay.forEach((date: Date) => {
           const today = getDay(date);
@@ -143,7 +151,6 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
             endDate.setMinutes(Number(item.end.split(':')[1]));
             endDate.setSeconds(0);
 
-            console.log('NEW LOCKS', newLocks);
             return {
               start: startDate,
               end: endDate,
@@ -156,8 +163,6 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
           locks.push(...newLocks);
         });
 
-        // console.log('MONTH 1: ', hours)
-        // console.log('MONTH 2: ', locks)
         setEvents((prev) => {
           const removeOldLocks = prev.filter(
             (item) => item.resource !== 'lock'
@@ -235,12 +240,9 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
           };
         }) as Event[];
 
-        console.log('NEW LOCKSA', newLocks);
-
         allEvents.push(...newHours);
         allEvents.push(...newLocks);
       });
-      //console.log('all', allEvents)
       setEvents((prev) => {
         const removeOldLocks = prev.filter((item) => item.resource !== 'lock');
 
@@ -249,145 +251,6 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
     },
     []
   );
-
-  const eventStyleGetter = (
-    event: Event,
-    start: Date,
-    end: Date,
-    isSelected: boolean
-  ): { style?: Record<string, unknown>; className?: string } => {
-    if (event.resource && event.resource === 'lock') {
-      const style = {
-        backgroundColor: '#9BB0A5',
-        borderRadius: '0px',
-        color: 'transparent',
-        cursor: 'auto',
-        width: '100%',
-        border: '1px',
-      };
-
-      return {
-        style: style,
-        className: 'eventDefault',
-      };
-    }
-
-    const style = {
-      backgroundColor: '#81a57d',
-      borderRadius: '2px',
-      color: '#161616',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-    };
-
-    return {
-      style: style,
-      className: 'eventDefault',
-    };
-  };
-
-  const CustomDateHeader = ({
-    label,
-    drilldownView,
-    onDrillDown,
-    date,
-    isOffRange,
-  }: DateHeaderProps) => {
-    const eventsInDate = events.reduce(
-      (prev, cur) =>
-        cur.start?.getDate() === date.getDate() &&
-        cur.start.getMonth() === date.getMonth() &&
-        cur.start.getFullYear() === date.getFullYear() &&
-        cur.resource !== 'lock'
-          ? prev + 1
-          : prev,
-      0
-    );
-
-    return (
-      <CustomDateHeaderContainer>
-        <div
-          style={{
-            backgroundColor: '#385f3b',
-            borderRadius: 20,
-            width: 40,
-            height: 40,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 20,
-          }}
-        >
-          <p style={{ fontWeight: 'bold', fontSize: 18, color: '#FFF' }}>
-            {eventsInDate}
-          </p>
-        </div>
-        <a
-          style={{
-            fontWeight: 'bold',
-            fontSize: 18,
-            textDecoration: 'none',
-            position: 'absolute',
-            right: 0,
-            top: 15,
-            color: '#202020',
-          }}
-          href="#"
-          onClick={onDrillDown}
-        >
-          {label}
-        </a>
-      </CustomDateHeaderContainer>
-    );
-  };
-
-  function CustomHeaderMonth({ date, label, localizer }: HeaderProps) {
-    return (
-      <div>
-        <p>{label}</p>
-      </div>
-    );
-  }
-
-  function CustomEventMonth({
-    continuesAfter,
-    continuesPrior,
-    event,
-    isAllDay,
-    localizer,
-    slotEnd,
-    slotStart,
-    title,
-  }: EventProps) {
-    return <div></div>;
-  }
-
-  const slotPropGetter: SlotPropGetter = useCallback(
-    (date: Date, resourceId?: string | number | undefined) => {
-      return {
-        className: 'slot-non-click',
-        style: {
-          backgroundColor: '#FFF',
-          color: '#141414',
-          pointerEvents: 'none',
-        },
-      };
-    },
-    []
-  );
-
-  const dayPropGetter = useCallback(
-    (date: Date): { style?: Record<string, unknown>; className?: string } => {
-      return {
-        className: '',
-        style: {},
-      };
-    },
-    []
-  );
-
-  console.log('EVEEEENTS', events);
 
   return (
     <Calendar
@@ -402,8 +265,6 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
         eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
       }}
       timeslots={1}
-      // onView={onViewChange}
-      // date={currentDate}
       onRangeChange={(
         range:
           | Date[]
@@ -414,10 +275,6 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
         view?: View | undefined
       ) => onRangeChange(range, view)}
       dayLayoutAlgorithm="no-overlap"
-      // onDrillDown={(date: Date, view: View) => onRangeChange([date], view)}
-      // min={getDayMin()}
-      // min={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 8, 0, 0)}
-      // max={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 15, 0, 0)}
       slotPropGetter={slotPropGetter}
       eventPropGetter={eventStyleGetter}
       // onSelectSlot={(slotInfo: SlotInfo) => setCurrentSlot(slotInfo)}
@@ -449,48 +306,15 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
             </div>
           );
         },
-        //dateCellWrapper: CustomDay
-        // eventWrapper: (event) => {
-        //   console.log('evne', event.className)
-        //   return (
-        //       <div className={event.className} style={{ height: 4.166666666666686,
-        //         top: 79.16666666666666,
-        //         width: 100,
-        //         xOffset: 0, backgroundColor: '#F00', cursor: 'pointer' }}>
-        //         <p>{event.event.title}</p>
-        //       </div>
-
-        //   )
-        // }
         month: {
-          dateHeader: CustomDateHeader,
+          dateHeader: (props) => CustomDateHeader({ ...props, events }),
           header: CustomHeaderMonth,
           event: CustomEventMonth,
         },
-        eventWrapper: (props: any) => {
-          const { event, children, style } = props;
-
-          console.log('PROSP', props);
-          return (
-            <div
-            // onClick={e => {
-            //   console.log("ON CHICKE',", e)
-            //   handleClick(e)
-            // }}
-            // onContextMenu={(e) => {
-            //   // alert(`${event.title} is clicked.`);
-            //   console.log('ON KINVERTE\',', e);
-            //   handleClick(e);
-            //   e.preventDefault();
-            // }}
-            // className={children.props.className}
-            // style={{ ...children.props.style }}
-            >
-              {children}
-            </div>
-          );
+        week: {
+          header: CustomHeaderWeek,
         },
-        // }}
+        eventWrapper: CustomEventWrapper,
       }}
     />
   );

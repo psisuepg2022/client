@@ -1,11 +1,11 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import TopToolbar from './components/TopToolbar';
+import AlterTopToolbar from './components/AlterTopToolbar';
 
 const App = (): JSX.Element => {
   return (
     <div style={{ width: '100%' }}>
-      <TopToolbar />
+      <AlterTopToolbar />
       <div>
         <Typography variant="h1" fontSize="5rem">
           PSIS

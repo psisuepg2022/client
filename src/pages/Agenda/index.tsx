@@ -12,7 +12,7 @@ import CircularProgressWithContent from '../../components/CircularProgressWithCo
 const Agenda = (): JSX.Element => {
   const [events, setEvents] = useState<Event[]>([]);
   const [weekAgenda, setWeekAgenda] = useState<AgendaHours[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {

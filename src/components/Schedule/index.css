@@ -39,3 +39,19 @@
   pointer-events: none !important;
   background-color: #031926;
 }
+
+.rbc-month-row .rbc-row-content {
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.rbc-month-row .rbc-row-content .rbc-row {
+  display: none !important;
+}
+
+.rbc-month-row .rbc-row-content .rbc-row:first-child {
+  display: flex !important;
+  flex-grow: 1;
+  height: 100%;
+}

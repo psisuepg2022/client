@@ -95,7 +95,7 @@ export const CustomHeaderMonth = ({ date, label }: HeaderProps) => {
 };
 
 export const CustomEventMonth = () => {
-  return <div></div>;
+  return <></>;
 };
 
 export const slotPropGetter: SlotPropGetter = () => {

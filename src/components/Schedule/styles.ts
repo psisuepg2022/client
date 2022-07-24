@@ -6,7 +6,7 @@ export const CustomDateHeaderContainer = styled('div')`
   justify-content: center;
   align-items: center;
   margin: 0px 15px;
-  height: 11rem;
+  height: 100%;
   position: relative;
 `;
 

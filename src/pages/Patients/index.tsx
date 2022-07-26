@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, Tooltip } from '@mui/material';
+import { FormControl, IconButton, SelectChangeEvent, Tooltip } from '@mui/material';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import { api } from '../../service';
 import { Column, Patient } from '../../types';
-import { BoxHeader, Container, Content, CustomBox, PageTitle, LogoContainer } from './styles';
+import { BoxHeader, Container, Content, CustomBox, PageTitle, LogoContainer, StyledButton, TitleAndInputs, ButtonsContainer, InputsForm, StyledSelect, StyledMenuItem, StyledInputLabel } from './styles';
 import PatientsTable from './table';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '../../components/CircularProgressWithContent';
+import ControlledInput from '../../components/ControlledInput';
+import { FormProvider, useForm } from 'react-hook-form';
+import ControlledSelect from '../../components/ControlledSelect';
 
 const columns: Column[] = [
   {
@@ -41,6 +44,8 @@ const columns: Column[] = [
 const Patients = (): JSX.Element => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [category, setCategory] = useState<string>('Nome');
+  const formMethods = useForm();
 
   useEffect(() => {
     (async () => {
@@ -63,7 +68,39 @@ const Patients = (): JSX.Element => {
               />
             : <CustomBox>
                 <BoxHeader>
-                  <PageTitle>Lista de Pacientes</PageTitle>
+                  <TitleAndInputs>
+                    <PageTitle>Lista de Pacientes</PageTitle>
+                    <FormProvider {...formMethods}>
+                      <InputsForm>
+                        <ControlledInput 
+                          name="filter"
+                          label={category}
+                          size="medium"
+                        />
+                        <FormControl>
+                          <StyledInputLabel>Categoria</StyledInputLabel>
+                          <StyledSelect
+                            name="category"
+                            label="Categoria"
+                            notched
+                            defaultValue={'name'}
+                            onChange={(e: SelectChangeEvent<unknown>) =>
+                              setCategory(e.target.value as string)
+                            }
+                            value={category}
+                          >
+                            <StyledMenuItem value='Nome'>Nome</StyledMenuItem>
+                            <StyledMenuItem value='CPF'>CPF</StyledMenuItem>
+                            <StyledMenuItem value='Email'>Email</StyledMenuItem>
+                          </StyledSelect>
+                        </FormControl>
+                      </InputsForm>
+                    </FormProvider>
+                  </TitleAndInputs>
+                  <ButtonsContainer>
+                    <StyledButton>ADICIONAR</StyledButton>
+                    <StyledButton>BUSCAR</StyledButton>
+                  </ButtonsContainer>
                 </BoxHeader>
                 <PatientsTable patients={patients} columns={columns} />
               </CustomBox>

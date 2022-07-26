@@ -12,16 +12,29 @@ export type AgendaHours = {
   ];
 };
 
-export type Patient = {
-  id: number;
+export type Address = {
+  city: string;
+  state: string;
+  zip_code: string;
+  public_area: string;
+  district: string;
+}
+
+export type Person = {
+  id: string;
   name: string;
   email?: string;
-  phone?: string;
-  CPF: string;
-  birthdate: string;
-  maritalStatus: number;
-  sex: string;
-};
+  contact_number?: string;
+  CPF?: string;
+  birth_date: string;
+}
+
+export type Patient = {
+  marital_status: string;
+  gender: string;
+  liable?: Person;
+  address: Address;
+} & Person;
 
 export type Column = {
   id: number;
@@ -29,4 +42,5 @@ export type Column = {
   minWidth?: number;
   align?: 'right';
   format?: (value: number) => string;
+  tooltip?: React.ReactElement;
 };

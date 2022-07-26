@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { IconButton, Tooltip } from '@mui/material';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import { api } from '../../service';
 import { Column, Patient } from '../../types';
 import { BoxHeader, Container, Content, CustomBox, PageTitle } from './styles';
 import PatientsTable from './table';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
 
 const columns: Column[] = [
   {
@@ -12,27 +14,25 @@ const columns: Column[] = [
   },
   {
     id: 1,
-    label: 'Email',
+    label: 'CPF',
+    tooltip: 
+      <Tooltip title="Caso o paciente não possua CPF próprio, o CPF do responsável será apresentado nesta coluna.">
+        <IconButton size="small">
+          <AiOutlineQuestionCircle />
+        </IconButton>
+      </Tooltip>
   },
   {
     id: 2,
-    label: 'Telefone',
-  },
-  {
-    id: 3,
     label: 'Data de nascimento',
   },
   {
+    id: 3,
+    label: 'Telefone',
+  },
+  {
     id: 4,
-    label: 'CPF',
-  },
-  {
-    id: 5,
-    label: 'Estado civil',
-  },
-  {
-    id: 6,
-    label: 'Sexo',
+    label: 'Ações',
   },
 ];
 

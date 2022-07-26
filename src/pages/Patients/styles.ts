@@ -42,3 +42,23 @@ export const PageTitle = styled(Typography)`
   color: ${colors.TEXT};
   font-weight: 600;
 `;
+
+export const PersonalDataExpand = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 1rem 0;
+`;
+
+export const AuxDataExpand = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 1rem 0;
+`;
+
+export const TextExpand = styled(Typography)`
+  font-size: 1rem;
+
+  span {
+    font-weight: 600;
+  }
+`;

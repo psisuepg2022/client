@@ -3,9 +3,11 @@ import { IconButton, Tooltip } from '@mui/material';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import { api } from '../../service';
 import { Column, Patient } from '../../types';
-import { BoxHeader, Container, Content, CustomBox, PageTitle } from './styles';
+import { BoxHeader, Container, Content, CustomBox, PageTitle, LogoContainer } from './styles';
 import PatientsTable from './table';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
+import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
+import CircularProgressWithContent from '../../components/CircularProgressWithContent';
 
 const columns: Column[] = [
   {
@@ -38,12 +40,14 @@ const columns: Column[] = [
 
 const Patients = (): JSX.Element => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
       const res = await api.get('patients');
 
       setPatients(res.data);
+      setLoading(false);
     })();
   }, []);
 
@@ -51,12 +55,20 @@ const Patients = (): JSX.Element => {
     <Container>
       <AlterTopToolbar />
       <Content>
-        <CustomBox>
-          <BoxHeader>
-            <PageTitle>Lista de Pacientes</PageTitle>
-          </BoxHeader>
-          <PatientsTable patients={patients} columns={columns} />
-        </CustomBox>
+        {
+          loading
+            ? <CircularProgressWithContent
+                content={<LogoContainer src={logoPSIS} />}
+                size={200}
+              />
+            : <CustomBox>
+                <BoxHeader>
+                  <PageTitle>Lista de Pacientes</PageTitle>
+                </BoxHeader>
+                <PatientsTable patients={patients} columns={columns} />
+              </CustomBox>
+        }
+ 
       </Content>
     </Container>
   );

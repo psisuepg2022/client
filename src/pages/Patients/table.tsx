@@ -45,6 +45,7 @@ const PatientsTable = ({
           sx={{ minWidth: 750 }}
           aria-labelledby="patientsTable"
           size={'medium'}
+          stickyHeader
         >
           <TableHead>
             <TableRow sx={{ height: 10 }}>
@@ -118,35 +119,6 @@ const PatientsTable = ({
                             </>
                           )
                         }
-                          {/* <div>
-                            <div>
-                              <Typography color="textPrimary" variant="h6">Informações Pessoais</Typography>
-                            </div>
-                            <Typography><span>Nome: </span>{row.name}</Typography>
-                            <Typography><span>Registro Geral: </span>{row.CPF}</Typography>
-                            <Typography><span>Data de nascimento: </span>{row.birth_date}</Typography>
-                            <Typography><span>Estado civil: </span>{row.marital_status}</Typography>
-                          </div>
-                          <div>
-                            <div>
-                              <Typography color="textPrimary" variant="h6">Informações de contato</Typography>
-                              {/* <Contactcontact_numberOutlined /> 
-                            </div>
-                            <Typography><span>Telefone: </span>{row.contact_number}</Typography>
-                            <Typography><span>Endereço: </span>{row.sex} - {row.sex}, {row.sex}</Typography>
-                            <Typography><span>Ocupação: </span>{row.sex}</Typography>
-                          </div>
-                          <div>
-                            <div>
-                              <Typography color="textPrimary" variant="h6">Informações médicas</Typography>
-                              {/* <LocalHospitalOutlined /> 
-                            </div>
-                             <Typography><span>Motivo da consulta: </span>{patient.subject}</Typography>
-                            {
-                              patient.notes
-                                && <Typography><span>Notas: </span>{patient.notes}</Typography>
-                            } 
-                          </div> */}
                       </Box>
                     </Collapse>
                   </TableCell>
@@ -158,6 +130,7 @@ const PatientsTable = ({
         </Table>
       </TableContainer>
       <TablePagination
+        sx={{ overflow: 'hidden' }}
         rowsPerPageOptions={[]}
         component="div"
         count={patients.length}

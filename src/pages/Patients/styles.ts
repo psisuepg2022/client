@@ -62,3 +62,8 @@ export const TextExpand = styled(Typography)`
     font-weight: 600;
   }
 `;
+
+export const LogoContainer = styled('img')`
+  width: 100px;
+  height: auto;
+`;

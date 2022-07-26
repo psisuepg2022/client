@@ -100,11 +100,10 @@ export const CustomEventMonth = () => {
 
 export const slotPropGetter: SlotPropGetter = () => {
   return {
-    className: 'slot-non-click',
     style: {
       backgroundColor: '#FFF',
       color: colors.TEXT,
-      pointerEvents: 'none',
+      cursor: 'pointer'
     },
   };
 };

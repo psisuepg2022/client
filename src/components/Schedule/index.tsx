@@ -6,6 +6,7 @@ import {
   View,
   Messages,
   ToolbarProps,
+  SlotInfo,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';
@@ -29,6 +30,7 @@ import {
   eventStyleGetter,
   slotPropGetter,
 } from './customComponents';
+import CreateEventModal from '../CreateEventModal';
 
 const locales = {
   'pt-BR': ptBR,
@@ -75,6 +77,7 @@ type Ranges = {
 
 const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
   const [events, setEvents] = useState<Event[]>(givenEvents);
+  const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(undefined);
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, view?: View | undefined) => {
@@ -249,70 +252,73 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
   );
 
   return (
-    <Calendar
-      localizer={localizer}
-      events={events}
-      style={{ height: '100vh', width: '100%', fontFamily: 'Poppins' }}
-      views={['day', 'week', 'month']}
-      culture="pt-BR"
-      step={60}
-      defaultView="day"
-      formats={{
-        eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
-      }}
-      timeslots={1}
-      onRangeChange={(
-        range:
-          | Date[]
-          | {
-              start: Date;
-              end: Date;
-            },
-        view?: View | undefined
-      ) => onRangeChange(range, view)}
-      dayLayoutAlgorithm="no-overlap"
-      slotPropGetter={slotPropGetter}
-      eventPropGetter={eventStyleGetter}
-      // onSelectSlot={(slotInfo: SlotInfo) => setCurrentSlot(slotInfo)}
-      messages={messages}
-      // onSelectEvent={(event: Event) =>
-      //   event?.resource !== 'lock' && setOpenContext(true)
-      // }
-      selectable
-      onSelecting={() => false}
-      popup={true}
-      dayPropGetter={dayPropGetter}
-      components={{
-        toolbar: (toolbar: ToolbarProps) =>
-          TopToolbar({
-            ...toolbar,
-            onRangeChange,
-          }),
-        dateCellWrapper: (props: any) => {
-          const { event, children } = props;
-          return (
-            <div
-              style={{ backgroundColor: '#000' }}
-              onContextMenu={(e) => {
-                alert(`${event.title} is clicked.`);
-                e.preventDefault();
-              }}
-            >
-              {children}
-            </div>
-          );
-        },
-        month: {
-          dateHeader: (props) => CustomDateHeader({ ...props, events }),
-          header: CustomHeaderMonth,
-          event: CustomEventMonth,
-        },
-        week: {
-          header: CustomHeaderWeek,
-        },
-        eventWrapper: CustomEventWrapper,
-      }}
-    />
+    <>
+      <CreateEventModal handleClose={() => setCurrentSlotInfo(undefined)} open={currentSlotInfo !== undefined} slotInfo={currentSlotInfo} />
+      <Calendar
+        localizer={localizer}
+        events={events}
+        style={{ height: '100vh', width: '100%', fontFamily: 'Poppins' }}
+        views={['day', 'week', 'month']}
+        culture="pt-BR"
+        step={60}
+        defaultView="day"
+        formats={{
+          eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
+        }}
+        timeslots={1}
+        onRangeChange={(
+          range:
+            | Date[]
+            | {
+                start: Date;
+                end: Date;
+              },
+          view?: View | undefined
+        ) => onRangeChange(range, view)}
+        dayLayoutAlgorithm="no-overlap"
+        slotPropGetter={slotPropGetter}
+        eventPropGetter={eventStyleGetter}
+        messages={messages}
+        // onSelectEvent={(event: Event) =>
+        //   event?.resource !== 'lock' && setOpenContext(true)
+        // }
+        onSelectSlot={(slotInfo: SlotInfo) => setCurrentSlotInfo(slotInfo)}
+        selectable
+        onSelecting={() => false}
+        popup={true}
+        dayPropGetter={dayPropGetter}
+        components={{
+          toolbar: (toolbar: ToolbarProps) =>
+            TopToolbar({
+              ...toolbar,
+              onRangeChange,
+            }),
+          dateCellWrapper: (props: any) => {
+            const { event, children } = props;
+            return (
+              <div
+                style={{ backgroundColor: '#000' }}
+                onContextMenu={(e) => {
+                  alert(`${event.title} is clicked.`);
+                  e.preventDefault();
+                }}
+              >
+                {children}
+              </div>
+            );
+          },
+          month: {
+            dateHeader: (props) => CustomDateHeader({ ...props, events }),
+            header: CustomHeaderMonth,
+            event: CustomEventMonth,
+          },
+          week: {
+            header: CustomHeaderWeek,
+          },
+          eventWrapper: CustomEventWrapper,
+        }}
+      />
+    </>
   );
 };
 

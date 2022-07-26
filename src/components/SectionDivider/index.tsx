@@ -3,12 +3,13 @@ import { SectionBar, SectionHeader, SectionTitle } from './styles';
 
 type SectionDividerProps = {
   children?: React.ReactNode;
+  fontSize?: number;
 };
 
-const SectionDivider: React.FC<SectionDividerProps> = ({ children }) => {
+const SectionDivider: React.FC<SectionDividerProps> = ({ children, fontSize }) => {
   return (
     <SectionHeader>
-      <SectionTitle>{children}</SectionTitle>
+      <SectionTitle style={{ fontSize: fontSize }}>{children}</SectionTitle>
       <SectionBar />
     </SectionHeader>
   );

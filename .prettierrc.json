@@ -3,6 +3,6 @@
   "tabWidth": 2,
   "semi": true,
   "backetSpacing": true,
-  "arrowParans": "always",
+  "arrowParens": "always",
   "endOfLine": "lf"
 }

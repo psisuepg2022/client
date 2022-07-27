@@ -103,7 +103,7 @@ export const slotPropGetter: SlotPropGetter = () => {
     style: {
       backgroundColor: '#FFF',
       color: colors.TEXT,
-      cursor: 'pointer'
+      cursor: 'pointer',
     },
   };
 };

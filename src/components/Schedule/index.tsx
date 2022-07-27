@@ -77,7 +77,9 @@ type Ranges = {
 
 const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
   const [events, setEvents] = useState<Event[]>(givenEvents);
-  const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(undefined);
+  const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(
+    undefined
+  );
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, view?: View | undefined) => {
@@ -253,7 +255,11 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
 
   return (
     <>
-      <CreateEventModal handleClose={() => setCurrentSlotInfo(undefined)} open={currentSlotInfo !== undefined} slotInfo={currentSlotInfo} />
+      <CreateEventModal
+        handleClose={() => setCurrentSlotInfo(undefined)}
+        open={currentSlotInfo !== undefined}
+        slotInfo={currentSlotInfo}
+      />
       <Calendar
         localizer={localizer}
         events={events}

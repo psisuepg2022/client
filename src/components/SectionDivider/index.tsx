@@ -6,7 +6,10 @@ type SectionDividerProps = {
   fontSize?: number;
 };
 
-const SectionDivider: React.FC<SectionDividerProps> = ({ children, fontSize }) => {
+const SectionDivider: React.FC<SectionDividerProps> = ({
+  children,
+  fontSize,
+}) => {
   return (
     <SectionHeader>
       <SectionTitle style={{ fontSize: fontSize }}>{children}</SectionTitle>

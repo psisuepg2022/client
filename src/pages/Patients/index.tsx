@@ -1,16 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { FormControl, IconButton, SelectChangeEvent, Tooltip } from '@mui/material';
+import {
+  FormControl,
+  IconButton,
+  SelectChangeEvent,
+  Tooltip,
+} from '@mui/material';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import { api } from '../../service';
 import { Column, Patient } from '../../types';
-import { BoxHeader, Container, Content, CustomBox, PageTitle, LogoContainer, StyledButton, TitleAndInputs, ButtonsContainer, InputsForm, StyledSelect, StyledMenuItem, StyledInputLabel } from './styles';
+import {
+  BoxHeader,
+  Container,
+  Content,
+  CustomBox,
+  PageTitle,
+  LogoContainer,
+  StyledButton,
+  TitleAndInputs,
+  ButtonsContainer,
+  InputsForm,
+  StyledSelect,
+  StyledMenuItem,
+  StyledInputLabel,
+} from './styles';
 import PatientsTable from './table';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '../../components/CircularProgressWithContent';
 import ControlledInput from '../../components/ControlledInput';
 import { FormProvider, useForm } from 'react-hook-form';
-import ControlledSelect from '../../components/ControlledSelect';
 
 const columns: Column[] = [
   {
@@ -20,12 +38,13 @@ const columns: Column[] = [
   {
     id: 1,
     label: 'CPF',
-    tooltip: 
+    tooltip: (
       <Tooltip title="Caso o paciente não possua CPF próprio, o CPF do responsável será apresentado nesta coluna.">
         <IconButton size="small">
           <AiOutlineQuestionCircle />
         </IconButton>
       </Tooltip>
+    ),
   },
   {
     id: 2,
@@ -60,52 +79,51 @@ const Patients = (): JSX.Element => {
     <Container>
       <AlterTopToolbar />
       <Content>
-        {
-          loading
-            ? <CircularProgressWithContent
-                content={<LogoContainer src={logoPSIS} />}
-                size={200}
-              />
-            : <CustomBox>
-                <BoxHeader>
-                  <TitleAndInputs>
-                    <PageTitle>Lista de Pacientes</PageTitle>
-                    <FormProvider {...formMethods}>
-                      <InputsForm>
-                        <ControlledInput 
-                          name="filter"
-                          label={category}
-                          size="medium"
-                        />
-                        <FormControl>
-                          <StyledInputLabel>Categoria</StyledInputLabel>
-                          <StyledSelect
-                            name="category"
-                            label="Categoria"
-                            notched
-                            defaultValue={'name'}
-                            onChange={(e: SelectChangeEvent<unknown>) =>
-                              setCategory(e.target.value as string)
-                            }
-                            value={category}
-                          >
-                            <StyledMenuItem value='Nome'>Nome</StyledMenuItem>
-                            <StyledMenuItem value='CPF'>CPF</StyledMenuItem>
-                            <StyledMenuItem value='Email'>Email</StyledMenuItem>
-                          </StyledSelect>
-                        </FormControl>
-                      </InputsForm>
-                    </FormProvider>
-                  </TitleAndInputs>
-                  <ButtonsContainer>
-                    <StyledButton>ADICIONAR</StyledButton>
-                    <StyledButton>BUSCAR</StyledButton>
-                  </ButtonsContainer>
-                </BoxHeader>
-                <PatientsTable patients={patients} columns={columns} />
-              </CustomBox>
-        }
- 
+        {loading ? (
+          <CircularProgressWithContent
+            content={<LogoContainer src={logoPSIS} />}
+            size={200}
+          />
+        ) : (
+          <CustomBox>
+            <BoxHeader>
+              <TitleAndInputs>
+                <PageTitle>Lista de Pacientes</PageTitle>
+                <FormProvider {...formMethods}>
+                  <InputsForm>
+                    <ControlledInput
+                      name="filter"
+                      label={category}
+                      size="medium"
+                    />
+                    <FormControl>
+                      <StyledInputLabel>Categoria</StyledInputLabel>
+                      <StyledSelect
+                        name="category"
+                        label="Categoria"
+                        notched
+                        defaultValue={'name'}
+                        onChange={(e: SelectChangeEvent<unknown>) =>
+                          setCategory(e.target.value as string)
+                        }
+                        value={category}
+                      >
+                        <StyledMenuItem value="Nome">Nome</StyledMenuItem>
+                        <StyledMenuItem value="CPF">CPF</StyledMenuItem>
+                        <StyledMenuItem value="Email">Email</StyledMenuItem>
+                      </StyledSelect>
+                    </FormControl>
+                  </InputsForm>
+                </FormProvider>
+              </TitleAndInputs>
+              <ButtonsContainer>
+                <StyledButton>ADICIONAR</StyledButton>
+                <StyledButton>BUSCAR</StyledButton>
+              </ButtonsContainer>
+            </BoxHeader>
+            <PatientsTable patients={patients} columns={columns} />
+          </CustomBox>
+        )}
       </Content>
     </Container>
   );

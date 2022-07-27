@@ -1,4 +1,4 @@
-import { Button, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { colors } from '../../global/colors';
 

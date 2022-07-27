@@ -2,7 +2,15 @@
 import React from 'react';
 import { SlotInfo } from 'react-big-calendar';
 import { dateFormat } from '../../utils/dateFormat';
-import { Body, Header, SlotDataText, StyledBox, StyledModal } from './styles';
+import {
+  Body,
+  ButtonArea,
+  Header,
+  SlotDataText,
+  StyledBox,
+  StyledButton,
+  StyledModal,
+} from './styles';
 import { MdLock, MdOutlineClose } from 'react-icons/md';
 import { IconButton } from '@mui/material';
 import { colors } from '../../global/colors';
@@ -51,8 +59,8 @@ const CreateEventModal = ({
                 date: slotInfo.start,
                 stringFormat: "d 'de' MMMM 'de' yyyy",
               })}{' '}
-              | {dateFormat({ date: slotInfo.start, stringFormat: 'hh:mm' })} -{' '}
-              {dateFormat({ date: slotInfo.end, stringFormat: 'hh:mm' })}
+              | {dateFormat({ date: slotInfo.start, stringFormat: 'HH:mm' })} -{' '}
+              {dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' })}
             </SlotDataText>
             <IconButton size="small" onClick={handleClose}>
               <MdOutlineClose size={40} />
@@ -65,6 +73,9 @@ const CreateEventModal = ({
               noOptionsText="Nenhum paciente encontrado..."
               callback={handleSearch}
             />
+            <ButtonArea>
+              <StyledButton>AGENDAR</StyledButton>
+            </ButtonArea>
           </Body>
         </StyledBox>
       </StyledModal>

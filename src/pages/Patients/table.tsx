@@ -159,33 +159,31 @@ const PatientsTable = ({
                               {row.contact_number}
                             </TextExpand>
                           </AuxDataExpand>
-                          <AuxDataExpand>
-                            {row.liable && (
-                              <>
-                                <SectionDivider fontSize={14}>
-                                  Dados do responsável
-                                </SectionDivider>
-                                <PersonalDataExpand>
-                                  <TextExpand>
-                                    <span>Nome: </span>
-                                    {row.liable.name}
-                                  </TextExpand>
-                                  <TextExpand>
-                                    <span>Email: </span>
-                                    {row.liable.email}
-                                  </TextExpand>
-                                  <TextExpand>
-                                    <span>CPF: </span>
-                                    {row.liable.CPF}
-                                  </TextExpand>
-                                  <TextExpand>
-                                    <span>Data de nascimento: </span>
-                                    {row.liable.birth_date}
-                                  </TextExpand>
-                                </PersonalDataExpand>
-                              </>
-                            )}
-                          </AuxDataExpand>
+                          {row.liable && (
+                            <>
+                              <SectionDivider fontSize={14}>
+                                Dados do responsável
+                              </SectionDivider>
+                              <PersonalDataExpand>
+                                <TextExpand>
+                                  <span>Nome: </span>
+                                  {row.liable.name}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>Email: </span>
+                                  {row.liable.email}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>CPF: </span>
+                                  {row.liable.CPF}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>Data de nascimento: </span>
+                                  {row.liable.birth_date}
+                                </TextExpand>
+                              </PersonalDataExpand>
+                            </>
+                          )}
                         </Box>
                       </Collapse>
                     </TableCell>

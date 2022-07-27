@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Autocomplete,
   Box,
@@ -23,8 +23,10 @@ const AutocompleteInput = ({
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<Person[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const alreadyUsed = useRef(false);
 
   const handleDebounce = async (inputValue: string): Promise<void> => {
+    alreadyUsed.current = true;
     setLoading(true);
     const patients = await callback(inputValue);
     console.log('RES.DATA', patients);
@@ -42,7 +44,6 @@ const AutocompleteInput = ({
   return (
     <Autocomplete
       id="asynchronous-autocomplete"
-      sx={{ width: 300 }}
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -51,7 +52,9 @@ const AutocompleteInput = ({
         setOpen(false);
       }}
       loadingText="Buscando..."
-      noOptionsText={noOptionsText}
+      noOptionsText={
+        alreadyUsed.current ? noOptionsText : 'Insira 3 caracteres para buscar'
+      }
       filterOptions={(x) => x}
       isOptionEqualToValue={(option, value) => option.name === value.name}
       getOptionLabel={(option) => `${option.name}`}
@@ -68,6 +71,7 @@ const AutocompleteInput = ({
       renderInput={(params) => (
         <TextField
           {...params}
+          fullWidth
           label={label}
           onChange={(e) => handleInputChange(e.target.value)}
           InputProps={{

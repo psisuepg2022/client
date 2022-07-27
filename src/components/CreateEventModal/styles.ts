@@ -1,5 +1,6 @@
-import { Box, Modal, Typography } from '@mui/material';
+import { Box, Button, Modal, Typography } from '@mui/material';
 import { styled } from '@mui/system';
+import { colors } from '../../global/colors';
 
 export const StyledModal = styled(Modal)`
   background-color: rgba(0, 0, 0, 0.2);
@@ -9,8 +10,8 @@ export const StyledModal = styled(Modal)`
 `;
 
 export const StyledBox = styled(Box)`
-  width: 40%;
-  height: 40%;
+  width: 30%;
+  height: 30%;
   background-color: #fff;
   outline: none;
   border-radius: 5px;
@@ -24,12 +25,32 @@ export const Header = styled('div')`
 
 export const Body = styled('div')`
   display: flex;
+  height: 100%;
   flex-direction: column;
-  padding: 1rem;
+  gap: 1rem;
+  padding: 0 1rem;
+`;
+
+export const ButtonArea = styled('div')`
+  padding-top: 3rem;
 `;
 
 export const SlotDataText = styled(Typography)`
   font-size: 1.2rem;
   font-weight: 600;
   padding: 1rem 0;
+`;
+
+export const StyledButton = styled(Button)`
+  background-color: ${colors.PRIMARY};
+  color: #fff;
+  transition: 300ms;
+  width: 100%;
+  font-weight: 400;
+  font-size: 1rem;
+  height: 50px;
+
+  :hover {
+    background-color: ${colors.SECONDARY};
+  }
 `;

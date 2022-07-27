@@ -14,6 +14,7 @@ type AutocompleteProps = {
   label: string;
   noOptionsText: string;
   selectCallback: (value: Person | Patient) => void;
+  cleanseAfterSelect?: () => void;
 };
 
 const AutocompleteInput = ({
@@ -21,6 +22,7 @@ const AutocompleteInput = ({
   label,
   noOptionsText,
   selectCallback,
+  cleanseAfterSelect,
 }: AutocompleteProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<Person[]>([]);
@@ -60,8 +62,11 @@ const AutocompleteInput = ({
       isOptionEqualToValue={(option, value) => option.name === value.name}
       getOptionLabel={(option) => `${option.name}`}
       onChange={(e, value, reason) => {
-        if (reason === 'clear') setOptions([]);
-        else selectCallback(value as Patient);
+        if (reason === 'clear') {
+          alreadyUsed.current = false;
+          setOptions([]);
+          if (cleanseAfterSelect) cleanseAfterSelect();
+        } else selectCallback(value as Patient);
       }}
       options={options}
       loading={loading}

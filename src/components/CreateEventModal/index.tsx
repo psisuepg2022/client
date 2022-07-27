@@ -87,6 +87,7 @@ const CreateEventModal = ({
               noOptionsText="Nenhum paciente encontrado..."
               callback={handleSearch}
               selectCallback={selectPerson}
+              cleanseAfterSelect={() => setCurrentPatient(undefined)}
             />
             {currentPatient && (
               <ConditionalInputs>
@@ -109,20 +110,29 @@ const CreateEventModal = ({
               </ConditionalInputs>
             )}
             {currentPatient && !currentPatient.CPF && currentPatient?.liable && (
-              <ConditionalInputs>
+              <>
+                <SectionDivider>Responsável</SectionDivider>
                 <SimpleInput
-                  name="CPF"
-                  label="CPF"
-                  value={currentPatient.liable.CPF}
+                  name="liable-name"
+                  label="Nome"
+                  value={currentPatient.liable.name}
                   contentEditable={false}
                 />
-                <SimpleInput
-                  name="birthdate"
-                  label="Data de nascimento"
-                  value={currentPatient.liable.birth_date}
-                  contentEditable={false}
-                />
-              </ConditionalInputs>
+                <ConditionalInputs>
+                  <SimpleInput
+                    name="CPF"
+                    label="CPF"
+                    value={currentPatient.liable.CPF}
+                    contentEditable={false}
+                  />
+                  <SimpleInput
+                    name="birthdate"
+                    label="Data de nascimento"
+                    value={currentPatient.liable.birth_date}
+                    contentEditable={false}
+                  />
+                </ConditionalInputs>
+              </>
             )}
             <ButtonArea>
               <StyledButton>AGENDAR</StyledButton>

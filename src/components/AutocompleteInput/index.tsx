@@ -7,18 +7,20 @@ import {
   Typography,
 } from '@mui/material';
 import debounce from 'lodash.debounce';
-import { Person } from '../../types';
+import { Patient, Person } from '../../types';
 
 type AutocompleteProps = {
   callback: (inputValue: string) => Promise<Person[]>;
   label: string;
   noOptionsText: string;
+  selectCallback: (value: Person | Patient) => void;
 };
 
 const AutocompleteInput = ({
   callback,
   label,
   noOptionsText,
+  selectCallback,
 }: AutocompleteProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<Person[]>([]);
@@ -29,7 +31,6 @@ const AutocompleteInput = ({
     alreadyUsed.current = true;
     setLoading(true);
     const patients = await callback(inputValue);
-    console.log('RES.DATA', patients);
     setOptions([...patients]);
     setLoading(false);
   };
@@ -60,6 +61,7 @@ const AutocompleteInput = ({
       getOptionLabel={(option) => `${option.name}`}
       onChange={(e, value, reason) => {
         if (reason === 'clear') setOptions([]);
+        else selectCallback(value as Patient);
       }}
       options={options}
       loading={loading}

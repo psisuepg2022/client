@@ -1,0 +1,32 @@
+import { TextFieldProps } from '@mui/material';
+import React from 'react';
+import { CustomTextField } from './styles';
+
+type SimpleInputProps = {
+  name: string;
+  label: string;
+  type?: string;
+  mask?: (value: string) => string;
+} & TextFieldProps;
+
+const SimpleInput = ({
+  label,
+  contentEditable,
+  defaultValue,
+  value,
+  disabled,
+  ...rest
+}: SimpleInputProps): JSX.Element => {
+  return (
+    <CustomTextField
+      {...rest}
+      label={label}
+      defaultValue={defaultValue}
+      contentEditable={contentEditable}
+      value={value}
+      disabled={disabled}
+    />
+  );
+};
+
+export default SimpleInput;

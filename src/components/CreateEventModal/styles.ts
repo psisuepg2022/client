@@ -11,7 +11,7 @@ export const StyledModal = styled(Modal)`
 
 export const StyledBox = styled(Box)`
   width: 30%;
-  height: 30%;
+  height: auto;
   background-color: #fff;
   outline: none;
   border-radius: 5px;
@@ -53,4 +53,10 @@ export const StyledButton = styled(Button)`
   :hover {
     background-color: ${colors.SECONDARY};
   }
+`;
+
+export const ConditionalInputs = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 `;

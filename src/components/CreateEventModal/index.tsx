@@ -1,10 +1,11 @@
 /* eslint-disable quotes */
-import React from 'react';
+import React, { useState } from 'react';
 import { SlotInfo } from 'react-big-calendar';
 import { dateFormat } from '../../utils/dateFormat';
 import {
   Body,
   ButtonArea,
+  ConditionalInputs,
   Header,
   SlotDataText,
   StyledBox,
@@ -17,7 +18,8 @@ import { colors } from '../../global/colors';
 import SectionDivider from '../SectionDivider';
 import AutocompleteInput from '../AutocompleteInput';
 import axios from 'axios';
-import { Person } from '../../types';
+import { Person, Patient } from '../../types';
+import SimpleInput from '../SimpleInput';
 
 type CreateEventModalProps = {
   open: boolean;
@@ -30,6 +32,8 @@ const CreateEventModal = ({
   handleClose,
   slotInfo,
 }: CreateEventModalProps): JSX.Element => {
+  const [currentPatient, setCurrentPatient] = useState<Patient>();
+
   if (!slotInfo) return <></>;
 
   if (slotInfo && slotInfo.slots && slotInfo.slots.length === 1) return <></>;
@@ -41,11 +45,21 @@ const CreateEventModal = ({
     return res.data;
   };
 
+  const selectPerson = (patient: Person | Patient): void => {
+    console.log('I SELECTED', patient);
+    setCurrentPatient(patient as Patient);
+  };
+
+  const closeAll = (): void => {
+    setCurrentPatient(undefined);
+    handleClose();
+  };
+
   return (
     <>
       <StyledModal
         open={open}
-        onClose={handleClose}
+        onClose={closeAll}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -62,7 +76,7 @@ const CreateEventModal = ({
               | {dateFormat({ date: slotInfo.start, stringFormat: 'HH:mm' })} -{' '}
               {dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' })}
             </SlotDataText>
-            <IconButton size="small" onClick={handleClose}>
+            <IconButton size="small" onClick={closeAll}>
               <MdOutlineClose size={40} />
             </IconButton>
           </Header>
@@ -72,7 +86,44 @@ const CreateEventModal = ({
               label="Nome"
               noOptionsText="Nenhum paciente encontrado..."
               callback={handleSearch}
+              selectCallback={selectPerson}
             />
+            {currentPatient && (
+              <ConditionalInputs>
+                <SimpleInput
+                  name="CPF"
+                  label="CPF"
+                  value={
+                    !currentPatient.CPF && currentPatient.liable
+                      ? currentPatient.liable.CPF
+                      : currentPatient.CPF
+                  }
+                  contentEditable={false}
+                />
+                <SimpleInput
+                  name="birthdate"
+                  label="Data de nascimento"
+                  value={currentPatient.birth_date}
+                  contentEditable={false}
+                />
+              </ConditionalInputs>
+            )}
+            {currentPatient && !currentPatient.CPF && currentPatient?.liable && (
+              <ConditionalInputs>
+                <SimpleInput
+                  name="CPF"
+                  label="CPF"
+                  value={currentPatient.liable.CPF}
+                  contentEditable={false}
+                />
+                <SimpleInput
+                  name="birthdate"
+                  label="Data de nascimento"
+                  value={currentPatient.liable.birth_date}
+                  contentEditable={false}
+                />
+              </ConditionalInputs>
+            )}
             <ButtonArea>
               <StyledButton>AGENDAR</StyledButton>
             </ButtonArea>

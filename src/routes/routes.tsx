@@ -5,6 +5,7 @@ import SideBar from '../components/SideBar';
 import Agenda from '../pages/Agenda';
 import Login from '../pages/Login';
 import Patients from '../pages/Patients';
+import PatientsForm from '../pages/PatientsForm';
 import Profile from '../pages/Profile';
 
 const AppRoutes = () => {
@@ -46,12 +47,22 @@ const AppRoutes = () => {
             </div>
           }
         />
+        {/* PATIENTS PAGES */}
         <Route
           path="/patients"
           element={
             <div style={{ display: 'flex' }}>
               <SideBar />
               <Patients />
+            </div>
+          }
+        />
+        <Route
+          path="/patients/new"
+          element={
+            <div style={{ display: 'flex' }}>
+              <SideBar />
+              <PatientsForm />
             </div>
           }
         />

@@ -29,6 +29,7 @@ import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '../../components/CircularProgressWithContent';
 import ControlledInput from '../../components/ControlledInput';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 const columns: Column[] = [
   {
@@ -65,6 +66,7 @@ const Patients = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('Nome');
   const formMethods = useForm();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -117,7 +119,9 @@ const Patients = (): JSX.Element => {
                 </FormProvider>
               </TitleAndInputs>
               <ButtonsContainer>
-                <StyledButton>ADICIONAR</StyledButton>
+                <StyledButton onClick={() => navigate('/patients/new')}>
+                  ADICIONAR
+                </StyledButton>
                 <StyledButton>BUSCAR</StyledButton>
               </ButtonsContainer>
             </BoxHeader>

@@ -56,7 +56,9 @@ const AutocompleteInput = ({
       }}
       loadingText="Buscando..."
       noOptionsText={
-        alreadyUsed.current ? noOptionsText : 'Insira 3 caracteres para buscar'
+        alreadyUsed.current
+          ? noOptionsText
+          : 'Insira no mínimo 3 caracteres para buscar'
       }
       filterOptions={(x) => x}
       isOptionEqualToValue={(option, value) => option.name === value.name}

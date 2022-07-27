@@ -18,7 +18,7 @@ export type Address = {
   zip_code: string;
   public_area: string;
   district: string;
-}
+};
 
 export type Person = {
   id: string;
@@ -27,7 +27,7 @@ export type Person = {
   contact_number?: string;
   CPF?: string;
   birth_date: string;
-}
+};
 
 export type Patient = {
   marital_status: string;

@@ -1,9 +1,8 @@
-import { Box, Modal, Typography } from "@mui/material";
-import { styled } from "@mui/system";
-
+import { Box, Modal, Typography } from '@mui/material';
+import { styled } from '@mui/system';
 
 export const StyledModal = styled(Modal)`
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,12 +14,18 @@ export const StyledBox = styled(Box)`
   background-color: #fff;
   outline: none;
   border-radius: 5px;
+  padding: 1rem;
 `;
 
 export const Header = styled('div')`
   display: flex;
   justify-content: space-between;
-  padding: .5rem 1rem;
+`;
+
+export const Body = styled('div')`
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
 `;
 
 export const SlotDataText = styled(Typography)`

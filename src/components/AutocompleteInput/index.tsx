@@ -1,33 +1,43 @@
 import React, { useCallback, useState } from 'react';
-import { Autocomplete, Box, CircularProgress, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  CircularProgress,
+  TextField,
+  Typography,
+} from '@mui/material';
 import debounce from 'lodash.debounce';
+import { Person } from '../../types';
 
 type AutocompleteProps = {
-  callback: (inputValue: string) => Promise<any>;
+  callback: (inputValue: string) => Promise<Person[]>;
   label: string;
   noOptionsText: string;
-}
+};
 
-
-const AutocompleteInput = ({ callback, label, noOptionsText }: AutocompleteProps): JSX.Element => {
+const AutocompleteInput = ({
+  callback,
+  label,
+  noOptionsText,
+}: AutocompleteProps): JSX.Element => {
   const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false)
+  const [options, setOptions] = useState<Person[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleDebounce = async (inputValue: string): Promise<void> => {
     setLoading(true);
-    const res = await callback(inputValue);
-    setOptions([...res.data]);
+    const patients = await callback(inputValue);
+    console.log('RES.DATA', patients);
+    setOptions([...patients]);
     setLoading(false);
-  }
-  
+  };
+
   const debounceFn = useCallback(debounce(handleDebounce, 500), []);
 
   const handleInputChange = useCallback(async (value: string) => {
-    if (value.length < 3) 
-      return;
+    if (value.length < 3) return;
     debounceFn(value);
-  }, [])
+  }, []);
 
   return (
     <Autocomplete
@@ -42,11 +52,11 @@ const AutocompleteInput = ({ callback, label, noOptionsText }: AutocompleteProps
       }}
       loadingText="Buscando..."
       noOptionsText={noOptionsText}
-      filterOptions={x => x}
+      filterOptions={(x) => x}
       isOptionEqualToValue={(option, value) => option.name === value.name}
       getOptionLabel={(option) => `${option.name}`}
       onChange={(e, value, reason) => {
-        if (reason === 'clear') setOptions([])
+        if (reason === 'clear') setOptions([]);
       }}
       options={options}
       loading={loading}
@@ -64,7 +74,9 @@ const AutocompleteInput = ({ callback, label, noOptionsText }: AutocompleteProps
             ...params.InputProps,
             endAdornment: (
               <>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                {loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
                 {params.InputProps.endAdornment}
               </>
             ),
@@ -73,6 +85,6 @@ const AutocompleteInput = ({ callback, label, noOptionsText }: AutocompleteProps
       )}
     />
   );
-}
+};
 
 export default AutocompleteInput;

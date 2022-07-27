@@ -1,6 +1,5 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
-import { getDay } from 'date-fns';
 import React, { useEffect, useState } from 'react';
+import { getDay } from 'date-fns';
 import { Event } from 'react-big-calendar';
 import Schedule from '../../components/Schedule';
 import { api } from '../../service';

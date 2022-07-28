@@ -6,35 +6,34 @@ import {
   outlinedInputClasses,
 } from '@mui/material';
 import { styled } from '@mui/system';
+import { colors } from '../../global/colors';
 
 export const StyledSelect = styled(Select)`
-  width: 150px;
-  height: 40px;
-  color: #fff;
-  border-color: #fff;
+  color: ${colors.PRIMARY};
+  border-color: ${colors.PRIMARY};
 
   & .${selectClasses.icon} {
-    color: #fff;
+    color: ${colors.PRIMARY};
   }
 
   & .${outlinedInputClasses.notchedOutline} {
-    border-color: #fff;
+    border-color: ${colors.PRIMARY};
   }
   &:hover .${outlinedInputClasses.notchedOutline} {
-    border-color: #fff;
+    border-color: ${colors.PRIMARY};
   }
 
   &.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline} {
     // MUITO IMPORTANTE NÃO DEIXAR ESPAÇO ENTRE O '&' E O '.'
-    border-color: #fff !important;
+    border-color: ${colors.PRIMARY} !important;
   }
 `;
 
 export const StyledInputLabel = styled(InputLabel)`
-  color: #fff;
+  color: ${colors.PRIMARY};
 
   &.${inputLabelClasses.focused} {
     // MUITO IMPORTANTE NÃO DEIXAR ESPAÇO ENTRE O '&' E O '.'
-    color: #fff !important;
+    color: ${colors.PRIMARY} !important;
   }
 `;

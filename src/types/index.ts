@@ -44,3 +44,12 @@ export type Column = {
   format?: (value: number) => string;
   tooltip?: React.ReactElement;
 };
+
+export type CepInfos = {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  bairro: string;
+  localidade: string;
+  uf: string;
+};

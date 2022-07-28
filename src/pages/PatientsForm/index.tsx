@@ -1,11 +1,15 @@
 import { FormControlLabel } from '@mui/material';
 import React, { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
+import AsyncInput from '../../components/AsyncInput';
 import ControlledDatePicker from '../../components/ControlledDatePicker';
 import ControlledInput from '../../components/ControlledInput';
 import ControlledSelect from '../../components/ControlledSelect';
 import SectionDivider from '../../components/SectionDivider';
+import SimpleInput from '../../components/SimpleInput';
+import { CepInfos } from '../../types';
+import { searchForCep } from '../../utils/zipCode';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -24,9 +28,46 @@ import {
   StyledMenuItem,
 } from './styles';
 
+type FormProps = {
+  name: string;
+  email: string;
+  birthdate: string;
+  gender: number;
+  maritalStatus: number;
+};
+
 const PatientsForm = (): JSX.Element => {
   const formMethods = useForm();
+  const { handleSubmit } = formMethods;
   const [needLiable, setNeedLiable] = useState<boolean>(false);
+  const [inputLoading, setInputLoading] = useState<boolean>(false);
+  const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
+
+  const onSubmit = (data: FieldValues): void => {
+    const formData: FormProps = data as FormProps;
+
+    console.log('FORM DATA', formData);
+  };
+
+  const handleCepComplete = async (value: string): Promise<CepInfos | void> => {
+    if (value.length < 10) {
+      cepInfos && setCepInfos(undefined);
+      return;
+    }
+
+    try {
+      setInputLoading(true);
+      const infos = (await searchForCep(value)) as CepInfos;
+
+      setCepInfos(infos);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.log('EERR,', err);
+      //sweet alert
+    } finally {
+      setInputLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -38,14 +79,26 @@ const PatientsForm = (): JSX.Element => {
               <PageTitle>Criar Paciente</PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
-              <StyledForm>
+              <StyledForm id="form" onSubmit={handleSubmit(onSubmit)}>
                 <SectionDivider>Dados Pessoais</SectionDivider>
                 <PersonalDataFirst>
                   <ControlledInput name="name" label="Nome" />
                   <ControlledInput name="email" label="Email" />
                 </PersonalDataFirst>
                 <PersonalDataSecond>
-                  <ControlledInput name="name" label="Nome" />
+                  <ControlledInput
+                    name="CPF"
+                    label="CPF"
+                    maxLength={14}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1-$2')
+                        .replace(/(-\d{2})\d+?$/, '$1')}`
+                    }
+                  />
                   <ControlledDatePicker
                     name="birthdate"
                     label="Data de nascimento"
@@ -100,17 +153,67 @@ const PatientsForm = (): JSX.Element => {
 
                 <SectionDivider>Dados Auxiliares</SectionDivider>
                 <AuxDataFirst>
-                  <ControlledInput name="name" label="Nome" />
-                  <ControlledInput name="city" label="Cidade" />
-                  <ControlledInput name="publicArea" label="Logradouro" />
+                  <AsyncInput
+                    name="zipCode"
+                    label="CEP"
+                    onCompleteCep={handleCepComplete}
+                    inputLoading={inputLoading}
+                    defaultValue=""
+                    maxLength={10}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{2})(\d)/, '$1.$2')
+                        .replace(/(\d{3})(\d)/, '$1-$2')
+                        .replace(/(-\d{3})\d+?$/, '$1')}`
+                    }
+                  />
+                  <SimpleInput
+                    name="city"
+                    label="Cidade"
+                    contentEditable={false}
+                    value={cepInfos?.localidade || ''}
+                  />
+                  {cepInfos?.cep && !cepInfos?.logradouro ? (
+                    <ControlledInput name="publicArea" label="Logradouro" />
+                  ) : (
+                    <SimpleInput
+                      name="publicArea"
+                      label="Logradouro"
+                      contentEditable={false}
+                      value={cepInfos?.logradouro || ''}
+                    />
+                  )}
                 </AuxDataFirst>
                 <AuxDataSecond>
-                  <ControlledInput name="state" label="Estado" />
-                  <ControlledInput name="district" label="Bairro" />
+                  <SimpleInput
+                    name="state"
+                    label="Estado"
+                    contentEditable={false}
+                    value={cepInfos?.uf || ''}
+                  />
+                  {cepInfos?.cep && !cepInfos.bairro ? (
+                    <ControlledInput name="district" label="Bairro" />
+                  ) : (
+                    <SimpleInput
+                      name="district"
+                      label="Bairro"
+                      contentEditable={false}
+                      value={cepInfos?.bairro || ''}
+                    />
+                  )}
                   <ControlledInput
                     name="contactNumber"
                     label="Telefone"
                     style={{ width: '50%' }}
+                    maxLength={15}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{2})(\d)/, '($1) $2')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{4})\d+?$/, '$1')}`
+                    }
                   />
                 </AuxDataSecond>
               </StyledForm>
@@ -118,7 +221,13 @@ const PatientsForm = (): JSX.Element => {
           </div>
 
           <ButtonsContainer>
-            <StyledButton style={{ gridColumnStart: 3 }}>SALVAR</StyledButton>
+            <StyledButton
+              type="submit"
+              form="form"
+              style={{ gridColumnStart: 3 }}
+            >
+              SALVAR
+            </StyledButton>
             <StyledButtonInverted style={{ gridColumnStart: 4 }}>
               CANCELAR
             </StyledButtonInverted>

@@ -12,6 +12,7 @@ type ControlledInputProps = {
   defaultValue?: string | number;
   type?: string;
   mask?: (value: string) => string;
+  maxLength?: number;
 } & TextFieldProps;
 
 const ControlledInput = ({
@@ -22,6 +23,7 @@ const ControlledInput = ({
   defaultValue,
   type = 'text',
   mask,
+  maxLength,
   ...rest
 }: ControlledInputProps): JSX.Element => {
   const {
@@ -54,6 +56,9 @@ const ControlledInput = ({
                 )}
               </IconButton>
             ),
+          }}
+          inputProps={{
+            maxLength: maxLength,
           }}
           // helperText={helperText}
           // error={error}

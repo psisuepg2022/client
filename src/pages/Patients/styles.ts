@@ -39,13 +39,13 @@ export const CustomBox = styled('div')`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 2rem;
 `;
 
 export const BoxHeader = styled('div')`
   display: grid;
   grid-template-columns: 3fr 1fr;
-  padding: 1rem 0 2rem 0;
+  padding: 0 0 2rem 0;
   flex-grow: 1;
 `;
 

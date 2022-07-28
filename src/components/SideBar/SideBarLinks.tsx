@@ -29,6 +29,6 @@ export const sideBarLinks: SideBarLinks[] = [
   {
     title: 'Pacientes',
     path: '/patients',
-    icon: <MdOutlineSick color="#FFF" fontSize={30} />,
+    icon: <MdOutlineSick color="#FFF" fontSize={28} />,
   },
 ];

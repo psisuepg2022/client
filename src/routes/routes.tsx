@@ -23,7 +23,7 @@ const AppRoutes = () => {
         <Route
           path="/agenda"
           element={
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
               <Agenda />
             </div>
@@ -32,7 +32,7 @@ const AppRoutes = () => {
         <Route
           path="/professionals"
           element={
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
               <App />
             </div>
@@ -41,7 +41,7 @@ const AppRoutes = () => {
         <Route
           path="/collaborators"
           element={
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
               <App />
             </div>
@@ -51,7 +51,7 @@ const AppRoutes = () => {
         <Route
           path="/patients"
           element={
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
               <Patients />
             </div>
@@ -60,7 +60,12 @@ const AppRoutes = () => {
         <Route
           path="/patients/new"
           element={
-            <div style={{ display: 'flex' }}>
+            <div
+              style={{
+                display: 'flex',
+                overflow: 'hidden',
+              }}
+            >
               <SideBar />
               <PatientsForm />
             </div>

@@ -5,13 +5,15 @@ import { colors } from '../../global/colors';
 
 export const Container = styled('div')`
   width: 250px;
-  height: 100vh;
+  min-height: 100vh;
   max-width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: sticky;
   top: 0;
+  margin-bottom: -101%;
+  padding-bottom: 101%;
   left: 0;
   transition: 850ms;
   background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
@@ -20,7 +22,7 @@ export const Container = styled('div')`
 
 export const CollapsedContainer = styled('div')`
   width: 70px;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;

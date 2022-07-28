@@ -195,7 +195,7 @@ const PatientsTable = ({
         </Table>
       </TableContainer>
       <TablePagination
-        sx={{ overflow: 'hidden' }}
+        sx={{ overflow: 'hidden', minHeight: 60 }}
         rowsPerPageOptions={[]}
         component="div"
         count={patients.length}

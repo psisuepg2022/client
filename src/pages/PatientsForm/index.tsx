@@ -1,6 +1,8 @@
 import { FormControlLabel } from '@mui/material';
+import { isAfter, subYears } from 'date-fns';
 import React, { useState } from 'react';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import AsyncInput from '../../components/AsyncInput';
 import ControlledDatePicker from '../../components/ControlledDatePicker';
@@ -44,6 +46,7 @@ const PatientsForm = (): JSX.Element => {
   const [needLiable, setNeedLiable] = useState<boolean>(false);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
+  const navigate = useNavigate();
 
   const onSubmit = (data: FieldValues): void => {
     const formData: FormProps = data as FormProps;
@@ -84,7 +87,16 @@ const PatientsForm = (): JSX.Element => {
               <StyledForm id="form" onSubmit={handleSubmit(onSubmit)}>
                 <SectionDivider>Dados Pessoais</SectionDivider>
                 <PersonalDataFirst>
-                  <ControlledInput name="name" label="Nome" />
+                  <ControlledInput
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'O nome do paciente é obrigatório',
+                      },
+                    }}
+                    name="name"
+                    label="Nome"
+                  />
                   <ControlledInput name="email" label="Email" />
                 </PersonalDataFirst>
                 <PersonalDataSecond>
@@ -100,9 +112,32 @@ const PatientsForm = (): JSX.Element => {
                         .replace(/(\d{3})(\d)/, '$1-$2')
                         .replace(/(-\d{2})\d+?$/, '$1')}`
                     }
+                    rules={{
+                      maxLength: {
+                        value: 14,
+                        message: 'Insira um CPF válido',
+                      },
+                      minLength: {
+                        value: 14,
+                        message: 'Insira um CPF válido',
+                      },
+                      validate: (value) =>
+                        !(!value && !needLiable) ||
+                        'Caso o paciente não possua CPF é necessário cadastrar um responsável com CPF válido',
+                    }}
                   />
                   <ControlledDatePicker
                     name="birthdate"
+                    rules={{
+                      required: {
+                        value: true,
+                        message:
+                          'A data de nascimento do paciente é obrigatória',
+                      },
+                      validate: (date) =>
+                        !isAfter(date, new Date()) ||
+                        'A Data escolhida não pode ser superior à data atual',
+                    }}
                     label="Data de nascimento"
                     defaultValue={new Date()}
                   />
@@ -144,12 +179,61 @@ const PatientsForm = (): JSX.Element => {
                   <>
                     <SectionDivider>Dados do Responsável</SectionDivider>
                     <PersonalDataFirst>
-                      <ControlledInput name="name" label="Nome" />
-                      <ControlledInput name="email" label="Email" />
+                      <ControlledInput
+                        rules={{
+                          required: {
+                            value: true,
+                            message: 'O nome do responsável é obrigatório',
+                          },
+                        }}
+                        name="liable.name"
+                        label="Nome"
+                      />
+                      <ControlledInput name="liable.email" label="Email" />
                     </PersonalDataFirst>
                     <PersonalDataSecond>
-                      <ControlledInput name="name" label="Nome" />
-                      <ControlledInput name="email" label="Email" />
+                      <ControlledInput
+                        name="liable.CPF"
+                        label="CPF"
+                        rules={{
+                          maxLength: {
+                            value: 14,
+                            message: 'Insira um CPF válido',
+                          },
+                          minLength: {
+                            value: 14,
+                            message: 'Insira um CPF válido',
+                          },
+                          required: {
+                            value: true,
+                            message: 'O CPF do responsável é obrigatório',
+                          },
+                        }}
+                        maxLength={14}
+                        mask={(s: string): string =>
+                          `${s
+                            .replace(/\D/g, '')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1-$2')
+                            .replace(/(-\d{2})\d+?$/, '$1')}`
+                        }
+                      />
+                      <ControlledDatePicker
+                        name="liable.birthdate"
+                        label="Data de nascimento"
+                        defaultValue={new Date()}
+                        rules={{
+                          required: {
+                            value: true,
+                            message:
+                              'A data de nascimento do paciente é obrigatória',
+                          },
+                          validate: (date) =>
+                            !isAfter(date, new Date()) ||
+                            'A Data escolhida não pode ser superior à data atual',
+                        }}
+                      />
                     </PersonalDataSecond>
                   </>
                 )}
@@ -231,7 +315,10 @@ const PatientsForm = (): JSX.Element => {
             >
               SALVAR
             </StyledButton>
-            <StyledButtonInverted style={{ gridColumnStart: 4 }}>
+            <StyledButtonInverted
+              onClick={() => navigate('/patients', { replace: true })}
+              style={{ gridColumnStart: 4 }}
+            >
               CANCELAR
             </StyledButtonInverted>
           </ButtonsContainer>

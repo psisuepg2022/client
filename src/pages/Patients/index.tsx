@@ -66,6 +66,7 @@ const Patients = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('Nome');
   const formMethods = useForm();
+  const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,6 +77,51 @@ const Patients = (): JSX.Element => {
       setLoading(false);
     })();
   }, []);
+
+  const onSubmit = (data: any): void => {
+    console.log('DATA', data);
+  };
+
+  const getSearchInput = (): JSX.Element => {
+    console.log('CATEGHORUAI', category);
+    if (category === 'Email') {
+      return <ControlledInput name="email" label={category} size="medium" />;
+    }
+
+    if (category === 'CPF') {
+      return (
+        <ControlledInput
+          name="CPF"
+          label={category}
+          rules={{
+            maxLength: {
+              value: 14,
+              message: 'Insira um CPF válido',
+            },
+            minLength: {
+              value: 14,
+              message: 'Insira um CPF válido',
+            },
+            required: {
+              value: true,
+              message: 'O CPF do responsável é obrigatório',
+            },
+          }}
+          maxLength={14}
+          mask={(s: string): string =>
+            `${s
+              .replace(/\D/g, '')
+              .replace(/(\d{3})(\d)/, '$1.$2')
+              .replace(/(\d{3})(\d)/, '$1.$2')
+              .replace(/(\d{3})(\d)/, '$1-$2')
+              .replace(/(-\d{2})\d+?$/, '$1')}`
+          }
+        />
+      );
+    }
+
+    return <ControlledInput name="name" label={category} size="medium" />;
+  };
 
   return (
     <Container>
@@ -92,12 +138,8 @@ const Patients = (): JSX.Element => {
               <TitleAndInputs>
                 <PageTitle>Lista de Pacientes</PageTitle>
                 <FormProvider {...formMethods}>
-                  <InputsForm>
-                    <ControlledInput
-                      name="filter"
-                      label={category}
-                      size="medium"
-                    />
+                  <InputsForm id="search" onSubmit={handleSubmit(onSubmit)}>
+                    {getSearchInput()}
                     <FormControl>
                       <StyledInputLabel>Categoria</StyledInputLabel>
                       <StyledSelect
@@ -105,9 +147,10 @@ const Patients = (): JSX.Element => {
                         label="Categoria"
                         notched
                         defaultValue={'name'}
-                        onChange={(e: SelectChangeEvent<unknown>) =>
-                          setCategory(e.target.value as string)
-                        }
+                        onChange={(e: SelectChangeEvent<unknown>) => {
+                          setCategory(e.target.value as string);
+                          setValue(`search_${e.target.value as string}`, '');
+                        }}
                         value={category}
                       >
                         <StyledMenuItem value="Nome">Nome</StyledMenuItem>
@@ -122,7 +165,9 @@ const Patients = (): JSX.Element => {
                 <StyledButton onClick={() => navigate('/patients/new')}>
                   ADICIONAR
                 </StyledButton>
-                <StyledButton>BUSCAR</StyledButton>
+                <StyledButton form="search" type="submit">
+                  BUSCAR
+                </StyledButton>
               </ButtonsContainer>
             </BoxHeader>
             <PatientsTable patients={patients} columns={columns} />

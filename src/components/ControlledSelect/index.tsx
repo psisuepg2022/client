@@ -19,10 +19,7 @@ const ControlledSelect = ({
   defaultValue,
   ...rest
 }: ControlledSelectProps): JSX.Element => {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <Controller

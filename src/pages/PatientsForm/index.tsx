@@ -34,6 +34,8 @@ type FormProps = {
   birthdate: string;
   gender: number;
   maritalStatus: number;
+  CPF: string;
+  contactNumber: string;
 };
 
 const PatientsForm = (): JSX.Element => {
@@ -102,6 +104,7 @@ const PatientsForm = (): JSX.Element => {
                   <ControlledDatePicker
                     name="birthdate"
                     label="Data de nascimento"
+                    defaultValue={new Date()}
                   />
                   <ControlledSelect
                     defaultValue={1}

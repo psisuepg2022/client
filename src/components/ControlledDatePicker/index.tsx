@@ -9,7 +9,7 @@ type ControlledDatePickerProps = {
   name: string;
   label: string;
   disabled?: boolean;
-  defaultValue?: string | number;
+  defaultValue?: Date;
 };
 
 const ControlledDatePicker = ({

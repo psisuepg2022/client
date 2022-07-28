@@ -9,6 +9,7 @@ import {
 } from 'react-hook-form';
 import { CustomTextField } from './styles';
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from 'react-icons/md';
+import { InputErrorProps } from '../../types';
 
 type ControlledInputProps = {
   name: string;
@@ -25,11 +26,6 @@ type ControlledInputProps = {
   >;
 } & TextFieldProps;
 
-type ErrorProps = {
-  message: string;
-  status: boolean;
-};
-
 const ControlledInput = ({
   name,
   label,
@@ -45,17 +41,17 @@ const ControlledInput = ({
   const { control, formState, getFieldState } = useFormContext();
   const [visibility, setVisibility] = useState<boolean>(type !== 'password');
 
-  const getError = (): ErrorProps => {
+  const getError = (): InputErrorProps => {
     const fieldState = getFieldState(name, formState);
     console.log('ERORS', fieldState);
 
     if (fieldState.error && fieldState.error.message)
       return {
-        status: true,
+        value: true,
         message: fieldState.error.message,
       };
     return {
-      status: false,
+      value: false,
       message: '',
     };
   };
@@ -90,7 +86,7 @@ const ControlledInput = ({
             maxLength: maxLength,
           }}
           helperText={getError().message}
-          error={getError().status}
+          error={getError().value}
         />
       )}
     />

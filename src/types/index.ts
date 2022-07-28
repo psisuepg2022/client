@@ -53,3 +53,8 @@ export type CepInfos = {
   localidade: string;
   uf: string;
 };
+
+export type InputErrorProps = {
+  message: string;
+  value: boolean;
+};

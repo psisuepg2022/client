@@ -2,6 +2,7 @@ import { FormControlLabel } from '@mui/material';
 import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
+import ControlledDatePicker from '../../components/ControlledDatePicker';
 import ControlledInput from '../../components/ControlledInput';
 import ControlledSelect from '../../components/ControlledSelect';
 import SectionDivider from '../../components/SectionDivider';
@@ -45,7 +46,10 @@ const PatientsForm = (): JSX.Element => {
                 </PersonalDataFirst>
                 <PersonalDataSecond>
                   <ControlledInput name="name" label="Nome" />
-                  <ControlledInput name="email" label="Email" />
+                  <ControlledDatePicker
+                    name="birthdate"
+                    label="Data de nascimento"
+                  />
                   <ControlledSelect
                     defaultValue={1}
                     name="maritalStatus"
@@ -97,15 +101,15 @@ const PatientsForm = (): JSX.Element => {
                 <SectionDivider>Dados Auxiliares</SectionDivider>
                 <AuxDataFirst>
                   <ControlledInput name="name" label="Nome" />
-                  <ControlledInput name="email" label="Email" />
-                  <ControlledInput name="email" label="Email" />
+                  <ControlledInput name="city" label="Cidade" />
+                  <ControlledInput name="publicArea" label="Logradouro" />
                 </AuxDataFirst>
                 <AuxDataSecond>
-                  <ControlledInput name="name" label="Nome" />
-                  <ControlledInput name="email" label="Email" />
+                  <ControlledInput name="state" label="Estado" />
+                  <ControlledInput name="district" label="Bairro" />
                   <ControlledInput
-                    name="email"
-                    label="Email"
+                    name="contactNumber"
+                    label="Telefone"
                     style={{ width: '50%' }}
                   />
                 </AuxDataSecond>

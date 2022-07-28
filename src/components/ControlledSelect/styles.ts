@@ -9,7 +9,7 @@ import { styled } from '@mui/system';
 import { colors } from '../../global/colors';
 
 export const StyledSelect = styled(Select)`
-  color: ${colors.PRIMARY};
+  color: ${colors.TEXT};
   border-color: ${colors.PRIMARY};
 
   & .${selectClasses.icon} {

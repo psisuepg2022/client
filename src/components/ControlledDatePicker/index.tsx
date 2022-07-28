@@ -12,7 +12,7 @@ type ControlledDatePickerProps = {
   defaultValue?: string | number;
 };
 
-const ControllerDatePicker = ({
+const ControlledDatePicker = ({
   name,
   label,
   disabled,
@@ -46,4 +46,4 @@ const ControllerDatePicker = ({
   );
 };
 
-export default ControllerDatePicker;
+export default ControlledDatePicker;

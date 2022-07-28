@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { IconButton, TextFieldProps } from '@mui/material';
-import { Controller, useFormContext } from 'react-hook-form';
+import {
+  Controller,
+  FieldPath,
+  FieldValues,
+  RegisterOptions,
+  useFormContext,
+} from 'react-hook-form';
 import { CustomTextField } from './styles';
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from 'react-icons/md';
 
@@ -13,7 +19,16 @@ type ControlledInputProps = {
   type?: string;
   mask?: (value: string) => string;
   maxLength?: number;
+  rules?: Omit<
+    RegisterOptions<FieldValues, FieldPath<FieldValues>>,
+    'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+  >;
 } & TextFieldProps;
+
+type ErrorProps = {
+  message: string;
+  status: boolean;
+};
 
 const ControlledInput = ({
   name,
@@ -24,19 +39,33 @@ const ControlledInput = ({
   type = 'text',
   mask,
   maxLength,
+  rules,
   ...rest
 }: ControlledInputProps): JSX.Element => {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext();
+  const { control, formState, getFieldState } = useFormContext();
   const [visibility, setVisibility] = useState<boolean>(type !== 'password');
+
+  const getError = (): ErrorProps => {
+    const fieldState = getFieldState(name, formState);
+    console.log('ERORS', fieldState);
+
+    if (fieldState.error && fieldState.error.message)
+      return {
+        status: true,
+        message: fieldState.error.message,
+      };
+    return {
+      status: false,
+      message: '',
+    };
+  };
 
   return (
     <Controller
       name={name}
       defaultValue={defaultValue}
       control={control}
+      rules={rules}
       render={({ field: { value, onChange } }) => (
         <CustomTextField
           {...rest}
@@ -60,8 +89,8 @@ const ControlledInput = ({
           inputProps={{
             maxLength: maxLength,
           }}
-          // helperText={helperText}
-          // error={error}
+          helperText={getError().message}
+          error={getError().status}
         />
       )}
     />

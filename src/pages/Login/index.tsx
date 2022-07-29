@@ -18,11 +18,23 @@ import {
 } from './styles';
 
 import logoPSIS from '../../assets/PSIS-Logo-Transparente.png';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
+
+type FormProps = {
+  access_code: number;
+  user_name: string;
+  password: string;
+};
 
 const Login = (): JSX.Element => {
   const formMethods = useForm();
+  const { handleSubmit } = formMethods;
+
+  const onSubmit = (data: FieldValues): void => {
+    const formData: FormProps = data as FormProps;
+    console.log('DATA', formData);
+  };
 
   return (
     <Container>
@@ -33,14 +45,27 @@ const Login = (): JSX.Element => {
         </TitleAndSubTitle>
 
         <FormProvider {...formMethods}>
-          <InputsContainer>
+          <InputsContainer id="form" onSubmit={handleSubmit(onSubmit)}>
             <CodeAndUser>
-              <ControlledInput name="code" label="Código" required />
               <ControlledInput
-                autoComplete="username"
-                name="username"
+                name="access_code"
+                label="Código"
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'O código de acesso é obrigatório',
+                  },
+                }}
+              />
+              <ControlledInput
+                name="user_name"
                 label="Usuário"
-                required
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'O nome de usuário é obrigatório',
+                  },
+                }}
               />
             </CodeAndUser>
 
@@ -49,12 +74,18 @@ const Login = (): JSX.Element => {
                 type="password"
                 name="password"
                 label="Senha"
-                required
-                autoComplete="current-password"
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'A senha é obrigatória',
+                  },
+                }}
               />
             </PasswordBox>
 
-            <StyledButton>ENTRAR</StyledButton>
+            <StyledButton type="submit" form="form">
+              ENTRAR
+            </StyledButton>
           </InputsContainer>
         </FormProvider>
       </LeftContainer>

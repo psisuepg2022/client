@@ -168,7 +168,7 @@ const Patients = (): JSX.Element => {
                 </FormProvider>
               </TitleAndInputs>
               <ButtonsContainer>
-                <StyledButton onClick={() => navigate('/patients/new')}>
+                <StyledButton onClick={() => navigate('/patients/form')}>
                   ADICIONAR
                 </StyledButton>
                 <StyledButton form="search" type="submit">

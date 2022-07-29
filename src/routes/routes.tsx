@@ -58,7 +58,21 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/patients/new"
+          path="/patients/form"
+          element={
+            <div
+              style={{
+                display: 'flex',
+                overflow: 'hidden',
+              }}
+            >
+              <SideBar />
+              <PatientsForm />
+            </div>
+          }
+        />
+        <Route
+          path="/patients/form/:id"
           element={
             <div
               style={{

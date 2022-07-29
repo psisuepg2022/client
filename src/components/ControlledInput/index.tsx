@@ -64,6 +64,7 @@ const ControlledInput = ({
       render={({ field: { value, onChange } }) => (
         <CustomTextField
           {...rest}
+          autoComplete="off"
           onChange={onChange}
           value={mask ? mask(value || '') : value || ''}
           required={required}

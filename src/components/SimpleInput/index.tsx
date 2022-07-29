@@ -20,6 +20,7 @@ const SimpleInput = ({
   return (
     <CustomTextField
       {...rest}
+      autoComplete="off"
       label={label}
       defaultValue={defaultValue}
       contentEditable={contentEditable}

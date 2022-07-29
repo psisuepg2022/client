@@ -40,6 +40,7 @@ const AsyncInput = ({
       render={({ field: { value, onChange } }) => (
         <CustomTextField
           {...rest}
+          autoComplete="off"
           onChange={(
             event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
           ) => {

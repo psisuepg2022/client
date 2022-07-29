@@ -20,11 +20,11 @@ import {
   TodayButton,
 } from './styles';
 import { AiOutlineUser, AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
-import { FormProvider, useForm } from 'react-hook-form';
 import { ToolbarProps, View } from 'react-big-calendar';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import CardSelector from '../CardSelector';
+import { useNavigate } from 'react-router-dom';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -37,10 +37,9 @@ const TopToolbar = ({
   view,
   date,
 }: CustomToolbarProps): JSX.Element => {
-  const formMethods = useForm();
-  const {} = formMethods;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -115,27 +114,23 @@ const TopToolbar = ({
               Hoje
             </TodayButton>
           )}
-
-          <FormProvider {...formMethods}>
-            <FormControl>
-              <StyledInputLabel shrink>Modo</StyledInputLabel>
-              <StyledSelect
-                name="mode"
-                label="Modo"
-                notched
-                defaultValue={0}
-                onChange={(e: SelectChangeEvent<unknown>) =>
-                  handleViewChange(e.target.value as number)
-                }
-                value={view === 'day' ? 0 : view === 'week' ? 1 : 2}
-              >
-                <StyledMenuItem value={0}>Dia</StyledMenuItem>
-                <StyledMenuItem value={1}>Semana</StyledMenuItem>
-                <StyledMenuItem value={2}>Mês</StyledMenuItem>
-              </StyledSelect>
-            </FormControl>
-          </FormProvider>
-
+          <FormControl>
+            <StyledInputLabel shrink>Modo</StyledInputLabel>
+            <StyledSelect
+              name="mode"
+              label="Modo"
+              notched
+              defaultValue={0}
+              onChange={(e: SelectChangeEvent<unknown>) =>
+                handleViewChange(e.target.value as number)
+              }
+              value={view === 'day' ? 0 : view === 'week' ? 1 : 2}
+            >
+              <StyledMenuItem value={0}>Dia</StyledMenuItem>
+              <StyledMenuItem value={1}>Semana</StyledMenuItem>
+              <StyledMenuItem value={2}>Mês</StyledMenuItem>
+            </StyledSelect>
+          </FormControl>
           <IconButton
             id="basic-button"
             aria-controls={open ? 'basic-menu' : undefined}
@@ -157,7 +152,7 @@ const TopToolbar = ({
             }}
             sx={{ zIndex: 999 }}
           >
-            <MenuItem>Perfil</MenuItem>
+            <MenuItem onClick={() => navigate('/profile')}>Perfil</MenuItem>
             <hr />
             <MenuItem>Logout</MenuItem>
           </Menu>

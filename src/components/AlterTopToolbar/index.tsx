@@ -3,10 +3,12 @@ import React from 'react';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import { ClinicTitle, Container, EarlyContent, LatterContent } from './styles';
 import { AiOutlineUser } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 const AlterTopToolbar = (): JSX.Element => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -45,7 +47,7 @@ const AlterTopToolbar = (): JSX.Element => {
             }}
             sx={{ zIndex: 999 }}
           >
-            <MenuItem>Perfil</MenuItem>
+            <MenuItem onClick={() => navigate('/profile')}>Perfil</MenuItem>
             <hr />
             <MenuItem>Logout</MenuItem>
           </Menu>

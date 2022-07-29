@@ -18,7 +18,7 @@ import {
   getDay,
   eachDayOfInterval,
 } from 'date-fns';
-import { AgendaHours } from '../../types';
+import { AgendaHours } from '../../interfaces';
 import TopToolbar from '../TopToolbar';
 import {
   CustomDateHeader,

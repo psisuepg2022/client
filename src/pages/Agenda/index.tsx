@@ -3,7 +3,7 @@ import { getDay } from 'date-fns';
 import { Event } from 'react-big-calendar';
 import Schedule from '../../components/Schedule';
 import { api } from '../../service';
-import { AgendaHours } from '../../types';
+import { AgendaHours } from '../../interfaces';
 import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
 import { LogoContainer } from './styles';
 import CircularProgressWithContent from '../../components/CircularProgressWithContent';

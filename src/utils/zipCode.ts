@@ -1,5 +1,5 @@
 import { api } from '../service';
-import { CepInfos } from '../types';
+import { CepInfos } from '../interfaces';
 
 export const searchForCep = async (value: string): Promise<CepInfos | void> => {
   try {

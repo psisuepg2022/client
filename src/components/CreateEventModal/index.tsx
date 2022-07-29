@@ -18,7 +18,7 @@ import { colors } from '../../global/colors';
 import SectionDivider from '../SectionDivider';
 import AutocompleteInput from '../AutocompleteInput';
 import axios from 'axios';
-import { Person, Patient } from '../../types';
+import { Person, Patient } from '../../interfaces';
 import SimpleInput from '../SimpleInput';
 
 type CreateEventModalProps = {

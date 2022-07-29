@@ -10,7 +10,7 @@ import { CustomTextField } from './styles';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
-import { InputErrorProps } from '../../types';
+import { InputErrorProps } from '../../interfaces';
 
 type ControlledDatePickerProps = {
   name: string;

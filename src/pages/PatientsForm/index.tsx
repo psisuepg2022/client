@@ -10,7 +10,7 @@ import ControlledInput from '../../components/ControlledInput';
 import ControlledSelect from '../../components/ControlledSelect';
 import SectionDivider from '../../components/SectionDivider';
 import SimpleInput from '../../components/SimpleInput';
-import { CepInfos } from '../../types';
+import { CepInfos } from '../../interfaces';
 import { searchForCep } from '../../utils/zipCode';
 import {
   AuxDataFirst,

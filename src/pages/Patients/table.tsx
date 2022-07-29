@@ -12,7 +12,7 @@ import {
   TablePagination,
   TableRow,
 } from '@mui/material';
-import { Column, Patient } from '../../types';
+import { Column, Patient } from '../../interfaces';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { MdModeEdit, MdDelete } from 'react-icons/md';
 import SectionDivider from '../../components/SectionDivider';

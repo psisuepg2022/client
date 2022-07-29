@@ -9,7 +9,7 @@ import {
 } from 'react-hook-form';
 import { CustomTextField } from './styles';
 import { MdOutlineVisibility, MdOutlineVisibilityOff } from 'react-icons/md';
-import { InputErrorProps } from '../../types';
+import { InputErrorProps } from '../../interfaces';
 
 type ControlledInputProps = {
   name: string;

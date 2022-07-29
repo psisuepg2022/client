@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import debounce from 'lodash.debounce';
-import { Patient, Person } from '../../types';
+import { Patient, Person } from '../../interfaces';
 import { Controller, useFormContext } from 'react-hook-form';
 
 type ControlledAutocompleteProps = {

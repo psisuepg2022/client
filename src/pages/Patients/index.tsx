@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import { api } from '../../service';
-import { Column, Patient } from '../../types';
+import { Column, Patient } from '../../interfaces';
 import {
   BoxHeader,
   Container,

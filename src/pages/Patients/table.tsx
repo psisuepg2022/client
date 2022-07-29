@@ -17,6 +17,7 @@ import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { MdModeEdit, MdDelete } from 'react-icons/md';
 import SectionDivider from '../../components/SectionDivider';
 import { AuxDataExpand, PersonalDataExpand, TextExpand } from './styles';
+import { useNavigate } from 'react-router-dom';
 
 type PatientsTableProps = {
   patients: Patient[];
@@ -28,6 +29,7 @@ const PatientsTable = ({
   columns,
 }: PatientsTableProps): JSX.Element => {
   const [open, setOpen] = useState<string>('');
+  const navigate = useNavigate();
 
   return (
     <Paper
@@ -82,7 +84,11 @@ const PatientsTable = ({
                     <TableCell align="left">{row.birth_date}</TableCell>
                     <TableCell align="left">{row.contact_number}</TableCell>
                     <TableCell align="left">
-                      <IconButton>
+                      <IconButton
+                        onClick={() =>
+                          navigate(`/patients/form/${row.id}`, { state: row })
+                        }
+                      >
                         <MdModeEdit />
                       </IconButton>
                       <IconButton>

@@ -48,7 +48,6 @@ export type Column = {
 export type CepInfos = {
   cep: string;
   logradouro: string;
-  complemento: string;
   bairro: string;
   localidade: string;
   uf: string;
@@ -63,4 +62,18 @@ export interface Response<T> {
   success: boolean;
   message: string;
   content: T | null;
+}
+
+export enum MartitalStatus {
+  'Casado(a)' = 1,
+  'Solteiro(a)',
+  'Divorciado(a)',
+  'Viúvo(a)',
+}
+
+export enum Gender {
+  'Masculino' = 1,
+  'Feminino',
+  'Não-binário',
+  'Prefiro não dizer',
 }

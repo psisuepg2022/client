@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormControlLabel } from '@mui/material';
 import { isAfter } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
 import AsyncInput from '../../components/AsyncInput';
 import ControlledDatePicker from '../../components/ControlledDatePicker';
@@ -10,7 +10,7 @@ import ControlledInput from '../../components/ControlledInput';
 import ControlledSelect from '../../components/ControlledSelect';
 import SectionDivider from '../../components/SectionDivider';
 import SimpleInput from '../../components/SimpleInput';
-import { CepInfos } from '../../interfaces';
+import { CepInfos, Gender, MartitalStatus, Patient } from '../../interfaces';
 import { searchForCep } from '../../utils/zipCode';
 import {
   AuxDataFirst,
@@ -41,12 +41,57 @@ type FormProps = {
 };
 
 const PatientsForm = (): JSX.Element => {
-  const formMethods = useForm();
+  const { state }: { state: Patient } = useLocation() as { state: Patient };
+  const formMethods = useForm({
+    defaultValues: {
+      name: state.name,
+      email: state?.email || '',
+      CPF: state?.CPF || '',
+      birthdate: new Date(
+        state.birth_date.split('/').reverse().join('-') + 'GMT-0300'
+      ),
+      maritalStatus:
+        MartitalStatus[state.marital_status as keyof typeof MartitalStatus],
+      gender: Gender[state.gender as keyof typeof Gender],
+      liable: {
+        name: state?.liable?.name || '',
+        email: state?.liable?.email || '',
+        CPF: state?.liable?.CPF || '',
+        birthdate:
+          state.liable &&
+          (new Date(
+            (state?.liable?.birth_date
+              .split('/')
+              .reverse()
+              .join('-') as string) + 'GMT-0300'
+          ) ||
+            new Date()),
+      },
+      contactNumber: state?.contact_number || '',
+      zipCode: state?.address?.zip_code || '',
+    },
+  });
   const { handleSubmit } = formMethods;
   const [needLiable, setNeedLiable] = useState<boolean>(false);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (state) {
+      state.liable && setNeedLiable(true);
+
+      if (state.address) {
+        setCepInfos({
+          cep: state.address.zip_code,
+          localidade: state.address.city,
+          logradouro: state.address.public_area,
+          bairro: state.address.district,
+          uf: state.address.state,
+        });
+      }
+    }
+  }, []);
 
   const onSubmit = (data: FieldValues): void => {
     const formData: FormProps = data as FormProps;

@@ -262,7 +262,19 @@ const PatientsForm = (): JSX.Element => {
                     value={cepInfos?.localidade || ''}
                   />
                   {cepInfos?.cep && !cepInfos?.logradouro ? (
-                    <ControlledInput name="publicArea" label="Logradouro" />
+                    <ControlledInput
+                      name="publicArea"
+                      label="Logradouro"
+                      rules={{
+                        validate: (value) => {
+                          console.log('VALUE,', value, cepInfos?.cep);
+                          return (
+                            (cepInfos?.cep && value !== undefined) ||
+                            'O logradouro é obrigatório'
+                          );
+                        },
+                      }}
+                    />
                   ) : (
                     <SimpleInput
                       name="publicArea"

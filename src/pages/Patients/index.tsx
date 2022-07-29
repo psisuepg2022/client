@@ -28,7 +28,7 @@ import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '../../components/CircularProgressWithContent';
 import ControlledInput from '../../components/ControlledInput';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 const columns: Column[] = [
@@ -61,12 +61,18 @@ const columns: Column[] = [
   },
 ];
 
+type SearchProps = {
+  CPF?: string;
+  Nome?: string;
+  Email?: string;
+};
+
 const Patients = (): JSX.Element => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('Nome');
   const formMethods = useForm();
-  const { handleSubmit, setValue } = formMethods;
+  const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,20 +84,20 @@ const Patients = (): JSX.Element => {
     })();
   }, []);
 
-  const onSubmit = (data: any): void => {
-    console.log('DATA', data);
+  const onSubmit = (data: FieldValues): void => {
+    const searchData: SearchProps = data as SearchProps;
+    console.log('DATA', searchData);
   };
 
   const getSearchInput = (): JSX.Element => {
-    console.log('CATEGHORUAI', category);
     if (category === 'Email') {
-      return <ControlledInput name="email" label={category} size="medium" />;
+      return <ControlledInput name={category} label={category} size="medium" />;
     }
 
     if (category === 'CPF') {
       return (
         <ControlledInput
-          name="CPF"
+          name={category}
           label={category}
           rules={{
             maxLength: {
@@ -120,7 +126,7 @@ const Patients = (): JSX.Element => {
       );
     }
 
-    return <ControlledInput name="name" label={category} size="medium" />;
+    return <ControlledInput name={category} label={category} size="medium" />;
   };
 
   return (
@@ -146,10 +152,10 @@ const Patients = (): JSX.Element => {
                         name="category"
                         label="Categoria"
                         notched
-                        defaultValue={'name'}
+                        defaultValue="Nome"
                         onChange={(e: SelectChangeEvent<unknown>) => {
                           setCategory(e.target.value as string);
-                          setValue(`search_${e.target.value as string}`, '');
+                          reset();
                         }}
                         value={category}
                       >

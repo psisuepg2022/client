@@ -90,7 +90,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "23/09/2000",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -113,7 +113,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Casado(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -129,7 +129,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Feminino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -144,8 +144,8 @@
       "CPF": "000.000.000-00",
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
-      "gender": "Não binário",
-      "marital_status": "Solteiro",
+      "gender": "Não-binário",
+      "marital_status": "Viúvo(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -160,8 +160,8 @@
       "CPF": "000.000.000-00",
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
-      "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "gender": "Prefiro não dizer",
+      "marital_status": "Divorciado(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -177,7 +177,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -193,7 +193,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -209,7 +209,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -225,7 +225,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -241,7 +241,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -257,7 +257,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -273,7 +273,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -289,7 +289,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -305,7 +305,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",
@@ -321,7 +321,7 @@
       "contact_number": "(42) 00000-0000",
       "birth_date": "01/06/1996",
       "gender": "Masculino",
-      "marital_status": "Solteiro",
+      "marital_status": "Solteiro(a)",
       "address": {
         "city": "Rio Azul",
         "state": "Paraná",

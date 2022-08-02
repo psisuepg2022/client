@@ -33,11 +33,11 @@ import {
 type FormProps = {
   name: string;
   email: string;
-  birthdate: string;
+  birth_date: string;
   gender: number;
-  maritalStatus: number;
+  marital_status: number;
   CPF: string;
-  contactNumber: string;
+  contact_number: string;
 };
 
 const PatientsForm = (): JSX.Element => {
@@ -47,17 +47,17 @@ const PatientsForm = (): JSX.Element => {
       name: state.name,
       email: state?.email || '',
       CPF: state?.CPF || '',
-      birthdate: new Date(
+      birth_date: new Date(
         state.birth_date.split('/').reverse().join('-') + 'GMT-0300'
       ),
-      maritalStatus:
+      marital_status:
         MartitalStatus[state.marital_status as keyof typeof MartitalStatus],
       gender: Gender[state.gender as keyof typeof Gender],
       liable: {
         name: state?.liable?.name || '',
         email: state?.liable?.email || '',
         CPF: state?.liable?.CPF || '',
-        birthdate:
+        birth_date:
           state.liable &&
           (new Date(
             (state?.liable?.birth_date
@@ -67,8 +67,8 @@ const PatientsForm = (): JSX.Element => {
           ) ||
             new Date()),
       },
-      contactNumber: state?.contact_number || '',
-      zipCode: state?.address?.zip_code || '',
+      contact_number: state?.contact_number || '',
+      zip_code: state?.address?.zip_code || '',
     },
   });
   const { handleSubmit } = formMethods;
@@ -172,7 +172,7 @@ const PatientsForm = (): JSX.Element => {
                     }}
                   />
                   <ControlledDatePicker
-                    name="birthdate"
+                    name="birth_date"
                     rules={{
                       required: {
                         value: true,
@@ -188,7 +188,7 @@ const PatientsForm = (): JSX.Element => {
                   />
                   <ControlledSelect
                     defaultValue={1}
-                    name="maritalStatus"
+                    name="marital_status"
                     label="Estado civil"
                   >
                     <StyledMenuItem value={1}>Casado(a)</StyledMenuItem>
@@ -265,7 +265,7 @@ const PatientsForm = (): JSX.Element => {
                         }
                       />
                       <ControlledDatePicker
-                        name="liable.birthdate"
+                        name="liable.birth_date"
                         label="Data de nascimento"
                         defaultValue={new Date()}
                         rules={{
@@ -286,7 +286,7 @@ const PatientsForm = (): JSX.Element => {
                 <SectionDivider>Dados Auxiliares</SectionDivider>
                 <AuxDataFirst>
                   <AsyncInput
-                    name="zipCode"
+                    name="zip_code"
                     label="CEP"
                     onCompleteCep={handleCepComplete}
                     inputLoading={inputLoading}
@@ -308,7 +308,7 @@ const PatientsForm = (): JSX.Element => {
                   />
                   {cepInfos?.cep && !cepInfos?.logradouro ? (
                     <ControlledInput
-                      name="publicArea"
+                      name="public_area"
                       label="Logradouro"
                       rules={{
                         validate: (value) => {
@@ -322,7 +322,7 @@ const PatientsForm = (): JSX.Element => {
                     />
                   ) : (
                     <SimpleInput
-                      name="publicArea"
+                      name="public_area"
                       label="Logradouro"
                       contentEditable={false}
                       value={cepInfos?.logradouro || ''}
@@ -347,7 +347,7 @@ const PatientsForm = (): JSX.Element => {
                     />
                   )}
                   <ControlledInput
-                    name="contactNumber"
+                    name="contact_number"
                     label="Telefone"
                     style={{ width: '50%' }}
                     maxLength={15}

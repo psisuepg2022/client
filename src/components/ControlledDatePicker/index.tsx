@@ -35,7 +35,6 @@ const ControlledDatePicker = ({
 
   const getError = (): InputErrorProps => {
     const fieldState = getFieldState(name, formState);
-    console.log('FSTTATE', fieldState);
 
     if (fieldState.error && fieldState.error.message)
       return {

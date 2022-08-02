@@ -43,7 +43,7 @@ type FormProps = {
 const PatientsForm = (): JSX.Element => {
   const { state }: { state: Patient } = useLocation() as { state: Patient };
   const formMethods = useForm({
-    defaultValues: {
+    defaultValues: state && {
       name: state.name,
       email: state?.email || '',
       CPF: state?.CPF || '',

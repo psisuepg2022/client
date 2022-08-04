@@ -27,7 +27,7 @@ type ProfileFormProps = {
   };
   name: string;
   email?: string;
-  contact_number?: string;
+  contactNumber?: string;
   birthdate: string;
   CPF: string;
 };

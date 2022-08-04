@@ -33,11 +33,11 @@ import {
 type FormProps = {
   name: string;
   email: string;
-  birth_date: string;
+  birthDate: string;
   gender: number;
-  marital_status: number;
+  maritalStatus: number;
   CPF: string;
-  contact_number: string;
+  contactNumber: string;
 };
 
 const PatientsForm = (): JSX.Element => {
@@ -47,28 +47,28 @@ const PatientsForm = (): JSX.Element => {
       name: state.name,
       email: state?.email || '',
       CPF: state?.CPF || '',
-      birth_date: new Date(
-        state.birth_date.split('/').reverse().join('-') + 'GMT-0300'
+      birthDate: new Date(
+        state.birthDate.split('/').reverse().join('-') + 'GMT-0300'
       ),
-      marital_status:
-        MartitalStatus[state.marital_status as keyof typeof MartitalStatus],
+      maritalStatus:
+        MartitalStatus[state.maritalStatus as keyof typeof MartitalStatus],
       gender: Gender[state.gender as keyof typeof Gender],
       liable: {
         name: state?.liable?.name || '',
         email: state?.liable?.email || '',
         CPF: state?.liable?.CPF || '',
-        birth_date:
+        birthDate:
           state.liable &&
           (new Date(
-            (state?.liable?.birth_date
+            (state?.liable?.birthDate
               .split('/')
               .reverse()
               .join('-') as string) + 'GMT-0300'
           ) ||
             new Date()),
       },
-      contact_number: state?.contact_number || '',
-      zip_code: state?.address?.zip_code || '',
+      contactNumber: state?.contactNumber || '',
+      zipCode: state?.address?.zipCode || '',
     },
   });
   const { handleSubmit } = formMethods;
@@ -83,9 +83,9 @@ const PatientsForm = (): JSX.Element => {
 
       if (state.address) {
         setCepInfos({
-          cep: state.address.zip_code,
+          cep: state.address.zipCode,
           localidade: state.address.city,
-          logradouro: state.address.public_area,
+          logradouro: state.address.publicArea,
           bairro: state.address.district,
           uf: state.address.state,
         });
@@ -172,7 +172,7 @@ const PatientsForm = (): JSX.Element => {
                     }}
                   />
                   <ControlledDatePicker
-                    name="birth_date"
+                    name="birthDate"
                     rules={{
                       required: {
                         value: true,
@@ -188,7 +188,7 @@ const PatientsForm = (): JSX.Element => {
                   />
                   <ControlledSelect
                     defaultValue={1}
-                    name="marital_status"
+                    name="maritalStatus"
                     label="Estado civil"
                   >
                     <StyledMenuItem value={1}>Casado(a)</StyledMenuItem>
@@ -265,7 +265,7 @@ const PatientsForm = (): JSX.Element => {
                         }
                       />
                       <ControlledDatePicker
-                        name="liable.birth_date"
+                        name="liable.birthDate"
                         label="Data de nascimento"
                         defaultValue={new Date()}
                         rules={{
@@ -286,7 +286,7 @@ const PatientsForm = (): JSX.Element => {
                 <SectionDivider>Dados Auxiliares</SectionDivider>
                 <AuxDataFirst>
                   <AsyncInput
-                    name="zip_code"
+                    name="zipCode"
                     label="CEP"
                     onCompleteCep={handleCepComplete}
                     inputLoading={inputLoading}
@@ -308,7 +308,7 @@ const PatientsForm = (): JSX.Element => {
                   />
                   {cepInfos?.cep && !cepInfos?.logradouro ? (
                     <ControlledInput
-                      name="public_area"
+                      name="publicArea"
                       label="Logradouro"
                       rules={{
                         validate: (value) => {
@@ -322,7 +322,7 @@ const PatientsForm = (): JSX.Element => {
                     />
                   ) : (
                     <SimpleInput
-                      name="public_area"
+                      name="publicArea"
                       label="Logradouro"
                       contentEditable={false}
                       value={cepInfos?.logradouro || ''}
@@ -347,7 +347,7 @@ const PatientsForm = (): JSX.Element => {
                     />
                   )}
                   <ControlledInput
-                    name="contact_number"
+                    name="contactNumber"
                     label="Telefone"
                     style={{ width: '50%' }}
                     maxLength={15}

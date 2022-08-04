@@ -15,8 +15,8 @@ export type AgendaHours = {
 export type Address = {
   city: string;
   state: string;
-  zip_code: string;
-  public_area: string;
+  zipCode: string;
+  publicArea: string;
   district: string;
 };
 
@@ -24,13 +24,13 @@ export type Person = {
   id: string;
   name: string;
   email?: string;
-  contact_number?: string;
+  contactNumber?: string;
   CPF?: string;
-  birth_date: string;
+  birthDate: string;
 };
 
 export type Patient = {
-  marital_status: string;
+  maritalStatus: string;
   gender: string;
   liable?: Person;
   address: Address;

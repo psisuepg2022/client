@@ -81,8 +81,8 @@ const PatientsTable = ({
                     <TableCell align="left">
                       {!row.CPF && row.liable ? row.liable.CPF : row.CPF}
                     </TableCell>
-                    <TableCell align="left">{row.birth_date}</TableCell>
-                    <TableCell align="left">{row.contact_number}</TableCell>
+                    <TableCell align="left">{row.birthDate}</TableCell>
+                    <TableCell align="left">{row.contactNumber}</TableCell>
                     <TableCell align="left">
                       <IconButton
                         onClick={() =>
@@ -125,11 +125,11 @@ const PatientsTable = ({
                             </TextExpand>
                             <TextExpand>
                               <span>Estado civil: </span>
-                              {row.marital_status}
+                              {row.maritalStatus}
                             </TextExpand>
                             <TextExpand>
                               <span>Data de nascimento: </span>
-                              {row.birth_date}
+                              {row.birthDate}
                             </TextExpand>
                             <TextExpand>
                               <span>Gênero: </span>
@@ -154,15 +154,15 @@ const PatientsTable = ({
                             </TextExpand>
                             <TextExpand>
                               <span>Logradouro: </span>
-                              {row.address.public_area}
+                              {row.address.publicArea}
                             </TextExpand>
                             <TextExpand>
                               <span>CEP: </span>
-                              {row.address.zip_code}
+                              {row.address.zipCode}
                             </TextExpand>
                             <TextExpand>
                               <span>Telefone: </span>
-                              {row.contact_number}
+                              {row.contactNumber}
                             </TextExpand>
                           </AuxDataExpand>
                           {row.liable && (
@@ -185,7 +185,7 @@ const PatientsTable = ({
                                 </TextExpand>
                                 <TextExpand>
                                   <span>Data de nascimento: </span>
-                                  {row.liable.birth_date}
+                                  {row.liable.birthDate}
                                 </TextExpand>
                               </PersonalDataExpand>
                             </>

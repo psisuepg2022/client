@@ -104,7 +104,7 @@ const CreateEventModal = ({
                 <SimpleInput
                   name="birthdate"
                   label="Data de nascimento"
-                  value={currentPatient.birth_date}
+                  value={currentPatient.birthDate}
                   contentEditable={false}
                 />
               </ConditionalInputs>
@@ -128,7 +128,7 @@ const CreateEventModal = ({
                   <SimpleInput
                     name="birthdate"
                     label="Data de nascimento"
-                    value={currentPatient.liable.birth_date}
+                    value={currentPatient.liable.birthDate}
                     contentEditable={false}
                   />
                 </ConditionalInputs>

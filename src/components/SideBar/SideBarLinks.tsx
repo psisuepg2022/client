@@ -22,8 +22,8 @@ export const sideBarLinks: SideBarLinks[] = [
     icon: <FaHandHoldingMedical color="#FFF" fontSize={30} />,
   },
   {
-    title: 'Colaboradores',
-    path: '/collaborators',
+    title: 'Funcionários',
+    path: '/employees',
     icon: <BsFillPersonLinesFill color="#FFF" fontSize={30} />,
   },
   {

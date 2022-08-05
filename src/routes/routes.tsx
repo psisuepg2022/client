@@ -43,7 +43,7 @@ const AppRoutes = () => {
               }
             />
             <Route
-              path="/collaborators"
+              path="/employees"
               element={
                 <div style={{ display: 'flex', overflow: 'hidden' }}>
                   <SideBar />

@@ -1,10 +1,11 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
+import { useJwt } from 'react-jwt';
 import { Response } from '../../interfaces';
 import { api } from '../../service';
 
 type AuthCredentials = {
-  access_code: number;
-  user_name: string;
+  accessCode: number;
+  userName: string;
   password: string;
 };
 
@@ -26,9 +27,20 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export const AuthProvider: React.FC<AuthProviderProps> = ({
   children,
 }: AuthProviderProps) => {
-  const signIn = (
+  const signIn = async (
     credentials: AuthCredentials
-  ): Promise<Response<LoginResponse>> => {};
+  ): Promise<Response<LoginResponse>> => {
+    const { data }: { data: Response<LoginResponse> } = await api.post(
+      'login',
+      { ...credentials }
+    );
+
+    const { decodedToken } = useJwt(data.content?.accessToken || '');
+
+    console.log('DECODED', decodedToken);
+
+    return data;
+  };
 
   return (
     <AuthContext.Provider

@@ -22,8 +22,8 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
 
 type FormProps = {
-  access_code: number;
-  user_name: string;
+  accessCode: number;
+  userName: string;
   password: string;
 };
 
@@ -48,7 +48,7 @@ const Login = (): JSX.Element => {
           <InputsContainer id="form" onSubmit={handleSubmit(onSubmit)}>
             <CodeAndUser>
               <ControlledInput
-                name="access_code"
+                name="accessCode"
                 label="Código"
                 rules={{
                   required: {
@@ -58,7 +58,7 @@ const Login = (): JSX.Element => {
                 }}
               />
               <ControlledInput
-                name="user_name"
+                name="userName"
                 label="Usuário"
                 rules={{
                   required: {

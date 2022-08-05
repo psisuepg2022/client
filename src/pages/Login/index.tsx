@@ -22,8 +22,8 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
 import { useAuth } from '../../contexts/Auth';
 import { showAlert } from '../../utils/showAlert';
-import { AxiosError } from 'axios';
 import { CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 type FormProps = {
   accessCode: number;
@@ -32,9 +32,10 @@ type FormProps = {
 };
 
 const Login = (): JSX.Element => {
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const formMethods = useForm();
   const { handleSubmit } = formMethods;
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
@@ -42,9 +43,8 @@ const Login = (): JSX.Element => {
 
     try {
       setLoading(true);
-      const res = await signIn(formData);
-
-      console.log('RES', res);
+      await signIn(formData);
+      navigate('/agenda', { replace: true });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -54,6 +54,7 @@ const Login = (): JSX.Element => {
       });
     } finally {
       setLoading(false);
+      console.log('RES', user);
     }
   };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   CodeAndUser,
   Container,
@@ -21,6 +21,9 @@ import logoPSIS from '../../assets/PSIS-Logo-Transparente.png';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
 import { useAuth } from '../../contexts/Auth';
+import { showAlert } from '../../utils/showAlert';
+import { AxiosError } from 'axios';
+import { CircularProgress } from '@mui/material';
 
 type FormProps = {
   accessCode: number;
@@ -32,16 +35,25 @@ const Login = (): JSX.Element => {
   const { signIn } = useAuth();
   const formMethods = useForm();
   const { handleSubmit } = formMethods;
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: FormProps = data as FormProps;
 
     try {
+      setLoading(true);
       const res = await signIn(formData);
 
       console.log('RES', res);
-    } catch (e) {
-      console.log('Erro', e);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        title: 'Ops...',
+        text: e.response.data.message,
+        icon: 'error',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,7 +74,7 @@ const Login = (): JSX.Element => {
                 rules={{
                   required: {
                     value: true,
-                    message: 'O código de acesso é obrigatório',
+                    message: 'O código é obrigatório',
                   },
                 }}
               />
@@ -93,7 +105,11 @@ const Login = (): JSX.Element => {
             </PasswordBox>
 
             <StyledButton type="submit" form="form">
-              ENTRAR
+              {loading ? (
+                <CircularProgress style={{ color: '#FFF' }} size={20} />
+              ) : (
+                'ENTRAR'
+              )}
             </StyledButton>
           </InputsContainer>
         </FormProvider>

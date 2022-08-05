@@ -24,7 +24,8 @@
     "react-hook-form": "^7.32.2",
     "react-icons": "^4.4.0",
     "react-jwt": "^1.1.6",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "sweetalert2": "^11.4.25"
   },
   "devDependencies": {
     "@types/date-fns": "^2.6.0",

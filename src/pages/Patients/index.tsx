@@ -30,6 +30,7 @@ import CircularProgressWithContent from '../../components/CircularProgressWithCo
 import ControlledInput from '../../components/ControlledInput';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { usePatients } from '../../contexts/Patients';
 
 const columns: Column[] = [
   {
@@ -68,7 +69,7 @@ type SearchProps = {
 };
 
 const Patients = (): JSX.Element => {
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const { patients, list } = usePatients();
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('Nome');
   const formMethods = useForm();
@@ -77,10 +78,13 @@ const Patients = (): JSX.Element => {
 
   useEffect(() => {
     (async () => {
-      const res = await api.get('patients');
-
-      setPatients(res.data);
-      setLoading(false);
+      try {
+        await list();
+      } catch (e: any) {
+      } finally {
+        setLoading(false);
+        console.log('pt', patients);
+      }
     })();
   }, []);
 

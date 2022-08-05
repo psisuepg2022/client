@@ -136,35 +136,40 @@ const PatientsTable = ({
                               {row.gender}
                             </TextExpand>
                           </PersonalDataExpand>
-                          <SectionDivider fontSize={14}>
-                            Dados auxiliares
-                          </SectionDivider>
-                          <AuxDataExpand>
-                            <TextExpand>
-                              <span>Cidade: </span>
-                              {row.address.city}
-                            </TextExpand>
-                            <TextExpand>
-                              <span>Bairro: </span>
-                              {row.address.district}
-                            </TextExpand>
-                            <TextExpand>
-                              <span>Estado: </span>
-                              {row.address.state}
-                            </TextExpand>
-                            <TextExpand>
-                              <span>Logradouro: </span>
-                              {row.address.publicArea}
-                            </TextExpand>
-                            <TextExpand>
-                              <span>CEP: </span>
-                              {row.address.zipCode}
-                            </TextExpand>
-                            <TextExpand>
-                              <span>Telefone: </span>
-                              {row.contactNumber}
-                            </TextExpand>
-                          </AuxDataExpand>
+                          {row.address && (
+                            <>
+                              <SectionDivider fontSize={14}>
+                                Dados auxiliares
+                              </SectionDivider>
+                              <AuxDataExpand>
+                                <TextExpand>
+                                  <span>Cidade: </span>
+                                  {row.address.city}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>Bairro: </span>
+                                  {row.address.district}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>Estado: </span>
+                                  {row.address.state}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>Logradouro: </span>
+                                  {row.address.publicArea}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>CEP: </span>
+                                  {row.address.zipCode}
+                                </TextExpand>
+                                <TextExpand>
+                                  <span>Telefone: </span>
+                                  {row.contactNumber}
+                                </TextExpand>
+                              </AuxDataExpand>
+                            </>
+                          )}
+
                           {row.liable && (
                             <>
                               <SectionDivider fontSize={14}>

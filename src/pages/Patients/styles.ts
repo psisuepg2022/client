@@ -46,7 +46,6 @@ export const BoxHeader = styled('div')`
   display: grid;
   grid-template-columns: 3fr 1fr;
   padding: 0 0 2rem 0;
-  flex-grow: 1;
 `;
 
 export const PageTitle = styled(Typography)`

@@ -77,3 +77,16 @@ export enum Gender {
   'Não-binário',
   'Prefiro não dizer',
 }
+
+export type User = {
+  id: string;
+  accessCode: number;
+  userName: string;
+  name: string;
+  email: string;
+  permissions: string[];
+  clinic: {
+    id: string;
+    name: string;
+  };
+};

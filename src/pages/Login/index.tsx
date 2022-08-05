@@ -20,6 +20,7 @@ import {
 import logoPSIS from '../../assets/PSIS-Logo-Transparente.png';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '../../components/ControlledInput';
+import { useAuth } from '../../contexts/Auth';
 
 type FormProps = {
   accessCode: number;
@@ -28,12 +29,20 @@ type FormProps = {
 };
 
 const Login = (): JSX.Element => {
+  const { signIn } = useAuth();
   const formMethods = useForm();
   const { handleSubmit } = formMethods;
 
-  const onSubmit = (data: FieldValues): void => {
+  const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: FormProps = data as FormProps;
-    console.log('DATA', formData);
+
+    try {
+      const res = await signIn(formData);
+
+      console.log('RES', res);
+    } catch (e) {
+      console.log('Erro', e);
+    }
   };
 
   return (

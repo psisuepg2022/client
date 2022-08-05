@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import { useJwt } from 'react-jwt';
+import React, { createContext, useContext } from 'react';
+import { decodeToken } from 'react-jwt';
 import { Response } from '../../interfaces';
 import { api } from '../../service';
 
@@ -30,12 +30,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   const signIn = async (
     credentials: AuthCredentials
   ): Promise<Response<LoginResponse>> => {
-    const { data }: { data: Response<LoginResponse> } = await api.post(
-      'login',
-      { ...credentials }
-    );
+    const { data }: { data: Response<LoginResponse> } = await api.post('auth', {
+      ...credentials,
+    });
 
-    const { decodedToken } = useJwt(data.content?.accessToken || '');
+    const decodedToken = decodeToken(data.content?.accessToken || '');
 
     console.log('DECODED', decodedToken);
 

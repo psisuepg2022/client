@@ -21,12 +21,14 @@ import { useNavigate } from 'react-router-dom';
 
 type PatientsTableProps = {
   patients: Patient[];
+  count: number;
   columns: Column[];
 };
 
 const PatientsTable = ({
   patients,
   columns,
+  count,
 }: PatientsTableProps): JSX.Element => {
   const [open, setOpen] = useState<string>('');
   const navigate = useNavigate();
@@ -209,7 +211,7 @@ const PatientsTable = ({
         sx={{ overflow: 'hidden', minHeight: 60 }}
         rowsPerPageOptions={[]}
         component="div"
-        count={patients.length}
+        count={count}
         rowsPerPage={10}
         page={0}
         onPageChange={() => 1}

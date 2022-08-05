@@ -69,7 +69,7 @@ type SearchProps = {
 };
 
 const Patients = (): JSX.Element => {
-  const { patients, list } = usePatients();
+  const { patients, list, count } = usePatients();
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('Nome');
   const formMethods = useForm();
@@ -180,7 +180,11 @@ const Patients = (): JSX.Element => {
                 </StyledButton>
               </ButtonsContainer>
             </BoxHeader>
-            <PatientsTable patients={patients} columns={columns} />
+            <PatientsTable
+              patients={patients}
+              columns={columns}
+              count={count}
+            />
           </CustomBox>
         )}
       </Content>

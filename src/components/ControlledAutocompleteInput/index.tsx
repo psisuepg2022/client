@@ -1,14 +1,9 @@
 import React, { useCallback, useRef, useState } from 'react';
-import {
-  Autocomplete,
-  Box,
-  CircularProgress,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, Box, CircularProgress, Typography } from '@mui/material';
 import debounce from 'lodash.debounce';
 import { Patient, Person } from '../../interfaces';
 import { Controller, useFormContext } from 'react-hook-form';
+import { StyledTextfield } from './styles';
 
 type ControlledAutocompleteProps = {
   callback: (inputValue: string) => Promise<Person[]>;
@@ -29,10 +24,7 @@ const ControlledAutocompleteInput = ({
   name,
   defaultValue,
 }: ControlledAutocompleteProps): JSX.Element => {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext();
+  const { control } = useFormContext();
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<Person[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,6 +41,7 @@ const ControlledAutocompleteInput = ({
   const debounceFn = useCallback(debounce(handleDebounce, 500), []);
 
   const handleInputChange = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (value: string, onChange: (event: any) => void) => {
       onChange(value);
       if (value.length < 3) return;
@@ -86,7 +79,10 @@ const ControlledAutocompleteInput = ({
               alreadyUsed.current = false;
               setOptions([]);
               if (cleanseAfterSelect) cleanseAfterSelect();
-            } else selectCallback(value as Patient);
+            } else if (value) {
+              onChange(value.name);
+              selectCallback(value as Patient);
+            }
           }}
           options={options}
           loading={loading}
@@ -96,7 +92,7 @@ const ControlledAutocompleteInput = ({
             </Box>
           )}
           renderInput={(params) => (
-            <TextField
+            <StyledTextfield
               {...params}
               fullWidth
               label={label}

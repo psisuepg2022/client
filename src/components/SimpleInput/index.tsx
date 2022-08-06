@@ -15,6 +15,7 @@ const SimpleInput = ({
   defaultValue,
   value,
   disabled,
+  mask,
   ...rest
 }: SimpleInputProps): JSX.Element => {
   return (
@@ -24,7 +25,7 @@ const SimpleInput = ({
       label={label}
       defaultValue={defaultValue}
       contentEditable={contentEditable}
-      value={value}
+      value={mask ? mask(`${value}` || '') : value || ''}
       disabled={disabled}
     />
   );

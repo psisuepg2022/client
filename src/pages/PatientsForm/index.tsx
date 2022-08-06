@@ -110,7 +110,7 @@ const PatientsForm = (): JSX.Element => {
   const onSubmit = (data: FieldValues): void => {
     const formData: FormProps = data as FormProps;
 
-    console.log('FORM DATA', formData);
+    console.log('FORM DATA', formData, existingLiable);
   };
 
   const handleCepComplete = async (value: string): Promise<CepInfos | void> => {
@@ -142,6 +142,13 @@ const PatientsForm = (): JSX.Element => {
 
     return [
       {
+        birthDate: new Date().toISOString().split('T')[0],
+        id: '',
+        name: value,
+        CPF: '',
+        email: '',
+      },
+      {
         birthDate: '23/09/2000',
         id: '12',
         name: 'Renato Cristiano',
@@ -168,7 +175,11 @@ const PatientsForm = (): JSX.Element => {
               <PageTitle>Criar Paciente</PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
-              <StyledForm id="form" onSubmit={handleSubmit(onSubmit)}>
+              <StyledForm
+                id="form"
+                onSubmit={handleSubmit(onSubmit)}
+                noValidate
+              >
                 <SectionDivider>Dados Pessoais</SectionDivider>
                 <PersonalDataFirst>
                   <ControlledInput
@@ -180,6 +191,7 @@ const PatientsForm = (): JSX.Element => {
                     }}
                     name="name"
                     label="Nome"
+                    required
                   />
                   <ControlledInput name="email" label="Email" />
                 </PersonalDataFirst>
@@ -209,6 +221,7 @@ const PatientsForm = (): JSX.Element => {
                         !(!value && !needLiable) ||
                         'Caso o paciente não possua CPF é necessário cadastrar um responsável com CPF válido',
                     }}
+                    required={!needLiable}
                   />
                   <ControlledDatePicker
                     name="birthDate"
@@ -270,9 +283,16 @@ const PatientsForm = (): JSX.Element => {
                         noOptionsText="Não foram encontrados responsáveis cadastrados"
                         selectCallback={(person: Person) => {
                           console.log('SELECT', person);
-                          setExistingLiable(person);
+                          if (person.id) setExistingLiable(person);
                         }}
                         cleanseAfterSelect={() => setExistingLiable(undefined)}
+                        required
+                        rules={{
+                          required: {
+                            value: true,
+                            message: 'O nome do responsável é obrigatório',
+                          },
+                        }}
                       />
                       {existingLiable ? (
                         <SimpleInput
@@ -300,6 +320,7 @@ const PatientsForm = (): JSX.Element => {
                               .replace(/(\d{3})(\d)/, '$1-$2')
                               .replace(/(-\d{2})\d+?$/, '$1')}`
                           }
+                          required
                         />
                       ) : (
                         <ControlledInput
@@ -328,6 +349,7 @@ const PatientsForm = (): JSX.Element => {
                               .replace(/(\d{3})(\d)/, '$1-$2')
                               .replace(/(-\d{2})\d+?$/, '$1')}`
                           }
+                          required
                         />
                       )}
 

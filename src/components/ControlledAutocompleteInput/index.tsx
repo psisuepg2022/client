@@ -1,8 +1,14 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Autocomplete, Box, CircularProgress, Typography } from '@mui/material';
 import debounce from 'lodash.debounce';
-import { Patient, Person } from '../../interfaces';
-import { Controller, useFormContext } from 'react-hook-form';
+import { InputErrorProps, Patient, Person } from '../../interfaces';
+import {
+  Controller,
+  FieldPath,
+  FieldValues,
+  RegisterOptions,
+  useFormContext,
+} from 'react-hook-form';
 import { StyledTextfield } from './styles';
 
 type ControlledAutocompleteProps = {
@@ -13,6 +19,11 @@ type ControlledAutocompleteProps = {
   cleanseAfterSelect?: () => void;
   defaultValue?: string;
   name: string;
+  required?: boolean;
+  rules?: Omit<
+    RegisterOptions<FieldValues, FieldPath<FieldValues>>,
+    'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+  >;
 };
 
 const ControlledAutocompleteInput = ({
@@ -23,12 +34,28 @@ const ControlledAutocompleteInput = ({
   cleanseAfterSelect,
   name,
   defaultValue,
+  required,
+  rules,
 }: ControlledAutocompleteProps): JSX.Element => {
-  const { control } = useFormContext();
+  const { control, getFieldState, formState } = useFormContext();
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<Person[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const alreadyUsed = useRef(false);
+
+  const getError = (): InputErrorProps => {
+    const fieldState = getFieldState(name, formState);
+
+    if (fieldState.error && fieldState.error.message)
+      return {
+        value: true,
+        message: fieldState.error.message,
+      };
+    return {
+      value: false,
+      message: '',
+    };
+  };
 
   const handleDebounce = async (inputValue: string): Promise<void> => {
     alreadyUsed.current = true;
@@ -55,6 +82,7 @@ const ControlledAutocompleteInput = ({
       name={name}
       defaultValue={defaultValue}
       control={control}
+      rules={rules}
       render={({ field: { value, onChange } }) => (
         <Autocomplete
           id="asynchronous-autocomplete-controlled"
@@ -78,6 +106,7 @@ const ControlledAutocompleteInput = ({
             if (reason === 'clear') {
               alreadyUsed.current = false;
               setOptions([]);
+              onChange('');
               if (cleanseAfterSelect) cleanseAfterSelect();
             } else if (value) {
               onChange(value.name);
@@ -88,7 +117,9 @@ const ControlledAutocompleteInput = ({
           loading={loading}
           renderOption={(props, option) => (
             <Box {...props} component="li" key={option.id}>
-              <Typography>{option.name}</Typography>
+              <Typography>
+                {!option.id ? `Criar "${option.name}"` : option.name}
+              </Typography>
             </Box>
           )}
           renderInput={(params) => (
@@ -96,6 +127,7 @@ const ControlledAutocompleteInput = ({
               {...params}
               fullWidth
               label={label}
+              required={required}
               onChange={(e) => handleInputChange(e.target.value, onChange)}
               value={value}
               InputProps={{
@@ -109,6 +141,8 @@ const ControlledAutocompleteInput = ({
                   </>
                 ),
               }}
+              error={getError().value}
+              helperText={getError().message}
             />
           )}
         />

@@ -6,8 +6,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
-import { api } from '../../service';
-import { Column, Patient } from '../../interfaces';
+import { Column } from '../../interfaces';
 import {
   BoxHeader,
   Container,

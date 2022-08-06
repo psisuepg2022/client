@@ -10,7 +10,13 @@ import ControlledInput from '../../components/ControlledInput';
 import ControlledSelect from '../../components/ControlledSelect';
 import SectionDivider from '../../components/SectionDivider';
 import SimpleInput from '../../components/SimpleInput';
-import { CepInfos, Gender, MartitalStatus, Patient } from '../../interfaces';
+import {
+  CepInfos,
+  Gender,
+  MartitalStatus,
+  Patient,
+  Person,
+} from '../../interfaces';
 import { searchForCep } from '../../utils/zipCode';
 import {
   AuxDataFirst,
@@ -20,6 +26,7 @@ import {
   Container,
   Content,
   CustomBox,
+  CustomTextField,
   PageTitle,
   PersonalDataFirst,
   PersonalDataSecond,
@@ -30,6 +37,9 @@ import {
   StyledMenuItem,
 } from './styles';
 import { showAlert } from '../../utils/showAlert';
+import ControlledAutocompleteInput from '../../components/ControlledAutocompleteInput';
+import { api } from '../../service';
+import SimpleDatePicker from '../../components/SimpleDatePicker';
 
 type FormProps = {
   name: string;
@@ -76,6 +86,9 @@ const PatientsForm = (): JSX.Element => {
   const [needLiable, setNeedLiable] = useState<boolean>(false);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
+  const [existingLiable, setExistingLiable] = useState<Person | undefined>(
+    undefined
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -120,6 +133,29 @@ const PatientsForm = (): JSX.Element => {
     } finally {
       setInputLoading(false);
     }
+  };
+
+  const handleSearchLiable = async (value: string): Promise<Person[]> => {
+    console.log('STRING', value);
+    const res = await api.get('/patient');
+    console.log('res', res);
+
+    return [
+      {
+        birthDate: '23/09/2000',
+        id: '12',
+        name: 'Renato Cristiano',
+        CPF: '000.000.000-00',
+        email: 'rcruppel@email.com',
+      },
+      {
+        birthDate: '22/04/1959',
+        id: '16',
+        name: 'Renato Ruppel',
+        CPF: '111.111.000-00',
+        email: 'rruppel@email.com',
+      },
+    ] as Person[];
   };
 
   return (
@@ -227,61 +263,111 @@ const PatientsForm = (): JSX.Element => {
                   <>
                     <SectionDivider>Dados do Responsável</SectionDivider>
                     <PersonalDataFirst>
-                      <ControlledInput
-                        rules={{
-                          required: {
-                            value: true,
-                            message: 'O nome do responsável é obrigatório',
-                          },
-                        }}
+                      <ControlledAutocompleteInput
                         name="liable.name"
                         label="Nome"
+                        callback={(value: string) => handleSearchLiable(value)}
+                        noOptionsText="Não foram encontrados responsáveis cadastrados"
+                        selectCallback={(person: Person) => {
+                          console.log('SELECT', person);
+                          setExistingLiable(person);
+                        }}
+                        cleanseAfterSelect={() => setExistingLiable(undefined)}
                       />
-                      <ControlledInput name="liable.email" label="Email" />
+                      {existingLiable ? (
+                        <SimpleInput
+                          name="liable.email"
+                          label="Email"
+                          contentEditable={false}
+                          value={existingLiable?.email || ''}
+                        />
+                      ) : (
+                        <ControlledInput name="liable.email" label="Email" />
+                      )}
                     </PersonalDataFirst>
                     <PersonalDataSecond>
-                      <ControlledInput
-                        name="liable.CPF"
-                        label="CPF"
-                        rules={{
-                          maxLength: {
-                            value: 14,
-                            message: 'Insira um CPF válido',
-                          },
-                          minLength: {
-                            value: 14,
-                            message: 'Insira um CPF válido',
-                          },
-                          required: {
-                            value: true,
-                            message: 'O CPF do responsável é obrigatório',
-                          },
-                        }}
-                        maxLength={14}
-                        mask={(s: string): string =>
-                          `${s
-                            .replace(/\D/g, '')
-                            .replace(/(\d{3})(\d)/, '$1.$2')
-                            .replace(/(\d{3})(\d)/, '$1.$2')
-                            .replace(/(\d{3})(\d)/, '$1-$2')
-                            .replace(/(-\d{2})\d+?$/, '$1')}`
-                        }
-                      />
-                      <ControlledDatePicker
-                        name="liable.birthDate"
-                        label="Data de nascimento"
-                        defaultValue={new Date()}
-                        rules={{
-                          required: {
-                            value: true,
-                            message:
-                              'A data de nascimento do paciente é obrigatória',
-                          },
-                          validate: (date) =>
-                            !isAfter(date, new Date()) ||
-                            'A Data escolhida não pode ser superior à data atual',
-                        }}
-                      />
+                      {existingLiable ? (
+                        <SimpleInput
+                          name="liable.CPF"
+                          label="CPF"
+                          contentEditable={false}
+                          value={existingLiable.CPF || ''}
+                          mask={(s: string): string =>
+                            `${s
+                              .replace(/\D/g, '')
+                              .replace(/(\d{3})(\d)/, '$1.$2')
+                              .replace(/(\d{3})(\d)/, '$1.$2')
+                              .replace(/(\d{3})(\d)/, '$1-$2')
+                              .replace(/(-\d{2})\d+?$/, '$1')}`
+                          }
+                        />
+                      ) : (
+                        <ControlledInput
+                          name="liable.CPF"
+                          label="CPF"
+                          rules={{
+                            maxLength: {
+                              value: 14,
+                              message: 'Insira um CPF válido',
+                            },
+                            minLength: {
+                              value: 14,
+                              message: 'Insira um CPF válido',
+                            },
+                            required: {
+                              value: true,
+                              message: 'O CPF do responsável é obrigatório',
+                            },
+                          }}
+                          maxLength={14}
+                          mask={(s: string): string =>
+                            `${s
+                              .replace(/\D/g, '')
+                              .replace(/(\d{3})(\d)/, '$1.$2')
+                              .replace(/(\d{3})(\d)/, '$1.$2')
+                              .replace(/(\d{3})(\d)/, '$1-$2')
+                              .replace(/(-\d{2})\d+?$/, '$1')}`
+                          }
+                        />
+                      )}
+
+                      {existingLiable ? (
+                        <SimpleDatePicker
+                          name="liable.birthDate"
+                          label="Data de nascimento"
+                          value={
+                            new Date(
+                              existingLiable.birthDate
+                                .split('/')
+                                .reverse()
+                                .join('-') + 'GMT-0300'
+                            )
+                          }
+                          onChange={() => null}
+                          renderInput={(params) => (
+                            <CustomTextField
+                              {...params}
+                              contentEditable={false}
+                            />
+                          )}
+                        />
+                      ) : (
+                        <ControlledDatePicker
+                          name="liable.birthDate"
+                          label="Data de nascimento"
+                          defaultValue={new Date()}
+                          rules={{
+                            required: {
+                              value: true,
+                              message:
+                                'A data de nascimento do paciente é obrigatória',
+                            },
+                            validate: (date) =>
+                              !isAfter(date, new Date()) ||
+                              'A Data escolhida não pode ser superior à data atual',
+                          }}
+                        />
+                      )}
                     </PersonalDataSecond>
                   </>
                 )}

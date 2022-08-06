@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { colors } from '../../global/colors';
+import { outlinedInputClasses, TextField } from '@mui/material';
 
 export const Container = styled('div')`
   background-color: ${colors.BACKGREY};
@@ -124,5 +125,26 @@ export const StyledMenuItem = styled(MenuItem)`
 
   &.${menuItemClasses.selected} {
     background-color: #d0d0d0;
+  }
+`;
+
+export const CustomTextField = styled(TextField)`
+  & .${outlinedInputClasses.notchedOutline} {
+    border-color: ${colors.PRIMARY};
+  }
+  &:hover .${outlinedInputClasses.notchedOutline} {
+    border-color: ${colors.SECONDARY} !important;
+    border-width: 2px;
+  }
+
+  &.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline} {
+    border-color: ${colors.SECONDARY};
+  }
+  &.${outlinedInputClasses.inputAdornedEnd}
+    .${outlinedInputClasses.notchedOutline} {
+    color: ${colors.SECONDARY};
+  }
+  &.${outlinedInputClasses.notchedOutline} .${outlinedInputClasses.input} {
+    color: ${colors.SECONDARY};
   }
 `;

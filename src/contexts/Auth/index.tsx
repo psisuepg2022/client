@@ -17,6 +17,7 @@ type LoginResponse = {
 type AuthContextData = {
   signIn: (credentials: AuthCredentials) => Promise<void>;
   user: User;
+  isAuthenticated: boolean;
 };
 
 type AuthProviderProps = {
@@ -51,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       data.content?.accessToken || ''
     ) as User;
 
-    localStorage.setItem('@psis:accessToken', data.content?.accessToken);
+    localStorage.setItem('@psis:accessToken', data.content?.accessToken || '');
     api.defaults.headers.common[
       'authorization'
     ] = `Bearer ${data.content?.accessToken}`;
@@ -64,6 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       value={{
         signIn,
         user,
+        isAuthenticated: Object.keys(user).length !== 0,
       }}
     >
       {children}

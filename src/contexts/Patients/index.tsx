@@ -32,7 +32,7 @@ export const PatientsProvider: React.FC<PatientsProviderProps> = ({
       page && size ? `/patient?page=${page}&size=${size}` : '/patient'
     );
 
-    setPatients((prev) => [...prev, ...(data.content?.items as Patient[])]);
+    setPatients(data.content?.items as Patient[]);
     setCount(data.content?.totalItems || 0);
   };
 

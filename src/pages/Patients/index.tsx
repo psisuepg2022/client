@@ -31,6 +31,7 @@ import ControlledInput from '../../components/ControlledInput';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { usePatients } from '../../contexts/Patients';
+import { showAlert } from '../../utils/showAlert';
 
 const columns: Column[] = [
   {
@@ -80,10 +81,15 @@ const Patients = (): JSX.Element => {
     (async () => {
       try {
         await list();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
+        showAlert({
+          title: 'Ops...',
+          text: e.response.data.message || 'Ocorreu um problema inesperado',
+          icon: 'error',
+        });
       } finally {
         setLoading(false);
-        console.log('pt', patients);
       }
     })();
   }, []);

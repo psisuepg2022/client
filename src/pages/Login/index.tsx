@@ -49,7 +49,7 @@ const Login = (): JSX.Element => {
     } catch (e: any) {
       showAlert({
         title: 'Ops...',
-        text: e.response.data.message,
+        text: e.response.data.message || 'Ocorreu um problema inesperado',
         icon: 'error',
       });
     } finally {

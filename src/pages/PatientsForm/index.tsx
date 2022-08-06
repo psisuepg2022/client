@@ -29,6 +29,7 @@ import {
   StyledForm,
   StyledMenuItem,
 } from './styles';
+import { showAlert } from '../../utils/showAlert';
 
 type FormProps = {
   name: string;
@@ -112,8 +113,10 @@ const PatientsForm = (): JSX.Element => {
       setCepInfos(infos);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.log('EERR,', err);
-      //sweet alert
+      showAlert({
+        text: 'Ocorreu um problema ao buscar os dados do CEP',
+        icon: 'error',
+      });
     } finally {
       setInputLoading(false);
     }

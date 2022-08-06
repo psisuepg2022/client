@@ -3,7 +3,7 @@ import { colors } from '../global/colors';
 
 export interface AlertProps {
   icon?: SweetAlertIcon;
-  title: string;
+  title?: string;
   text: string;
   customClass?: string;
 }
@@ -11,7 +11,7 @@ export interface AlertProps {
 export const showAlert = ({ title, text, icon, customClass }: AlertProps) =>
   Swal.fire({
     icon: icon || 'info',
-    title,
+    title: 'Ops...' || title,
     text,
     confirmButtonColor: colors.PRIMARY,
     customClass: {

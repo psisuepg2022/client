@@ -83,7 +83,6 @@ const Patients = (): JSX.Element => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         showAlert({
-          title: 'Ops...',
           text: e.response.data.message || 'Ocorreu um problema inesperado',
           icon: 'error',
         });

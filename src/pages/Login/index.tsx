@@ -32,7 +32,7 @@ type FormProps = {
 };
 
 const Login = (): JSX.Element => {
-  const { signIn, user } = useAuth();
+  const { signIn } = useAuth();
   const formMethods = useForm();
   const { handleSubmit } = formMethods;
   const navigate = useNavigate();

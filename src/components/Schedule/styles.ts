@@ -1,5 +1,5 @@
 import { styled, Typography } from '@mui/material';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 
 export const CustomDateHeaderContainer = styled('div')`
   display: flex;

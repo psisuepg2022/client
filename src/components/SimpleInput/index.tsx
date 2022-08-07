@@ -1,5 +1,5 @@
-import { TextFieldProps } from '@mui/material';
 import React from 'react';
+import { TextFieldProps } from '@mui/material';
 import { CustomTextField } from './styles';
 
 type SimpleInputProps = {

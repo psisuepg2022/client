@@ -11,7 +11,7 @@ import {
   CollapsedHeader,
 } from './styles';
 import { sideBarLinks } from './SideBarLinks';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 import { AiOutlineRight, AiOutlineClose } from 'react-icons/ai';
 
 const SideBar = (): JSX.Element => {

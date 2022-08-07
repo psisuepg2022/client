@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { NavLink } from 'react-router-dom';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 
 export const Container = styled('div')`
   width: 250px;

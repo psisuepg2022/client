@@ -6,7 +6,6 @@ import {
   Tooltip,
 } from '@mui/material';
 import AlterTopToolbar from '../../components/AlterTopToolbar';
-import { Column } from '../../interfaces';
 import {
   BoxHeader,
   Container,
@@ -31,6 +30,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { usePatients } from '../../contexts/Patients';
 import { showAlert } from '../../utils/showAlert';
+import { Column } from './types';
 
 const columns: Column[] = [
   {

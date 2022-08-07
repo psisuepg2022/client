@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
-import { FormPatient, Patient, Response } from '../../interfaces';
+import { FormPatient, Patient } from '../../models/Patient';
+import { Response } from '../../interfaces/Response';
 import { api } from '../../service';
 
 type PatientsList = {
@@ -7,8 +8,14 @@ type PatientsList = {
   totalItems: number;
 };
 
+type SearchFilter = {
+  name?: string;
+  CPF?: string;
+  email?: string;
+};
+
 type PatientsContextData = {
-  list: (page?: number, size?: number) => Promise<void>;
+  list: (page?: number, size?: number, filter?: SearchFilter) => Promise<void>;
   create: (patient: FormPatient) => Promise<Response<Patient>>;
   patients: Patient[];
   count: number;

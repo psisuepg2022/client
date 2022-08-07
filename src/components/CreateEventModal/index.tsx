@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 import React, { useState } from 'react';
 import { SlotInfo } from 'react-big-calendar';
-import { dateFormat } from '../../utils/dateFormat';
+import { dateFormat } from '@utils/dateFormat';
 import {
   Body,
   ButtonArea,
@@ -14,11 +14,12 @@ import {
 } from './styles';
 import { MdLock, MdOutlineClose } from 'react-icons/md';
 import { IconButton } from '@mui/material';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 import SectionDivider from '../SectionDivider';
 import AutocompleteInput from '../AutocompleteInput';
 import axios from 'axios';
-import { Person, Patient } from '../../interfaces';
+import { Patient } from '@models/Patient';
+import { Person } from '@models/Person';
 import SimpleInput from '../SimpleInput';
 
 type CreateEventModalProps = {

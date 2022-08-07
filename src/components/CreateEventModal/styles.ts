@@ -1,6 +1,6 @@
 import { Box, Button, Modal, Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 
 export const StyledModal = styled(Modal)`
   background-color: rgba(0, 0, 0, 0.2);

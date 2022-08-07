@@ -5,7 +5,7 @@ import {
   HeaderProps,
   SlotPropGetter,
 } from 'react-big-calendar';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 import {
   CustomDateHeaderContainer,
   CustomDateHeaderContent,

@@ -1,5 +1,5 @@
 import { outlinedInputClasses, styled, TextField } from '@mui/material';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 
 export const CustomTextField = styled(TextField)`
   & .${outlinedInputClasses.notchedOutline} {

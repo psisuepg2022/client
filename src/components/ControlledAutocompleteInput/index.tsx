@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Autocomplete, Box, CircularProgress, Typography } from '@mui/material';
 import debounce from 'lodash.debounce';
-import { InputErrorProps, Patient, Person } from '../../interfaces';
 import {
   Controller,
   FieldPath,
@@ -10,6 +9,13 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { StyledTextfield } from './styles';
+import { Person } from '@models/Person';
+import { Patient } from '@models/Patient';
+
+type InputErrorProps = {
+  message: string;
+  value: boolean;
+};
 
 type ControlledAutocompleteProps = {
   callback: (inputValue: string) => Promise<Person[]>;

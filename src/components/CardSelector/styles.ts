@@ -1,5 +1,5 @@
 import { ButtonBase, styled, Typography } from '@mui/material';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 
 export const Container = styled(ButtonBase)`
   border-bottom: 2px ${colors.PRIMARY} solid;

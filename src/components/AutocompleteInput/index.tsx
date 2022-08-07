@@ -7,7 +7,8 @@ import {
   Typography,
 } from '@mui/material';
 import debounce from 'lodash.debounce';
-import { Patient, Person } from '../../interfaces';
+import { Patient } from '@models/Patient';
+import { Person } from '@models/Person';
 
 type AutocompleteProps = {
   callback: (inputValue: string) => Promise<Person[]>;

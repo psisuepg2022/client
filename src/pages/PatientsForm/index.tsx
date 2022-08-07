@@ -18,6 +18,7 @@ import {
   MartitalStatus,
   Patient,
   Person,
+  Response,
 } from '../../interfaces';
 import { searchForCep } from '../../utils/zipCode';
 import {
@@ -138,7 +139,8 @@ const PatientsForm = (): JSX.Element => {
               name: formData.liable.name,
               CPF: formData.liable.CPF,
               email: formData.liable.email || '',
-              birthDate: formData.birthDate.toISOString().split('T')[0],
+              birthDate: formData.liable.birthDate.toISOString().split('T')[0],
+              contactNumber: formData.contactNumber || '',
             }
           : undefined,
       liableRequired: needLiable,
@@ -197,9 +199,24 @@ const PatientsForm = (): JSX.Element => {
   };
 
   const handleSearchLiable = async (value: string): Promise<Person[]> => {
-    console.log('STRING', value);
-    const res = await api.get('/patient');
-    console.log('res', res);
+    const {
+      data,
+    }: { data: Response<{ items: Person[]; totalItems: number }> } =
+      await api.post('/patient/search_liable', {
+        name: value,
+      });
+
+    if (data.content?.items && data.content.items.length > 0)
+      return [
+        {
+          birthDate: new Date().toISOString().split('T')[0],
+          id: '',
+          name: value,
+          CPF: '',
+          email: '',
+        },
+        ...data.content.items,
+      ];
 
     return [
       {
@@ -208,20 +225,6 @@ const PatientsForm = (): JSX.Element => {
         name: value,
         CPF: '',
         email: '',
-      },
-      {
-        birthDate: '23/09/2000',
-        id: '12',
-        name: 'Renato Cristiano',
-        CPF: '000.000.000-00',
-        email: 'rcruppel@email.com',
-      },
-      {
-        birthDate: '22/04/1959',
-        id: '16',
-        name: 'Renato Ruppel',
-        CPF: '111.111.000-00',
-        email: 'rruppel@email.com',
       },
     ] as Person[];
   };

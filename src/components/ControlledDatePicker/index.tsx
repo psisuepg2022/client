@@ -17,6 +17,7 @@ type ControlledDatePickerProps = {
   label: string;
   disabled?: boolean;
   defaultValue?: Date;
+  required?: boolean;
   rules?: Omit<
     RegisterOptions<FieldValues, FieldPath<FieldValues>>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
@@ -29,6 +30,7 @@ const ControlledDatePicker = ({
   disabled,
   defaultValue,
   rules,
+  required,
   ...rest
 }: ControlledDatePickerProps): JSX.Element => {
   const { control, formState, getFieldState } = useFormContext();
@@ -63,6 +65,7 @@ const ControlledDatePicker = ({
             renderInput={(params) => (
               <CustomTextField
                 {...params}
+                required={required}
                 helperText={getError().message}
                 error={getError().value}
               />

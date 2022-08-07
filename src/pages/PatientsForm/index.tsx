@@ -289,6 +289,7 @@ const PatientsForm = (): JSX.Element => {
                   />
                   <ControlledDatePicker
                     name="birthDate"
+                    required
                     rules={{
                       required: {
                         value: true,
@@ -442,12 +443,13 @@ const PatientsForm = (): JSX.Element => {
                         <ControlledDatePicker
                           name="liable.birthDate"
                           label="Data de nascimento"
+                          required
                           defaultValue={new Date()}
                           rules={{
                             required: {
                               value: true,
                               message:
-                                'A data de nascimento do paciente é obrigatória',
+                                'A data de nascimento do responsável é obrigatória',
                             },
                             validate: (date) =>
                               !isAfter(date, new Date()) ||

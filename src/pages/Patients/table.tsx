@@ -12,10 +12,11 @@ import {
   TablePagination,
   TableRow,
 } from '@mui/material';
-import { Column, Patient } from '../../interfaces';
+import { Patient } from '@models/Patient';
+import { Column } from './types';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { MdModeEdit, MdDelete } from 'react-icons/md';
-import SectionDivider from '../../components/SectionDivider';
+import SectionDivider from '@components/SectionDivider';
 import { AuxDataExpand, PersonalDataExpand, TextExpand } from './styles';
 import { useNavigate } from 'react-router-dom';
 

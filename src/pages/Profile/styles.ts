@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { styled } from '@mui/system';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 
 export const Container = styled('div')`
   background-color: ${colors.PRIMARY};

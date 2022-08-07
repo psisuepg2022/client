@@ -3,24 +3,18 @@ import { CircularProgress, FormControlLabel } from '@mui/material';
 import { isAfter } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AlterTopToolbar from '../../components/AlterTopToolbar';
-import AsyncInput from '../../components/AsyncInput';
-import ControlledDatePicker from '../../components/ControlledDatePicker';
-import ControlledInput from '../../components/ControlledInput';
-import ControlledSelect from '../../components/ControlledSelect';
-import SectionDivider from '../../components/SectionDivider';
-import SimpleInput from '../../components/SimpleInput';
-import {
-  Address,
-  CepInfos,
-  FormPatient,
-  Gender,
-  MartitalStatus,
-  Patient,
-  Person,
-  Response,
-} from '../../interfaces';
-import { searchForCep } from '../../utils/zipCode';
+import AlterTopToolbar from '@components/AlterTopToolbar';
+import AsyncInput from '@components/AsyncInput';
+import ControlledDatePicker from '@components/ControlledDatePicker';
+import ControlledInput from '@components/ControlledInput';
+import ControlledSelect from '@components/ControlledSelect';
+import SectionDivider from '@components/SectionDivider';
+import SimpleInput from '@components/SimpleInput';
+import { Address } from '@models/Address';
+import { FormPatient, Patient } from '@models/Patient';
+import { Person } from '@models/Person';
+import { Response } from '@interfaces/Response';
+import { searchForCep } from '@utils/zipCode';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -39,11 +33,14 @@ import {
   StyledForm,
   StyledMenuItem,
 } from './styles';
-import { showAlert } from '../../utils/showAlert';
-import ControlledAutocompleteInput from '../../components/ControlledAutocompleteInput';
-import { api } from '../../service';
-import SimpleDatePicker from '../../components/SimpleDatePicker';
-import { usePatients } from '../../contexts/Patients';
+import { showAlert } from '@utils/showAlert';
+import ControlledAutocompleteInput from '@components/ControlledAutocompleteInput';
+import { api } from '@service/index';
+import SimpleDatePicker from '@components/SimpleDatePicker';
+import { usePatients } from '@contexts/Patients';
+import { MartitalStatus } from '@interfaces/MaritalStatus';
+import { Gender } from '@interfaces/Gender';
+import { CepInfos } from '@interfaces/CepInfos';
 
 type FormProps = {
   name: string;

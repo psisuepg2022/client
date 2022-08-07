@@ -5,7 +5,7 @@ import {
   SelectChangeEvent,
   Tooltip,
 } from '@mui/material';
-import AlterTopToolbar from '../../components/AlterTopToolbar';
+import AlterTopToolbar from '@components/AlterTopToolbar';
 import {
   BoxHeader,
   Container,
@@ -23,13 +23,13 @@ import {
 } from './styles';
 import PatientsTable from './table';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
-import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
-import CircularProgressWithContent from '../../components/CircularProgressWithContent';
-import ControlledInput from '../../components/ControlledInput';
+import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
+import CircularProgressWithContent from '@components/CircularProgressWithContent';
+import ControlledInput from '@components/ControlledInput';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { usePatients } from '../../contexts/Patients';
-import { showAlert } from '../../utils/showAlert';
+import { usePatients } from '@contexts/Patients';
+import { showAlert } from '@utils/showAlert';
 import { Column } from './types';
 
 const columns: Column[] = [

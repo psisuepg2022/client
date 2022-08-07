@@ -12,11 +12,11 @@ import {
   StyledButton,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
-import { colors } from '../../global/colors';
+import { colors } from '@global/colors';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
-import ControlledDatePicker from '../../components/ControlledDatePicker';
-import ControlledInput from '../../components/ControlledInput';
-import SectionDivider from '../../components/SectionDivider';
+import ControlledDatePicker from '@components/ControlledDatePicker';
+import ControlledInput from '@components/ControlledInput';
+import SectionDivider from '@components/SectionDivider';
 import { useNavigate } from 'react-router-dom';
 import { isAfter } from 'date-fns';
 

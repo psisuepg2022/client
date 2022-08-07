@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { getDay } from 'date-fns';
 import { Event } from 'react-big-calendar';
-import Schedule from '../../components/Schedule';
-import { api } from '../../service';
-import { AgendaHours } from '../../interfaces';
-import logoPSIS from '../../assets/PSIS-Logo-Invertido-Transparente.png';
+import Schedule from '@components/Schedule';
+import { api } from '@service/index';
+import { AgendaHours } from '@interfaces/AgendaHours';
+import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { LogoContainer } from './styles';
-import CircularProgressWithContent from '../../components/CircularProgressWithContent';
+import CircularProgressWithContent from '@components/CircularProgressWithContent';
 
 const Agenda = (): JSX.Element => {
   const [events, setEvents] = useState<Event[]>([]);

@@ -17,11 +17,11 @@ import {
   TitleThin,
 } from './styles';
 
-import logoPSIS from '../../assets/PSIS-Logo-Transparente.png';
+import logoPSIS from '@assets/PSIS-Logo-Transparente.png';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
-import ControlledInput from '../../components/ControlledInput';
-import { useAuth } from '../../contexts/Auth';
-import { showAlert } from '../../utils/showAlert';
+import ControlledInput from '@components/ControlledInput';
+import { useAuth } from '@contexts/Auth';
+import { showAlert } from '@utils/showAlert';
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 

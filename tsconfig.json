@@ -17,5 +17,17 @@
     "jsx": "react-jsx"
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "paths": {
+    "@interfaces/*": ["./src/interfaces/*"],
+    "@models/*": ["./src/models/*"],
+    "@utils/*": ["./src/utils/*"],
+    "@assets/*": ["./src/assets/*"],
+    "@components/*": ["./src/components/*"],
+    "@contexts/*": ["./src/contexts/*"],
+    "@global/*": ["./src/global/*"],
+    "@pages/*": ["./src/pages/*"],
+    "@routes/*": ["./src/routes/*"],
+    "@service/*": ["./src/service/*"]
+  }
 }

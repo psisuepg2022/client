@@ -92,7 +92,7 @@ const PatientsForm = (): JSX.Element => {
       zipCode: state?.address?.zipCode || '',
     },
   });
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, reset } = formMethods;
   const { create } = usePatients();
   const navigate = useNavigate();
   const [needLiable, setNeedLiable] = useState<boolean>(false);
@@ -157,7 +157,12 @@ const PatientsForm = (): JSX.Element => {
 
     setLoading(true);
     try {
-      await create(withAddress || patient);
+      const response = await create(withAddress || patient);
+      showAlert({
+        text: response.message,
+        icon: 'success',
+      });
+      reset();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({

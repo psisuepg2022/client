@@ -29,12 +29,28 @@ export type Person = {
   birthDate: string;
 };
 
+export type FormPerson = {
+  name: string;
+  email?: string;
+  contactNumber?: string;
+  CPF?: string;
+  birthDate: string;
+};
+
 export type Patient = {
   maritalStatus: string;
   gender: string;
   liable?: Person;
-  address: Address;
+  address?: Address;
 } & Person;
+
+export type FormPatient = {
+  maritalStatus: number;
+  gender: number;
+  liable?: FormPerson | { id: string };
+  liableRequired?: boolean;
+  address?: Address;
+} & FormPerson;
 
 export type Column = {
   id: number;
@@ -74,6 +90,7 @@ export enum MartitalStatus {
 export enum Gender {
   'Masculino' = 1,
   'Feminino',
+  'Transgênero',
   'Não-binário',
   'Prefiro não dizer',
 }

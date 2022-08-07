@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormControlLabel } from '@mui/material';
+import { CircularProgress, FormControlLabel } from '@mui/material';
 import { isAfter } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -11,7 +11,9 @@ import ControlledSelect from '../../components/ControlledSelect';
 import SectionDivider from '../../components/SectionDivider';
 import SimpleInput from '../../components/SimpleInput';
 import {
+  Address,
   CepInfos,
+  FormPatient,
   Gender,
   MartitalStatus,
   Patient,
@@ -40,15 +42,23 @@ import { showAlert } from '../../utils/showAlert';
 import ControlledAutocompleteInput from '../../components/ControlledAutocompleteInput';
 import { api } from '../../service';
 import SimpleDatePicker from '../../components/SimpleDatePicker';
+import { usePatients } from '../../contexts/Patients';
 
 type FormProps = {
   name: string;
   email: string;
-  birthDate: string;
+  birthDate: Date;
   gender: number;
   maritalStatus: number;
   CPF: string;
   contactNumber: string;
+  address?: Address;
+  liable?: {
+    name: string;
+    CPF: string;
+    email?: string;
+    birthDate: Date;
+  };
 };
 
 const PatientsForm = (): JSX.Element => {
@@ -83,13 +93,15 @@ const PatientsForm = (): JSX.Element => {
     },
   });
   const { handleSubmit } = formMethods;
+  const { create } = usePatients();
+  const navigate = useNavigate();
   const [needLiable, setNeedLiable] = useState<boolean>(false);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [existingLiable, setExistingLiable] = useState<Person | undefined>(
     undefined
   );
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (state) {
@@ -107,14 +119,58 @@ const PatientsForm = (): JSX.Element => {
     }
   }, []);
 
-  const onSubmit = (data: FieldValues): void => {
+  const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: FormProps = data as FormProps;
 
-    console.log('FORM DATA', formData, existingLiable);
+    const patient: FormPatient = {
+      name: formData.name,
+      email: formData.email || '',
+      CPF: formData.CPF || '',
+      birthDate: formData.birthDate
+        ? formData.birthDate.toISOString().split('T')[0]
+        : '',
+      gender: formData.gender,
+      maritalStatus: formData.maritalStatus,
+      contactNumber: formData.contactNumber || '',
+      liable:
+        formData.liable && needLiable
+          ? {
+              name: formData.liable.name,
+              CPF: formData.liable.CPF,
+              email: formData.liable.email || '',
+              birthDate: formData.birthDate.toISOString().split('T')[0],
+            }
+          : undefined,
+      liableRequired: needLiable,
+    };
+
+    const withAddress = formData.address?.zipCode && {
+      ...patient,
+      address: {
+        zipCode: formData.address.zipCode,
+        city: cepInfos?.localidade || '',
+        state: cepInfos?.uf || '',
+        publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
+        district: formData.address.district || cepInfos?.bairro || '',
+      },
+    };
+
+    setLoading(true);
+    try {
+      await create(withAddress || patient);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        text: e.response.data.message || 'Ocorreu um problema inesperado',
+        icon: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCepComplete = async (value: string): Promise<CepInfos | void> => {
-    if (value.length < 10) {
+    if (value.length < 9) {
       cepInfos && setCepInfos(undefined);
       return;
     }
@@ -255,8 +311,9 @@ const PatientsForm = (): JSX.Element => {
                   >
                     <StyledMenuItem value={1}>Masculino</StyledMenuItem>
                     <StyledMenuItem value={2}>Feminino</StyledMenuItem>
-                    <StyledMenuItem value={3}>Não-binário</StyledMenuItem>
-                    <StyledMenuItem value={4}>Prefiro não dizer</StyledMenuItem>
+                    <StyledMenuItem value={3}>Transgênero</StyledMenuItem>
+                    <StyledMenuItem value={4}>Não-binário</StyledMenuItem>
+                    <StyledMenuItem value={5}>Prefiro não dizer</StyledMenuItem>
                   </ControlledSelect>
                 </PersonalDataSecond>
 
@@ -397,43 +454,38 @@ const PatientsForm = (): JSX.Element => {
                 <SectionDivider>Dados Auxiliares</SectionDivider>
                 <AuxDataFirst>
                   <AsyncInput
-                    name="zipCode"
+                    name="address.zipCode"
                     label="CEP"
                     onCompleteCep={handleCepComplete}
                     inputLoading={inputLoading}
                     defaultValue=""
-                    maxLength={10}
+                    maxLength={9}
                     mask={(s: string): string =>
                       `${s
                         .replace(/\D/g, '')
-                        .replace(/(\d{2})(\d)/, '$1.$2')
-                        .replace(/(\d{3})(\d)/, '$1-$2')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
                         .replace(/(-\d{3})\d+?$/, '$1')}`
                     }
                   />
                   <SimpleInput
-                    name="city"
+                    name="address.city"
                     label="Cidade"
                     contentEditable={false}
                     value={cepInfos?.localidade || ''}
                   />
                   {cepInfos?.cep && !cepInfos?.logradouro ? (
                     <ControlledInput
-                      name="publicArea"
+                      name="address.publicArea"
                       label="Logradouro"
                       rules={{
-                        validate: (value) => {
-                          console.log('VALUE,', value, cepInfos?.cep);
-                          return (
-                            (cepInfos?.cep && value !== undefined) ||
-                            'O logradouro é obrigatório'
-                          );
-                        },
+                        validate: (value) =>
+                          (cepInfos?.cep && value !== undefined) ||
+                          'O logradouro é obrigatório',
                       }}
                     />
                   ) : (
                     <SimpleInput
-                      name="publicArea"
+                      name="address.publicArea"
                       label="Logradouro"
                       contentEditable={false}
                       value={cepInfos?.logradouro || ''}
@@ -442,16 +494,16 @@ const PatientsForm = (): JSX.Element => {
                 </AuxDataFirst>
                 <AuxDataSecond>
                   <SimpleInput
-                    name="state"
+                    name="address.state"
                     label="Estado"
                     contentEditable={false}
                     value={cepInfos?.uf || ''}
                   />
                   {cepInfos?.cep && !cepInfos.bairro ? (
-                    <ControlledInput name="district" label="Bairro" />
+                    <ControlledInput name="address.district" label="Bairro" />
                   ) : (
                     <SimpleInput
-                      name="district"
+                      name="address.district"
                       label="Bairro"
                       contentEditable={false}
                       value={cepInfos?.bairro || ''}
@@ -480,10 +532,16 @@ const PatientsForm = (): JSX.Element => {
               type="submit"
               form="form"
               style={{ gridColumnStart: 3 }}
+              disabled={loading}
             >
-              SALVAR
+              {loading ? (
+                <CircularProgress size={20} style={{ color: '#FFF' }} />
+              ) : (
+                'SALVAR'
+              )}
             </StyledButton>
             <StyledButtonInverted
+              disabled={loading}
               onClick={() => navigate('/patients', { replace: true })}
               style={{ gridColumnStart: 4 }}
             >

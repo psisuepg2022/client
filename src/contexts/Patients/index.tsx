@@ -5,8 +5,14 @@ import { api } from '@service/index';
 import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
 
+type ListProps = {
+  page?: number;
+  size?: number;
+  filter?: SearchFilter;
+};
+
 type PatientsContextData = {
-  list: (page?: number, size?: number, filter?: SearchFilter) => Promise<void>;
+  list: ({ size, page, filter }: ListProps) => Promise<void>;
   create: (patient: FormPatient) => Promise<Response<Patient>>;
   patients: Patient[];
   count: number;
@@ -26,12 +32,14 @@ export const PatientsProvider: React.FC<PatientsProviderProps> = ({
   const [patients, setPatients] = useState<Patient[]>([]);
   const [count, setCount] = useState<number>(0);
 
-  const list = async (page?: number, size?: number): Promise<void> => {
+  const list = async ({ size, page, filter }: ListProps): Promise<void> => {
     const { data }: { data: Response<ItemList<Patient>> } = await api.post(
       page && size
         ? `patient/search?page=${page}&size=${size}`
         : 'patient/search',
-      {}
+      {
+        ...filter,
+      }
     );
 
     setPatients(data.content?.items as Patient[]);

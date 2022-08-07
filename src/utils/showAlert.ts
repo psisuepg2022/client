@@ -1,17 +1,24 @@
-import Swal, { SweetAlertIcon } from 'sweetalert2';
+import Swal, { SweetAlertIcon, SweetAlertOptions } from 'sweetalert2';
 import { colors } from '@global/colors';
 
-export interface AlertProps {
+export type AlertProps = {
   icon?: SweetAlertIcon;
   title?: string;
   text: string;
   customClass?: string;
-}
+} & SweetAlertOptions;
 
-export const showAlert = ({ title, text, icon, customClass }: AlertProps) =>
+export const showAlert = ({
+  title,
+  text,
+  icon,
+  customClass,
+  ...rest
+}: AlertProps) =>
   Swal.fire({
+    ...rest,
     icon: icon || 'info',
-    title: 'Ops...' || title,
+    title: title || 'Ops...',
     text,
     confirmButtonColor: colors.PRIMARY,
     customClass: {

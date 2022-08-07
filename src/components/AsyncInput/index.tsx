@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import { CircularProgress, TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { CustomTextField } from './styles';
-import { CepInfos } from '../../interfaces';
+import { CepInfos } from '@interfaces/CepInfos';
 
 type AsyncInputProps = {
   name: string;

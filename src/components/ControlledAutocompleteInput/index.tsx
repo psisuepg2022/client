@@ -42,6 +42,7 @@ const ControlledAutocompleteInput = ({
   const [options, setOptions] = useState<Person[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const alreadyUsed = useRef(false);
+  const createMode = useRef(false);
 
   const getError = (): InputErrorProps => {
     const fieldState = getFieldState(name, formState);
@@ -71,7 +72,7 @@ const ControlledAutocompleteInput = ({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (value: string, onChange: (event: any) => void) => {
       onChange(value);
-      if (value.length < 3) return;
+      if (value.length < 3 || createMode.current) return;
       debounceFn(value);
     },
     []
@@ -86,7 +87,7 @@ const ControlledAutocompleteInput = ({
       render={({ field: { value, onChange } }) => (
         <Autocomplete
           id="asynchronous-autocomplete-controlled"
-          open={open}
+          open={open && !createMode.current}
           onOpen={() => {
             setOpen(true);
           }}
@@ -107,8 +108,10 @@ const ControlledAutocompleteInput = ({
               alreadyUsed.current = false;
               setOptions([]);
               onChange('');
+              createMode.current = false;
               if (cleanseAfterSelect) cleanseAfterSelect();
             } else if (value) {
+              if (!value.id) createMode.current = true;
               onChange(value.name);
               selectCallback(value as Patient);
             }

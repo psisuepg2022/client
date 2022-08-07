@@ -19,17 +19,22 @@ import { MdModeEdit, MdDelete } from 'react-icons/md';
 import SectionDivider from '@components/SectionDivider';
 import { AuxDataExpand, PersonalDataExpand, TextExpand } from './styles';
 import { useNavigate } from 'react-router-dom';
+import { PageSize } from '@global/constants';
 
 type PatientsTableProps = {
   patients: Patient[];
   count: number;
   columns: Column[];
+  page: number;
+  setPage: (page: number) => void;
 };
 
 const PatientsTable = ({
   patients,
   columns,
   count,
+  page,
+  setPage,
 }: PatientsTableProps): JSX.Element => {
   const [open, setOpen] = useState<string>('');
   const navigate = useNavigate();
@@ -213,10 +218,9 @@ const PatientsTable = ({
         rowsPerPageOptions={[]}
         component="div"
         count={count}
-        rowsPerPage={10}
-        page={0}
-        onPageChange={() => 1}
-        onRowsPerPageChange={() => 0}
+        rowsPerPage={PageSize}
+        page={page}
+        onPageChange={(e, page) => setPage(page)}
       />
     </Paper>
   );

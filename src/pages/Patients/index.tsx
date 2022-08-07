@@ -31,6 +31,8 @@ import { useNavigate } from 'react-router-dom';
 import { usePatients } from '@contexts/Patients';
 import { showAlert } from '@utils/showAlert';
 import { Column } from './types';
+import { SearchFilter } from '@interfaces/SearchFilter';
+import { PageSize } from '@global/constants';
 
 const columns: Column[] = [
   {
@@ -62,24 +64,22 @@ const columns: Column[] = [
   },
 ];
 
-type SearchProps = {
-  CPF?: string;
-  Nome?: string;
-  Email?: string;
-};
-
 const Patients = (): JSX.Element => {
   const { patients, list, count } = usePatients();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [category, setCategory] = useState<string>('Nome');
   const formMethods = useForm();
   const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [category, setCategory] = useState<string>('name');
+  const [page, setPage] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
       try {
-        await list();
+        await list({
+          size: PageSize,
+          page,
+        });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         showAlert({
@@ -92,14 +92,35 @@ const Patients = (): JSX.Element => {
     })();
   }, []);
 
-  const onSubmit = (data: FieldValues): void => {
-    const searchData: SearchProps = data as SearchProps;
-    console.log('DATA', searchData);
+  const onSubmit = async (data: FieldValues): Promise<void> => {
+    const searchData: SearchFilter = data as SearchFilter;
+    console.log('DATA', searchData, searchData?.email);
+
+    setLoading(true);
+    try {
+      await list({
+        size: PageSize,
+        page,
+        filter: {
+          name: searchData?.name || '',
+          CPF: searchData?.CPF || '',
+          email: searchData?.email || '',
+        },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        text: e.response.data.message || 'Ocorreu um problema inesperado',
+        icon: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getSearchInput = (): JSX.Element => {
-    if (category === 'Email') {
-      return <ControlledInput name={category} label={category} size="medium" />;
+    if (category === 'name') {
+      return <ControlledInput name={category} label="Nome" size="medium" />;
     }
 
     if (category === 'CPF') {
@@ -134,7 +155,7 @@ const Patients = (): JSX.Element => {
       );
     }
 
-    return <ControlledInput name={category} label={category} size="medium" />;
+    return <ControlledInput name={category} label="Email" size="medium" />;
   };
 
   return (
@@ -160,16 +181,16 @@ const Patients = (): JSX.Element => {
                         name="category"
                         label="Categoria"
                         notched
-                        defaultValue="Nome"
+                        defaultValue="name"
                         onChange={(e: SelectChangeEvent<unknown>) => {
                           setCategory(e.target.value as string);
                           reset();
                         }}
                         value={category}
                       >
-                        <StyledMenuItem value="Nome">Nome</StyledMenuItem>
+                        <StyledMenuItem value="name">Nome</StyledMenuItem>
                         <StyledMenuItem value="CPF">CPF</StyledMenuItem>
-                        <StyledMenuItem value="Email">Email</StyledMenuItem>
+                        <StyledMenuItem value="email">Email</StyledMenuItem>
                       </StyledSelect>
                     </FormControl>
                   </InputsForm>
@@ -188,6 +209,8 @@ const Patients = (): JSX.Element => {
               patients={patients}
               columns={columns}
               count={count}
+              page={page}
+              setPage={(page: number) => setPage(page)}
             />
           </CustomBox>
         )}

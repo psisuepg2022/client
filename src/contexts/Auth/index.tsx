@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { decodeToken } from 'react-jwt';
-import { Response, User } from '../../interfaces';
+import { Response } from '@interfaces/Response';
+import { User } from '@models/User';
 import { api } from '../../service';
 
 type AuthCredentials = {

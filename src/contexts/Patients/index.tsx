@@ -1,18 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
-import { FormPatient, Patient } from '../../models/Patient';
-import { Response } from '../../interfaces/Response';
-import { api } from '../../service';
-
-type PatientsList = {
-  items: Patient[];
-  totalItems: number;
-};
-
-type SearchFilter = {
-  name?: string;
-  CPF?: string;
-  email?: string;
-};
+import { FormPatient, Patient } from '@models/Patient';
+import { Response } from '@interfaces/Response';
+import { api } from '@service/index';
+import { SearchFilter } from '@interfaces/SearchFilter';
+import { ItemList } from '@interfaces/ItemList';
 
 type PatientsContextData = {
   list: (page?: number, size?: number, filter?: SearchFilter) => Promise<void>;
@@ -36,7 +27,7 @@ export const PatientsProvider: React.FC<PatientsProviderProps> = ({
   const [count, setCount] = useState<number>(0);
 
   const list = async (page?: number, size?: number): Promise<void> => {
-    const { data }: { data: Response<PatientsList> } = await api.post(
+    const { data }: { data: Response<ItemList<Patient>> } = await api.post(
       page && size
         ? `patient/search?page=${page}&size=${size}`
         : 'patient/search',

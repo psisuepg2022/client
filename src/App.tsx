@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import AlterTopToolbar from './components/AlterTopToolbar';
+import AlterTopToolbar from '@components/AlterTopToolbar';
 
 const App = (): JSX.Element => {
   return (

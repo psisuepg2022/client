@@ -1,5 +1,5 @@
 import Swal, { SweetAlertIcon } from 'sweetalert2';
-import { colors } from '../global/colors';
+import { colors } from '@global/colors';
 
 export interface AlertProps {
   icon?: SweetAlertIcon;

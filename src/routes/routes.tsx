@@ -1,14 +1,14 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import App from '../App';
-import SideBar from '../components/SideBar';
-import { useAuth } from '../contexts/Auth';
-import { PatientsProvider } from '../contexts/Patients';
-import Agenda from '../pages/Agenda';
-import Login from '../pages/Login';
-import Patients from '../pages/Patients';
-import PatientsForm from '../pages/PatientsForm';
-import Profile from '../pages/Profile';
+import SideBar from '@components/SideBar';
+import { useAuth } from '@contexts/Auth';
+import { PatientsProvider } from '@contexts/Patients';
+import Agenda from '@pages/Agenda';
+import Login from '@pages/Login';
+import Patients from '@pages/Patients';
+import PatientsForm from '@pages/PatientsForm';
+import Profile from '@pages/Profile';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();

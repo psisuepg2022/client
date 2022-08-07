@@ -16,7 +16,6 @@ export const showAlert = ({
   ...rest
 }: AlertProps) =>
   Swal.fire({
-    ...rest,
     icon: icon || 'info',
     title: title || 'Ops...',
     text,
@@ -24,4 +23,5 @@ export const showAlert = ({
     customClass: {
       container: customClass,
     },
+    ...rest,
   });

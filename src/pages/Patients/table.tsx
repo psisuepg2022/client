@@ -27,6 +27,7 @@ type PatientsTableProps = {
   columns: Column[];
   page: number;
   setPage: (page: number) => void;
+  deleteItem: (patient: Patient) => void;
 };
 
 const PatientsTable = ({
@@ -35,6 +36,7 @@ const PatientsTable = ({
   count,
   page,
   setPage,
+  deleteItem,
 }: PatientsTableProps): JSX.Element => {
   const [open, setOpen] = useState<string>('');
   const navigate = useNavigate();
@@ -99,7 +101,7 @@ const PatientsTable = ({
                       >
                         <MdModeEdit />
                       </IconButton>
-                      <IconButton>
+                      <IconButton onClick={() => deleteItem(row)}>
                         <MdDelete />
                       </IconButton>
                     </TableCell>

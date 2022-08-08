@@ -33,6 +33,8 @@ import { showAlert } from '@utils/showAlert';
 import { Column } from './types';
 import { SearchFilter } from '@interfaces/SearchFilter';
 import { PageSize } from '@global/constants';
+import { colors } from '@global/colors';
+import { Patient } from '@models/Patient';
 
 const columns: Column[] = [
   {
@@ -65,7 +67,7 @@ const columns: Column[] = [
 ];
 
 const Patients = (): JSX.Element => {
-  const { patients, list, count } = usePatients();
+  const { patients, list, count, remove } = usePatients();
   const formMethods = useForm();
   const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
@@ -115,6 +117,43 @@ const Patients = (): JSX.Element => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deletePopup = (patient: Patient): void => {
+    showAlert({
+      title: 'Tem certeza que deseja deletar?',
+      text: 'Esta ação não poderá ser revertida!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: colors.DANGER,
+      confirmButtonText: 'DELETAR',
+      cancelButtonColor: colors.BACKGREY,
+      cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await handleDelete(patient);
+      }
+    });
+  };
+
+  const handleDelete = async (patient: Patient): Promise<void> => {
+    console.log('DELETED', patient);
+    try {
+      await remove(patient.id);
+      await list({ size: PageSize, page });
+      showAlert({
+        title: 'Sucesso!',
+        text: 'O paciente foi deletado com sucesso!',
+        icon: 'success',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        text: e.response.data.message,
+        icon: 'error',
+      });
     }
   };
 
@@ -211,6 +250,7 @@ const Patients = (): JSX.Element => {
               count={count}
               page={page}
               setPage={(page: number) => setPage(page)}
+              deleteItem={deletePopup}
             />
           </CustomBox>
         )}

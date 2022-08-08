@@ -96,7 +96,6 @@ const Patients = (): JSX.Element => {
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const searchData: SearchFilter = data as SearchFilter;
-    console.log('DATA', searchData, searchData?.email);
 
     setLoading(true);
     try {
@@ -139,7 +138,6 @@ const Patients = (): JSX.Element => {
   };
 
   const handleDelete = async (patient: Patient): Promise<void> => {
-    console.log('DELETED', patient);
     try {
       await remove(patient.id);
       await list({ size: PageSize, page });

@@ -8,7 +8,11 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { CustomTextField } from './styles';
-import { MdOutlineVisibility, MdOutlineVisibilityOff } from 'react-icons/md';
+import {
+  MdOutlineVisibility,
+  MdOutlineVisibilityOff,
+  MdOutlineClose,
+} from 'react-icons/md';
 
 type InputErrorProps = {
   message: string;
@@ -24,6 +28,7 @@ type ControlledInputProps = {
   type?: string;
   mask?: (value: string) => string;
   maxLength?: number;
+  endFunction?: string;
   rules?: Omit<
     RegisterOptions<FieldValues, FieldPath<FieldValues>>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
@@ -40,6 +45,7 @@ const ControlledInput = ({
   mask,
   maxLength,
   rules,
+  endFunction,
   ...rest
 }: ControlledInputProps): JSX.Element => {
   const { control, formState, getFieldState } = useFormContext();
@@ -76,15 +82,22 @@ const ControlledInput = ({
           label={label}
           type={visibility ? 'text' : 'password'}
           InputProps={{
-            endAdornment: type === 'password' && (
-              <IconButton onClick={() => setVisibility((prev) => !prev)}>
-                {visibility ? (
-                  <MdOutlineVisibility />
-                ) : (
-                  <MdOutlineVisibilityOff />
-                )}
-              </IconButton>
-            ),
+            endAdornment:
+              endFunction === 'password' ? (
+                <IconButton onClick={() => setVisibility((prev) => !prev)}>
+                  {visibility ? (
+                    <MdOutlineVisibility />
+                  ) : (
+                    <MdOutlineVisibilityOff />
+                  )}
+                </IconButton>
+              ) : (
+                endFunction === 'clear' && (
+                  <IconButton onClick={() => onChange('')}>
+                    <MdOutlineClose />
+                  </IconButton>
+                )
+              ),
           }}
           inputProps={{
             maxLength: maxLength,

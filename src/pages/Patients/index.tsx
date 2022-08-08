@@ -159,7 +159,14 @@ const Patients = (): JSX.Element => {
 
   const getSearchInput = (): JSX.Element => {
     if (category === 'name') {
-      return <ControlledInput name={category} label="Nome" size="medium" />;
+      return (
+        <ControlledInput
+          name={category}
+          label="Nome"
+          size="medium"
+          endFunction="clear"
+        />
+      );
     }
 
     if (category === 'CPF') {
@@ -190,11 +197,19 @@ const Patients = (): JSX.Element => {
               .replace(/(\d{3})(\d)/, '$1-$2')
               .replace(/(-\d{2})\d+?$/, '$1')}`
           }
+          endFunction="clear"
         />
       );
     }
 
-    return <ControlledInput name={category} label="Email" size="medium" />;
+    return (
+      <ControlledInput
+        name={category}
+        label="Email"
+        size="medium"
+        endFunction="clear"
+      />
+    );
   };
 
   return (

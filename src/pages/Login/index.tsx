@@ -92,6 +92,7 @@ const Login = (): JSX.Element => {
             <PasswordBox>
               <ControlledInput
                 type="password"
+                endFunction="password"
                 name="password"
                 label="Senha"
                 rules={{

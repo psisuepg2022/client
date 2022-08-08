@@ -201,49 +201,61 @@ const Patients = (): JSX.Element => {
     <Container>
       <AlterTopToolbar />
       <Content>
-        {loading ? (
-          <CircularProgressWithContent
-            content={<LogoContainer src={logoPSIS} />}
-            size={200}
-          />
-        ) : (
-          <CustomBox>
-            <BoxHeader>
-              <TitleAndInputs>
-                <PageTitle>Lista de Pacientes</PageTitle>
-                <FormProvider {...formMethods}>
-                  <InputsForm id="search" onSubmit={handleSubmit(onSubmit)}>
-                    {getSearchInput()}
-                    <FormControl>
-                      <StyledInputLabel>Categoria</StyledInputLabel>
-                      <StyledSelect
-                        name="category"
-                        label="Categoria"
-                        notched
-                        defaultValue="name"
-                        onChange={(e: SelectChangeEvent<unknown>) => {
-                          setCategory(e.target.value as string);
-                          reset();
-                        }}
-                        value={category}
-                      >
-                        <StyledMenuItem value="name">Nome</StyledMenuItem>
-                        <StyledMenuItem value="CPF">CPF</StyledMenuItem>
-                        <StyledMenuItem value="email">Email</StyledMenuItem>
-                      </StyledSelect>
-                    </FormControl>
-                  </InputsForm>
-                </FormProvider>
-              </TitleAndInputs>
-              <ButtonsContainer>
-                <StyledButton onClick={() => navigate('/patients/form')}>
-                  ADICIONAR
-                </StyledButton>
-                <StyledButton form="search" type="submit">
-                  BUSCAR
-                </StyledButton>
-              </ButtonsContainer>
-            </BoxHeader>
+        <CustomBox>
+          <BoxHeader>
+            <TitleAndInputs>
+              <PageTitle>Lista de Pacientes</PageTitle>
+              <FormProvider {...formMethods}>
+                <InputsForm id="search" onSubmit={handleSubmit(onSubmit)}>
+                  {getSearchInput()}
+                  <FormControl>
+                    <StyledInputLabel>Categoria</StyledInputLabel>
+                    <StyledSelect
+                      name="category"
+                      label="Categoria"
+                      notched
+                      defaultValue="name"
+                      onChange={(e: SelectChangeEvent<unknown>) => {
+                        setCategory(e.target.value as string);
+                        reset();
+                      }}
+                      value={category}
+                    >
+                      <StyledMenuItem value="name">Nome</StyledMenuItem>
+                      <StyledMenuItem value="CPF">CPF</StyledMenuItem>
+                      <StyledMenuItem value="email">Email</StyledMenuItem>
+                    </StyledSelect>
+                  </FormControl>
+                </InputsForm>
+              </FormProvider>
+            </TitleAndInputs>
+            <ButtonsContainer>
+              <StyledButton
+                disabled={loading}
+                onClick={() => navigate('/patients/form')}
+              >
+                ADICIONAR
+              </StyledButton>
+              <StyledButton disabled={loading} form="search" type="submit">
+                BUSCAR
+              </StyledButton>
+            </ButtonsContainer>
+          </BoxHeader>
+          {loading ? (
+            <div
+              style={{
+                flexGrow: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <CircularProgressWithContent
+                content={<LogoContainer src={logoPSIS} />}
+                size={200}
+              />
+            </div>
+          ) : (
             <PatientsTable
               patients={patients}
               columns={columns}
@@ -252,8 +264,8 @@ const Patients = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
-          </CustomBox>
-        )}
+          )}
+        </CustomBox>
       </Content>
     </Container>
   );

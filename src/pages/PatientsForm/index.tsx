@@ -158,6 +158,7 @@ const PatientsForm = (): JSX.Element => {
     try {
       const response = await create(withAddress || patient);
       showAlert({
+        title: 'Sucesso!',
         text: response.message,
         icon: 'success',
       });

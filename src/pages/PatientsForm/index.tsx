@@ -163,6 +163,8 @@ const PatientsForm = (): JSX.Element => {
         icon: 'success',
       });
       reset();
+      setCepInfos(undefined);
+      setNeedLiable(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -346,7 +348,6 @@ const PatientsForm = (): JSX.Element => {
                         callback={(value: string) => handleSearchLiable(value)}
                         noOptionsText="Não foram encontrados responsáveis cadastrados"
                         selectCallback={(person: Person) => {
-                          console.log('SELECT', person);
                           if (person.id) setExistingLiable(person);
                         }}
                         cleanseAfterSelect={() => setExistingLiable(undefined)}

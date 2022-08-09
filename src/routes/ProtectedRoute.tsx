@@ -5,18 +5,17 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 type ProtectedRouteProps = {
   requiredPermissions: Permissions[];
-  authenticated: boolean;
 };
 
 const ProtectedRoute = ({
   requiredPermissions,
-  authenticated,
 }: ProtectedRouteProps): JSX.Element => {
   const {
     user: { permissions },
+    isAuthenticated,
   } = useAuth();
 
-  if (authenticated) {
+  if (isAuthenticated) {
     return requiredPermissions.every((permission) =>
       permissions.includes(permission)
     ) ? (

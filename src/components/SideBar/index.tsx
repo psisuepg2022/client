@@ -10,12 +10,32 @@ import {
   CollapsedNavItem,
   CollapsedHeader,
 } from './styles';
-import { sideBarLinks } from './SideBarLinks';
+import { SideBarLinks, sideBarLinks } from './SideBarLinks';
 import { colors } from '@global/colors';
 import { AiOutlineRight, AiOutlineClose } from 'react-icons/ai';
+import { useAuth } from '@contexts/Auth';
 
 const SideBar = (): JSX.Element => {
+  const {
+    user: { permissions },
+  } = useAuth();
   const [expanded, setExpanded] = useState<boolean>(true);
+
+  const renderLinks = (): SideBarLinks[] => {
+    const resultRoutes: SideBarLinks[] = [];
+
+    sideBarLinks.forEach((item) => {
+      if (
+        item.requiredPermissions.every((permission) =>
+          permissions.includes(permission)
+        )
+      ) {
+        resultRoutes.push(item);
+      }
+    });
+
+    return resultRoutes;
+  };
 
   if (!expanded) {
     return (
@@ -25,7 +45,7 @@ const SideBar = (): JSX.Element => {
             <AiOutlineRight style={{ color: '#FFF', fontSize: 35 }} />
           </IconButton>
         </CollapsedHeader>
-        {sideBarLinks.map((item) => (
+        {renderLinks().map((item) => (
           <CollapsedNavItem
             key={item.title}
             to={item.path}
@@ -48,7 +68,7 @@ const SideBar = (): JSX.Element => {
         </IconButton>
       </Header>
       <Content>
-        {sideBarLinks.map((item) => (
+        {renderLinks().map((item) => (
           <NavItem
             key={item.title}
             to={item.path}

@@ -21,34 +21,44 @@ const PatientRoutes = (): JSX.Element => {
           }
         />
       </Route>
+
       <Route
-        path="/form"
-        element={
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-            }}
-          >
-            <SideBar />
-            <PatientsForm />
-          </div>
-        }
-      />
+        element={<ProtectedRoute requiredPermissions={['CREATE_PATIENT']} />}
+      >
+        <Route
+          path="/form"
+          element={
+            <div
+              style={{
+                display: 'flex',
+                overflow: 'hidden',
+              }}
+            >
+              <SideBar />
+              <PatientsForm />
+            </div>
+          }
+        />
+      </Route>
+
       <Route
-        path="/form/:id"
-        element={
-          <div
-            style={{
-              display: 'flex',
-              overflow: 'hidden',
-            }}
-          >
-            <SideBar />
-            <PatientsForm />
-          </div>
-        }
-      />
+        element={<ProtectedRoute requiredPermissions={['UPDATE_PATIENT']} />}
+      >
+        <Route
+          path="/form/:id"
+          element={
+            <div
+              style={{
+                display: 'flex',
+                overflow: 'hidden',
+              }}
+            >
+              <SideBar />
+              <PatientsForm />
+            </div>
+          }
+        />
+      </Route>
     </Routes>
   );
 };

@@ -9,6 +9,7 @@ import Login from '@pages/Login';
 import Patients from '@pages/Patients';
 import PatientsForm from '@pages/PatientsForm';
 import Profile from '@pages/Profile';
+import NotFound from '@pages/NotFound';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -100,7 +101,7 @@ const AppRoutes = () => {
         <Route path="/profile" element={<Profile />} />
 
         {/* REDIRECT */}
-        <Route path="*" element={<Navigate to="/agenda" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </PatientsProvider>
   );

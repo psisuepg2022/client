@@ -40,6 +40,7 @@ const AppRoutes = () => {
         <Route path="/patients/*" element={<PatientRoutes />} />
 
         {/* PROFILE */}
+
         <Route path="/profile" element={<Profile />} />
 
         {/* REDIRECT */}

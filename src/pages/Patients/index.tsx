@@ -78,6 +78,7 @@ const Patients = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         await list({
           size: PageSize,
           page,
@@ -92,7 +93,7 @@ const Patients = (): JSX.Element => {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [page]);
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const searchData: SearchFilter = data as SearchFilter;

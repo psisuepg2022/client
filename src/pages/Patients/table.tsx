@@ -6,7 +6,6 @@ import {
   Paper,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
   TableHead,
   TablePagination,
@@ -17,7 +16,12 @@ import { Column } from './types';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { MdModeEdit, MdDelete } from 'react-icons/md';
 import SectionDivider from '@components/SectionDivider';
-import { AuxDataExpand, PersonalDataExpand, TextExpand } from './styles';
+import {
+  AuxDataExpand,
+  PersonalDataExpand,
+  StyledTableCell,
+  TextExpand,
+} from './styles';
 import { useNavigate } from 'react-router-dom';
 import { PageSize } from '@global/constants';
 
@@ -60,21 +64,26 @@ const PatientsTable = ({
         >
           <TableHead>
             <TableRow sx={{ height: 10 }}>
-              <TableCell />
+              <StyledTableCell />
               {columns.map((column) => (
-                <TableCell sx={{ height: 10 }} key={column.id}>
+                <StyledTableCell sx={{ height: 10 }} key={column.id}>
                   {column.label}
                   {column.tooltip}
-                </TableCell>
+                </StyledTableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody sx={{ minHeight: '100%', flexGrow: 1 }}>
-            {patients.slice(0 * 10, 0 * 10 + 10).map((row) => {
+            {patients.map((row) => {
               return (
                 <React.Fragment key={row.id}>
-                  <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover>
-                    <TableCell>
+                  <TableRow
+                    sx={{
+                      '& > *': { borderBottom: 'unset' },
+                    }}
+                    hover
+                  >
+                    <StyledTableCell>
                       <IconButton
                         aria-label="expand row"
                         size="small"
@@ -84,16 +93,20 @@ const PatientsTable = ({
                       >
                         {open === row.id ? <BsChevronUp /> : <BsChevronDown />}
                       </IconButton>
-                    </TableCell>
-                    <TableCell component="th" scope="row">
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
                       {row.name}
-                    </TableCell>
-                    <TableCell align="left">
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
                       {!row.CPF && row.liable ? row.liable.CPF : row.CPF}
-                    </TableCell>
-                    <TableCell align="left">{row.birthDate}</TableCell>
-                    <TableCell align="left">{row.contactNumber}</TableCell>
-                    <TableCell align="left">
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                      {row.birthDate}
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                      {row.contactNumber}
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
                       <IconButton
                         onClick={() =>
                           navigate(`/patients/form/${row.id}`, { state: row })
@@ -104,10 +117,10 @@ const PatientsTable = ({
                       <IconButton onClick={() => deleteItem(row)}>
                         <MdDelete />
                       </IconButton>
-                    </TableCell>
+                    </StyledTableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
+                    <StyledTableCell
                       style={{ paddingBottom: 0, paddingTop: 0 }}
                       colSpan={6}
                     >
@@ -207,7 +220,7 @@ const PatientsTable = ({
                           )}
                         </Box>
                       </Collapse>
-                    </TableCell>
+                    </StyledTableCell>
                   </TableRow>
                 </React.Fragment>
               );

@@ -7,6 +7,7 @@ import {
   outlinedInputClasses,
   Select,
   selectClasses,
+  TableCell,
   Typography,
 } from '@mui/material';
 import { styled } from '@mui/system';
@@ -148,4 +149,8 @@ export const StyledMenuItem = styled(MenuItem)`
   &.${menuItemClasses.selected} {
     background-color: #d0d0d0;
   }
+`;
+
+export const StyledTableCell = styled(TableCell)`
+  padding: 6px;
 `;

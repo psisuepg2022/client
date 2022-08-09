@@ -11,6 +11,7 @@ import PatientsForm from '@pages/PatientsForm';
 import Profile from '@pages/Profile';
 import NotFound from '@pages/NotFound';
 import ProtectedRoute from './ProtectedRoute';
+import PatientRoutes from './patient.routes';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -30,82 +31,35 @@ const AppRoutes = () => {
     <PatientsProvider>
       <Routes>
         {/* DASHBOARD */}
-        <Route>
-          <Route
-            path="/agenda"
-            element={
-              <div style={{ display: 'flex', overflow: 'hidden' }}>
-                <SideBar />
-                <Agenda />
-              </div>
-            }
-          />
-          <Route
-            path="/professionals"
-            element={
-              <div style={{ display: 'flex', overflow: 'hidden' }}>
-                <SideBar />
-                <App />
-              </div>
-            }
-          />
-          <Route
-            path="/employees"
-            element={
-              <div style={{ display: 'flex', overflow: 'hidden' }}>
-                <SideBar />
-                <App />
-              </div>
-            }
-          />
-          {/* PATIENTS PAGES */}
-          <Route
-            element={
-              <ProtectedRoute
-                authenticated={isAuthenticated}
-                requiredPermissions={['READ_PATIENT']}
-              />
-            }
-          >
-            <Route
-              path="/patients"
-              element={
-                <div style={{ display: 'flex', overflow: 'hidden' }}>
-                  <SideBar />
-                  <Patients />
-                </div>
-              }
-            />
-          </Route>
-          <Route
-            path="/patients/form"
-            element={
-              <div
-                style={{
-                  display: 'flex',
-                  overflow: 'hidden',
-                }}
-              >
-                <SideBar />
-                <PatientsForm />
-              </div>
-            }
-          />
-          <Route
-            path="/patients/form/:id"
-            element={
-              <div
-                style={{
-                  display: 'flex',
-                  overflow: 'hidden',
-                }}
-              >
-                <SideBar />
-                <PatientsForm />
-              </div>
-            }
-          />
-        </Route>
+        <Route
+          path="/agenda"
+          element={
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
+              <SideBar />
+              <Agenda />
+            </div>
+          }
+        />
+        <Route
+          path="/professionals"
+          element={
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
+              <SideBar />
+              <App />
+            </div>
+          }
+        />
+        <Route
+          path="/employees"
+          element={
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
+              <SideBar />
+              <App />
+            </div>
+          }
+        />
+        {/* PATIENTS PAGES */}
+        <Route path="/patients/*" element={<PatientRoutes />} />
 
         {/* PROFILE */}
         <Route path="/profile" element={<Profile />} />

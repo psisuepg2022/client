@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress, FormControlLabel } from '@mui/material';
-import { isAfter } from 'date-fns';
+import { isAfter, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlterTopToolbar from '@components/AlterTopToolbar';
@@ -296,9 +296,15 @@ const PatientsForm = (): JSX.Element => {
                         message:
                           'A data de nascimento do paciente é obrigatória',
                       },
-                      validate: (date) =>
-                        !isAfter(date, new Date()) ||
-                        'A Data escolhida não pode ser superior à data atual',
+                      validate: (date) => {
+                        if (!isValid(date))
+                          return 'A data escolhida é inválida';
+
+                        return (
+                          !isAfter(date, new Date()) ||
+                          'A Data escolhida não pode ser superior à data atual'
+                        );
+                      },
                     }}
                     label="Data de nascimento"
                     defaultValue={new Date()}

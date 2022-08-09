@@ -25,6 +25,7 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import CardSelector from '../CardSelector';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@contexts/Auth';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -37,9 +38,10 @@ const TopToolbar = ({
   view,
   date,
 }: CustomToolbarProps): JSX.Element => {
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -154,7 +156,7 @@ const TopToolbar = ({
           >
             <MenuItem onClick={() => navigate('/profile')}>Perfil</MenuItem>
             <hr />
-            <MenuItem>Logout</MenuItem>
+            <MenuItem onClick={signOut}>Logout</MenuItem>
           </Menu>
         </LatterContent>
       </Container>

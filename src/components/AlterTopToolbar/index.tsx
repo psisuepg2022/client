@@ -4,11 +4,13 @@ import { IconButton, Menu, MenuItem } from '@mui/material';
 import { ClinicTitle, Container, EarlyContent, LatterContent } from './styles';
 import { AiOutlineUser } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@contexts/Auth';
 
 const AlterTopToolbar = (): JSX.Element => {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -49,7 +51,7 @@ const AlterTopToolbar = (): JSX.Element => {
           >
             <MenuItem onClick={() => navigate('/profile')}>Perfil</MenuItem>
             <hr />
-            <MenuItem>Logout</MenuItem>
+            <MenuItem onClick={signOut}>Logout</MenuItem>
           </Menu>
         </LatterContent>
       </Container>

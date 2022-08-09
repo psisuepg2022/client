@@ -17,6 +17,7 @@ type LoginResponse = {
 
 type AuthContextData = {
   signIn: (credentials: AuthCredentials) => Promise<void>;
+  signOut: () => void;
   user: User;
   isAuthenticated: boolean;
 };
@@ -61,10 +62,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     setUser(decodedToken);
   };
 
+  const signOut = (): void => {
+    setUser({} as User);
+    localStorage.clear();
+  };
+
   return (
     <AuthContext.Provider
       value={{
         signIn,
+        signOut,
         user,
         isAuthenticated: Object.keys(user).length !== 0,
       }}

@@ -1,17 +1,14 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import App from '../App';
-import SideBar from '@components/SideBar';
 import { useAuth } from '@contexts/Auth';
 import { PatientsProvider } from '@contexts/Patients';
-import Agenda from '@pages/Agenda';
 import Login from '@pages/Login';
-import Patients from '@pages/Patients';
-import PatientsForm from '@pages/PatientsForm';
 import Profile from '@pages/Profile';
 import NotFound from '@pages/NotFound';
-import ProtectedRoute from './ProtectedRoute';
 import PatientRoutes from './patient.routes';
+import EmployeeRoutes from './employee.routes';
+import ProfessionalRoutes from './professional.routes';
+import AgendaRoutes from './agenda.routes';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -30,34 +27,15 @@ const AppRoutes = () => {
   return (
     <PatientsProvider>
       <Routes>
-        {/* DASHBOARD */}
-        <Route
-          path="/agenda"
-          element={
-            <div style={{ display: 'flex', overflow: 'hidden' }}>
-              <SideBar />
-              <Agenda />
-            </div>
-          }
-        />
-        <Route
-          path="/professionals"
-          element={
-            <div style={{ display: 'flex', overflow: 'hidden' }}>
-              <SideBar />
-              <App />
-            </div>
-          }
-        />
-        <Route
-          path="/employees"
-          element={
-            <div style={{ display: 'flex', overflow: 'hidden' }}>
-              <SideBar />
-              <App />
-            </div>
-          }
-        />
+        {/* AGENDA PAGES */}
+        <Route path="/agenda" element={<AgendaRoutes />} />
+
+        {/* PROFESSIONAL PAGES */}
+        <Route path="/professionals/*" element={<ProfessionalRoutes />} />
+
+        {/* EMPLOYEE PAGES */}
+        <Route path="/employees/*" element={<EmployeeRoutes />} />
+
         {/* PATIENTS PAGES */}
         <Route path="/patients/*" element={<PatientRoutes />} />
 

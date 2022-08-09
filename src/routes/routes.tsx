@@ -10,6 +10,7 @@ import Patients from '@pages/Patients';
 import PatientsForm from '@pages/PatientsForm';
 import Profile from '@pages/Profile';
 import NotFound from '@pages/NotFound';
+import ProtectedRoute from './ProtectedRoute';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -59,14 +60,23 @@ const AppRoutes = () => {
           />
           {/* PATIENTS PAGES */}
           <Route
-            path="/patients"
             element={
-              <div style={{ display: 'flex', overflow: 'hidden' }}>
-                <SideBar />
-                <Patients />
-              </div>
+              <ProtectedRoute
+                authenticated={isAuthenticated}
+                requiredPermissions={['READ_PATIENT']}
+              />
             }
-          />
+          >
+            <Route
+              path="/patients"
+              element={
+                <div style={{ display: 'flex', overflow: 'hidden' }}>
+                  <SideBar />
+                  <Patients />
+                </div>
+              }
+            />
+          </Route>
           <Route
             path="/patients/form"
             element={

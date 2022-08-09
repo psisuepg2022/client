@@ -3,12 +3,12 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 import { PatientsProvider } from '@contexts/Patients';
 import Login from '@pages/Login';
-import Profile from '@pages/Profile';
 import NotFound from '@pages/NotFound';
 import PatientRoutes from './patient.routes';
 import EmployeeRoutes from './employee.routes';
 import ProfessionalRoutes from './professional.routes';
 import AgendaRoutes from './agenda.routes';
+import ProfileRoutes from './profile.routes';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -39,9 +39,8 @@ const AppRoutes = () => {
         {/* PATIENTS PAGES */}
         <Route path="/patients/*" element={<PatientRoutes />} />
 
-        {/* PROFILE */}
-
-        <Route path="/profile" element={<Profile />} />
+        {/* PROFILE PAGES */}
+        <Route path="/profile/*" element={<ProfileRoutes />} />
 
         {/* REDIRECT */}
         <Route path="*" element={<NotFound />} />

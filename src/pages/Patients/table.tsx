@@ -25,6 +25,7 @@ import {
 } from './styles';
 import { useNavigate } from 'react-router-dom';
 import { PageSize } from '@global/constants';
+import { useAuth } from '@contexts/Auth';
 
 type PatientsTableProps = {
   patients: Patient[];
@@ -43,6 +44,9 @@ const PatientsTable = ({
   setPage,
   deleteItem,
 }: PatientsTableProps): JSX.Element => {
+  const {
+    user: { permissions },
+  } = useAuth();
   const [open, setOpen] = useState<string>('');
   const navigate = useNavigate();
 
@@ -118,6 +122,7 @@ const PatientsTable = ({
                     <StyledTableCell align="left">
                       <Tooltip title="Editar">
                         <IconButton
+                          disabled={!permissions.includes('UPDATE_PATIENT')}
                           onClick={() =>
                             navigate(`/patients/form/${row.id}`, { state: row })
                           }
@@ -126,7 +131,10 @@ const PatientsTable = ({
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Deletar">
-                        <IconButton onClick={() => deleteItem(row)}>
+                        <IconButton
+                          disabled={!permissions.includes('DELETE_PATIENT')}
+                          onClick={() => deleteItem(row)}
+                        >
                           <MdDelete />
                         </IconButton>
                       </Tooltip>

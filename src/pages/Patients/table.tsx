@@ -10,6 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
 } from '@mui/material';
 import { Patient } from '@models/Patient';
 import { Column } from './types';
@@ -84,15 +85,23 @@ const PatientsTable = ({
                     hover
                   >
                     <StyledTableCell>
-                      <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() =>
-                          open === row.id ? setOpen('') : setOpen(row.id)
-                        }
+                      <Tooltip
+                        title={open === row.id ? 'Recolher' : 'Expandir'}
                       >
-                        {open === row.id ? <BsChevronUp /> : <BsChevronDown />}
-                      </IconButton>
+                        <IconButton
+                          aria-label="expand row"
+                          size="small"
+                          onClick={() =>
+                            open === row.id ? setOpen('') : setOpen(row.id)
+                          }
+                        >
+                          {open === row.id ? (
+                            <BsChevronUp />
+                          ) : (
+                            <BsChevronDown />
+                          )}
+                        </IconButton>
+                      </Tooltip>
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       {row.name}
@@ -107,16 +116,20 @@ const PatientsTable = ({
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      <IconButton
-                        onClick={() =>
-                          navigate(`/patients/form/${row.id}`, { state: row })
-                        }
-                      >
-                        <MdModeEdit />
-                      </IconButton>
-                      <IconButton onClick={() => deleteItem(row)}>
-                        <MdDelete />
-                      </IconButton>
+                      <Tooltip title="Editar">
+                        <IconButton
+                          onClick={() =>
+                            navigate(`/patients/form/${row.id}`, { state: row })
+                          }
+                        >
+                          <MdModeEdit />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Deletar">
+                        <IconButton onClick={() => deleteItem(row)}>
+                          <MdDelete />
+                        </IconButton>
+                      </Tooltip>
                     </StyledTableCell>
                   </TableRow>
                   <TableRow>

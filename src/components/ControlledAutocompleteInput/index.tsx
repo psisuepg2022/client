@@ -37,7 +37,6 @@ const ControlledAutocompleteInput = ({
   label,
   noOptionsText,
   selectCallback,
-  cleanseAfterSelect,
   name,
   defaultValue,
   required,
@@ -108,20 +107,19 @@ const ControlledAutocompleteInput = ({
           }
           filterOptions={(x) => x}
           isOptionEqualToValue={(option, value) => option.name === value.name}
-          getOptionLabel={(option) => `${option.name}`}
-          onChange={(e, value, reason) => {
-            if (reason === 'clear') {
-              alreadyUsed.current = false;
-              setOptions([]);
-              onChange('');
-              createMode.current = false;
-              if (cleanseAfterSelect) cleanseAfterSelect();
-            } else if (value) {
-              if (!value.id) createMode.current = true;
-              onChange(value.name);
-              selectCallback(value as Patient);
+          getOptionLabel={(option) => `${(option as Person).name || option}`}
+          onInputChange={(e, value, reason) => {
+            console.log('VLAUIEJMDFK', value, reason);
+            if (reason === 'input') {
+              handleInputChange(value, onChange);
             }
           }}
+          onChange={(e, value, reason) => {
+            console.log('ON CAHNGE PADRAO', reason, value);
+            selectCallback(value);
+            if (reason === 'clear') setOptions([]);
+          }}
+          value={value}
           options={options}
           loading={loading}
           renderOption={(props, option) => (
@@ -131,14 +129,14 @@ const ControlledAutocompleteInput = ({
               </Typography>
             </Box>
           )}
+          selectOnFocus
+          freeSolo
           renderInput={(params) => (
             <StyledTextfield
               {...params}
               fullWidth
               label={label}
               required={required}
-              onChange={(e) => handleInputChange(e.target.value, onChange)}
-              value={value}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
@@ -160,4 +158,4 @@ const ControlledAutocompleteInput = ({
   );
 };
 
-export default ControlledAutocompleteInput;
+export default React.memo(ControlledAutocompleteInput);

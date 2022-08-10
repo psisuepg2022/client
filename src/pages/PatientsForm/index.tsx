@@ -73,7 +73,7 @@ const PatientsForm = (): JSX.Element => {
         MartitalStatus[state.maritalStatus as keyof typeof MartitalStatus],
       gender: Gender[state.gender as keyof typeof Gender],
       liable: {
-        name: state?.liable?.name || '',
+        name: state?.liable || '',
         email: state?.liable?.email || '',
         CPF: state?.liable?.CPF || '',
         birthDate:
@@ -90,7 +90,7 @@ const PatientsForm = (): JSX.Element => {
       zipCode: state?.address?.zipCode || '',
     },
   });
-  const { handleSubmit, reset } = formMethods;
+  const { handleSubmit, reset, setValue } = formMethods;
   const { create } = usePatients();
   const navigate = useNavigate();
   const [needLiable, setNeedLiable] = useState<boolean>(false);
@@ -351,10 +351,16 @@ const PatientsForm = (): JSX.Element => {
                       <ControlledAutocompleteInput
                         name="liable.name"
                         label="Nome"
+                        defaultValue={state?.liable ? state.liable.name : ''}
                         callback={(value: string) => handleSearchLiable(value)}
                         noOptionsText="Não foram encontrados responsáveis cadastrados"
                         selectCallback={(person: Person) => {
-                          if (person.id) setExistingLiable(person);
+                          if (person && person.id) setExistingLiable(person);
+                          else {
+                            setExistingLiable(undefined);
+                            setValue('liable.CPF', '');
+                            setValue('liable.birthDate', new Date());
+                          }
                         }}
                         cleanseAfterSelect={() => setExistingLiable(undefined)}
                         required
@@ -473,7 +479,7 @@ const PatientsForm = (): JSX.Element => {
                     label="CEP"
                     onCompleteCep={handleCepComplete}
                     inputLoading={inputLoading}
-                    defaultValue=""
+                    defaultValue={state?.address ? state.address.zipCode : ''}
                     maxLength={9}
                     mask={(s: string): string =>
                       `${s
@@ -569,4 +575,4 @@ const PatientsForm = (): JSX.Element => {
   );
 };
 
-export default PatientsForm;
+export default React.memo(PatientsForm);

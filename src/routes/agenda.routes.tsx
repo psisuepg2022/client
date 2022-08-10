@@ -7,7 +7,7 @@ const AgendaRoutes = (): JSX.Element => {
   return (
     <Routes>
       <Route
-        path="/agenda"
+        path="/"
         element={
           <div style={{ display: 'flex', overflow: 'hidden' }}>
             <SideBar />

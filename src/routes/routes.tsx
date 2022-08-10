@@ -16,10 +16,8 @@ const AppRoutes = () => {
   if (!isAuthenticated) {
     return (
       <Routes>
-        <Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
   }
@@ -43,6 +41,7 @@ const AppRoutes = () => {
         <Route path="/profile/*" element={<ProfileRoutes />} />
 
         {/* REDIRECT */}
+        <Route path="/" element={<Navigate to="/agenda" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </PatientsProvider>

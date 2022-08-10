@@ -1,10 +1,11 @@
-import { Address } from './Address';
+import { Address, FormAddress } from './Address';
+import { Liable } from './Liable';
 import { FormPerson, Person } from './Person';
 
 export type Patient = {
   maritalStatus: string;
   gender: string;
-  liable?: Person;
+  liable?: Liable;
   address?: Address;
 } & Person;
 
@@ -13,5 +14,5 @@ export type FormPatient = {
   gender: number;
   liable?: FormPerson | { id: string };
   liableRequired?: boolean;
-  address?: Address;
+  address?: FormAddress;
 } & FormPerson;

@@ -10,7 +10,7 @@ import ControlledInput from '@components/ControlledInput';
 import ControlledSelect from '@components/ControlledSelect';
 import SectionDivider from '@components/SectionDivider';
 import SimpleInput from '@components/SimpleInput';
-import { Address } from '@models/Address';
+import { FormAddress } from '@models/Address';
 import { FormPatient, Patient } from '@models/Patient';
 import { Person } from '@models/Person';
 import { Response } from '@interfaces/Response';
@@ -50,7 +50,7 @@ type FormProps = {
   maritalStatus: number;
   CPF: string;
   contactNumber: string;
-  address?: Address;
+  address?: FormAddress;
   liable?: {
     name: string;
     CPF: string;

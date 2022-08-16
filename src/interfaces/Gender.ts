@@ -2,6 +2,6 @@ export enum Gender {
   'Masculino' = 1,
   'Feminino',
   'Transgênero',
-  'Não-binário',
+  'Não binário',
   'Prefiro não dizer',
 }

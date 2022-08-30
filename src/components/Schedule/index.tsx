@@ -18,7 +18,6 @@ import {
   getDay,
   eachDayOfInterval,
 } from 'date-fns';
-import { AgendaHours } from '@interfaces/AgendaHours';
 import TopToolbar from '../TopToolbar';
 import {
   CustomDateHeader,
@@ -31,6 +30,7 @@ import {
   slotPropGetter,
 } from './customComponents';
 import CreateEventModal from '../CreateEventModal';
+import { WeeklySchedule } from '@models/WeeklySchedule';
 
 const locales = {
   'pt-BR': ptBR,
@@ -67,7 +67,7 @@ const messages: Messages = {
 
 type ScheduleProps = {
   givenEvents: Event[];
-  weekAgenda: AgendaHours[];
+  weekAgenda: WeeklySchedule[];
 };
 
 type Ranges = {
@@ -115,8 +115,8 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
                 date.getFullYear(),
                 date.getMonth(),
                 date.getDate(),
-                Number(dayHour?.start.split(':')[0]),
-                Number(dayHour?.start.split(':')[1]),
+                Number(dayHour?.startTime.split(':')[0]),
+                Number(dayHour?.startTime.split(':')[1]),
                 0
               ),
             },
@@ -126,8 +126,8 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
                 date.getFullYear(),
                 date.getMonth(),
                 date.getDate(),
-                Number(dayHour?.end.split(':')[0]),
-                Number(dayHour?.end.split(':')[1]),
+                Number(dayHour?.endTime.split(':')[0]),
+                Number(dayHour?.endTime.split(':')[1]),
                 0
               ),
               end: new Date(
@@ -141,24 +141,26 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
             },
           ];
 
-          const newLocks: Event[] = dayHour?.restrictions.map((item) => {
-            const startDate = new Date(date.getTime());
-            startDate.setHours(Number(item.start.split(':')[0]));
-            startDate.setMinutes(Number(item.start.split(':')[1]));
-            startDate.setSeconds(0);
+          const newLocks: Event[] = dayHour?.weeklyScheduleLocks?.map(
+            (item) => {
+              const startDate = new Date(date.getTime());
+              startDate.setHours(Number(item.startTime.split(':')[0]));
+              startDate.setMinutes(Number(item.startTime.split(':')[1]));
+              startDate.setSeconds(0);
 
-            const endDate = new Date(date.getTime());
-            endDate.setHours(Number(item.end.split(':')[0]));
-            endDate.setMinutes(Number(item.end.split(':')[1]));
-            endDate.setSeconds(0);
+              const endDate = new Date(date.getTime());
+              endDate.setHours(Number(item.endTime.split(':')[0]));
+              endDate.setMinutes(Number(item.endTime.split(':')[1]));
+              endDate.setSeconds(0);
 
-            return {
-              start: startDate,
-              end: endDate,
-              resource: 'lock',
-              title: 'Almoço',
-            };
-          }) as Event[];
+              return {
+                start: startDate,
+                end: endDate,
+                resource: 'lock',
+                title: 'Almoço',
+              };
+            }
+          ) as Event[];
 
           hours.push(...newHours);
           locks.push(...newLocks);
@@ -197,8 +199,8 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
               date.getFullYear(),
               date.getMonth(),
               date.getDate(),
-              Number(dayHour?.start.split(':')[0]),
-              Number(dayHour?.start.split(':')[1]),
+              Number(dayHour?.startTime.split(':')[0]),
+              Number(dayHour?.startTime.split(':')[1]),
               0
             ),
           },
@@ -208,8 +210,8 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
               date.getFullYear(),
               date.getMonth(),
               date.getDate(),
-              Number(dayHour?.end.split(':')[0]),
-              Number(dayHour?.end.split(':')[1]),
+              Number(dayHour?.endTime.split(':')[0]),
+              Number(dayHour?.endTime.split(':')[1]),
               0
             ),
             end: new Date(
@@ -223,14 +225,14 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
           },
         ];
 
-        const newLocks: Event[] = dayHour?.restrictions.map((item) => {
+        const newLocks: Event[] = dayHour?.weeklyScheduleLocks?.map((item) => {
           const startDate = new Date(date.getTime());
-          startDate.setHours(Number(item.start.split(':')[0]));
-          startDate.setMinutes(Number(item.start.split(':')[1]));
+          startDate.setHours(Number(item.startTime.split(':')[0]));
+          startDate.setMinutes(Number(item.startTime.split(':')[1]));
           startDate.setSeconds(0);
           const endDate = new Date(date.getTime());
-          endDate.setHours(Number(item.end.split(':')[0]));
-          endDate.setMinutes(Number(item.end.split(':')[1]));
+          endDate.setHours(Number(item.endTime.split(':')[0]));
+          endDate.setMinutes(Number(item.endTime.split(':')[1]));
           endDate.setSeconds(0);
 
           return {

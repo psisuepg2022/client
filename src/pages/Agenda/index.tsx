@@ -7,6 +7,7 @@ import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { LogoContainer } from './styles';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
 import { WeeklySchedule } from '@models/WeeklySchedule';
+import { Appointment } from '@models/Appointment';
 
 const Agenda = (): JSX.Element => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -90,18 +91,36 @@ const Agenda = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       const res = await api.get('events');
-      const resEvents: {
-        id: number;
-        title: string;
-        start: string;
-        end: string;
-      }[] = res.data;
+      const resEvents: Appointment[] = res.data;
 
-      const formEvents: Event[] = resEvents.map((event) => ({
-        start: new Date(event.start),
-        end: new Date(event.end),
-        title: event.title,
-      }));
+      const formEvents: Event[] = resEvents.map((event) => {
+        const startTime = new Date(event.startDate).toLocaleTimeString('en', {
+          timeStyle: 'short',
+          hour12: false,
+          timeZone: 'UTC',
+        });
+        const startDate = new Date(event.startDate);
+        startDate.setHours(Number(startTime.split(':')[0]));
+        startDate.setMinutes(Number(startTime.split(':')[1]));
+        startDate.setSeconds(0);
+
+        const endTime = new Date(event.endDate).toLocaleTimeString('en', {
+          timeStyle: 'short',
+          hour12: false,
+          timeZone: 'UTC',
+        });
+        const endDate = new Date(event.endDate);
+        endDate.setHours(Number(endTime.split(':')[0]));
+        endDate.setMinutes(Number(endTime.split(':')[1]));
+        endDate.setSeconds(0);
+
+        return {
+          start: startDate,
+          end: endDate,
+          title: event.title,
+          resource: event.resource,
+        };
+      });
 
       setEvents((prev) => [...prev, ...formEvents]);
       setLoading(false);

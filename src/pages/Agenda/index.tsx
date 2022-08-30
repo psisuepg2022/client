@@ -3,20 +3,20 @@ import { getDay } from 'date-fns';
 import { Event } from 'react-big-calendar';
 import Schedule from '@components/Schedule';
 import { api } from '@service/index';
-import { AgendaHours } from '@interfaces/AgendaHours';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { LogoContainer } from './styles';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
+import { WeeklySchedule } from '@models/WeeklySchedule';
 
 const Agenda = (): JSX.Element => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [weekAgenda, setWeekAgenda] = useState<AgendaHours[]>([]);
+  const [weekAgenda, setWeekAgenda] = useState<WeeklySchedule[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
       const res = await api.get('horarios');
-      const hours: AgendaHours[] = res.data;
+      const hours: WeeklySchedule[] = res.data;
       const currentDate = new Date();
       const today = getDay(currentDate);
       const dayHour = hours.find((item) => item.dayOfTheWeek === today);
@@ -37,8 +37,8 @@ const Agenda = (): JSX.Element => {
             currentDate.getFullYear(),
             currentDate.getMonth(),
             currentDate.getDate(),
-            Number(dayHour?.start.split(':')[0]),
-            Number(dayHour?.start.split(':')[1]),
+            Number(dayHour?.startTime.split(':')[0]),
+            Number(dayHour?.startTime.split(':')[1]),
             0
           ),
         },
@@ -48,8 +48,8 @@ const Agenda = (): JSX.Element => {
             currentDate.getFullYear(),
             currentDate.getMonth(),
             currentDate.getDate(),
-            Number(dayHour?.end.split(':')[0]),
-            Number(dayHour?.end.split(':')[1]),
+            Number(dayHour?.endTime.split(':')[0]),
+            Number(dayHour?.endTime.split(':')[1]),
             0
           ),
           end: new Date(
@@ -63,15 +63,15 @@ const Agenda = (): JSX.Element => {
         },
       ];
 
-      const newLocks: Event[] = dayHour?.restrictions.map((item) => {
+      const newLocks: Event[] = dayHour?.weeklyScheduleLocks?.map((item) => {
         const startDate = new Date(currentDate.getTime());
-        startDate.setHours(Number(item.start.split(':')[0]));
-        startDate.setMinutes(Number(item.start.split(':')[1]));
+        startDate.setHours(Number(item.startTime.split(':')[0]));
+        startDate.setMinutes(Number(item.startTime.split(':')[1]));
         startDate.setSeconds(0);
 
         const endDate = new Date(currentDate.getTime());
-        endDate.setHours(Number(item.end.split(':')[0]));
-        endDate.setMinutes(Number(item.end.split(':')[1]));
+        endDate.setHours(Number(item.endTime.split(':')[0]));
+        endDate.setMinutes(Number(item.endTime.split(':')[1]));
         endDate.setSeconds(0);
 
         return {

@@ -7,7 +7,7 @@ import NotFound from '@pages/NotFound';
 import PatientRoutes from './patient.routes';
 import EmployeeRoutes from './employee.routes';
 import ProfessionalRoutes from './professional.routes';
-import ScheduleRoutes from './schedule.routes';
+import AgendaRoutes from './agenda.routes';
 import ProfileRoutes from './profile.routes';
 
 const AppRoutes = () => {
@@ -26,7 +26,7 @@ const AppRoutes = () => {
     <PatientsProvider>
       <Routes>
         {/* SCHEDULE PAGES */}
-        <Route path="/schedule/*" element={<ScheduleRoutes />} />
+        <Route path="/schedule/*" element={<AgendaRoutes />} />
 
         {/* PROFESSIONAL PAGES */}
         <Route path="/professionals/*" element={<ProfessionalRoutes />} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FormControl,
   IconButton,
@@ -71,11 +71,13 @@ const Patients = (): JSX.Element => {
   const formMethods = useForm();
   const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
+  const searchActive = useRef(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('name');
   const [page, setPage] = useState<number>(0);
 
   useEffect(() => {
+    if (searchActive.current) return;
     (async () => {
       try {
         setLoading(true);
@@ -99,10 +101,11 @@ const Patients = (): JSX.Element => {
     const searchData: SearchFilter = data as SearchFilter;
 
     setLoading(true);
+    searchActive.current = true;
+    setPage(0);
     try {
       await list({
         size: PageSize,
-        page,
         filter: {
           name: searchData?.name || '',
           CPF: searchData?.CPF || '',
@@ -116,6 +119,7 @@ const Patients = (): JSX.Element => {
         icon: 'error',
       });
     } finally {
+      searchActive.current = false;
       setLoading(false);
     }
   };

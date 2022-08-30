@@ -270,9 +270,9 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
         culture="pt-BR"
         step={60}
         defaultView="day"
-        formats={{
-          eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
-        }}
+        // formats={{
+        //   eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
+        // }}
         timeslots={1}
         onRangeChange={(
           range:
@@ -301,6 +301,7 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
               ...toolbar,
               onRangeChange,
             }),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           dateCellWrapper: (props: any) => {
             const { event, children } = props;
             return (

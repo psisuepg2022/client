@@ -13,6 +13,8 @@ import {
   CustomDateHeaderText,
   CustomHeaderMonthText,
 } from './styles';
+import { EventStatus } from '@interfaces/EventStatus';
+import { eventColor } from '@utils/eventColor';
 
 export const eventStyleGetter = (
   event: Event
@@ -33,10 +35,10 @@ export const eventStyleGetter = (
     };
   }
 
-  const status: 'CONFIRMED' | 'SCHEDULED' | 'CONCLUDED' = event.resource;
+  const status: EventStatus = event.resource;
 
   const style = {
-    backgroundColor: colors[status],
+    backgroundColor: eventColor(status),
     borderRadius: '2px',
     color: colors.TEXT,
     whiteSpace: 'nowrap',
@@ -44,6 +46,9 @@ export const eventStyleGetter = (
     textOverflow: 'ellipsis',
     fontFamily: 'Poppins',
     border: '0px',
+    padding: '10px',
+    fontSize: '16px',
+    fontWeight: 500,
   };
 
   return {
@@ -103,7 +108,7 @@ export const slotPropGetter: SlotPropGetter = () => {
     style: {
       backgroundColor: '#FFF',
       color: colors.TEXT,
-      cursor: 'pointer',
+      cursor: 'pointer !important',
     },
   };
 };
@@ -121,14 +126,7 @@ export const dayPropGetter = (): {
 export const CustomEventWrapper = (props: any) => {
   const { children } = props;
 
-  return (
-    <div
-      className={children.props.className}
-      style={{ ...children.props.style }}
-    >
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 };
 
 export const CustomHeaderWeek = ({ date, label }: HeaderProps) => {

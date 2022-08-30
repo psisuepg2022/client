@@ -15,7 +15,7 @@ export type SideBarLinks = {
 export const sideBarLinks: SideBarLinks[] = [
   {
     title: 'Agenda',
-    path: '/agenda',
+    path: '/schedule',
     icon: <AiOutlineSchedule color="#FFF" fontSize={30} />,
     requiredPermissions: ['READ_APPOINTMENTS'],
   },

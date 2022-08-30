@@ -1,5 +1,5 @@
 export type WeeklyScheduleLock = {
   id: string;
-  startTime: Date | string;
-  endTime: Date | string;
+  startTime: string;
+  endTime: string;
 };

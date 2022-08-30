@@ -3,8 +3,8 @@ import { WeeklyScheduleLock } from './WeeklyScheduleLock';
 
 export type WeeklySchedule = {
   id: string;
-  startTime: Date | string;
-  endTime: Date | string;
+  startTime: string;
+  endTime: string;
   dayOfTheWeek: DaysOfTheWeek;
   weeklyScheduleLocks?: WeeklyScheduleLock[];
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress, FormControlLabel } from '@mui/material';
 import { isAfter, isValid } from 'date-fns';
-import { FieldValues, FormProvider, useForm } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import AsyncInput from '@components/AsyncInput';
@@ -23,7 +23,6 @@ import {
   Container,
   Content,
   CustomBox,
-  CustomTextField,
   PageTitle,
   PersonalDataFirst,
   PersonalDataSecond,
@@ -36,7 +35,6 @@ import {
 import { showAlert } from '@utils/showAlert';
 import ControlledAutocompleteInput from '@components/ControlledAutocompleteInput';
 import { api } from '@service/index';
-import SimpleDatePicker from '@components/SimpleDatePicker';
 import { usePatients } from '@contexts/Patients';
 import { MartitalStatus } from '@interfaces/MaritalStatus';
 import { Gender } from '@interfaces/Gender';
@@ -52,10 +50,11 @@ type FormProps = {
   contactNumber: string;
   address?: FormAddress;
   liable?: {
+    id?: string;
     name: string;
     CPF: string;
     email?: string;
-    birthDate: Date;
+    birthDate: Date | string;
   };
 };
 
@@ -63,6 +62,7 @@ const PatientsForm = (): JSX.Element => {
   const { state }: { state: Patient } = useLocation() as { state: Patient };
   const formMethods = useForm({
     defaultValues: state && {
+      id: state.id,
       name: state.name,
       email: state?.email || '',
       CPF: state?.CPF || '',
@@ -73,7 +73,8 @@ const PatientsForm = (): JSX.Element => {
         MartitalStatus[state.maritalStatus as keyof typeof MartitalStatus],
       gender: Gender[state.gender as keyof typeof Gender],
       liable: {
-        name: state?.liable || '',
+        id: state?.liable?.id || '',
+        name: state?.liable?.name || '',
         email: state?.liable?.email || '',
         CPF: state?.liable?.CPF || '',
         birthDate:
@@ -87,19 +88,19 @@ const PatientsForm = (): JSX.Element => {
             new Date()),
       },
       contactNumber: state?.contactNumber || '',
-      zipCode: state?.address?.zipCode || '',
+      address: {
+        zipCode: state?.address?.zipCode || '',
+      },
     },
   });
-  const { handleSubmit, reset, setValue } = formMethods;
+  const { handleSubmit, reset, setValue, control } = formMethods;
   const { create } = usePatients();
   const navigate = useNavigate();
   const [needLiable, setNeedLiable] = useState<boolean>(false);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
-  const [existingLiable, setExistingLiable] = useState<Person | undefined>(
-    undefined
-  );
   const [loading, setLoading] = useState<boolean>(false);
+  const { liable } = useWatch({ control });
 
   useEffect(() => {
     if (state) {
@@ -130,41 +131,48 @@ const PatientsForm = (): JSX.Element => {
       gender: formData.gender,
       maritalStatus: formData.maritalStatus,
       contactNumber: formData.contactNumber || '',
-      liable:
-        formData.liable && needLiable
-          ? {
-              name: formData.liable.name,
-              CPF: formData.liable.CPF,
-              email: formData.liable.email || '',
-              birthDate: formData.liable.birthDate.toISOString().split('T')[0],
-              contactNumber: formData.contactNumber || '',
-            }
-          : undefined,
+      ...(formData.liable &&
+        formData.liable.CPF &&
+        needLiable && {
+          liable: {
+            ...(formData.liable?.id && { id: formData.liable.id }),
+            name: formData.liable.name,
+            CPF: formData.liable.CPF,
+            email: formData.liable.email || '',
+            birthDate:
+              typeof formData.liable.birthDate === 'string'
+                ? formData.liable.birthDate
+                : formData.liable.birthDate.toISOString().split('T')[0],
+            contactNumber: formData.contactNumber || '',
+          },
+        }),
       liableRequired: needLiable,
-    };
-
-    const withAddress = formData.address?.zipCode && {
-      ...patient,
-      address: {
-        zipCode: formData.address.zipCode,
-        city: cepInfos?.localidade || '',
-        state: cepInfos?.uf || '',
-        publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
-        district: formData.address.district || cepInfos?.bairro || '',
-      },
+      ...(state.id && { id: state.id }),
+      ...(formData.address?.zipCode && {
+        address: {
+          zipCode: formData.address.zipCode,
+          city: cepInfos?.localidade || '',
+          state: cepInfos?.uf || '',
+          publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
+          district: formData.address.district || cepInfos?.bairro || '',
+          ...(state.address?.id && { id: state.address.id }),
+        },
+      }),
     };
 
     setLoading(true);
     try {
-      const response = await create(withAddress || patient);
+      const response = await create(patient);
       showAlert({
         title: 'Sucesso!',
         text: response.message,
         icon: 'success',
       });
-      reset();
-      setCepInfos(undefined);
-      setNeedLiable(false);
+      if (!state) {
+        reset();
+        setCepInfos(undefined);
+        setNeedLiable(false);
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -202,7 +210,7 @@ const PatientsForm = (): JSX.Element => {
     const {
       data,
     }: { data: Response<{ items: Person[]; totalItems: number }> } =
-      await api.post('/patient/search_liable', {
+      await api.post('patient/search_liable', {
         name: value,
       });
 
@@ -327,7 +335,7 @@ const PatientsForm = (): JSX.Element => {
                     <StyledMenuItem value={1}>Masculino</StyledMenuItem>
                     <StyledMenuItem value={2}>Feminino</StyledMenuItem>
                     <StyledMenuItem value={3}>Transgênero</StyledMenuItem>
-                    <StyledMenuItem value={4}>Não-binário</StyledMenuItem>
+                    <StyledMenuItem value={4}>Não binário</StyledMenuItem>
                     <StyledMenuItem value={5}>Prefiro não dizer</StyledMenuItem>
                   </ControlledSelect>
                 </PersonalDataSecond>
@@ -351,18 +359,32 @@ const PatientsForm = (): JSX.Element => {
                       <ControlledAutocompleteInput
                         name="liable.name"
                         label="Nome"
-                        defaultValue={state?.liable ? state.liable.name : ''}
+                        defaultValue={liable && liable?.name}
                         callback={(value: string) => handleSearchLiable(value)}
                         noOptionsText="Não foram encontrados responsáveis cadastrados"
                         selectCallback={(person: Person) => {
-                          if (person && person.id) setExistingLiable(person);
-                          else {
-                            setExistingLiable(undefined);
+                          if (person) {
+                            setValue('liable.id', person.id || '');
+                            setValue('liable.name', person.name);
+                            setValue('liable.email', person.email || '');
+                            setValue('liable.CPF', person.CPF || '');
+                            setValue(
+                              'liable.birthDate',
+                              new Date(
+                                (person.birthDate
+                                  .split('/')
+                                  .reverse()
+                                  .join('-') as string) + 'GMT-0300'
+                              )
+                            );
+                          } else {
+                            setValue('liable.id', '');
+                            setValue('liable.name', '');
+                            setValue('liable.email', '');
                             setValue('liable.CPF', '');
                             setValue('liable.birthDate', new Date());
                           }
                         }}
-                        cleanseAfterSelect={() => setExistingLiable(undefined)}
                         required
                         rules={{
                           required: {
@@ -371,24 +393,24 @@ const PatientsForm = (): JSX.Element => {
                           },
                         }}
                       />
-                      {existingLiable ? (
+                      {/* {liable?.email ? (
                         <SimpleInput
                           name="liable.email"
                           label="Email"
                           contentEditable={false}
-                          value={existingLiable?.email || ''}
+                          value={liable && liable?.email }
                         />
-                      ) : (
-                        <ControlledInput name="liable.email" label="Email" />
-                      )}
+                      ) : ( */}
+                      <ControlledInput name="liable.email" label="Email" />
+                      {/* )} */}
                     </PersonalDataFirst>
                     <PersonalDataSecond>
-                      {existingLiable ? (
+                      {/* {state.liable ? (
                         <SimpleInput
                           name="liable.CPF"
                           label="CPF"
                           contentEditable={false}
-                          value={existingLiable.CPF || ''}
+                          value={state.liable?.CPF || ''}
                           mask={(s: string): string =>
                             `${s
                               .replace(/\D/g, '')
@@ -399,44 +421,44 @@ const PatientsForm = (): JSX.Element => {
                           }
                           required
                         />
-                      ) : (
-                        <ControlledInput
-                          name="liable.CPF"
-                          label="CPF"
-                          rules={{
-                            maxLength: {
-                              value: 14,
-                              message: 'Insira um CPF válido',
-                            },
-                            minLength: {
-                              value: 14,
-                              message: 'Insira um CPF válido',
-                            },
-                            required: {
-                              value: true,
-                              message: 'O CPF do responsável é obrigatório',
-                            },
-                          }}
-                          maxLength={14}
-                          mask={(s: string): string =>
-                            `${s
-                              .replace(/\D/g, '')
-                              .replace(/(\d{3})(\d)/, '$1.$2')
-                              .replace(/(\d{3})(\d)/, '$1.$2')
-                              .replace(/(\d{3})(\d)/, '$1-$2')
-                              .replace(/(-\d{2})\d+?$/, '$1')}`
-                          }
-                          required
-                        />
-                      )}
+                      ) : ( */}
+                      <ControlledInput
+                        name="liable.CPF"
+                        label="CPF"
+                        rules={{
+                          maxLength: {
+                            value: 14,
+                            message: 'Insira um CPF válido',
+                          },
+                          minLength: {
+                            value: 14,
+                            message: 'Insira um CPF válido',
+                          },
+                          required: {
+                            value: true,
+                            message: 'O CPF do responsável é obrigatório',
+                          },
+                        }}
+                        maxLength={14}
+                        mask={(s: string): string =>
+                          `${s
+                            .replace(/\D/g, '')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1.$2')
+                            .replace(/(\d{3})(\d)/, '$1-$2')
+                            .replace(/(-\d{2})\d+?$/, '$1')}`
+                        }
+                        required
+                      />
+                      {/* )} */}
 
-                      {existingLiable ? (
+                      {/* {state.liable ? (
                         <SimpleDatePicker
                           name="liable.birthDate"
                           label="Data de nascimento"
                           value={
                             new Date(
-                              existingLiable.birthDate
+                              state.liable?.birthDate
                                 .split('/')
                                 .reverse()
                                 .join('-') + 'GMT-0300'
@@ -450,24 +472,24 @@ const PatientsForm = (): JSX.Element => {
                             />
                           )}
                         />
-                      ) : (
-                        <ControlledDatePicker
-                          name="liable.birthDate"
-                          label="Data de nascimento"
-                          required
-                          defaultValue={new Date()}
-                          rules={{
-                            required: {
-                              value: true,
-                              message:
-                                'A data de nascimento do responsável é obrigatória',
-                            },
-                            validate: (date) =>
-                              !isAfter(date, new Date()) ||
-                              'A Data escolhida não pode ser superior à data atual',
-                          }}
-                        />
-                      )}
+                      ) : ( */}
+                      <ControlledDatePicker
+                        name="liable.birthDate"
+                        label="Data de nascimento"
+                        required
+                        defaultValue={new Date()}
+                        rules={{
+                          required: {
+                            value: true,
+                            message:
+                              'A data de nascimento do responsável é obrigatória',
+                          },
+                          validate: (date) =>
+                            !isAfter(date, new Date()) ||
+                            'A Data escolhida não pode ser superior à data atual',
+                        }}
+                      />
+                      {/* )} */}
                     </PersonalDataSecond>
                   </>
                 )}
@@ -479,7 +501,7 @@ const PatientsForm = (): JSX.Element => {
                     label="CEP"
                     onCompleteCep={handleCepComplete}
                     inputLoading={inputLoading}
-                    defaultValue={state?.address ? state.address.zipCode : ''}
+                    defaultValue={''}
                     maxLength={9}
                     mask={(s: string): string =>
                       `${s

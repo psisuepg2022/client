@@ -37,6 +37,7 @@ const ControlledAutocompleteInput = ({
   label,
   noOptionsText,
   selectCallback,
+  cleanseAfterSelect,
   name,
   defaultValue,
   required,
@@ -109,15 +110,16 @@ const ControlledAutocompleteInput = ({
           isOptionEqualToValue={(option, value) => option.name === value.name}
           getOptionLabel={(option) => `${(option as Person).name || option}`}
           onInputChange={(e, value, reason) => {
-            console.log('VLAUIEJMDFK', value, reason);
             if (reason === 'input') {
               handleInputChange(value, onChange);
             }
           }}
           onChange={(e, value, reason) => {
-            console.log('ON CAHNGE PADRAO', reason, value);
             selectCallback(value);
-            if (reason === 'clear') setOptions([]);
+            if (reason === 'clear') {
+              if (cleanseAfterSelect) cleanseAfterSelect();
+              setOptions([]);
+            }
           }}
           value={value}
           options={options}

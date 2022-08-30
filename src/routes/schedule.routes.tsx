@@ -1,9 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SideBar from '@components/SideBar';
-import Agenda from '@pages/Agenda';
+import Schedule from '@pages/Schedule';
 
-const AgendaRoutes = (): JSX.Element => {
+const ScheduleRoutes = (): JSX.Element => {
   return (
     <Routes>
       <Route
@@ -11,7 +11,7 @@ const AgendaRoutes = (): JSX.Element => {
         element={
           <div style={{ display: 'flex', overflow: 'hidden' }}>
             <SideBar />
-            <Agenda />
+            <Schedule />
           </div>
         }
       />
@@ -19,4 +19,4 @@ const AgendaRoutes = (): JSX.Element => {
   );
 };
 
-export default AgendaRoutes;
+export default ScheduleRoutes;

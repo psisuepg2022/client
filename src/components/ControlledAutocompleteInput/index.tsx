@@ -72,7 +72,7 @@ const ControlledAutocompleteInput = ({
     setLoading(false);
   };
 
-  const debounceFn = useCallback(debounce(handleDebounce, 500), []);
+  const debounceFn = useCallback(debounce(handleDebounce, 1000), []);
 
   const handleInputChange = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

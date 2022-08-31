@@ -38,7 +38,7 @@ const AutocompleteInput = ({
     setLoading(false);
   };
 
-  const debounceFn = useCallback(debounce(handleDebounce, 500), []);
+  const debounceFn = useCallback(debounce(handleDebounce, 1000), []);
 
   const handleInputChange = useCallback(async (value: string) => {
     if (value.length < 3) return;

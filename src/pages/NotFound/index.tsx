@@ -30,7 +30,7 @@ const NotFound = (): JSX.Element => {
         <SecondaryText>Volte para a página inicial, e lembre:</SecondaryText>
         <SecondaryText>Você não viu nada!</SecondaryText>
 
-        <StyledButton onClick={() => navigate('/agenda')}>
+        <StyledButton onClick={() => navigate('/schedule')}>
           VOLTAR PARA O INÍCIO
         </StyledButton>
       </SecondarySection>

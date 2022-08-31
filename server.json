@@ -83,7 +83,7 @@
       }]
     }
   ],
-  "patients": [
+  "patients": { "content": [
     {
       "id": "1",
       "name": "Renato Cristiano Ruppel",
@@ -330,5 +330,5 @@
         "zipCode": "84560-000"
       }
     }
-  ]
+  ]}
 }

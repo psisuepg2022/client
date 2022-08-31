@@ -17,10 +17,10 @@ import { IconButton } from '@mui/material';
 import { colors } from '@global/colors';
 import SectionDivider from '../SectionDivider';
 import AutocompleteInput from '../AutocompleteInput';
-import axios from 'axios';
 import { Patient } from '@models/Patient';
 import { Person } from '@models/Person';
 import SimpleInput from '../SimpleInput';
+import { api } from '@service/index';
 
 type CreateEventModalProps = {
   open: boolean;
@@ -40,10 +40,9 @@ const CreateEventModal = ({
   if (slotInfo && slotInfo.slots && slotInfo.slots.length === 1) return <></>;
 
   const handleSearch = async (inputValue: string): Promise<Person[]> => {
-    const res = await axios.get(
-      `http://localhost:3333/patients?name_like=${inputValue}`
-    );
-    return res.data;
+    const res = await api.get(`patients?name_like=${inputValue}`);
+    console.log('REAS', res);
+    return res.data.content;
   };
 
   const selectPerson = (patient: Person | Patient): void => {

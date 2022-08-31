@@ -41,7 +41,7 @@ const AppRoutes = () => {
         <Route path="/profile/*" element={<ProfileRoutes />} />
 
         {/* REDIRECT */}
-        <Route path="/" element={<Navigate to="/agenda" />} />
+        <Route path="/" element={<Navigate to="/schedule" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </PatientsProvider>

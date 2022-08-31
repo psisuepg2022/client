@@ -149,7 +149,7 @@ export const InputsContainer = styled('form')`
 
 export const CodeAndUser = styled('div')`
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 3fr 8fr;
   gap: 1rem;
 `;
 

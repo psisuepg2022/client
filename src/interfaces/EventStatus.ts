@@ -1,1 +1,1 @@
-export type EventStatus = 'AGENDADO' | 'CONFIRMADO' | 'CONCLUÍDO';
+export type EventStatus = 'Agendado' | 'Confirmado' | 'Concluído';

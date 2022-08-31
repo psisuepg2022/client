@@ -31,6 +31,8 @@ import {
 } from './customComponents';
 import CreateEventModal from '../CreateEventModal';
 import { WeeklySchedule } from '@models/WeeklySchedule';
+import ScheduledEventModal from '@components/ScheduledEventModal';
+import { ScheduleEvent } from '@interfaces/ScheduleEvent';
 
 const locales = {
   'pt-BR': ptBR,
@@ -78,6 +80,9 @@ type Ranges = {
 const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
   const [events, setEvents] = useState<Event[]>(givenEvents);
   const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(
+    undefined
+  );
+  const [currentEvent, setCurrentEvent] = useState<ScheduleEvent | undefined>(
     undefined
   );
 
@@ -262,6 +267,13 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
         open={currentSlotInfo !== undefined}
         slotInfo={currentSlotInfo}
       />
+      {currentEvent && currentEvent.resource === 'Agendado' ? (
+        <ScheduledEventModal
+          open={currentEvent !== undefined}
+          handleClose={() => setCurrentEvent(undefined)}
+          eventInfo={currentEvent}
+        />
+      ) : null}
       <Calendar
         localizer={localizer}
         events={events}
@@ -287,9 +299,9 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
         slotPropGetter={slotPropGetter}
         eventPropGetter={eventStyleGetter}
         messages={messages}
-        // onSelectEvent={(event: Event) =>
-        //   event?.resource !== 'lock' && setOpenContext(true)
-        // }
+        onSelectEvent={(event: Event) =>
+          event?.resource !== 'lock' && setCurrentEvent(event)
+        }
         onSelectSlot={(slotInfo: SlotInfo) => setCurrentSlotInfo(slotInfo)}
         selectable
         onSelecting={() => false}

@@ -44,7 +44,7 @@ const Login = (): JSX.Element => {
     try {
       setLoading(true);
       await signIn(formData);
-      navigate('/agenda', { replace: true });
+      navigate('/schedule', { replace: true });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({

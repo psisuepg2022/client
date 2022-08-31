@@ -2,6 +2,7 @@ import React from 'react';
 import {
   AdditionalInfos,
   Body,
+  ButtonsContainer,
   EventPrimaryText,
   Header,
   ScheduleAtDate,
@@ -9,6 +10,8 @@ import {
   ScheduledAtContainer,
   StatusText,
   StyledBox,
+  StyledCancelButton,
+  StyledConfirmButton,
   StyledModal,
 } from './styles';
 import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
@@ -54,7 +57,7 @@ const ScheduledEventModal = ({
           <StatusText>
             Situação: <span>{eventInfo.resource}</span>
           </StatusText>
-          <IconButton>
+          <IconButton onClick={closeAll}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
@@ -73,6 +76,11 @@ const ScheduledEventModal = ({
               <ScheduleAtDate>4 de junho de 2022 às 09:42</ScheduleAtDate>
             </ScheduledAtContainer>
           </AdditionalInfos>
+
+          <ButtonsContainer>
+            <StyledConfirmButton>CONFIRMAR</StyledConfirmButton>
+            <StyledCancelButton>CANCELAR</StyledCancelButton>
+          </ButtonsContainer>
         </Body>
       </StyledBox>
     </StyledModal>

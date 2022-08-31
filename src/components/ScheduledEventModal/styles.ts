@@ -53,7 +53,7 @@ export const EventPrimaryText = styled(Typography)`
 export const AdditionalInfos = styled('div')`
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 4rem;
 `;
 
 export const ScheduledAtContainer = styled('div')`
@@ -67,4 +67,40 @@ export const ScheduleAtText = styled('div')`
 
 export const ScheduleAtDate = styled('div')`
   font-weight: 500;
+`;
+
+export const ButtonsContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 80%;
+  gap: 1rem;
+`;
+
+export const StyledConfirmButton = styled(Button)`
+  background-color: ${colors.PRIMARY};
+  color: #fff;
+  transition: 300ms;
+  width: 100%;
+  font-weight: 400;
+  font-size: 1rem;
+  height: 50px;
+
+  :hover {
+    background-color: ${colors.SECONDARY};
+  }
+`;
+
+export const StyledCancelButton = styled(Button)`
+  background-color: ${colors.DANGER};
+  color: #fff;
+  transition: 300ms;
+  width: 100%;
+  font-weight: 400;
+  font-size: 1rem;
+  height: 50px;
+
+  :hover {
+    background-color: ${colors.DANGER_HOVER};
+  }
 `;

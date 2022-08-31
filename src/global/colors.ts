@@ -8,6 +8,7 @@ export const colors = {
   LOCK: '#9BB0A5',
   BACKGREY: '#EEEEEE',
   DANGER: '#AD2626',
+  DANGER_HOVER: '#8C1313',
   WARNING: '#D86F51',
   TEXT: '#303030',
 };

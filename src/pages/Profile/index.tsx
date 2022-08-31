@@ -47,7 +47,7 @@ const Profile = (): JSX.Element => {
       <Box>
         <Content>
           <Header>
-            <IconButton onClick={() => navigate('/agenda')}>
+            <IconButton onClick={() => navigate(-1)}>
               <FiChevronLeft
                 style={{ color: colors.TEXT, fontSize: '2.5rem' }}
               />

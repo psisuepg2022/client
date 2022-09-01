@@ -9,6 +9,7 @@ import EmployeeRoutes from './employee.routes';
 import ProfessionalRoutes from './professional.routes';
 import AgendaRoutes from './agenda.routes';
 import ProfileRoutes from './profile.routes';
+import { ScheduleProvider } from '@contexts/Schedule';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -24,26 +25,28 @@ const AppRoutes = () => {
 
   return (
     <PatientsProvider>
-      <Routes>
-        {/* SCHEDULE PAGES */}
-        <Route path="/schedule/*" element={<AgendaRoutes />} />
+      <ScheduleProvider>
+        <Routes>
+          {/* SCHEDULE PAGES */}
+          <Route path="/schedule/*" element={<AgendaRoutes />} />
 
-        {/* PROFESSIONAL PAGES */}
-        <Route path="/professionals/*" element={<ProfessionalRoutes />} />
+          {/* PROFESSIONAL PAGES */}
+          <Route path="/professionals/*" element={<ProfessionalRoutes />} />
 
-        {/* EMPLOYEE PAGES */}
-        <Route path="/employees/*" element={<EmployeeRoutes />} />
+          {/* EMPLOYEE PAGES */}
+          <Route path="/employees/*" element={<EmployeeRoutes />} />
 
-        {/* PATIENTS PAGES */}
-        <Route path="/patients/*" element={<PatientRoutes />} />
+          {/* PATIENTS PAGES */}
+          <Route path="/patients/*" element={<PatientRoutes />} />
 
-        {/* PROFILE PAGES */}
-        <Route path="/profile/*" element={<ProfileRoutes />} />
+          {/* PROFILE PAGES */}
+          <Route path="/profile/*" element={<ProfileRoutes />} />
 
-        {/* REDIRECT */}
-        <Route path="/" element={<Navigate to="/schedule" />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          {/* REDIRECT */}
+          <Route path="/" element={<Navigate to="/schedule" />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ScheduleProvider>
     </PatientsProvider>
   );
 };

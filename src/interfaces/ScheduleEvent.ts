@@ -1,5 +1,7 @@
 import { Event } from 'react-big-calendar';
 
-export type ScheduleEvent = {
+export type ScheduleEvent = Omit<Event, 'start' | 'end'> & {
   updatedAt?: Date | string;
-} & Event;
+  startDate: string;
+  endDate: string;
+};

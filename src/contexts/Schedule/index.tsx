@@ -1,15 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
-import { ScheduleEvent } from '@interfaces/ScheduleEvent';
-import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
-import { WeeklySchedule } from '@models/WeeklySchedule';
-
-type AllScheduleEvents = {
-  appointments: ScheduleEvent[];
-  weeklySchedule: WeeklySchedule[];
-  scheduleLocks: WeeklyScheduleLock[];
-};
+import { AllScheduleEvents } from '@interfaces/AllScheduleEvents';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -17,7 +9,8 @@ type ScheduleContextData = {
       startDate: string;
       endDate: string;
     },
-    professionalId?: string
+    professionalId?: string,
+    weekly?: boolean
   ) => Promise<Response<AllScheduleEvents>>;
 };
 
@@ -37,12 +30,15 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
       startDate: string;
       endDate: string;
     },
-    professionalId?: string
+    professionalId?: string,
+    weekly?: boolean
   ): Promise<Response<AllScheduleEvents>> => {
     const { data }: { data: Response<AllScheduleEvents> } = await api.post(
       professionalId
-        ? `appointment/calendar/${professionalId}`
-        : 'appointment/calendar',
+        ? `appointment/calendar/${professionalId}${
+            weekly ? '?weekly=' + weekly : ''
+          }`
+        : `appointment/calendar${weekly ? '?weekly=' + weekly : ''}`,
       {
         ...filter,
       }

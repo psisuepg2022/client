@@ -12,7 +12,7 @@ import {
   CustomDateHeaderLink,
   CustomDateHeaderText,
   CustomHeaderMonthText,
-} from '../../pages/Schedule/styles';
+} from './styles';
 import { EventStatus } from '@interfaces/EventStatus';
 import { eventColor } from '@utils/eventColor';
 

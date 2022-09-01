@@ -41,3 +41,8 @@ export const CustomHeaderMonthText = styled(Typography)`
   font-weight: 600;
   padding: 5px 0;
 `;
+
+export const LogoContainer = styled('img')`
+  width: 100px;
+  height: auto;
+`;

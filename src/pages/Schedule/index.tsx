@@ -276,52 +276,53 @@ const Schedule = (): JSX.Element => {
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, view?: View | undefined) => {
-      if (view === 'month' || ('start' in range && 'end' in range)) {
-        const ranges: Ranges = range as Ranges;
-        const eachDay = eachDayOfInterval({
-          start: ranges.start,
-          end: ranges.end,
-        });
+      if (view === 'month' || ('start' in range && 'end' in range)) return;
+      // if (view === 'month' || ('start' in range && 'end' in range)) {
+      //   const ranges: Ranges = range as Ranges;
+      //   const eachDay = eachDayOfInterval({
+      //     start: ranges.start,
+      //     end: ranges.end,
+      //   });
 
-        const locks: Event[] = [];
-        const hours: Event[] = [];
+      //   const locks: Event[] = [];
+      //   const hours: Event[] = [];
 
-        eachDay.forEach((date: Date) => {
-          const currentDate = new Date();
-          currentDate.setHours(0, 0, 0, 0);
-          const dateIndex = getDay(date);
-          const today = retrievedWeeklySchedule?.find(
-            (item) => item.dayOfTheWeek === dateIndex
-          );
+      //   eachDay.forEach((date: Date) => {
+      //     const currentDate = new Date();
+      //     currentDate.setHours(0, 0, 0, 0);
+      //     const dateIndex = getDay(date);
+      //     const today = retrievedWeeklySchedule?.find(
+      //       (item) => item.dayOfTheWeek === dateIndex
+      //     );
 
-          if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-            const weeklySchedule: Event[] = buildWeeklySchedule(
-              date,
-              today as WeeklySchedule
-            );
+      //     if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
+      //       const weeklySchedule: Event[] = buildWeeklySchedule(
+      //         date,
+      //         today as WeeklySchedule
+      //       );
 
-            const weeklyScheduleLocks: Event[] = today?.locks?.map(
-              (lock: WeeklyScheduleLock) => {
-                const newLock = buildWeeklyScheduleLocks(date, lock);
-                return newLock;
-              }
-            ) as Event[];
+      //       const weeklyScheduleLocks: Event[] = today?.locks?.map(
+      //         (lock: WeeklyScheduleLock) => {
+      //           const newLock = buildWeeklyScheduleLocks(date, lock);
+      //           return newLock;
+      //         }
+      //       ) as Event[];
 
-            console.log('WEEK', weeklyScheduleLocks, weeklySchedule);
-            hours.push(...weeklySchedule);
-            locks.push(...weeklyScheduleLocks);
-          }
-        });
+      //       console.log('WEEK', weeklyScheduleLocks, weeklySchedule);
+      //       hours.push(...weeklySchedule);
+      //       locks.push(...weeklyScheduleLocks);
+      //     }
+      //   });
 
-        setEvents((prev) => {
-          const removeOldLocks = prev.filter(
-            (item) => item.resource !== 'LOCK'
-          );
+      //   setEvents((prev) => {
+      //     const removeOldLocks = prev.filter(
+      //       (item) => item.resource !== 'LOCK'
+      //     );
 
-          return [...removeOldLocks, ...hours, ...locks];
-        });
-        return;
-      }
+      //     return [...removeOldLocks, ...hours, ...locks];
+      //   });
+      //   return;
+      // }
 
       const allEvents: Event[] = [];
 

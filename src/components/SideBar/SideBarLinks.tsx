@@ -17,7 +17,12 @@ export const sideBarLinks: SideBarLinks[] = [
     title: 'Agenda',
     path: '/schedule',
     icon: <AiOutlineSchedule color="#FFF" fontSize={30} />,
-    requiredPermissions: ['READ_APPOINTMENTS'],
+    requiredPermissions: [
+      //'READ_APPOINTMENTS', // ONLY WAITING FOR PROFESSIONAL TO HAVE THIS PERMISSIONS
+      'READ_SCHEDULE_LOCK',
+      'READ_WEEKLY_SCHEDULE',
+      'READ_WEEKLY_SCHEDULE_LOCK',
+    ],
   },
   {
     title: 'Profissionais',
@@ -26,8 +31,8 @@ export const sideBarLinks: SideBarLinks[] = [
     requiredPermissions: [
       'READ_PROFESSIONAL',
       'CREATE_PROFESSIONAL',
-      'UPDATE_PROFESSIONAL',
-      'DELETE_PROFESSIONAL',
+      // 'UPDATE_PROFESSIONAL', UPDATE AND DELETE WILL BE HANDLED AT THE ACCESS ICON ON TABLE
+      // 'DELETE_PROFESSIONAL',
     ],
   },
   {
@@ -37,8 +42,8 @@ export const sideBarLinks: SideBarLinks[] = [
     requiredPermissions: [
       'READ_EMPLOYEE',
       'CREATE_EMPLOYEE',
-      'UPDATE_EMPLOYEE',
-      'DELETE_EMPLOYEE',
+      // 'UPDATE_EMPLOYEE',
+      // 'DELETE_EMPLOYEE',
     ],
   },
   {
@@ -47,9 +52,9 @@ export const sideBarLinks: SideBarLinks[] = [
     icon: <MdOutlineSick color="#FFF" fontSize={28} />,
     requiredPermissions: [
       'READ_PATIENT',
-      'CREATE_PATIENT',
-      'UPDATE_PATIENT',
-      'DELETE_PATIENT',
+      // 'CREATE_PATIENT',
+      // 'UPDATE_PATIENT',
+      // 'DELETE_PATIENT',
       'READ_LIABLE',
     ],
   },

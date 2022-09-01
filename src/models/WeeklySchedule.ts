@@ -6,5 +6,5 @@ export type WeeklySchedule = {
   startTime: string;
   endTime: string;
   dayOfTheWeek: DaysOfTheWeek;
-  weeklyScheduleLocks?: WeeklyScheduleLock[];
+  locks?: WeeklyScheduleLock[];
 };

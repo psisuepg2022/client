@@ -1,3 +1,4 @@
+import { Permissions } from '@interfaces/Permissions';
 import { Clinic } from './Clinic';
 import { Person } from './Person';
 
@@ -6,6 +7,6 @@ export type User = {
   userName: string;
   name: string;
   email: string;
-  permissions: string[];
+  permissions: Permissions;
   clinic?: Clinic;
 } & Person;

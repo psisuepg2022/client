@@ -104,12 +104,12 @@ const Schedule = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
-        await list({
+        const retrievedProfessionals = await list({
           // List Professionals
           page: 0,
           size: 100,
         });
-
+        console.log('PROF', retrievedProfessionals);
         const initialDate = new Date().toISOString().split('T')[0];
 
         const { content }: Response<AllScheduleEvents> =

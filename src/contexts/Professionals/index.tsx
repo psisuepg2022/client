@@ -12,7 +12,7 @@ type ListProps = {
 };
 
 type ProfessionalsContextData = {
-  list: (listProps: ListProps) => Promise<void>;
+  list: (listProps: ListProps) => Promise<Professional[]>;
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
   remove: (professionalId: string) => Promise<Response<boolean>>;
   professionals: Professional[];
@@ -33,7 +33,11 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [count, setCount] = useState<number>(0);
 
-  const list = async ({ size, page, filter }: ListProps): Promise<void> => {
+  const list = async ({
+    size,
+    page,
+    filter,
+  }: ListProps): Promise<Professional[]> => {
     const { data }: { data: Response<ItemList<Professional>> } = await api.post(
       page && size
         ? `professional/search?page=${page}&size=${size}`
@@ -45,6 +49,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
 
     setProfessionals(data.content?.items as Professional[]);
     setCount(data.content?.totalItems || 0);
+    return data.content?.items as Professional[];
   };
 
   const create = async (

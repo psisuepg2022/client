@@ -15,7 +15,7 @@ type ProfessionalsContextData = {
   list: (listProps: ListProps) => Promise<void>;
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
   remove: (professionalId: string) => Promise<Response<boolean>>;
-  patients: Professional[];
+  professionals: Professional[];
   count: number;
 };
 
@@ -30,7 +30,7 @@ const ProfessionalsContext = createContext<ProfessionalsContextData>(
 export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
   children,
 }: ProfessionalsProviderProps) => {
-  const [patients, setPatients] = useState<Professional[]>([]);
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [count, setCount] = useState<number>(0);
 
   const list = async ({ size, page, filter }: ListProps): Promise<void> => {
@@ -43,7 +43,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
       }
     );
 
-    setPatients(data.content?.items as Professional[]);
+    setProfessionals(data.content?.items as Professional[]);
     setCount(data.content?.totalItems || 0);
   };
 
@@ -69,7 +69,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
         list,
         create,
         remove,
-        patients,
+        professionals,
         count,
       }}
     >

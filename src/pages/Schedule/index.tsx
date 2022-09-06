@@ -94,7 +94,7 @@ const Schedule = (): JSX.Element => {
   const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(
     undefined
   );
-  const [currentEvent, setCurrentEvent] = useState<ScheduleEvent | undefined>(
+  const [currentEvent, setCurrentEvent] = useState<Event | undefined>(
     undefined
   );
   const [loading, setLoading] = useState(true);

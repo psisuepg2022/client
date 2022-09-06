@@ -20,11 +20,12 @@ import { colors } from '@global/colors';
 import { IconButton } from '@mui/material';
 import { format } from 'date-fns';
 import { ScheduleEvent } from '@interfaces/ScheduleEvent';
+import { Event } from 'react-big-calendar';
 
 type ScheduledEventModalProps = {
   open: boolean;
   handleClose: () => void;
-  eventInfo: ScheduleEvent | undefined;
+  eventInfo: Event | undefined;
 };
 
 const ScheduledEventModal = ({

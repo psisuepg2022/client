@@ -43,6 +43,7 @@ import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { useSchedule } from '@contexts/Schedule';
 import { Response } from '@interfaces/Response';
 import { AllScheduleEvents } from '@interfaces/AllScheduleEvents';
+import { useProfessionals } from '@contexts/Professionals';
 
 const locales = {
   'pt-BR': ptBR,
@@ -86,6 +87,7 @@ const Schedule = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
+  const { list, professionals } = useProfessionals();
   const { getScheduleEvents } = useSchedule();
   const [retrievedWeeklySchedule, setRetrievedWeeklySchedule] = useState<
     WeeklySchedule[]
@@ -102,6 +104,12 @@ const Schedule = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
+        await list({
+          // List Professionals
+          page: 0,
+          size: 100,
+        });
+
         const initialDate = new Date().toISOString().split('T')[0];
 
         const { content }: Response<AllScheduleEvents> =

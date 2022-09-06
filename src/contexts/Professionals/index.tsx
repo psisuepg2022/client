@@ -47,10 +47,15 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     setCount(data.content?.totalItems || 0);
   };
 
-  const create = async (professional: FormProfessional): Promise<Response<Professional>> => {
-    const { data }: { data: Response<Professional> } = await api.post('professional', {
-      ...professional,
-    });
+  const create = async (
+    professional: FormProfessional
+  ): Promise<Response<Professional>> => {
+    const { data }: { data: Response<Professional> } = await api.post(
+      'professional',
+      {
+        ...professional,
+      }
+    );
 
     return data;
   };
@@ -78,7 +83,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
   );
 };
 
-export const usesProfessionals = (): ProfessionalsContextData => {
+export const useProfessionals = (): ProfessionalsContextData => {
   const context = useContext(ProfessionalsContext);
 
   if (!context) {

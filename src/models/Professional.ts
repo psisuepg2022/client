@@ -8,11 +8,11 @@ export type Professional = {
   registry: string;
 } & User;
 
-
 export type FormProfessional = {
   profession: string;
   specialization?: string;
   baseDuration: number;
   registry: string;
   password: string;
-} & User & FormPerson;
+} & User &
+  FormPerson;

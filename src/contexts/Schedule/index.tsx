@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
 import { AllScheduleEvents } from '@interfaces/AllScheduleEvents';
+import { Professional } from '@models/Professional';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -12,6 +13,10 @@ type ScheduleContextData = {
     professionalId?: string,
     weekly?: boolean
   ) => Promise<Response<AllScheduleEvents>>;
+  currentProfessional: Professional | undefined;
+  setCurrentProfessional: (professional: Professional) => void;
+  currentSchedule: AllScheduleEvents | undefined;
+  setCurrentSchedule: (schedule: AllScheduleEvents) => void;
 };
 
 type ScheduleProviderProps = {
@@ -25,6 +30,13 @@ const ScheduleContext = createContext<ScheduleContextData>(
 export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   children,
 }: ScheduleProviderProps) => {
+  const [currentProfessional, setCurrentProfessional] = useState<
+    Professional | undefined
+  >();
+  const [currentSchedule, setCurrentSchedule] = useState<
+    AllScheduleEvents | undefined
+  >();
+
   const getScheduleEvents = async (
     filter: {
       startDate: string;
@@ -51,6 +63,10 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     <ScheduleContext.Provider
       value={{
         getScheduleEvents,
+        currentProfessional,
+        setCurrentProfessional,
+        currentSchedule,
+        setCurrentSchedule,
       }}
     >
       {children}

@@ -44,6 +44,8 @@ import { useSchedule } from '@contexts/Schedule';
 import { Response } from '@interfaces/Response';
 import { AllScheduleEvents } from '@interfaces/AllScheduleEvents';
 import { useProfessionals } from '@contexts/Professionals';
+import { Professional } from '@models/Professional';
+import { ProfessionalScheduleEvents } from '@interfaces/ProfessionalScheduleEvents';
 
 const locales = {
   'pt-BR': ptBR,
@@ -87,8 +89,14 @@ const Schedule = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
-  const { list, professionals } = useProfessionals();
-  const { getScheduleEvents } = useSchedule();
+  const { list } = useProfessionals();
+  const {
+    getScheduleEvents,
+    setCurrentProfessional,
+    currentProfessional,
+    currentSchedule,
+    setCurrentSchedule,
+  } = useSchedule();
   const [retrievedWeeklySchedule, setRetrievedWeeklySchedule] = useState<
     WeeklySchedule[]
   >([]);
@@ -104,107 +112,79 @@ const Schedule = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
-        const retrievedProfessionals = await list({
+        await list({
           // List Professionals
           page: 0,
           size: 100,
+        }).then(async (professionals) => {
+          const initialDate = new Date().toISOString().split('T')[0];
+          const requests: Promise<any>[] = [];
+
+          professionals.content?.items.forEach((professional) => {
+            requests.push(getScheduleEventsAsync(professional, initialDate));
+          });
+
+          const requestsResult: ProfessionalScheduleEvents[] =
+            await Promise.all(requests).then((response) => response);
+
+          setCurrentProfessional(
+            professionals.content?.items[0] as Professional
+          );
+
+          const firstSchedule = requestsResult.find(
+            (item) => item.professionalId === professionals.content?.items[0].id
+          ) as AllScheduleEvents;
+
+          setCurrentSchedule(firstSchedule);
+          console.log('REQUYEST', requestsResult);
+
+          const currentDate = new Date();
+          const dayIndex = getDay(currentDate) + 1;
+          const today = firstSchedule.weeklySchedule.find(
+            (item) => item.dayOfTheWeek === dayIndex
+          ) as WeeklySchedule;
+
+          const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+            currentDate,
+            today
+          ) as ScheduleEvent[];
+
+          const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
+            (lock: WeeklyScheduleLock) => {
+              return buildWeeklyScheduleLocks(currentDate, lock);
+            }
+          ) as ScheduleEvent[];
+
+          const formEvents: Event[] = firstSchedule.appointments.map(
+            (event) => {
+              const startTime = event.startDate.split('T')[1].substring(0, 4);
+              const startDate = new Date(event.startDate);
+              startDate.setHours(Number(startTime.split(':')[0]));
+              startDate.setMinutes(Number(startTime.split(':')[1]));
+              startDate.setSeconds(0);
+              const endTime = event.endDate.split('T')[1].substring(0, 4);
+              const endDate = new Date(event.endDate);
+              endDate.setHours(Number(endTime.split(':')[0]));
+              endDate.setMinutes(Number(endTime.split(':')[1]));
+              endDate.setSeconds(0);
+              return {
+                start: startDate,
+                end: endDate,
+                title: event.title,
+                resource: event.resource,
+              };
+            }
+          ) as Event[];
+
+          setRetrievedWeeklySchedule(firstSchedule.weeklySchedule || []);
+          setEvents((prev) => [
+            ...prev,
+            ...weeklyScheduleEvents,
+            ...weeklyScheduleLocksEvents,
+            ...formEvents,
+          ]);
         });
-        console.log('PROF', retrievedProfessionals);
-        const initialDate = new Date().toISOString().split('T')[0];
 
-        const { content }: Response<AllScheduleEvents> =
-          await getScheduleEvents(
-            { startDate: initialDate, endDate: initialDate },
-            '',
-            true
-          );
-
-        console.log('CONTEN', content);
-
-        const currentDate = new Date();
-        const dayIndex = getDay(currentDate) + 1;
-        const today = content?.weeklySchedule.find(
-          (item) => item.dayOfTheWeek === dayIndex
-        ) as WeeklySchedule;
-
-        const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-          currentDate,
-          today
-        ) as ScheduleEvent[];
-
-        const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
-          (lock: WeeklyScheduleLock) => {
-            return buildWeeklyScheduleLocks(currentDate, lock);
-          }
-        ) as ScheduleEvent[];
-
-        setRetrievedWeeklySchedule(content?.weeklySchedule || []);
-        setEvents((prev) => [
-          ...prev,
-          ...weeklyScheduleEvents,
-          ...weeklyScheduleLocksEvents,
-        ]);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
-        console.log('ERR WEEKLY', e);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const initialDate = new Date().toISOString().split('T')[0];
-
-        const { content }: Response<AllScheduleEvents> =
-          await getScheduleEvents(
-            { startDate: initialDate, endDate: initialDate },
-            ''
-          );
-
-        const formEvents: Event[] = content?.appointments.map((event) => {
-          const startTime = event.startDate.split('T')[1].substring(0, 4);
-          const startDate = new Date(event.startDate);
-          startDate.setHours(Number(startTime.split(':')[0]) - 3);
-          startDate.setMinutes(Number(startTime.split(':')[1]));
-          startDate.setSeconds(0);
-
-          const endTime = event.endDate.split('T')[1].substring(0, 4);
-          const endDate = new Date(event.endDate);
-          endDate.setHours(Number(endTime.split(':')[0]) - 3);
-          endDate.setMinutes(Number(endTime.split(':')[1]));
-          endDate.setSeconds(0);
-
-          return {
-            start: startDate,
-            end: endDate,
-            title: event.title,
-            resource: event.resource,
-          };
-        }) as Event[];
-
-        console.log('FORM', formEvents);
-        setEvents((prev) => [...prev, ...formEvents]);
-
-        // const currentDate = new Date();
-        // const dayIndex = getDay(currentDate) + 1;
-        // const today = content?.weeklySchedule.find(
-        //   (item) => item.dayOfTheWeek === dayIndex
-        // ) as WeeklySchedule;
-
-        // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-        //   currentDate,
-        //   today
-        // ) as ScheduleEvent[];
-
-        // const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
-        //   (lock: WeeklyScheduleLock) => {
-        //     return buildWeeklyScheduleLocks(currentDate, lock);
-        //   }
-        // ) as ScheduleEvent[];
-
-        // setRetrievedWeeklySchedule(content?.weeklySchedule || []);
-        // setEvents([...weeklyScheduleEvents, ...weeklyScheduleLocksEvents]);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.log('ERR WEEKLY', e);
@@ -214,7 +194,75 @@ const Schedule = (): JSX.Element => {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        // const initialDate = new Date().toISOString().split('T')[0];
+        // const { content }: Response<AllScheduleEvents> =
+        //   await getScheduleEvents(
+        //     { startDate: initialDate, endDate: initialDate },
+        //     ''
+        //   );
+        // const formEvents: Event[] = content?.appointments.map((event) => {
+        //   const startTime = event.startDate.split('T')[1].substring(0, 4);
+        //   const startDate = new Date(event.startDate);
+        //   startDate.setHours(Number(startTime.split(':')[0]) - 3);
+        //   startDate.setMinutes(Number(startTime.split(':')[1]));
+        //   startDate.setSeconds(0);
+        //   const endTime = event.endDate.split('T')[1].substring(0, 4);
+        //   const endDate = new Date(event.endDate);
+        //   endDate.setHours(Number(endTime.split(':')[0]) - 3);
+        //   endDate.setMinutes(Number(endTime.split(':')[1]));
+        //   endDate.setSeconds(0);
+        //   return {
+        //     start: startDate,
+        //     end: endDate,
+        //     title: event.title,
+        //     resource: event.resource,
+        //   };
+        // }) as Event[];
+        // console.log('FORM', formEvents);
+        // setEvents((prev) => [...prev, ...formEvents]);
+        // const currentDate = new Date();
+        // const dayIndex = getDay(currentDate) + 1;
+        // const today = content?.weeklySchedule.find(
+        //   (item) => item.dayOfTheWeek === dayIndex
+        // ) as WeeklySchedule;
+        // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+        //   currentDate,
+        //   today
+        // ) as ScheduleEvent[];
+        // const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
+        //   (lock: WeeklyScheduleLock) => {
+        //     return buildWeeklyScheduleLocks(currentDate, lock);
+        //   }
+        // ) as ScheduleEvent[];
+        // setRetrievedWeeklySchedule(content?.weeklySchedule || []);
+        // setEvents([...weeklyScheduleEvents, ...weeklyScheduleLocksEvents]);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        console.log('ERR WEEKLY', e);
+      }
+    })();
+  }, []);
+
   console.log('EVENT', events);
+
+  const getScheduleEventsAsync = async (
+    professional: Professional,
+    initialDate: string
+  ): Promise<ProfessionalScheduleEvents> => {
+    const { content }: Response<AllScheduleEvents> = await getScheduleEvents(
+      { startDate: initialDate, endDate: initialDate },
+      professional.id,
+      true
+    );
+
+    return {
+      professionalId: professional.id,
+      ...content,
+    } as ProfessionalScheduleEvents;
+  };
 
   const buildWeeklySchedule = (date: Date, today: WeeklySchedule): Event[] => {
     const newHours: Event[] = [

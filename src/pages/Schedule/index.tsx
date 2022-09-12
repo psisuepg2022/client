@@ -188,6 +188,8 @@ const Schedule = (): JSX.Element => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.log('ERR WEEKLY', e);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
@@ -240,8 +242,6 @@ const Schedule = (): JSX.Element => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.log('ERR WEEKLY', e);
-      } finally {
-        setLoading(false);
       }
     })();
   }, []);

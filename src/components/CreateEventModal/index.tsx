@@ -13,7 +13,7 @@ import {
   StyledModal,
 } from './styles';
 import { MdLock, MdOutlineClose } from 'react-icons/md';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import { colors } from '@global/colors';
 import SectionDivider from '../SectionDivider';
 import AutocompleteInput from '../AutocompleteInput';
@@ -22,6 +22,11 @@ import { Person } from '@models/Person';
 import SimpleInput from '../SimpleInput';
 import { api } from '@service/index';
 import { useSchedule } from '@contexts/Schedule';
+import { Response } from '@interfaces/Response';
+import { ItemList } from '@interfaces/ItemList';
+import { AutocompletePatient } from '@interfaces/AutocompletePatient';
+import { showAlert } from '@utils/showAlert';
+import { format } from 'date-fns';
 
 type CreateEventModalProps = {
   open: boolean;
@@ -34,31 +39,65 @@ const CreateEventModal = ({
   handleClose,
   slotInfo,
 }: CreateEventModalProps): JSX.Element => {
-  const { currentProfessional } = useSchedule();
+  const { currentProfessional, saveAppointment } = useSchedule();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   if (!slotInfo) return <></>;
 
   if (slotInfo && slotInfo.slots && slotInfo.slots.length === 1) return <></>;
 
-  console.log('SLOTINJFO', slotInfo, currentProfessional);
+  const handleSearch = async (
+    inputValue: string
+  ): Promise<AutocompletePatient[]> => {
+    try {
+      const res: { data: Response<ItemList<AutocompletePatient>> } =
+        await api.post('appointment/autocomplete_patient', {
+          name: inputValue,
+        });
 
-  const handleSearch = async (inputValue: string): Promise<Person[]> => {
-    const res = await api.post('appointment/autocomplete_patient', {
-      name: inputValue,
-    });
-    console.log('REAS', res);
-    return res.data.content;
+      return res?.data?.content?.items || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        text: e?.response?.data?.message || 'Ocorreu um problema inesperado',
+      });
+      return [];
+    }
   };
 
   const selectPerson = (patient: Person | Patient): void => {
-    console.log('I SELECTED', patient);
     setCurrentPatient(patient as Patient);
   };
 
   const closeAll = (): void => {
     setCurrentPatient(undefined);
     handleClose();
+  };
+
+  const onSubmit = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      const date = format(slotInfo.start, 'yyyy-MM-dd');
+      const startTime = format(slotInfo.start, 'HH:mm');
+      const endTime = format(slotInfo.end, 'HH:mm');
+
+      await saveAppointment({
+        date,
+        startTime,
+        endTime,
+        professionalId: currentProfessional?.id || '',
+        patientId: currentPatient?.id || '',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        text: e?.response?.data?.message || 'Ocorreu um problema inesperado',
+        icon: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -108,9 +147,9 @@ const CreateEventModal = ({
                   contentEditable={false}
                 />
                 <SimpleInput
-                  name="birthdate"
-                  label="Data de nascimento"
-                  value={currentPatient.birthDate}
+                  name="contactNumber"
+                  label="Telefone"
+                  value={currentPatient.contactNumber}
                   contentEditable={false}
                 />
               </ConditionalInputs>
@@ -132,16 +171,22 @@ const CreateEventModal = ({
                     contentEditable={false}
                   />
                   <SimpleInput
-                    name="birthdate"
-                    label="Data de nascimento"
-                    value={currentPatient.liable.birthDate}
+                    name="contactNumber"
+                    label="Telefone"
+                    value={currentPatient.contactNumber}
                     contentEditable={false}
                   />
                 </ConditionalInputs>
               </>
             )}
             <ButtonArea>
-              <StyledButton>AGENDAR</StyledButton>
+              <StyledButton onClick={onSubmit}>
+                {loading ? (
+                  <CircularProgress style={{ color: '#FFF' }} size={20} />
+                ) : (
+                  'AGENDAR'
+                )}
+              </StyledButton>
             </ButtonArea>
           </Body>
         </StyledBox>

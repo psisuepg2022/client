@@ -60,36 +60,40 @@ type FormProps = {
 
 const PatientsForm = (): JSX.Element => {
   const { state }: { state: Patient } = useLocation() as { state: Patient };
+  const [patientToEdit] = useState<Patient>(state);
+
   const formMethods = useForm({
-    defaultValues: state && {
-      id: state.id,
-      name: state.name,
-      email: state?.email || '',
-      CPF: state?.CPF || '',
+    defaultValues: patientToEdit && {
+      id: patientToEdit.id,
+      name: patientToEdit.name,
+      email: patientToEdit?.email || '',
+      CPF: patientToEdit?.CPF || '',
       birthDate: new Date(
-        state.birthDate.split('/').reverse().join('-') + 'GMT-0300'
+        patientToEdit.birthDate.split('/').reverse().join('-') + 'GMT-0300'
       ),
       maritalStatus:
-        MartitalStatus[state.maritalStatus as keyof typeof MartitalStatus],
-      gender: Gender[state.gender as keyof typeof Gender],
+        MartitalStatus[
+          patientToEdit.maritalStatus as keyof typeof MartitalStatus
+        ],
+      gender: Gender[patientToEdit.gender as keyof typeof Gender],
       liable: {
-        id: state?.liable?.id || '',
-        name: state?.liable?.name || '',
-        email: state?.liable?.email || '',
-        CPF: state?.liable?.CPF || '',
+        id: patientToEdit?.liable?.id || '',
+        name: patientToEdit?.liable?.name || '',
+        email: patientToEdit?.liable?.email || '',
+        CPF: patientToEdit?.liable?.CPF || '',
         birthDate:
-          state.liable &&
+          patientToEdit.liable &&
           (new Date(
-            (state?.liable?.birthDate
+            (patientToEdit?.liable?.birthDate
               .split('/')
               .reverse()
               .join('-') as string) + 'GMT-0300'
           ) ||
             new Date()),
       },
-      contactNumber: state?.contactNumber || '',
+      contactNumber: patientToEdit?.contactNumber || '',
       address: {
-        zipCode: state?.address?.zipCode || '',
+        zipCode: patientToEdit?.address?.zipCode || '',
       },
     },
   });
@@ -103,16 +107,16 @@ const PatientsForm = (): JSX.Element => {
   const { liable } = useWatch({ control });
 
   useEffect(() => {
-    if (state) {
-      state.liable && setNeedLiable(true);
+    if (patientToEdit) {
+      patientToEdit.liable && setNeedLiable(true);
 
-      if (state.address) {
+      if (patientToEdit.address) {
         setCepInfos({
-          cep: state.address.zipCode,
-          localidade: state.address.city,
-          logradouro: state.address.publicArea,
-          bairro: state.address.district,
-          uf: state.address.state,
+          cep: patientToEdit.address.zipCode,
+          localidade: patientToEdit.address.city,
+          logradouro: patientToEdit.address.publicArea,
+          bairro: patientToEdit.address.district,
+          uf: patientToEdit.address.state,
         });
       }
     }
@@ -147,7 +151,7 @@ const PatientsForm = (): JSX.Element => {
           },
         }),
       liableRequired: needLiable,
-      ...(state.id && { id: state.id }),
+      ...(patientToEdit?.id && { id: patientToEdit.id }),
       ...(formData.address?.zipCode && {
         address: {
           zipCode: formData.address.zipCode,
@@ -155,7 +159,7 @@ const PatientsForm = (): JSX.Element => {
           state: cepInfos?.uf || '',
           publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
           district: formData.address.district || cepInfos?.bairro || '',
-          ...(state.address?.id && { id: state.address.id }),
+          ...(patientToEdit?.address?.id && { id: patientToEdit.address.id }),
         },
       }),
     };
@@ -168,7 +172,7 @@ const PatientsForm = (): JSX.Element => {
         text: response.message,
         icon: 'success',
       });
-      if (!state) {
+      if (!patientToEdit) {
         reset();
         setCepInfos(undefined);
         setNeedLiable(false);

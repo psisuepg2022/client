@@ -19,7 +19,6 @@ import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { IconButton } from '@mui/material';
 import { format } from 'date-fns';
-import { ScheduleEvent } from '@interfaces/ScheduleEvent';
 import { Event } from 'react-big-calendar';
 
 type ScheduledEventModalProps = {

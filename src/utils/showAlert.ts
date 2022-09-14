@@ -1,18 +1,19 @@
 import Swal, { SweetAlertIcon, SweetAlertOptions } from 'sweetalert2';
 import { colors } from '@global/colors';
+import './custom.css';
 
 export type AlertProps = {
   icon?: SweetAlertIcon;
   title?: string;
   text: string;
-  customClass?: string;
+  // customClass?: string;
 } & SweetAlertOptions;
 
 export const showAlert = ({
   title,
   text,
   icon,
-  customClass,
+  // customClass,
   ...rest
 }: AlertProps) =>
   Swal.fire({
@@ -20,8 +21,8 @@ export const showAlert = ({
     title: title || 'Ops...',
     text,
     confirmButtonColor: colors.PRIMARY,
-    customClass: {
-      container: customClass,
-    },
+    // customClass: {
+    //   container: '.alert-above-all',
+    // },
     ...rest,
   });

@@ -151,7 +151,7 @@ const PatientsForm = (): JSX.Element => {
           },
         }),
       liableRequired: needLiable,
-      // ...(patientToEdit?.id && { id: patientToEdit.id }),
+      ...(patientToEdit && patientToEdit?.id && { id: patientToEdit.id }),
       ...(formData.address?.zipCode && {
         address: {
           zipCode: formData.address.zipCode,

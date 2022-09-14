@@ -21,6 +21,7 @@ import { Patient } from '@models/Patient';
 import { Person } from '@models/Person';
 import SimpleInput from '../SimpleInput';
 import { api } from '@service/index';
+import { useSchedule } from '@contexts/Schedule';
 
 type CreateEventModalProps = {
   open: boolean;
@@ -33,14 +34,19 @@ const CreateEventModal = ({
   handleClose,
   slotInfo,
 }: CreateEventModalProps): JSX.Element => {
+  const { currentProfessional } = useSchedule();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
 
   if (!slotInfo) return <></>;
 
   if (slotInfo && slotInfo.slots && slotInfo.slots.length === 1) return <></>;
 
+  console.log('SLOTINJFO', slotInfo, currentProfessional);
+
   const handleSearch = async (inputValue: string): Promise<Person[]> => {
-    const res = await api.get(`patients?name_like=${inputValue}`);
+    const res = await api.post('appointment/autocomplete_patient', {
+      name: inputValue,
+    });
     console.log('REAS', res);
     return res.data.content;
   };

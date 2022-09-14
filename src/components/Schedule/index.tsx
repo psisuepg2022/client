@@ -496,9 +496,9 @@ const Schedule = ({ givenEvents, weekAgenda }: ScheduleProps): JSX.Element => {
         slotPropGetter={slotPropGetter}
         eventPropGetter={eventStyleGetter}
         messages={messages}
-        onSelectEvent={(event: Event) =>
-          event?.resource !== 'LOCK' && setCurrentEvent(event)
-        }
+        // onSelectEvent={(event: Event) =>
+        //   event?.resource !== 'LOCK' && setCurrentEvent(event)
+        // }
         onSelectSlot={(slotInfo: SlotInfo) =>
           permissions.includes('CREATE_APPOINTMENTS') &&
           setCurrentSlotInfo(slotInfo)

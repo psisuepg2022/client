@@ -11,7 +11,7 @@ import { Patient } from '@models/Patient';
 import { Person } from '@models/Person';
 
 type AutocompleteProps = {
-  callback: (inputValue: string) => Promise<Person[]>;
+  callback: (inputValue: string) => Promise<any>;
   label: string;
   noOptionsText: string;
   selectCallback: (value: Person | Patient) => void;

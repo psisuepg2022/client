@@ -126,6 +126,7 @@ const PatientsForm = (): JSX.Element => {
     const formData: FormProps = data as FormProps;
 
     const patient: FormPatient = {
+      ...(patientToEdit && patientToEdit?.id && { id: patientToEdit.id }),
       name: formData.name,
       email: formData.email || '',
       CPF: formData.CPF || '',
@@ -151,7 +152,6 @@ const PatientsForm = (): JSX.Element => {
           },
         }),
       liableRequired: needLiable,
-      ...(patientToEdit && patientToEdit?.id && { id: patientToEdit.id }),
       ...(formData.address?.zipCode && {
         address: {
           zipCode: formData.address.zipCode,

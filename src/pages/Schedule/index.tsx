@@ -16,10 +16,10 @@ import {
   parse,
   startOfWeek,
   getDay,
-  eachDayOfInterval,
   isAfter,
   isEqual,
   addDays,
+  formatISO,
 } from 'date-fns';
 import TopToolbar from '@components/TopToolbar';
 import {
@@ -120,13 +120,13 @@ const Schedule = (): JSX.Element => {
           size: 100,
         }).then(async (professionals) => {
           // then only used for garanteed professionals retrieve
-          const initialDate = new Date().toISOString().split('T')[0];
-          const endDate = addDays(new Date(), 29).toISOString().split('T')[0];
+          const startDate = format(new Date(), 'yyyy-MM-dd');
+          const endDate = format(addDays(new Date(), 29), 'yyyy-MM-dd');
           const requests: Promise<ProfessionalScheduleEvents>[] = [];
 
           professionals.content?.items.forEach((professional) => {
             requests.push(
-              getScheduleEventsAsync(professional, initialDate, endDate)
+              getScheduleEventsAsync(professional, startDate, endDate)
             );
           });
 

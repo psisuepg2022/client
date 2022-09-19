@@ -45,6 +45,7 @@ import {
   weekRangeDates,
   buildWeeklySchedule,
 } from './utils';
+import { Modal } from '@mui/material';
 
 const locales = {
   'pt-BR': ptBR,
@@ -93,7 +94,6 @@ const Schedule = (): JSX.Element => {
     getScheduleEvents,
     setCurrentProfessional,
     currentProfessional,
-    currentSchedule,
     setCurrentSchedule,
   } = useSchedule();
   const [retrievedWeeklySchedule, setRetrievedWeeklySchedule] = useState<
@@ -106,7 +106,8 @@ const Schedule = (): JSX.Element => {
   const [currentEvent, setCurrentEvent] = useState<Event | undefined>(
     undefined
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [scheduleLoading, setScheduleLoading] = useState<boolean>(false);
   const previousRange = useRef<string[]>();
 
   useEffect(() => {
@@ -249,6 +250,7 @@ const Schedule = (): JSX.Element => {
       );
 
       if (view === 'month' || ('start' in range && 'end' in range)) {
+        setScheduleLoading(true);
         getScheduleEventsAsync(
           currentProfessional as Professional,
           startDate,
@@ -289,7 +291,8 @@ const Schedule = (): JSX.Element => {
 
             console.log('RESPONSE', retrievedEvents);
           })
-          .catch((e) => console.log('ERRO REEWTRIEVE', e));
+          .catch((e) => console.log('ERRO REEWTRIEVE', e))
+          .finally(() => setScheduleLoading(false));
         return;
       }
 
@@ -336,6 +339,7 @@ const Schedule = (): JSX.Element => {
         console.log('NEW RANGE', weekRangeDatesOnly);
         previousRange.current = weekRangeDatesOnly;
 
+        setScheduleLoading(true);
         getScheduleEventsAsync(
           currentProfessional as Professional,
           weekRangeDatesOnly[0],
@@ -376,7 +380,8 @@ const Schedule = (): JSX.Element => {
 
             console.log('RESPONSE', retrievedEvents);
           })
-          .catch((e) => console.log('ERRO REEWTRIEVE', e));
+          .catch((e) => console.log('ERRO REEWTRIEVE', e))
+          .finally(() => setScheduleLoading(false));
       }
     },
     [retrievedWeeklySchedule]
@@ -404,6 +409,21 @@ const Schedule = (): JSX.Element => {
 
   return (
     <>
+      <Modal
+        open={scheduleLoading}
+        style={{
+          display: 'flex',
+          height: '100%',
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center ',
+        }}
+      >
+        <CircularProgressWithContent
+          content={<LogoContainer src={logoPSIS} />}
+          size={200}
+        />
+      </Modal>
       <CreateEventModal
         handleClose={() => setCurrentSlotInfo(undefined)}
         open={currentSlotInfo !== undefined}

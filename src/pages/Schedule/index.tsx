@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Calendar,
   Event,
@@ -11,16 +11,7 @@ import {
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';
 import ptBR from 'date-fns/locale/pt-BR';
-import {
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  isAfter,
-  isEqual,
-  addDays,
-  formatISO,
-} from 'date-fns';
+import { format, parse, startOfWeek, getDay, isAfter, isEqual } from 'date-fns';
 import TopToolbar from '@components/TopToolbar';
 import {
   CustomDateHeader,
@@ -48,6 +39,12 @@ import { useProfessionals } from '@contexts/Professionals';
 import { Professional } from '@models/Professional';
 import { ProfessionalScheduleEvents } from '@interfaces/ProfessionalScheduleEvents';
 import { showAlert } from '@utils/showAlert';
+import {
+  buildWeeklyScheduleLocks,
+  weekRange,
+  weekRangeDates,
+  buildWeeklySchedule,
+} from './utils';
 
 const locales = {
   'pt-BR': ptBR,
@@ -110,6 +107,7 @@ const Schedule = (): JSX.Element => {
     undefined
   );
   const [loading, setLoading] = useState(true);
+  const previousRange = useRef<string[]>();
 
   useEffect(() => {
     (async () => {
@@ -120,13 +118,28 @@ const Schedule = (): JSX.Element => {
           size: 100,
         }).then(async (professionals) => {
           // then only used for garanteed professionals retrieve
-          const startDate = format(new Date(), 'yyyy-MM-dd');
-          const endDate = format(addDays(new Date(), 29), 'yyyy-MM-dd');
+
+          const [startOfWeek, endOfWeek] = weekRange(new Date());
+          const startOfWeekDate = format(startOfWeek, 'yyyy-MM-dd');
+          const endOfWeekDate = format(endOfWeek, 'yyyy-MM-dd');
+          const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
+          const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
+            format(date, 'yyyy-MM-dd')
+          );
+
+          previousRange.current = weekRangeDatesOnly;
+
+          console.log(previousRange.current);
+
           const requests: Promise<ProfessionalScheduleEvents>[] = [];
 
           professionals.content?.items.forEach((professional) => {
             requests.push(
-              getScheduleEventsAsync(professional, startDate, endDate)
+              getScheduleEventsAsync(
+                professional,
+                startOfWeekDate,
+                endOfWeekDate
+              )
             );
           });
 
@@ -220,78 +233,66 @@ const Schedule = (): JSX.Element => {
     } as ProfessionalScheduleEvents;
   };
 
-  const buildWeeklySchedule = (date: Date, today: WeeklySchedule): Event[] => {
-    const newHours: Event[] = [
-      {
-        resource: 'LOCK',
-        title: 'start',
-        start: new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-          0,
-          0,
-          0
-        ),
-        end: new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-          Number(today?.startTime.split(':')[0]),
-          Number(today?.startTime.split(':')[1]),
-          0
-        ),
-      },
-      {
-        resource: 'LOCK',
-        start: new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-          Number(today?.endTime.split(':')[0]),
-          Number(today?.endTime.split(':')[1]),
-          0
-        ),
-        end: new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-          23,
-          59,
-          59
-        ),
-      },
-    ];
-
-    return newHours;
-  };
-
-  const buildWeeklyScheduleLocks = (
-    date: Date,
-    lock: WeeklyScheduleLock
-  ): Event => {
-    const startDate = new Date(date.getTime());
-    startDate.setHours(Number(lock.startTime.split(':')[0]));
-    startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-    startDate.setSeconds(0);
-    const endDate = new Date(date.getTime());
-    endDate.setHours(Number(lock.endTime.split(':')[0]));
-    endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-    endDate.setSeconds(0);
-
-    return {
-      start: startDate,
-      end: endDate,
-      resource: 'LOCK',
-    };
-  };
-
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, view?: View | undefined) => {
-      if (view === 'month' || ('start' in range && 'end' in range)) return;
+      console.log('RANGE', range);
 
       const allEvents: Event[] = [];
       const dates: Date[] = range as Date[];
+      const startDate = format(
+        'start' in range ? range.start : dates[0],
+        'yyyy-MM-dd'
+      );
+      const endDate = format(
+        'end' in range ? range.end : dates[dates.length - 1],
+        'yyyy-MM-dd'
+      );
+
+      if (view === 'month' || ('start' in range && 'end' in range)) {
+        getScheduleEventsAsync(
+          currentProfessional as Professional,
+          startDate,
+          endDate
+        )
+          .then((retrievedEvents) => {
+            setEvents((prev) => {
+              const removeOldEvents = prev.filter(
+                (item) => item.resource === 'LOCK'
+              );
+
+              const mappedNewEvents: Event[] = retrievedEvents.appointments.map(
+                (item) => {
+                  const startTime = item.startDate
+                    .split('T')[1]
+                    .substring(0, 4);
+                  const startDate = new Date(item.startDate);
+                  startDate.setHours(Number(startTime.split(':')[0]));
+                  startDate.setMinutes(Number(startTime.split(':')[1]));
+                  startDate.setSeconds(0);
+                  const endTime = item.endDate.split('T')[1].substring(0, 4);
+                  const endDate = new Date(item.endDate);
+                  endDate.setHours(Number(endTime.split(':')[0]));
+                  endDate.setMinutes(Number(endTime.split(':')[1]));
+                  endDate.setSeconds(0);
+
+                  return {
+                    title: `${item.title}`,
+                    start: startDate,
+                    end: endDate,
+                    resource: `${item.resource}`,
+                  };
+                }
+              );
+
+              return [...removeOldEvents, ...mappedNewEvents];
+            });
+
+            console.log('RESPONSE', retrievedEvents);
+          })
+          .catch((e) => console.log('ERRO REEWTRIEVE', e));
+        return;
+      }
+
       dates.forEach((date: Date) => {
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
@@ -322,9 +323,66 @@ const Schedule = (): JSX.Element => {
 
         return [...removeOldLocks, ...allEvents];
       });
+
+      if (!previousRange.current?.includes(startDate)) {
+        console.log('RANGES', startDate, endDate);
+
+        const [startOfWeek, endOfWeek] = weekRange(dates[0]);
+        const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
+        const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
+          format(date, 'yyyy-MM-dd')
+        );
+
+        console.log('NEW RANGE', weekRangeDatesOnly);
+        previousRange.current = weekRangeDatesOnly;
+
+        getScheduleEventsAsync(
+          currentProfessional as Professional,
+          weekRangeDatesOnly[0],
+          weekRangeDatesOnly[weekRangeDatesOnly.length - 1]
+        )
+          .then((retrievedEvents) => {
+            setEvents((prev) => {
+              const removeOldEvents = prev.filter(
+                (item) => item.resource === 'LOCK'
+              );
+
+              const mappedNewEvents: Event[] = retrievedEvents.appointments.map(
+                (item) => {
+                  const startTime = item.startDate
+                    .split('T')[1]
+                    .substring(0, 4);
+                  const startDate = new Date(item.startDate);
+                  startDate.setHours(Number(startTime.split(':')[0]));
+                  startDate.setMinutes(Number(startTime.split(':')[1]));
+                  startDate.setSeconds(0);
+                  const endTime = item.endDate.split('T')[1].substring(0, 4);
+                  const endDate = new Date(item.endDate);
+                  endDate.setHours(Number(endTime.split(':')[0]));
+                  endDate.setMinutes(Number(endTime.split(':')[1]));
+                  endDate.setSeconds(0);
+
+                  return {
+                    title: `${item.title}`,
+                    start: startDate,
+                    end: endDate,
+                    resource: `${item.resource}`,
+                  };
+                }
+              );
+
+              return [...removeOldEvents, ...mappedNewEvents];
+            });
+
+            console.log('RESPONSE', retrievedEvents);
+          })
+          .catch((e) => console.log('ERRO REEWTRIEVE', e));
+      }
     },
     [retrievedWeeklySchedule]
   );
+
+  console.log('EVENTS,', events);
 
   if (loading)
     return (
@@ -343,8 +401,6 @@ const Schedule = (): JSX.Element => {
         />
       </div>
     );
-
-  console.log('CUR', currentProfessional);
 
   return (
     <>

@@ -26,6 +26,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 import CardSelector from '../CardSelector';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
+import { useProfessionals } from '@contexts/Professionals';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -40,6 +41,7 @@ const TopToolbar = ({
 }: CustomToolbarProps): JSX.Element => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { professionals } = useProfessionals();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -65,8 +67,6 @@ const TopToolbar = ({
     onRangeChange([new Date()], 'day');
   };
 
-  console.log('VIEW', view, date);
-
   const handleViewChange = (value: number): void => {
     switch (value) {
       case 0:
@@ -90,6 +90,8 @@ const TopToolbar = ({
       </DayTitle>
     );
   };
+
+  if (professionals?.length === 0) return <></>;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -160,7 +162,9 @@ const TopToolbar = ({
           </Menu>
         </LatterContent>
       </Container>
-      <CardSelector /> {/* MOCK ONLY */}
+      {professionals.map((professional) => (
+        <CardSelector key={professional.id} name={professional.name} />
+      ))}
     </div>
   );
 };

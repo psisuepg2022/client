@@ -1,10 +1,14 @@
 import React from 'react';
 import { CardName, Container } from './styles';
 
-const CardSelector = (): JSX.Element => {
+type CardSelectorProps = {
+  name: string;
+};
+
+const CardSelector = ({ name }: CardSelectorProps): JSX.Element => {
   return (
     <Container>
-      <CardName>Martha Nielsen</CardName>
+      <CardName>{name}</CardName>
     </Container>
   );
 };

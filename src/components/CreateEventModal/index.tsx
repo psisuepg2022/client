@@ -97,6 +97,7 @@ const CreateEventModal = ({
       });
     } finally {
       setLoading(false);
+      closeAll();
     }
   };
 

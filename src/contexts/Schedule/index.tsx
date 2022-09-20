@@ -4,6 +4,7 @@ import { api } from '@service/index';
 import { AllScheduleEvents } from '@interfaces/AllScheduleEvents';
 import { Professional } from '@models/Professional';
 import { AppointmentSave } from '@interfaces/AppointmentSave';
+import { SavedEvent } from '@interfaces/SavedEvent';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -14,7 +15,9 @@ type ScheduleContextData = {
     professionalId?: string,
     weekly?: boolean
   ) => Promise<Response<AllScheduleEvents>>;
-  saveAppointment: (appointmentData: AppointmentSave) => Promise<void>;
+  saveAppointment: (
+    appointmentData: AppointmentSave
+  ) => Promise<Response<SavedEvent>>;
   currentProfessional: Professional | undefined;
   setCurrentProfessional: (professional: Professional) => void;
   currentSchedule: AllScheduleEvents | undefined;
@@ -64,12 +67,15 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
 
   const saveAppointment = async (
     appointmentData: AppointmentSave
-  ): Promise<void> => {
-    const { data }: { data: Response<any> } = await api.post('appointment', {
-      ...appointmentData,
-    });
+  ): Promise<Response<SavedEvent>> => {
+    const { data }: { data: Response<SavedEvent> } = await api.post(
+      'appointment',
+      {
+        ...appointmentData,
+      }
+    );
 
-    console.log('DATA', data);
+    return data;
   };
 
   return (

@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 import React, { useState } from 'react';
-import { SlotInfo } from 'react-big-calendar';
+import { Event, SlotInfo } from 'react-big-calendar';
 import { dateFormat } from '@utils/dateFormat';
 import {
   Body,
@@ -32,12 +32,14 @@ type CreateEventModalProps = {
   open: boolean;
   handleClose: () => void;
   slotInfo: SlotInfo | undefined;
+  addNewEvent: (event: Event) => void;
 };
 
 const CreateEventModal = ({
   open,
   handleClose,
   slotInfo,
+  addNewEvent,
 }: CreateEventModalProps): JSX.Element => {
   const { currentProfessional, saveAppointment } = useSchedule();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
@@ -82,13 +84,23 @@ const CreateEventModal = ({
       const startTime = format(slotInfo.start, 'HH:mm');
       const endTime = format(slotInfo.end, 'HH:mm');
 
-      await saveAppointment({
+      const savedEvent = await saveAppointment({
         date,
         startTime,
         endTime,
         professionalId: currentProfessional?.id || '',
         patientId: currentPatient?.id || '',
       });
+
+      const newAppointment: Event = {
+        title: `${currentPatient?.name}`,
+        start: slotInfo.start,
+        end: slotInfo.end,
+        resource: `${savedEvent.content?.status}`,
+      };
+
+      addNewEvent(newAppointment);
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({

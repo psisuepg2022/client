@@ -139,7 +139,8 @@ const Schedule = (): JSX.Element => {
               getScheduleEventsAsync(
                 professional,
                 startOfWeekDate,
-                endOfWeekDate
+                endOfWeekDate,
+                true
               )
             );
           });
@@ -220,12 +221,13 @@ const Schedule = (): JSX.Element => {
   const getScheduleEventsAsync = async (
     professional: Professional,
     startDate: string,
-    endDate: string
+    endDate: string,
+    weekly?: boolean
   ): Promise<ProfessionalScheduleEvents> => {
     const { content }: Response<AllScheduleEvents> = await getScheduleEvents(
       { startDate, endDate },
       professional.id,
-      true
+      weekly
     );
 
     return {
@@ -428,6 +430,9 @@ const Schedule = (): JSX.Element => {
         handleClose={() => setCurrentSlotInfo(undefined)}
         open={currentSlotInfo !== undefined}
         slotInfo={currentSlotInfo}
+        addNewEvent={(newEvent: Event) =>
+          setEvents((prev) => [...prev, newEvent])
+        }
       />
       {currentEvent && currentEvent.resource === 'Agendado' ? (
         <ScheduledEventModal

@@ -103,7 +103,7 @@ const CreateEventModal = ({
         title: `${currentPatient?.name}`,
         start: slotInfo.start,
         end: slotInfo.end,
-        resource: `${savedEvent.content?.status}`,
+        resource: `${savedEvent.content?.status}/${savedEvent.content?.id}/${savedEvent.content?.updatedAt}`,
       };
 
       addNewEvent(newAppointment);

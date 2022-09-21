@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AdditionalInfos,
   Body,
@@ -17,13 +17,16 @@ import {
 import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import { format } from 'date-fns';
 import { Event } from 'react-big-calendar';
+import { useSchedule } from '@contexts/Schedule';
+import { idFromResource, statusFromResource } from '@utils/schedule';
+import { showAlert } from '@utils/showAlert';
 
 type ScheduledEventModalProps = {
   open: boolean;
-  handleClose: () => void;
+  handleClose: (reason: 'backdropClick' | 'escapeKeyDown' | '') => void;
   eventInfo: Event | undefined;
 };
 
@@ -32,32 +35,90 @@ const ScheduledEventModal = ({
   handleClose,
   eventInfo,
 }: ScheduledEventModalProps): JSX.Element => {
+  const { updateAppointmentStatus, setEvents } = useSchedule();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  console.log('EVENT', eventInfo);
+
   if (!eventInfo) return <></>;
 
   if (eventInfo && !eventInfo.title) return <></>;
 
-  const closeAll = (): void => {
-    handleClose();
+  const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
+    handleClose(reason);
+  };
+
+  const updateStatus = async () => {
+    try {
+      setLoading(true);
+      const appointmentId = idFromResource(eventInfo.resource);
+      const { content, message } = await updateAppointmentStatus(
+        appointmentId,
+        '3'
+      );
+
+      if (!content) {
+        showAlert({
+          icon: 'error',
+          text: 'Ocorreu um problema ao atualizar a consulta',
+        });
+      }
+
+      setEvents((prev) => {
+        const newEvents: Event[] = prev.map((event) =>
+          idFromResource(event.resource) === content?.id
+            ? {
+                ...event,
+                resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+              }
+            : event
+        );
+
+        return newEvents;
+      });
+
+      showAlert({
+        title: 'Sucesso!',
+        icon: 'success',
+        text: message,
+      });
+
+      console.log('UPDATED', content);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao atualizar a consulta',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <StyledModal
       open={open}
-      onClose={closeAll}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onClose={(event: any, reason: 'backdropClick' | 'escapeKeyDown') =>
+        closeAll(reason)
+      }
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <StyledBox>
         <Header>
-          <IconButton>
+          <IconButton disabled={loading}>
             <MdOutlineStickyNote2
               style={{ fontSize: 35, color: colors.PRIMARY }}
             />
           </IconButton>
           <StatusText>
-            Situação: <span>{eventInfo.resource}</span>
+            Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>
-          <IconButton onClick={closeAll}>
+          <IconButton disabled={loading} onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
@@ -78,8 +139,14 @@ const ScheduledEventModal = ({
           </AdditionalInfos>
 
           <ButtonsContainer>
-            <StyledConfirmButton>CONFIRMAR</StyledConfirmButton>
-            <StyledCancelButton>CANCELAR</StyledCancelButton>
+            <StyledConfirmButton disabled={loading} onClick={updateStatus}>
+              {loading ? (
+                <CircularProgress style={{ color: '#FFF' }} size={20} />
+              ) : (
+                'CONFIRMAR'
+              )}
+            </StyledConfirmButton>
+            <StyledCancelButton disabled={loading}>CANCELAR</StyledCancelButton>
           </ButtonsContainer>
         </Body>
       </StyledBox>

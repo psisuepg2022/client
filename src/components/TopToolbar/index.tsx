@@ -92,6 +92,7 @@ const TopToolbar = ({
   const onChangeProfessional = async (
     professional: Professional
   ): Promise<void> => {
+    if (currentProfessional?.id === professional.id) return;
     setScheduleLoading(true);
     try {
       const currentDate = new Date();

@@ -18,11 +18,15 @@ import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
-import { format } from 'date-fns';
 import { Event } from 'react-big-calendar';
 import { useSchedule } from '@contexts/Schedule';
-import { idFromResource, statusFromResource } from '@utils/schedule';
+import {
+  idFromResource,
+  statusFromResource,
+  updatedAtFromResource,
+} from '@utils/schedule';
 import { showAlert } from '@utils/showAlert';
+import { dateFormat } from '@utils/dateFormat';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -38,11 +42,9 @@ const ScheduledEventModal = ({
   const { updateAppointmentStatus, setEvents } = useSchedule();
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log('EVENT', eventInfo);
-
   if (!eventInfo) return <></>;
 
-  if (eventInfo && !eventInfo.title) return <></>;
+  if (eventInfo && !eventInfo.title && !eventInfo.resource) return <></>;
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
     handleClose(reason);
@@ -98,6 +100,22 @@ const ScheduledEventModal = ({
     }
   };
 
+  const updatedAtDisplay = (): string => {
+    const updateTime = updatedAtFromResource(eventInfo.resource)
+      .split('T')[1]
+      .substring(0, 7);
+    const updateDate = new Date(updatedAtFromResource(eventInfo.resource));
+    updateDate.setHours(Number(updateTime.split(':')[0]));
+    updateDate.setMinutes(Number(updateTime.split(':')[1]));
+    updateDate.setSeconds(0);
+
+    return dateFormat({
+      date: updateDate,
+      // eslint-disable-next-line quotes
+      stringFormat: "d 'de' MMMM 'de' yyyy 'às' HH:mm",
+    });
+  };
+
   return (
     <StyledModal
       open={open}
@@ -125,8 +143,12 @@ const ScheduledEventModal = ({
         <Body>
           <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
           <EventPrimaryText>
-            {format(eventInfo.start as Date, 'hh:mm')} -{' '}
-            {format(eventInfo.end as Date, 'hh:mm')}
+            {dateFormat({
+              date: eventInfo.start as Date,
+              stringFormat: 'HH:mm',
+            })}{' '}
+            -{' '}
+            {dateFormat({ date: eventInfo.end as Date, stringFormat: 'HH:mm' })}
           </EventPrimaryText>
 
           <AdditionalInfos>
@@ -134,7 +156,7 @@ const ScheduledEventModal = ({
 
             <ScheduledAtContainer>
               <ScheduleAtText>Agendada em:</ScheduleAtText>
-              <ScheduleAtDate>4 de junho de 2022 às 09:42</ScheduleAtDate>
+              <ScheduleAtDate>{updatedAtDisplay()}</ScheduleAtDate>
             </ScheduledAtContainer>
           </AdditionalInfos>
 

@@ -3,7 +3,7 @@ import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { eachDayOfInterval } from 'date-fns';
 import { Event } from 'react-big-calendar';
 
-export function weekRange(day: Date) {
+export const weekRange = (day: Date): Date[] => {
   const remainingDays = 7;
 
   const currentDate = day;
@@ -16,14 +16,14 @@ export function weekRange(day: Date) {
   lastWeekDate.setDate(firstWeekDate.getDate() + (remainingDays - 1));
 
   return [firstWeekDate, lastWeekDate];
-}
+};
 
-export function weekRangeDates(start: Date, end: Date) {
+export const weekRangeDates = (start: Date, end: Date): Date[] => {
   return eachDayOfInterval({
     start,
     end,
   });
-}
+};
 
 export const buildWeeklySchedule = (
   date: Date,

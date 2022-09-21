@@ -20,14 +20,24 @@ import {
   TodayButton,
 } from './styles';
 import { AiOutlineUser, AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
-import { ToolbarProps, View } from 'react-big-calendar';
-import { format } from 'date-fns';
+import { ToolbarProps, View, Event } from 'react-big-calendar';
+import { format, getDay } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import CardSelector from '../CardSelector';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 import { useProfessionals } from '@contexts/Professionals';
 import { useSchedule } from '@contexts/Schedule';
+import { Professional } from '@models/Professional';
+import { showAlert } from '@utils/showAlert';
+import { WeeklySchedule } from '@models/WeeklySchedule';
+import { ScheduleEvent } from '@interfaces/ScheduleEvent';
+import {
+  buildWeeklySchedule,
+  buildWeeklyScheduleLocks,
+  weekRange,
+} from '@utils/schedule';
+import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -46,7 +56,14 @@ const TopToolbar = ({
     user: { permissions },
   } = useAuth();
   const { professionals } = useProfessionals();
-  const { currentProfessional, setCurrentProfessional } = useSchedule();
+  const {
+    currentProfessional,
+    setCurrentProfessional,
+    setScheduleLoading,
+    getScheduleEvents,
+    setRetrievedWeeklySchedule,
+    setEvents,
+  } = useSchedule();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -70,6 +87,82 @@ const TopToolbar = ({
     onNavigate('TODAY');
     onView('day');
     onRangeChange([new Date()], 'day');
+  };
+
+  const onChangeProfessional = async (
+    professional: Professional
+  ): Promise<void> => {
+    setScheduleLoading(true);
+    try {
+      const currentDate = new Date();
+      const [startOfWeek, endOfWeek] = weekRange(currentDate);
+      const startOfWeekDate = format(startOfWeek, 'yyyy-MM-dd');
+      const endOfWeekDate = format(endOfWeek, 'yyyy-MM-dd');
+      setCurrentProfessional(professional);
+      goToCurrent();
+      const professionalSchedule = await getScheduleEvents(
+        {
+          startDate: startOfWeekDate,
+          endDate: endOfWeekDate,
+        },
+        professional.id,
+        true
+      );
+      const dayIndex = getDay(currentDate) + 1;
+      const today = professionalSchedule?.content?.weeklySchedule.find(
+        (item) => item.dayOfTheWeek === dayIndex
+      ) as WeeklySchedule;
+
+      const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+        currentDate,
+        today
+      ) as ScheduleEvent[];
+
+      const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
+        (lock: WeeklyScheduleLock) => {
+          return buildWeeklyScheduleLocks(currentDate, lock);
+        }
+      ) as ScheduleEvent[];
+
+      const mappedEvents: Event[] =
+        professionalSchedule?.content?.appointments.map((event) => {
+          const startTime = event.startDate.split('T')[1].substring(0, 4);
+          const startDate = new Date(event.startDate);
+          startDate.setHours(Number(startTime.split(':')[0]));
+          startDate.setMinutes(Number(startTime.split(':')[1]));
+          startDate.setSeconds(0);
+          const endTime = event.endDate.split('T')[1].substring(0, 4);
+          const endDate = new Date(event.endDate);
+          endDate.setHours(Number(endTime.split(':')[0]));
+          endDate.setMinutes(Number(endTime.split(':')[1]));
+          endDate.setSeconds(0);
+          return {
+            start: startDate,
+            end: endDate,
+            title: event.title,
+            resource: event.resource,
+          };
+        }) as Event[];
+
+      setRetrievedWeeklySchedule(
+        professionalSchedule?.content?.weeklySchedule || []
+      );
+      setEvents([
+        ...weeklyScheduleEvents,
+        ...weeklyScheduleLocksEvents,
+        ...mappedEvents,
+      ]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao recuperar as consultas',
+      });
+    } finally {
+      setScheduleLoading(false);
+    }
   };
 
   const handleViewChange = (value: number): void => {
@@ -179,7 +272,7 @@ const TopToolbar = ({
               key={professional.id}
               name={professional.name}
               selected={professional.id === currentProfessional?.id}
-              onSelect={() => setCurrentProfessional(professional)}
+              onSelect={() => onChangeProfessional(professional)}
             />
           ))}
         </div>

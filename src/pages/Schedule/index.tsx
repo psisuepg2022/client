@@ -44,7 +44,7 @@ import {
   weekRange,
   weekRangeDates,
   buildWeeklySchedule,
-} from './utils';
+} from '@utils/schedule';
 import { Modal } from '@mui/material';
 
 const locales = {
@@ -94,12 +94,13 @@ const Schedule = (): JSX.Element => {
     getScheduleEvents,
     setCurrentProfessional,
     currentProfessional,
-    setCurrentSchedule,
+    scheduleLoading,
+    setScheduleLoading,
+    events,
+    setEvents,
+    retrievedWeeklySchedule,
+    setRetrievedWeeklySchedule,
   } = useSchedule();
-  const [retrievedWeeklySchedule, setRetrievedWeeklySchedule] = useState<
-    WeeklySchedule[]
-  >([]);
-  const [events, setEvents] = useState<Event[]>([]);
   const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(
     undefined
   );
@@ -107,7 +108,6 @@ const Schedule = (): JSX.Element => {
     undefined
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [scheduleLoading, setScheduleLoading] = useState<boolean>(false);
   const previousRange = useRef<string[]>();
 
   useEffect(() => {
@@ -132,32 +132,34 @@ const Schedule = (): JSX.Element => {
 
           console.log(previousRange.current);
 
-          const requests: Promise<ProfessionalScheduleEvents>[] = [];
+          // const requests: Promise<ProfessionalScheduleEvents>[] = [];
 
-          professionals.content?.items.forEach((professional) => {
-            requests.push(
-              getScheduleEventsAsync(
-                professional,
-                startOfWeekDate,
-                endOfWeekDate,
-                true
-              )
-            );
-          });
+          // professionals.content?.items.forEach((professional) => {
+          //   requests.push(
+          //     getScheduleEventsAsync(
+          //       professional,
+          //       startOfWeekDate,
+          //       endOfWeekDate,
+          //       true
+          //     )
+          //   );
+          // });
 
-          const requestsResult: ProfessionalScheduleEvents[] =
-            await Promise.all(requests).then((response) => response);
+          // const requestsResult: ProfessionalScheduleEvents[] =
+          //   await Promise.all(requests).then((response) => response);
+
+          const firstSchedule = await getScheduleEventsAsync(
+            professionals.content?.items[0] as Professional,
+            startOfWeekDate,
+            endOfWeekDate,
+            true
+          );
 
           setCurrentProfessional(
             professionals.content?.items[0] as Professional
           );
 
-          const firstSchedule = requestsResult.find(
-            (item) => item.professionalId === professionals.content?.items[0].id
-          ) as AllScheduleEvents;
-
-          setCurrentSchedule(firstSchedule);
-          console.log('REQUYEST', requestsResult);
+          //setCurrentSchedule(firstSchedule);
 
           const currentDate = new Date();
           const dayIndex = getDay(currentDate) + 1;
@@ -176,7 +178,7 @@ const Schedule = (): JSX.Element => {
             }
           ) as ScheduleEvent[];
 
-          const formEvents: Event[] = firstSchedule.appointments.map(
+          const mappedEvents: Event[] = firstSchedule.appointments.map(
             (event) => {
               const startTime = event.startDate.split('T')[1].substring(0, 4);
               const startDate = new Date(event.startDate);
@@ -198,12 +200,15 @@ const Schedule = (): JSX.Element => {
           ) as Event[];
 
           setRetrievedWeeklySchedule(firstSchedule.weeklySchedule || []);
-          setEvents((prev) => [
-            ...prev,
-            ...weeklyScheduleEvents,
-            ...weeklyScheduleLocksEvents,
-            ...formEvents,
-          ]);
+          setEvents(
+            (prev) =>
+              [
+                ...prev,
+                ...weeklyScheduleEvents,
+                ...weeklyScheduleLocksEvents,
+                ...mappedEvents,
+              ] as Event[]
+          );
         });
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -293,7 +298,14 @@ const Schedule = (): JSX.Element => {
 
             console.log('RESPONSE', retrievedEvents);
           })
-          .catch((e) => console.log('ERRO REEWTRIEVE', e))
+          .catch((e) => {
+            showAlert({
+              icon: 'error',
+              text:
+                e?.response?.data?.message ||
+                'Ocorreu um erro ao recuperar as consultas',
+            });
+          })
           .finally(() => setScheduleLoading(false));
         return;
       }
@@ -421,10 +433,12 @@ const Schedule = (): JSX.Element => {
           alignItems: 'center ',
         }}
       >
-        <CircularProgressWithContent
-          content={<LogoContainer src={logoPSIS} />}
-          size={200}
-        />
+        <>
+          <CircularProgressWithContent
+            content={<LogoContainer src={logoPSIS} />}
+            size={200}
+          />
+        </>
       </Modal>
       <CreateEventModal
         handleClose={() => setCurrentSlotInfo(undefined)}

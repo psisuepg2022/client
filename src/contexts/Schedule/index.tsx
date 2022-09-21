@@ -5,6 +5,8 @@ import { AllScheduleEvents } from '@interfaces/AllScheduleEvents';
 import { Professional } from '@models/Professional';
 import { AppointmentSave } from '@interfaces/AppointmentSave';
 import { SavedEvent } from '@interfaces/SavedEvent';
+import { Event } from 'react-big-calendar';
+import { WeeklySchedule } from '@models/WeeklySchedule';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -22,6 +24,12 @@ type ScheduleContextData = {
   setCurrentProfessional: (professional: Professional) => void;
   currentSchedule: AllScheduleEvents | undefined;
   setCurrentSchedule: (schedule: AllScheduleEvents) => void;
+  scheduleLoading: boolean;
+  setScheduleLoading: (state: boolean) => void;
+  events: Event[];
+  setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
+  retrievedWeeklySchedule: WeeklySchedule[];
+  setRetrievedWeeklySchedule: (weeklySchedule: WeeklySchedule[]) => void;
 };
 
 type ScheduleProviderProps = {
@@ -41,6 +49,11 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   const [currentSchedule, setCurrentSchedule] = useState<
     AllScheduleEvents | undefined
   >();
+  const [scheduleLoading, setScheduleLoading] = useState<boolean>(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [retrievedWeeklySchedule, setRetrievedWeeklySchedule] = useState<
+    WeeklySchedule[]
+  >([]);
 
   const getScheduleEvents = async (
     filter: {
@@ -87,6 +100,12 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
         setCurrentProfessional,
         currentSchedule,
         setCurrentSchedule,
+        scheduleLoading,
+        setScheduleLoading,
+        events,
+        setEvents,
+        retrievedWeeklySchedule,
+        setRetrievedWeeklySchedule,
       }}
     >
       {children}

@@ -484,9 +484,9 @@ const Schedule = (): JSX.Element => {
         culture="pt-BR"
         step={currentProfessional?.baseDuration}
         defaultView="day"
-        // formats={{
-        //   eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
-        // }}
+        formats={{
+          eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
+        }}
         timeslots={1}
         onRangeChange={(
           range:

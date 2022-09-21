@@ -94,6 +94,9 @@ const TopToolbar = ({
   ): Promise<void> => {
     if (currentProfessional?.id === professional.id) return;
     setScheduleLoading(true);
+    goToCurrent();
+    setEvents([]);
+    setRetrievedWeeklySchedule([]);
     try {
       const currentDate = new Date();
       const [startOfWeek, endOfWeek] = weekRange(currentDate);
@@ -106,7 +109,6 @@ const TopToolbar = ({
         stringFormat: 'yyyy-MM-dd',
       });
       setCurrentProfessional(professional);
-      goToCurrent();
       const professionalSchedule = await getScheduleEvents(
         {
           startDate: startOfWeekDate,
@@ -158,8 +160,6 @@ const TopToolbar = ({
             title: lock.id,
           };
         }) as Event[];
-
-      console.log('MAPPED', mappedScheduleLocks);
 
       const mappedEvents: Event[] =
         professionalSchedule?.content?.appointments.map((event) => {

@@ -42,6 +42,7 @@ import {
   weekRangeDates,
   buildWeeklySchedule,
   isUUID,
+  lockFromResource,
 } from '@utils/schedule';
 import { Modal } from '@mui/material';
 
@@ -171,7 +172,7 @@ const Schedule = (): JSX.Element => {
             return {
               start: startDate,
               end: endDate,
-              resource: 'LOCK',
+              resource: `${lock.resource}/${lock.id}`,
             };
           }) as Event[];
 
@@ -192,7 +193,9 @@ const Schedule = (): JSX.Element => {
               start: startDate,
               end: endDate,
               title: event.title,
-              resource: event.resource,
+              resource: event?.updatedAt
+                ? `${event.resource}/${event.id}`
+                : `${event.resource}/${event.id}/${event.updatedAt}`,
             };
           }
         ) as Event[];
@@ -248,29 +251,31 @@ const Schedule = (): JSX.Element => {
           .then(({ content }) => {
             setEvents((prev) => {
               const removeOldEvents = prev.filter(
-                (item) => item.resource === 'LOCK'
+                (item) => lockFromResource(item.resource) === 'LOCK'
               );
 
               const mappedNewEvents: Event[] = content?.appointments.map(
-                (item) => {
-                  const startTime = item.startDate
+                (event) => {
+                  const startTime = event.startDate
                     .split('T')[1]
                     .substring(0, 4);
-                  const startDate = new Date(item.startDate);
+                  const startDate = new Date(event.startDate);
                   startDate.setHours(Number(startTime.split(':')[0]));
                   startDate.setMinutes(Number(startTime.split(':')[1]));
                   startDate.setSeconds(0);
-                  const endTime = item.endDate.split('T')[1].substring(0, 4);
-                  const endDate = new Date(item.endDate);
+                  const endTime = event.endDate.split('T')[1].substring(0, 4);
+                  const endDate = new Date(event.endDate);
                   endDate.setHours(Number(endTime.split(':')[0]));
                   endDate.setMinutes(Number(endTime.split(':')[1]));
                   endDate.setSeconds(0);
 
                   return {
-                    title: `${item.title}`,
+                    title: `${event.title}`,
                     start: startDate,
                     end: endDate,
-                    resource: `${item.resource}`,
+                    resource: event?.updatedAt
+                      ? `${event.resource}/${event.id}`
+                      : `${event.resource}/${event.id}/${event.updatedAt}`,
                   };
                 }
               ) as Event[];
@@ -317,7 +322,9 @@ const Schedule = (): JSX.Element => {
 
       setEvents((prev) => {
         const removeOldLocks = prev.filter(
-          (item) => item.resource !== 'LOCK' || isUUID(`${item.title}`)
+          (item) =>
+            lockFromResource(item.resource) !== 'LOCK' ||
+            isUUID(`${item.title}`)
         );
 
         return [...removeOldLocks, ...allEvents];
@@ -348,29 +355,33 @@ const Schedule = (): JSX.Element => {
           .then(({ content }) => {
             setEvents((prev) => {
               const removeOldEvents = prev.filter(
-                (item) => item.resource === 'LOCK' || isUUID(`${item.title}`)
+                (item) =>
+                  lockFromResource(item.resource) === 'LOCK' ||
+                  isUUID(`${item.title}`)
               );
 
               const mappedNewEvents: Event[] = content?.appointments.map(
-                (item) => {
-                  const startTime = item.startDate
+                (event) => {
+                  const startTime = event.startDate
                     .split('T')[1]
                     .substring(0, 4);
-                  const startDate = new Date(item.startDate);
+                  const startDate = new Date(event.startDate);
                   startDate.setHours(Number(startTime.split(':')[0]));
                   startDate.setMinutes(Number(startTime.split(':')[1]));
                   startDate.setSeconds(0);
-                  const endTime = item.endDate.split('T')[1].substring(0, 4);
-                  const endDate = new Date(item.endDate);
+                  const endTime = event.endDate.split('T')[1].substring(0, 4);
+                  const endDate = new Date(event.endDate);
                   endDate.setHours(Number(endTime.split(':')[0]));
                   endDate.setMinutes(Number(endTime.split(':')[1]));
                   endDate.setSeconds(0);
 
                   return {
-                    title: `${item.title}`,
+                    title: `${event.title}`,
                     start: startDate,
                     end: endDate,
-                    resource: `${item.resource}`,
+                    resource: event?.updatedAt
+                      ? `${event.resource}/${event.id}`
+                      : `${event.resource}/${event.id}/${event.updatedAt}`,
                   };
                 }
               ) as Event[];

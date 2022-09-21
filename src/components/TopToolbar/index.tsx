@@ -125,8 +125,6 @@ const TopToolbar = ({
         }
       ) as ScheduleEvent[];
 
-      console.log('FIRST', professionalSchedule.content);
-
       const mappedScheduleLocks: Event[] =
         professionalSchedule?.content?.scheduleLocks.map((lock) => {
           const [day, month, year] = lock.date.split('/');
@@ -150,7 +148,7 @@ const TopToolbar = ({
           return {
             start: startDate,
             end: endDate,
-            resource: `${lock.resource}`,
+            resource: `${lock.resource}/${lock.id}`,
             title: lock.id,
           };
         }) as Event[];
@@ -173,7 +171,9 @@ const TopToolbar = ({
             start: startDate,
             end: endDate,
             title: event.title,
-            resource: event.resource,
+            resource: event?.updatedAt
+              ? `${event.resource}/${event.id}`
+              : `${event.resource}/${event.id}/${event.updatedAt}`,
           };
         }) as Event[];
 

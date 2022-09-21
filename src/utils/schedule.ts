@@ -1,3 +1,4 @@
+import { EventStatus } from '@interfaces/EventStatus';
 import { WeeklySchedule } from '@models/WeeklySchedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { eachDayOfInterval } from 'date-fns';
@@ -31,7 +32,7 @@ export const buildWeeklySchedule = (
 ): Event[] => {
   const newHours: Event[] = [
     {
-      resource: 'LOCK',
+      resource: `LOCK/${today.id}`,
       start: new Date(
         date.getFullYear(),
         date.getMonth(),
@@ -50,7 +51,7 @@ export const buildWeeklySchedule = (
       ),
     },
     {
-      resource: 'LOCK',
+      resource: `LOCK/${today.id}`,
       start: new Date(
         date.getFullYear(),
         date.getMonth(),
@@ -89,7 +90,7 @@ export const buildWeeklyScheduleLocks = (
   return {
     start: startDate,
     end: endDate,
-    resource: 'LOCK',
+    resource: `LOCK/${lock.id}`,
   };
 };
 
@@ -99,3 +100,17 @@ export const isUUID = (uuid: string): boolean =>
   )
     ? true
     : false;
+
+export const statusFromResource = (
+  resource: string
+): keyof typeof EventStatus =>
+  resource.split('/')[0] as keyof typeof EventStatus;
+
+export const lockFromResource = (resource: string): string =>
+  resource.split('/')[0];
+
+export const idFromResource = (resource: string): string =>
+  resource.split('/')[1];
+
+export const updatedAtFromResource = (resource: string): string =>
+  resource.split('/')[2];

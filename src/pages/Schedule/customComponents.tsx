@@ -15,11 +15,12 @@ import {
 } from './styles';
 import { EventStatus } from '@interfaces/EventStatus';
 import { eventColor } from '@utils/eventColor';
+import { lockFromResource, statusFromResource } from '@utils/schedule';
 
 export const eventStyleGetter = (
   event: Event
 ): { style?: Record<string, unknown>; className?: string } => {
-  if (event.resource && event.resource === 'LOCK') {
+  if (event.resource && lockFromResource(event.resource) === 'LOCK') {
     const style = {
       backgroundColor: colors.LOCK,
       borderRadius: '0px',
@@ -35,7 +36,7 @@ export const eventStyleGetter = (
     };
   }
 
-  const status: keyof typeof EventStatus = event.resource;
+  const status: keyof typeof EventStatus = statusFromResource(event.resource);
 
   const style = {
     backgroundColor: eventColor(status),
@@ -72,7 +73,7 @@ export const CustomDateHeader = ({
       cur.start?.getDate() === date.getDate() &&
       cur.start.getMonth() === date.getMonth() &&
       cur.start.getFullYear() === date.getFullYear() &&
-      cur.resource !== 'LOCK'
+      lockFromResource(cur.resource) !== 'LOCK'
         ? prev + 1
         : prev,
     0

@@ -27,6 +27,7 @@ import CardSelector from '../CardSelector';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 import { useProfessionals } from '@contexts/Professionals';
+import { useSchedule } from '@contexts/Schedule';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -40,8 +41,12 @@ const TopToolbar = ({
   date,
 }: CustomToolbarProps): JSX.Element => {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const {
+    signOut,
+    user: { permissions },
+  } = useAuth();
   const { professionals } = useProfessionals();
+  const { currentProfessional, setCurrentProfessional } = useSchedule();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -91,7 +96,12 @@ const TopToolbar = ({
     );
   };
 
-  if (professionals?.length === 0) return <></>;
+  if (
+    permissions.includes('CREATE_APPOINTMENT') &&
+    professionals?.length === 0 &&
+    !currentProfessional
+  )
+    return <></>;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -162,9 +172,18 @@ const TopToolbar = ({
           </Menu>
         </LatterContent>
       </Container>
-      {professionals.map((professional) => (
-        <CardSelector key={professional.id} name={professional.name} />
-      ))}
+      {permissions.includes('CREATE_APPOINTMENT') && (
+        <div style={{ display: 'flex' }}>
+          {professionals.map((professional) => (
+            <CardSelector
+              key={professional.id}
+              name={professional.name}
+              selected={professional.id === currentProfessional?.id}
+              onSelect={() => setCurrentProfessional(professional)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

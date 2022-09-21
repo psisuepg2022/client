@@ -9,6 +9,7 @@ import { Event } from 'react-big-calendar';
 import { WeeklySchedule } from '@models/WeeklySchedule';
 import { LockSave } from '@interfaces/LockSave';
 import { SavedLock } from '@interfaces/SavedLock';
+import { UpdatedEvent } from '@interfaces/UpdatedEvent';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -22,6 +23,10 @@ type ScheduleContextData = {
   saveAppointment: (
     appointmentData: AppointmentSave
   ) => Promise<Response<SavedEvent>>;
+  updateAppointmentStatus: (
+    appointmentId: string,
+    status: string
+  ) => Promise<Response<UpdatedEvent>>;
   saveScheduleLock: (lockData: LockSave) => Promise<Response<SavedLock>>;
   currentProfessional: Professional | undefined;
   setCurrentProfessional: (professional: Professional) => void;
@@ -110,12 +115,27 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     return data;
   };
 
+  const updateAppointmentStatus = async (
+    appointmentId: string,
+    status: string
+  ): Promise<Response<UpdatedEvent>> => {
+    const { data }: { data: Response<UpdatedEvent> } = await api.patch(
+      `appointment/status/${appointmentId}`,
+      {
+        status,
+      }
+    );
+
+    return data;
+  };
+
   return (
     <ScheduleContext.Provider
       value={{
         getScheduleEvents,
         saveAppointment,
         saveScheduleLock,
+        updateAppointmentStatus,
         currentProfessional,
         setCurrentProfessional,
         currentSchedule,

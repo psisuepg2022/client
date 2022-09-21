@@ -63,7 +63,6 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     professionalId?: string,
     weekly?: boolean
   ): Promise<Response<AllScheduleEvents>> => {
-    console.log('CHAKEI');
     const { data }: { data: Response<AllScheduleEvents> } = await api.post(
       professionalId
         ? `appointment/calendar/${professionalId}${

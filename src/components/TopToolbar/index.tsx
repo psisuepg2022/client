@@ -191,7 +191,7 @@ const TopToolbar = ({
   };
 
   if (
-    permissions.includes('CREATE_APPOINTMENT') &&
+    !permissions.includes('USER_TYPE_PROFESSIONAL') &&
     professionals?.length === 0 &&
     !currentProfessional
   )
@@ -266,7 +266,7 @@ const TopToolbar = ({
           </Menu>
         </LatterContent>
       </Container>
-      {permissions.includes('CREATE_APPOINTMENT') && (
+      {!permissions.includes('USER_TYPE_PROFESSIONAL') && (
         <div style={{ display: 'flex' }}>
           {professionals.map((professional) => (
             <CardSelector

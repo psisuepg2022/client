@@ -33,11 +33,8 @@ import { LogoContainer } from '@pages/Schedule/styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { useSchedule } from '@contexts/Schedule';
-import { Response } from '@interfaces/Response';
-import { AllScheduleEvents } from '@interfaces/AllScheduleEvents';
 import { useProfessionals } from '@contexts/Professionals';
 import { Professional } from '@models/Professional';
-import { ProfessionalScheduleEvents } from '@interfaces/ProfessionalScheduleEvents';
 import { showAlert } from '@utils/showAlert';
 import {
   buildWeeklyScheduleLocks,
@@ -86,9 +83,7 @@ type Ranges = {
 };
 
 const Schedule = (): JSX.Element => {
-  const {
-    user: { permissions },
-  } = useAuth();
+  const { user } = useAuth();
   const { list } = useProfessionals();
   const {
     getScheduleEvents,
@@ -113,103 +108,81 @@ const Schedule = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
-        await list({
-          // List Professionals
-          page: 0,
-          size: 100,
-        }).then(async (professionals) => {
-          // then only used for garanteed professionals retrieve
+        const professionals = user.permissions.includes(
+          'USER_TYPE_PROFESSIONAL'
+        )
+          ? { content: { items: [user] } }
+          : await list({
+              // List Professionals
+              page: 0,
+              size: 100,
+            });
+        const [startOfWeek, endOfWeek] = weekRange(new Date());
+        const startOfWeekDate = format(startOfWeek, 'yyyy-MM-dd');
+        const endOfWeekDate = format(endOfWeek, 'yyyy-MM-dd');
+        const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
+        const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
+          format(date, 'yyyy-MM-dd')
+        );
 
-          const [startOfWeek, endOfWeek] = weekRange(new Date());
-          const startOfWeekDate = format(startOfWeek, 'yyyy-MM-dd');
-          const endOfWeekDate = format(endOfWeek, 'yyyy-MM-dd');
-          const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
-          const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
-            format(date, 'yyyy-MM-dd')
-          );
+        previousRange.current = weekRangeDatesOnly;
 
-          previousRange.current = weekRangeDatesOnly;
+        const firstSchedule = await getScheduleEvents(
+          { startDate: startOfWeekDate, endDate: endOfWeekDate },
+          user.permissions.includes('USER_TYPE_PROFESSIONAL')
+            ? undefined
+            : professionals.content?.items[0].id,
+          true
+        );
 
-          console.log(previousRange.current);
+        setCurrentProfessional(professionals.content?.items[0] as Professional);
 
-          // const requests: Promise<ProfessionalScheduleEvents>[] = [];
+        const currentDate = new Date();
+        const dayIndex = getDay(currentDate) + 1;
+        const today = firstSchedule?.content?.weeklySchedule.find(
+          (item) => item.dayOfTheWeek === dayIndex
+        ) as WeeklySchedule;
 
-          // professionals.content?.items.forEach((professional) => {
-          //   requests.push(
-          //     getScheduleEventsAsync(
-          //       professional,
-          //       startOfWeekDate,
-          //       endOfWeekDate,
-          //       true
-          //     )
-          //   );
-          // });
+        const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+          currentDate,
+          today
+        ) as ScheduleEvent[];
 
-          // const requestsResult: ProfessionalScheduleEvents[] =
-          //   await Promise.all(requests).then((response) => response);
+        const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
+          (lock: WeeklyScheduleLock) => {
+            return buildWeeklyScheduleLocks(currentDate, lock);
+          }
+        ) as ScheduleEvent[];
 
-          const firstSchedule = await getScheduleEventsAsync(
-            professionals.content?.items[0] as Professional,
-            startOfWeekDate,
-            endOfWeekDate,
-            true
-          );
+        const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
+          (event) => {
+            const startTime = event.startDate.split('T')[1].substring(0, 4);
+            const startDate = new Date(event.startDate);
+            startDate.setHours(Number(startTime.split(':')[0]));
+            startDate.setMinutes(Number(startTime.split(':')[1]));
+            startDate.setSeconds(0);
+            const endTime = event.endDate.split('T')[1].substring(0, 4);
+            const endDate = new Date(event.endDate);
+            endDate.setHours(Number(endTime.split(':')[0]));
+            endDate.setMinutes(Number(endTime.split(':')[1]));
+            endDate.setSeconds(0);
+            return {
+              start: startDate,
+              end: endDate,
+              title: event.title,
+              resource: event.resource,
+            };
+          }
+        ) as Event[];
 
-          setCurrentProfessional(
-            professionals.content?.items[0] as Professional
-          );
-
-          //setCurrentSchedule(firstSchedule);
-
-          const currentDate = new Date();
-          const dayIndex = getDay(currentDate) + 1;
-          const today = firstSchedule.weeklySchedule.find(
-            (item) => item.dayOfTheWeek === dayIndex
-          ) as WeeklySchedule;
-
-          const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-            currentDate,
-            today
-          ) as ScheduleEvent[];
-
-          const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
-            (lock: WeeklyScheduleLock) => {
-              return buildWeeklyScheduleLocks(currentDate, lock);
-            }
-          ) as ScheduleEvent[];
-
-          const mappedEvents: Event[] = firstSchedule.appointments.map(
-            (event) => {
-              const startTime = event.startDate.split('T')[1].substring(0, 4);
-              const startDate = new Date(event.startDate);
-              startDate.setHours(Number(startTime.split(':')[0]));
-              startDate.setMinutes(Number(startTime.split(':')[1]));
-              startDate.setSeconds(0);
-              const endTime = event.endDate.split('T')[1].substring(0, 4);
-              const endDate = new Date(event.endDate);
-              endDate.setHours(Number(endTime.split(':')[0]));
-              endDate.setMinutes(Number(endTime.split(':')[1]));
-              endDate.setSeconds(0);
-              return {
-                start: startDate,
-                end: endDate,
-                title: event.title,
-                resource: event.resource,
-              };
-            }
-          ) as Event[];
-
-          setRetrievedWeeklySchedule(firstSchedule.weeklySchedule || []);
-          setEvents(
-            (prev) =>
-              [
-                ...prev,
-                ...weeklyScheduleEvents,
-                ...weeklyScheduleLocksEvents,
-                ...mappedEvents,
-              ] as Event[]
-          );
-        });
+        setRetrievedWeeklySchedule(
+          firstSchedule?.content?.weeklySchedule || []
+        );
+        setEvents([
+          ...weeklyScheduleEvents,
+          ...weeklyScheduleLocksEvents,
+          ...mappedEvents,
+        ]);
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -222,24 +195,6 @@ const Schedule = (): JSX.Element => {
       }
     })();
   }, []);
-
-  const getScheduleEventsAsync = async (
-    professional: Professional,
-    startDate: string,
-    endDate: string,
-    weekly?: boolean
-  ): Promise<ProfessionalScheduleEvents> => {
-    const { content }: Response<AllScheduleEvents> = await getScheduleEvents(
-      { startDate, endDate },
-      professional.id,
-      weekly
-    );
-
-    return {
-      professionalId: professional.id,
-      ...content,
-    } as ProfessionalScheduleEvents;
-  };
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, view?: View | undefined) => {
@@ -258,18 +213,22 @@ const Schedule = (): JSX.Element => {
 
       if (view === 'month' || ('start' in range && 'end' in range)) {
         setScheduleLoading(true);
-        getScheduleEventsAsync(
-          currentProfessional as Professional,
-          startDate,
-          endDate
+        getScheduleEvents(
+          {
+            startDate,
+            endDate,
+          },
+          user.permissions.includes('USER_TYPE_PROFESSIONAL')
+            ? undefined
+            : currentProfessional?.id
         )
-          .then((retrievedEvents) => {
+          .then(({ content }) => {
             setEvents((prev) => {
               const removeOldEvents = prev.filter(
                 (item) => item.resource === 'LOCK'
               );
 
-              const mappedNewEvents: Event[] = retrievedEvents.appointments.map(
+              const mappedNewEvents: Event[] = content?.appointments.map(
                 (item) => {
                   const startTime = item.startDate
                     .split('T')[1]
@@ -291,12 +250,10 @@ const Schedule = (): JSX.Element => {
                     resource: `${item.resource}`,
                   };
                 }
-              );
+              ) as Event[];
 
               return [...removeOldEvents, ...mappedNewEvents];
             });
-
-            console.log('RESPONSE', retrievedEvents);
           })
           .catch((e) => {
             showAlert({
@@ -354,18 +311,22 @@ const Schedule = (): JSX.Element => {
         previousRange.current = weekRangeDatesOnly;
 
         setScheduleLoading(true);
-        getScheduleEventsAsync(
-          currentProfessional as Professional,
-          weekRangeDatesOnly[0],
-          weekRangeDatesOnly[weekRangeDatesOnly.length - 1]
+        getScheduleEvents(
+          {
+            startDate: weekRangeDatesOnly[0],
+            endDate: weekRangeDatesOnly[weekRangeDatesOnly.length - 1],
+          },
+          user.permissions.includes('USER_TYPE_PROFESSIONAL')
+            ? undefined
+            : currentProfessional?.id
         )
-          .then((retrievedEvents) => {
+          .then(({ content }) => {
             setEvents((prev) => {
               const removeOldEvents = prev.filter(
                 (item) => item.resource === 'LOCK'
               );
 
-              const mappedNewEvents: Event[] = retrievedEvents.appointments.map(
+              const mappedNewEvents: Event[] = content?.appointments.map(
                 (item) => {
                   const startTime = item.startDate
                     .split('T')[1]
@@ -387,12 +348,10 @@ const Schedule = (): JSX.Element => {
                     resource: `${item.resource}`,
                   };
                 }
-              );
+              ) as Event[];
 
               return [...removeOldEvents, ...mappedNewEvents];
             });
-
-            console.log('RESPONSE', retrievedEvents);
           })
           .catch((e) => console.log('ERRO REEWTRIEVE', e))
           .finally(() => setScheduleLoading(false));
@@ -484,7 +443,7 @@ const Schedule = (): JSX.Element => {
           event?.resource !== 'LOCK' && setCurrentEvent(event)
         }
         onSelectSlot={(slotInfo: SlotInfo) =>
-          permissions.includes('CREATE_APPOINTMENT') &&
+          user.permissions.includes('CREATE_APPOINTMENT') &&
           setCurrentSlotInfo(slotInfo)
         }
         selectable

@@ -11,4 +11,6 @@ export const colors = {
   DANGER_HOVER: '#8C1313',
   WARNING: '#D86F51',
   TEXT: '#303030',
+  ABSENCE: '#C2C2C2',
+  CANCELLED: '#B6A2A1',
 };

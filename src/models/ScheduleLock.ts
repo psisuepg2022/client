@@ -3,4 +3,5 @@ export type ScheduleLock = {
   date: string;
   startTime: string;
   endTime: string;
+  resource: string;
 };

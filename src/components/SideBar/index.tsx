@@ -26,7 +26,7 @@ const SideBar = (): JSX.Element => {
 
     sideBarLinks.forEach((item) => {
       if (
-        item.requiredPermissions.every((permission) =>
+        item.requiredPermissions.some((permission) =>
           permissions.includes(permission)
         )
       ) {

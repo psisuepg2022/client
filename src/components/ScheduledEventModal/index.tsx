@@ -77,13 +77,13 @@ const ScheduledEventModal = ({
         return newEvents;
       });
 
+      closeAll('');
+
       showAlert({
         title: 'Sucesso!',
         icon: 'success',
         text: message,
       });
-
-      console.log('UPDATED', content);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

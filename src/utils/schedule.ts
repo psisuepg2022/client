@@ -32,7 +32,6 @@ export const buildWeeklySchedule = (
   const newHours: Event[] = [
     {
       resource: 'LOCK',
-      title: 'start',
       start: new Date(
         date.getFullYear(),
         date.getMonth(),
@@ -93,3 +92,10 @@ export const buildWeeklyScheduleLocks = (
     resource: 'LOCK',
   };
 };
+
+export const isUUID = (uuid: string): boolean =>
+  uuid.match(
+    /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+  )
+    ? true
+    : false;

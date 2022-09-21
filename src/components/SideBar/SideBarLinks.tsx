@@ -18,7 +18,7 @@ export const sideBarLinks: SideBarLinks[] = [
     path: '/schedule',
     icon: <AiOutlineSchedule color="#FFF" fontSize={30} />,
     requiredPermissions: [
-      //'READ_APPOINTMENTS', // ONLY WAITING FOR PROFESSIONAL TO HAVE THIS PERMISSIONS
+      'USER_TYPE_PROFESSIONAL',
       'READ_SCHEDULE_LOCK',
       'READ_WEEKLY_SCHEDULE',
       'READ_WEEKLY_SCHEDULE_LOCK',

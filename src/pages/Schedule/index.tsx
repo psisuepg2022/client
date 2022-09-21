@@ -41,6 +41,7 @@ import {
   weekRange,
   weekRangeDates,
   buildWeeklySchedule,
+  isUUID,
 } from '@utils/schedule';
 import { Modal } from '@mui/material';
 
@@ -154,6 +155,26 @@ const Schedule = (): JSX.Element => {
           }
         ) as ScheduleEvent[];
 
+        console.log('LOCKS', firstSchedule?.content);
+
+        const mappedScheduleLocks: Event[] =
+          firstSchedule?.content?.scheduleLocks.map((lock) => {
+            const startDate = new Date(lock.date);
+            startDate.setHours(Number(lock.startTime.split(':')[0]));
+            startDate.setMinutes(Number(lock.startTime.split(':')[1]));
+            startDate.setSeconds(0);
+            const endDate = new Date(lock.date);
+            endDate.setHours(Number(lock.endTime.split(':')[0]));
+            endDate.setMinutes(Number(lock.endTime.split(':')[1]));
+            endDate.setSeconds(0);
+
+            return {
+              start: startDate,
+              end: endDate,
+              resource: 'LOCK',
+            };
+          }) as Event[];
+
         const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
           (event) => {
             const startTime = event.startDate.split('T')[1].substring(0, 4);
@@ -166,6 +187,7 @@ const Schedule = (): JSX.Element => {
             endDate.setHours(Number(endTime.split(':')[0]));
             endDate.setMinutes(Number(endTime.split(':')[1]));
             endDate.setSeconds(0);
+
             return {
               start: startDate,
               end: endDate,
@@ -181,6 +203,7 @@ const Schedule = (): JSX.Element => {
         setEvents([
           ...weeklyScheduleEvents,
           ...weeklyScheduleLocksEvents,
+          ...mappedScheduleLocks,
           ...mappedEvents,
         ]);
 
@@ -293,7 +316,9 @@ const Schedule = (): JSX.Element => {
       });
 
       setEvents((prev) => {
-        const removeOldLocks = prev.filter((item) => item.resource !== 'LOCK');
+        const removeOldLocks = prev.filter(
+          (item) => item.resource !== 'LOCK' || isUUID(`${item.title}`)
+        );
 
         return [...removeOldLocks, ...allEvents];
       });
@@ -323,7 +348,7 @@ const Schedule = (): JSX.Element => {
           .then(({ content }) => {
             setEvents((prev) => {
               const removeOldEvents = prev.filter(
-                (item) => item.resource === 'LOCK'
+                (item) => item.resource === 'LOCK' || isUUID(`${item.title}`)
               );
 
               const mappedNewEvents: Event[] = content?.appointments.map(
@@ -449,6 +474,7 @@ const Schedule = (): JSX.Element => {
         selectable
         onSelecting={() => false}
         popup={true}
+        tooltipAccessor={() => ''}
         dayPropGetter={dayPropGetter}
         components={{
           toolbar: (toolbar: ToolbarProps) =>

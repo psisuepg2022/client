@@ -125,6 +125,38 @@ const TopToolbar = ({
         }
       ) as ScheduleEvent[];
 
+      console.log('FIRST', professionalSchedule.content);
+
+      const mappedScheduleLocks: Event[] =
+        professionalSchedule?.content?.scheduleLocks.map((lock) => {
+          const [day, month, year] = lock.date.split('/');
+          const startDate = new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day)
+          );
+          startDate.setHours(Number(lock.startTime.split(':')[0]));
+          startDate.setMinutes(Number(lock.startTime.split(':')[1]));
+          startDate.setSeconds(0);
+          const endDate = new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day)
+          );
+          endDate.setHours(Number(lock.endTime.split(':')[0]));
+          endDate.setMinutes(Number(lock.endTime.split(':')[1]));
+          endDate.setSeconds(0);
+
+          return {
+            start: startDate,
+            end: endDate,
+            resource: `${lock.resource}`,
+            title: lock.id,
+          };
+        }) as Event[];
+
+      console.log('MAPPED', mappedScheduleLocks);
+
       const mappedEvents: Event[] =
         professionalSchedule?.content?.appointments.map((event) => {
           const startTime = event.startDate.split('T')[1].substring(0, 4);
@@ -151,6 +183,7 @@ const TopToolbar = ({
       setEvents([
         ...weeklyScheduleEvents,
         ...weeklyScheduleLocksEvents,
+        ...mappedScheduleLocks,
         ...mappedEvents,
       ]);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -6,4 +6,5 @@ export type SavedEvent = {
   status: EventStatus;
   endTime: string;
   startTime: string;
+  updatedAt: string;
 };

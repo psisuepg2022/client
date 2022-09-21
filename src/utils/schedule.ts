@@ -32,7 +32,7 @@ export const buildWeeklySchedule = (
 ): Event[] => {
   const newHours: Event[] = [
     {
-      resource: `LOCK/${today.id}`,
+      resource: 'LOCK',
       start: new Date(
         date.getFullYear(),
         date.getMonth(),
@@ -51,7 +51,7 @@ export const buildWeeklySchedule = (
       ),
     },
     {
-      resource: `LOCK/${today.id}`,
+      resource: 'LOCK',
       start: new Date(
         date.getFullYear(),
         date.getMonth(),
@@ -90,7 +90,7 @@ export const buildWeeklyScheduleLocks = (
   return {
     start: startDate,
     end: endDate,
-    resource: `LOCK/${lock.id}`,
+    resource: 'LOCK',
   };
 };
 

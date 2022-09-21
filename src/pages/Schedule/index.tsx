@@ -43,6 +43,7 @@ import {
   buildWeeklySchedule,
   isUUID,
   lockFromResource,
+  statusFromResource,
 } from '@utils/schedule';
 import { Modal } from '@mui/material';
 
@@ -443,13 +444,18 @@ const Schedule = (): JSX.Element => {
           setEvents((prev) => [...prev, newEvent])
         }
       />
-      {currentEvent && currentEvent.resource === 'Agendado' ? (
-        <ScheduledEventModal
-          open={currentEvent !== undefined}
-          handleClose={() => setCurrentEvent(undefined)}
-          eventInfo={currentEvent}
-        />
-      ) : null}
+      {currentEvent &&
+        statusFromResource(currentEvent.resource) === 'Agendado' && (
+          <ScheduledEventModal
+            open={currentEvent !== undefined}
+            handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+              reason !== 'backdropClick' &&
+              reason !== 'escapeKeyDown' &&
+              setCurrentEvent(undefined)
+            }
+            eventInfo={currentEvent}
+          />
+        )}
       <Calendar
         localizer={localizer}
         events={events}
@@ -476,7 +482,7 @@ const Schedule = (): JSX.Element => {
         eventPropGetter={eventStyleGetter}
         messages={messages}
         onSelectEvent={(event: Event) =>
-          event?.resource !== 'LOCK' && setCurrentEvent(event)
+          statusFromResource(event.resource) && setCurrentEvent(event)
         }
         onSelectSlot={(slotInfo: SlotInfo) =>
           user.permissions.includes('CREATE_APPOINTMENT') &&

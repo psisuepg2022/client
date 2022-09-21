@@ -25,7 +25,7 @@ export const eventStyleGetter = (
       backgroundColor: colors.LOCK,
       borderRadius: '0px',
       color: 'transparent',
-      cursor: 'auto',
+      cursor: !event.resource.includes('/') ? 'auto' : 'pointer',
       width: '100%',
       border: '1px',
     };

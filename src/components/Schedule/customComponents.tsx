@@ -35,8 +35,7 @@ export const eventStyleGetter = (
     };
   }
 
-  const status: EventStatus = event.resource;
-
+  const status: keyof typeof EventStatus = event.resource;
   const style = {
     backgroundColor: eventColor(status),
     borderRadius: '2px',
@@ -63,7 +62,6 @@ type CustomDateHeaderProps = {
 
 export const CustomDateHeader = ({
   label,
-  drilldownView,
   onDrillDown,
   date,
   events,
@@ -91,7 +89,7 @@ export const CustomDateHeader = ({
   );
 };
 
-export const CustomHeaderMonth = ({ date, label }: HeaderProps) => {
+export const CustomHeaderMonth = ({ label }: HeaderProps) => {
   return (
     <div>
       <CustomHeaderMonthText>{label}</CustomHeaderMonthText>
@@ -123,13 +121,14 @@ export const dayPropGetter = (): {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CustomEventWrapper = (props: any) => {
   const { children } = props;
 
   return <div>{children}</div>;
 };
 
-export const CustomHeaderWeek = ({ date, label }: HeaderProps) => {
+export const CustomHeaderWeek = ({ label }: HeaderProps) => {
   return (
     <div>
       <CustomHeaderMonthText>{label}</CustomHeaderMonthText>

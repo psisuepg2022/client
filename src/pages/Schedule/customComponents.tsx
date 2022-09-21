@@ -35,7 +35,7 @@ export const eventStyleGetter = (
     };
   }
 
-  const status: EventStatus = event.resource;
+  const status: keyof typeof EventStatus = event.resource;
 
   const style = {
     backgroundColor: eventColor(status),

@@ -18,7 +18,6 @@ import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
-import { format } from 'date-fns';
 import { Event } from 'react-big-calendar';
 import { useSchedule } from '@contexts/Schedule';
 import {
@@ -143,8 +142,12 @@ const ConfirmedEventModal = ({
         <Body>
           <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
           <EventPrimaryText>
-            {format(eventInfo.start as Date, 'hh:mm')} -{' '}
-            {format(eventInfo.end as Date, 'hh:mm')}
+            {dateFormat({
+              date: eventInfo.start as Date,
+              stringFormat: 'HH:mm',
+            })}{' '}
+            -{' '}
+            {dateFormat({ date: eventInfo.end as Date, stringFormat: 'HH:mm' })}
           </EventPrimaryText>
 
           <AdditionalInfos>

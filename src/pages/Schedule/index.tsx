@@ -47,6 +47,7 @@ import {
 } from '@utils/schedule';
 import { Modal } from '@mui/material';
 import ConfirmedEventModal from '@components/ConfirmedEventModal';
+import { dateFormat } from '@utils/dateFormat';
 
 const locales = {
   'pt-BR': ptBR,
@@ -122,11 +123,17 @@ const Schedule = (): JSX.Element => {
               size: 100,
             });
         const [startOfWeek, endOfWeek] = weekRange(new Date());
-        const startOfWeekDate = format(startOfWeek, 'yyyy-MM-dd');
-        const endOfWeekDate = format(endOfWeek, 'yyyy-MM-dd');
+        const startOfWeekDate = dateFormat({
+          date: startOfWeek,
+          stringFormat: 'yyyy-MM-dd',
+        });
+        const endOfWeekDate = dateFormat({
+          date: endOfWeek,
+          stringFormat: 'yyyy-MM-dd',
+        });
         const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
         const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
-          format(date, 'yyyy-MM-dd')
+          dateFormat({ date, stringFormat: 'yyyy-MM-dd' })
         );
 
         previousRange.current = weekRangeDatesOnly;
@@ -230,14 +237,14 @@ const Schedule = (): JSX.Element => {
 
       const allEvents: Event[] = [];
       const dates: Date[] = range as Date[];
-      const startDate = format(
-        'start' in range ? range.start : dates[0],
-        'yyyy-MM-dd'
-      );
-      const endDate = format(
-        'end' in range ? range.end : dates[dates.length - 1],
-        'yyyy-MM-dd'
-      );
+      const startDate = dateFormat({
+        date: 'start' in range ? range.start : dates[0],
+        stringFormat: 'yyyy-MM-dd',
+      });
+      const endDate = dateFormat({
+        date: 'end' in range ? range.end : dates[dates.length - 1],
+        stringFormat: 'yyyy-MM-dd',
+      });
 
       if (view === 'month' || ('start' in range && 'end' in range)) {
         setScheduleLoading(true);
@@ -338,7 +345,7 @@ const Schedule = (): JSX.Element => {
         const [startOfWeek, endOfWeek] = weekRange(dates[0]);
         const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
         const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
-          format(date, 'yyyy-MM-dd')
+          dateFormat({ date: date, stringFormat: 'yyyy-MM-dd' })
         );
 
         console.log('NEW RANGE', weekRangeDatesOnly);

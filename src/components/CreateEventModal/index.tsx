@@ -28,7 +28,6 @@ import { Response } from '@interfaces/Response';
 import { ItemList } from '@interfaces/ItemList';
 import { AutocompletePatient } from '@interfaces/AutocompletePatient';
 import { showAlert } from '@utils/showAlert';
-import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledTimePicker from '@components/ControlledTimePicker';
 
@@ -87,9 +86,15 @@ const CreateEventModal = ({
   const onSubmit = async (): Promise<void> => {
     try {
       setLoading(true);
-      const date = format(slotInfo.start, 'yyyy-MM-dd');
-      const startTime = format(slotInfo.start, 'HH:mm');
-      const endTime = format(slotInfo.end, 'HH:mm');
+      const date = dateFormat({
+        date: slotInfo.start,
+        stringFormat: 'yyyy-MM-dd',
+      });
+      const startTime = dateFormat({
+        date: slotInfo.start,
+        stringFormat: 'HH:mm',
+      });
+      const endTime = dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' });
 
       const savedEvent = await saveAppointment({
         date,

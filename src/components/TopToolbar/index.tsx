@@ -21,8 +21,6 @@ import {
 } from './styles';
 import { AiOutlineUser, AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { ToolbarProps, View, Event } from 'react-big-calendar';
-import { format, getDay } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
 import CardSelector from '../CardSelector';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
@@ -38,6 +36,8 @@ import {
   weekRange,
 } from '@utils/schedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
+import { dateFormat } from '@utils/dateFormat';
+import { getDay } from 'date-fns';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -97,8 +97,14 @@ const TopToolbar = ({
     try {
       const currentDate = new Date();
       const [startOfWeek, endOfWeek] = weekRange(currentDate);
-      const startOfWeekDate = format(startOfWeek, 'yyyy-MM-dd');
-      const endOfWeekDate = format(endOfWeek, 'yyyy-MM-dd');
+      const startOfWeekDate = dateFormat({
+        date: startOfWeek,
+        stringFormat: 'yyyy-MM-dd',
+      });
+      const endOfWeekDate = dateFormat({
+        date: endOfWeek,
+        stringFormat: 'yyyy-MM-dd',
+      });
       setCurrentProfessional(professional);
       goToCurrent();
       const professionalSchedule = await getScheduleEvents(
@@ -217,8 +223,8 @@ const TopToolbar = ({
     const toFormatDate = date;
     return (
       <DayTitle>
-        {format(toFormatDate, "dd 'de' MMMM", { locale: ptBR })}{' '}
-        {format(toFormatDate, 'yyyy', { locale: ptBR })}
+        {dateFormat({ date: toFormatDate, stringFormat: "dd 'de' MMMM" })}{' '}
+        {dateFormat({ date: toFormatDate, stringFormat: 'yyyy' })}
       </DayTitle>
     );
   };

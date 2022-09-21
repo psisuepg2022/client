@@ -11,8 +11,10 @@ import {
   StyledBox,
   StyledButton,
   StyledModal,
+  TimePickerContainer,
 } from './styles';
 import { MdLock, MdOutlineClose } from 'react-icons/md';
+import { AiOutlineLeft } from 'react-icons/ai';
 import { CircularProgress, IconButton } from '@mui/material';
 import { colors } from '@global/colors';
 import SectionDivider from '../SectionDivider';
@@ -27,6 +29,8 @@ import { ItemList } from '@interfaces/ItemList';
 import { AutocompletePatient } from '@interfaces/AutocompletePatient';
 import { showAlert } from '@utils/showAlert';
 import { format } from 'date-fns';
+import { FormProvider, useForm } from 'react-hook-form';
+import ControlledTimePicker from '@components/ControlledTimePicker';
 
 type CreateEventModalProps = {
   open: boolean;
@@ -42,8 +46,10 @@ const CreateEventModal = ({
   addNewEvent,
 }: CreateEventModalProps): JSX.Element => {
   const { currentProfessional, saveAppointment } = useSchedule();
+  const formMethods = useForm();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [lockMode, setLockMode] = useState<boolean>(false);
 
   if (!slotInfo) return <></>;
 
@@ -75,6 +81,7 @@ const CreateEventModal = ({
   const closeAll = (): void => {
     setCurrentPatient(undefined);
     handleClose();
+    setLockMode(false);
   };
 
   const onSubmit = async (): Promise<void> => {
@@ -121,66 +128,94 @@ const CreateEventModal = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <StyledBox>
-          <Header>
-            <IconButton>
-              <MdLock size={30} color={colors.DANGER} />
-            </IconButton>
-            <SlotDataText>
-              {dateFormat({
-                date: slotInfo.start,
-                stringFormat: "d 'de' MMMM 'de' yyyy",
-              })}{' '}
-              | {dateFormat({ date: slotInfo.start, stringFormat: 'HH:mm' })} -{' '}
-              {dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' })}
-            </SlotDataText>
-            <IconButton size="small" onClick={closeAll}>
-              <MdOutlineClose size={40} />
-            </IconButton>
-          </Header>
-          <Body>
-            <SectionDivider>Paciente</SectionDivider>
-            <AutocompleteInput
-              label="Nome"
-              noOptionsText="Nenhum paciente encontrado..."
-              callback={handleSearch}
-              selectCallback={selectPerson}
-              cleanseAfterSelect={() => setCurrentPatient(undefined)}
-            />
-            {currentPatient && (
-              <ConditionalInputs>
-                <SimpleInput
-                  name="CPF"
-                  label="CPF"
-                  value={
-                    !currentPatient.CPF && currentPatient.liable
-                      ? currentPatient.liable.CPF
-                      : currentPatient.CPF
-                  }
-                  contentEditable={false}
-                />
-                <SimpleInput
-                  name="contactNumber"
-                  label="Telefone"
-                  value={currentPatient.contactNumber}
-                  contentEditable={false}
-                />
-              </ConditionalInputs>
-            )}
-            {currentPatient && !currentPatient.CPF && currentPatient?.liable && (
-              <>
-                <SectionDivider>Responsável</SectionDivider>
-                <SimpleInput
-                  name="liable-name"
-                  label="Nome"
-                  value={currentPatient.liable.name}
-                  contentEditable={false}
-                />
+        {lockMode ? (
+          <StyledBox>
+            <Header>
+              <IconButton onClick={() => setLockMode(false)}>
+                <AiOutlineLeft size={30} />
+              </IconButton>
+              <SlotDataText>
+                {dateFormat({
+                  date: slotInfo.start,
+                  stringFormat: "d 'de' MMMM 'de' yyyy",
+                })}
+              </SlotDataText>
+              <IconButton size="small" onClick={closeAll}>
+                <MdOutlineClose size={40} />
+              </IconButton>
+            </Header>
+            <Body>
+              <SectionDivider>Criar uma restrição de horário</SectionDivider>
+
+              <FormProvider {...formMethods}>
+                <TimePickerContainer>
+                  <ControlledTimePicker
+                    name="start"
+                    label="Início"
+                    defaultValue={'11:00'}
+                  />
+                  <ControlledTimePicker
+                    name="end"
+                    label="Fim"
+                    defaultValue={'11:00'}
+                  />
+                </TimePickerContainer>
+              </FormProvider>
+
+              <ButtonArea>
+                <StyledButton onClick={onSubmit}>
+                  {loading ? (
+                    <CircularProgress style={{ color: '#FFF' }} size={20} />
+                  ) : (
+                    'CRIAR RESTRIÇÃO'
+                  )}
+                </StyledButton>
+              </ButtonArea>
+            </Body>
+          </StyledBox>
+        ) : (
+          <StyledBox>
+            <Header>
+              {currentPatient ? (
+                <IconButton size="small" disabled>
+                  <MdOutlineClose size={40} color="#FFF" />
+                </IconButton>
+              ) : (
+                <IconButton onClick={() => setLockMode(true)}>
+                  <MdLock size={30} color={colors.DANGER} />
+                </IconButton>
+              )}
+              <SlotDataText>
+                {dateFormat({
+                  date: slotInfo.start,
+                  stringFormat: "d 'de' MMMM 'de' yyyy",
+                })}{' '}
+                | {dateFormat({ date: slotInfo.start, stringFormat: 'HH:mm' })}{' '}
+                - {dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' })}
+              </SlotDataText>
+              <IconButton size="small" onClick={closeAll}>
+                <MdOutlineClose size={40} />
+              </IconButton>
+            </Header>
+            <Body>
+              <SectionDivider>Paciente</SectionDivider>
+              <AutocompleteInput
+                label="Nome"
+                noOptionsText="Nenhum paciente encontrado..."
+                callback={handleSearch}
+                selectCallback={selectPerson}
+                cleanseAfterSelect={() => setCurrentPatient(undefined)}
+              />
+              {currentPatient && (
                 <ConditionalInputs>
                   <SimpleInput
                     name="CPF"
                     label="CPF"
-                    value={currentPatient.liable.CPF}
+                    value={
+                      !currentPatient.CPF && currentPatient.liable
+                        ? currentPatient.liable.CPF
+                        : currentPatient.CPF
+                    }
                     contentEditable={false}
                   />
                   <SimpleInput
@@ -190,19 +225,44 @@ const CreateEventModal = ({
                     contentEditable={false}
                   />
                 </ConditionalInputs>
-              </>
-            )}
-            <ButtonArea>
-              <StyledButton onClick={onSubmit}>
-                {loading ? (
-                  <CircularProgress style={{ color: '#FFF' }} size={20} />
-                ) : (
-                  'AGENDAR'
-                )}
-              </StyledButton>
-            </ButtonArea>
-          </Body>
-        </StyledBox>
+              )}
+              {currentPatient && !currentPatient.CPF && currentPatient?.liable && (
+                <>
+                  <SectionDivider>Responsável</SectionDivider>
+                  <SimpleInput
+                    name="liable-name"
+                    label="Nome"
+                    value={currentPatient.liable.name}
+                    contentEditable={false}
+                  />
+                  <ConditionalInputs>
+                    <SimpleInput
+                      name="CPF"
+                      label="CPF"
+                      value={currentPatient.liable.CPF}
+                      contentEditable={false}
+                    />
+                    <SimpleInput
+                      name="contactNumber"
+                      label="Telefone"
+                      value={currentPatient.contactNumber}
+                      contentEditable={false}
+                    />
+                  </ConditionalInputs>
+                </>
+              )}
+              <ButtonArea>
+                <StyledButton onClick={onSubmit}>
+                  {loading ? (
+                    <CircularProgress style={{ color: '#FFF' }} size={20} />
+                  ) : (
+                    'AGENDAR'
+                  )}
+                </StyledButton>
+              </ButtonArea>
+            </Body>
+          </StyledBox>
+        )}
       </StyledModal>
     </>
   );

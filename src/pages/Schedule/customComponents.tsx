@@ -82,7 +82,7 @@ export const CustomDateHeader = ({
   return (
     <CustomDateHeaderContainer>
       <CustomDateHeaderContent>
-        <CustomDateHeaderText>{eventsInDate}</CustomDateHeaderText>
+        <CustomDateHeaderText>{eventsInDate || ''}</CustomDateHeaderText>
       </CustomDateHeaderContent>
       <CustomDateHeaderLink href="#" onClick={onDrillDown}>
         {label}

@@ -103,7 +103,7 @@ const ScheduledEventModal = ({
   const updatedAtDisplay = (): string => {
     const updateTime = updatedAtFromResource(eventInfo.resource)
       .split('T')[1]
-      .substring(0, 7);
+      .substring(0, 5);
     const updateDate = new Date(updatedAtFromResource(eventInfo.resource));
     updateDate.setHours(Number(updateTime.split(':')[0]));
     updateDate.setMinutes(Number(updateTime.split(':')[1]));

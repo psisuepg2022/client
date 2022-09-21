@@ -179,12 +179,12 @@ const Schedule = (): JSX.Element => {
 
         const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
           (event) => {
-            const startTime = event.startDate.split('T')[1].substring(0, 4);
+            const startTime = event.startDate.split('T')[1].substring(0, 5);
             const startDate = new Date(event.startDate);
             startDate.setHours(Number(startTime.split(':')[0]));
             startDate.setMinutes(Number(startTime.split(':')[1]));
             startDate.setSeconds(0);
-            const endTime = event.endDate.split('T')[1].substring(0, 4);
+            const endTime = event.endDate.split('T')[1].substring(0, 5);
             const endDate = new Date(event.endDate);
             endDate.setHours(Number(endTime.split(':')[0]));
             endDate.setMinutes(Number(endTime.split(':')[1]));
@@ -195,8 +195,8 @@ const Schedule = (): JSX.Element => {
               end: endDate,
               title: event.title,
               resource: event?.updatedAt
-                ? `${event.resource}/${event.id}`
-                : `${event.resource}/${event.id}/${event.updatedAt}`,
+                ? `${event.resource}/${event.id}/${event.updatedAt}`
+                : `${event.resource}/${event.id}`,
             };
           }
         ) as Event[];
@@ -259,12 +259,12 @@ const Schedule = (): JSX.Element => {
                 (event) => {
                   const startTime = event.startDate
                     .split('T')[1]
-                    .substring(0, 4);
+                    .substring(0, 5);
                   const startDate = new Date(event.startDate);
                   startDate.setHours(Number(startTime.split(':')[0]));
                   startDate.setMinutes(Number(startTime.split(':')[1]));
                   startDate.setSeconds(0);
-                  const endTime = event.endDate.split('T')[1].substring(0, 4);
+                  const endTime = event.endDate.split('T')[1].substring(0, 5);
                   const endDate = new Date(event.endDate);
                   endDate.setHours(Number(endTime.split(':')[0]));
                   endDate.setMinutes(Number(endTime.split(':')[1]));
@@ -275,8 +275,8 @@ const Schedule = (): JSX.Element => {
                     start: startDate,
                     end: endDate,
                     resource: event?.updatedAt
-                      ? `${event.resource}/${event.id}`
-                      : `${event.resource}/${event.id}/${event.updatedAt}`,
+                      ? `${event.resource}/${event.id}/${event.updatedAt}`
+                      : `${event.resource}/${event.id}`,
                   };
                 }
               ) as Event[];
@@ -365,12 +365,12 @@ const Schedule = (): JSX.Element => {
                 (event) => {
                   const startTime = event.startDate
                     .split('T')[1]
-                    .substring(0, 4);
+                    .substring(0, 5);
                   const startDate = new Date(event.startDate);
                   startDate.setHours(Number(startTime.split(':')[0]));
                   startDate.setMinutes(Number(startTime.split(':')[1]));
                   startDate.setSeconds(0);
-                  const endTime = event.endDate.split('T')[1].substring(0, 4);
+                  const endTime = event.endDate.split('T')[1].substring(0, 5);
                   const endDate = new Date(event.endDate);
                   endDate.setHours(Number(endTime.split(':')[0]));
                   endDate.setMinutes(Number(endTime.split(':')[1]));
@@ -381,8 +381,8 @@ const Schedule = (): JSX.Element => {
                     start: startDate,
                     end: endDate,
                     resource: event?.updatedAt
-                      ? `${event.resource}/${event.id}`
-                      : `${event.resource}/${event.id}/${event.updatedAt}`,
+                      ? `${event.resource}/${event.id}/${event.updatedAt}`
+                      : `${event.resource}/${event.id}`,
                   };
                 }
               ) as Event[];

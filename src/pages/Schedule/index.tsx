@@ -46,6 +46,7 @@ import {
   statusFromResource,
 } from '@utils/schedule';
 import { Modal } from '@mui/material';
+import ConfirmedEventModal from '@components/ConfirmedEventModal';
 
 const locales = {
   'pt-BR': ptBR,
@@ -447,6 +448,18 @@ const Schedule = (): JSX.Element => {
       {currentEvent &&
         statusFromResource(currentEvent.resource) === 'Agendado' && (
           <ScheduledEventModal
+            open={currentEvent !== undefined}
+            handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+              reason !== 'backdropClick' &&
+              reason !== 'escapeKeyDown' &&
+              setCurrentEvent(undefined)
+            }
+            eventInfo={currentEvent}
+          />
+        )}
+      {currentEvent &&
+        statusFromResource(currentEvent.resource) === 'Confirmado' && (
+          <ConfirmedEventModal
             open={currentEvent !== undefined}
             handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
               reason !== 'backdropClick' &&

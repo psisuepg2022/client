@@ -50,13 +50,13 @@ const ScheduledEventModal = ({
     handleClose(reason);
   };
 
-  const updateStatus = async () => {
+  const updateStatus = async (status: string) => {
     try {
       setLoading(true);
       const appointmentId = idFromResource(eventInfo.resource);
       const { content, message } = await updateAppointmentStatus(
         appointmentId,
-        '3'
+        status
       );
 
       if (!content) {
@@ -107,7 +107,6 @@ const ScheduledEventModal = ({
     const updateDate = new Date(updatedAtFromResource(eventInfo.resource));
     updateDate.setHours(Number(updateTime.split(':')[0]));
     updateDate.setMinutes(Number(updateTime.split(':')[1]));
-    updateDate.setSeconds(0);
 
     return dateFormat({
       date: updateDate,
@@ -161,14 +160,22 @@ const ScheduledEventModal = ({
           </AdditionalInfos>
 
           <ButtonsContainer>
-            <StyledConfirmButton disabled={loading} onClick={updateStatus}>
+            <StyledConfirmButton
+              disabled={loading}
+              onClick={() => updateStatus('3')}
+            >
               {loading ? (
                 <CircularProgress style={{ color: '#FFF' }} size={20} />
               ) : (
                 'CONFIRMAR'
               )}
             </StyledConfirmButton>
-            <StyledCancelButton disabled={loading}>CANCELAR</StyledCancelButton>
+            <StyledCancelButton
+              disabled={loading}
+              onClick={() => updateStatus('2')}
+            >
+              CANCELAR
+            </StyledCancelButton>
           </ButtonsContainer>
         </Body>
       </StyledBox>

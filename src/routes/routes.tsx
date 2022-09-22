@@ -12,6 +12,7 @@ import ProfileRoutes from './profile.routes';
 import { ScheduleProvider } from '@contexts/Schedule';
 import { ProfessionalsProvider } from '@contexts/Professionals';
 import CommentRoutes from './comment.routes';
+import { CommentsProvider } from '@contexts/Comments';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -29,29 +30,31 @@ const AppRoutes = () => {
     <PatientsProvider>
       <ProfessionalsProvider>
         <ScheduleProvider>
-          <Routes>
-            {/* SCHEDULE PAGES */}
-            <Route path="/schedule/*" element={<AgendaRoutes />} />
+          <CommentsProvider>
+            <Routes>
+              {/* SCHEDULE PAGES */}
+              <Route path="/schedule/*" element={<AgendaRoutes />} />
 
-            {/* COMMENT PAGES */}
-            <Route path="/comment/*" element={<CommentRoutes />} />
+              {/* COMMENT PAGES */}
+              <Route path="/comment/*" element={<CommentRoutes />} />
 
-            {/* PROFESSIONAL PAGES */}
-            <Route path="/professionals/*" element={<ProfessionalRoutes />} />
+              {/* PROFESSIONAL PAGES */}
+              <Route path="/professionals/*" element={<ProfessionalRoutes />} />
 
-            {/* EMPLOYEE PAGES */}
-            <Route path="/employees/*" element={<EmployeeRoutes />} />
+              {/* EMPLOYEE PAGES */}
+              <Route path="/employees/*" element={<EmployeeRoutes />} />
 
-            {/* PATIENTS PAGES */}
-            <Route path="/patients/*" element={<PatientRoutes />} />
+              {/* PATIENTS PAGES */}
+              <Route path="/patients/*" element={<PatientRoutes />} />
 
-            {/* PROFILE PAGES */}
-            <Route path="/profile/*" element={<ProfileRoutes />} />
+              {/* PROFILE PAGES */}
+              <Route path="/profile/*" element={<ProfileRoutes />} />
 
-            {/* REDIRECT */}
-            <Route path="/" element={<Navigate to="/schedule" />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              {/* REDIRECT */}
+              <Route path="/" element={<Navigate to="/schedule" />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </CommentsProvider>
         </ScheduleProvider>
       </ProfessionalsProvider>
     </PatientsProvider>

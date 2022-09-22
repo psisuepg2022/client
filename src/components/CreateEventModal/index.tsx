@@ -30,6 +30,7 @@ import { AutocompletePatient } from '@interfaces/AutocompletePatient';
 import { showAlert } from '@utils/showAlert';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledTimePicker from '@components/ControlledTimePicker';
+import { useAuth } from '@contexts/Auth';
 
 type CreateEventModalProps = {
   open: boolean;
@@ -45,6 +46,9 @@ const CreateEventModal = ({
   addNewEvent,
 }: CreateEventModalProps): JSX.Element => {
   const { currentProfessional, saveAppointment } = useSchedule();
+  const {
+    user: { permissions },
+  } = useAuth();
   const formMethods = useForm();
   const [currentPatient, setCurrentPatient] = useState<Patient>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -181,7 +185,7 @@ const CreateEventModal = ({
         ) : (
           <StyledBox>
             <Header>
-              {currentPatient ? (
+              {permissions.includes('CREATE_APPOINTMENT') || currentPatient ? (
                 <IconButton size="small" disabled>
                   <MdOutlineClose size={40} color="#FFF" />
                 </IconButton>
@@ -202,49 +206,26 @@ const CreateEventModal = ({
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>
-            <Body>
-              <SectionDivider>Paciente</SectionDivider>
-              <AutocompleteInput
-                label="Nome"
-                noOptionsText="Nenhum paciente encontrado..."
-                callback={handleSearch}
-                selectCallback={selectPerson}
-                cleanseAfterSelect={() => setCurrentPatient(undefined)}
-              />
-              {currentPatient && (
-                <ConditionalInputs>
-                  <SimpleInput
-                    name="CPF"
-                    label="CPF"
-                    value={
-                      !currentPatient.CPF && currentPatient.liable
-                        ? currentPatient.liable.CPF
-                        : currentPatient.CPF
-                    }
-                    contentEditable={false}
-                  />
-                  <SimpleInput
-                    name="contactNumber"
-                    label="Telefone"
-                    value={currentPatient.contactNumber}
-                    contentEditable={false}
-                  />
-                </ConditionalInputs>
-              )}
-              {currentPatient && !currentPatient.CPF && currentPatient?.liable && (
-                <>
-                  <SectionDivider>Responsável</SectionDivider>
-                  <SimpleInput
-                    name="liable-name"
-                    label="Nome"
-                    value={currentPatient.liable.name}
-                    contentEditable={false}
-                  />
+            {permissions.includes('CREATE_APPOINTMENT') && (
+              <Body>
+                <SectionDivider>Paciente</SectionDivider>
+                <AutocompleteInput
+                  label="Nome"
+                  noOptionsText="Nenhum paciente encontrado..."
+                  callback={handleSearch}
+                  selectCallback={selectPerson}
+                  cleanseAfterSelect={() => setCurrentPatient(undefined)}
+                />
+                {currentPatient && (
                   <ConditionalInputs>
                     <SimpleInput
                       name="CPF"
                       label="CPF"
-                      value={currentPatient.liable.CPF}
+                      value={
+                        !currentPatient.CPF && currentPatient.liable
+                          ? currentPatient.liable.CPF
+                          : currentPatient.CPF
+                      }
                       contentEditable={false}
                     />
                     <SimpleInput
@@ -254,18 +235,45 @@ const CreateEventModal = ({
                       contentEditable={false}
                     />
                   </ConditionalInputs>
-                </>
-              )}
-              <ButtonArea>
-                <StyledButton onClick={onSubmit}>
-                  {loading ? (
-                    <CircularProgress style={{ color: '#FFF' }} size={20} />
-                  ) : (
-                    'AGENDAR'
+                )}
+                {currentPatient &&
+                  !currentPatient.CPF &&
+                  currentPatient?.liable && (
+                    <>
+                      <SectionDivider>Responsável</SectionDivider>
+                      <SimpleInput
+                        name="liable-name"
+                        label="Nome"
+                        value={currentPatient.liable.name}
+                        contentEditable={false}
+                      />
+                      <ConditionalInputs>
+                        <SimpleInput
+                          name="CPF"
+                          label="CPF"
+                          value={currentPatient.liable.CPF}
+                          contentEditable={false}
+                        />
+                        <SimpleInput
+                          name="contactNumber"
+                          label="Telefone"
+                          value={currentPatient.contactNumber}
+                          contentEditable={false}
+                        />
+                      </ConditionalInputs>
+                    </>
                   )}
-                </StyledButton>
-              </ButtonArea>
-            </Body>
+                <ButtonArea>
+                  <StyledButton onClick={onSubmit}>
+                    {loading ? (
+                      <CircularProgress style={{ color: '#FFF' }} size={20} />
+                    ) : (
+                      'AGENDAR'
+                    )}
+                  </StyledButton>
+                </ButtonArea>
+              </Body>
+            )}
           </StyledBox>
         )}
       </StyledModal>

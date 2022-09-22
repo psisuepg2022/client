@@ -1,6 +1,8 @@
-import { SavedEvent } from './SavedEvent';
-
-export type UpdatedEvent = Omit<SavedEvent, 'status'> & {
+export type UpdatedEvent = {
+  id: string;
+  startDate: string;
+  endDate: string;
+  title: string;
   updatedAt: string;
   resource: string;
 };

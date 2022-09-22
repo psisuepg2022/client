@@ -27,6 +27,7 @@ import {
 } from '@utils/schedule';
 import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
+import { isAfter } from 'date-fns';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -66,15 +67,21 @@ const ScheduledEventModal = ({
         });
       }
 
+      const currentDate = new Date();
+
       setEvents((prev) => {
-        const newEvents: Event[] = prev.map((event) =>
-          idFromResource(event.resource) === content?.id
-            ? {
-                ...event,
-                resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
-              }
-            : event
-        );
+        const newEvents: Event[] = isAfter(eventInfo.start as Date, currentDate)
+          ? prev.filter(
+              (event) => idFromResource(event.resource) !== content?.id
+            )
+          : prev.map((event) =>
+              idFromResource(event.resource) === content?.id
+                ? {
+                    ...event,
+                    resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                  }
+                : event
+            );
 
         return newEvents;
       });

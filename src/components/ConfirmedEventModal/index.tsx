@@ -173,34 +173,30 @@ const ConfirmedEventModal = ({
           </AdditionalInfos>
 
           <ButtonsContainer>
-            <Tooltip
-              title={
-                !permissions.includes('CREATE_COMMENTS')
-                  ? 'Somente um profissional pode concluir uma consulta'
-                  : ''
-              }
-            >
-              <span>
-                <StyledConfirmButton
-                  disabled={loading || !permissions.includes('CREATE_COMMENTS')}
-                  onClick={() =>
-                    navigate('/comment/creation', { state: eventInfo })
-                  }
-                >
-                  CONCLUIR
-                </StyledConfirmButton>
-              </span>
-            </Tooltip>
-            <StyledCancelButton
-              disabled={loading}
-              onClick={() => updateStatus('5')}
-            >
-              {loading ? (
-                <CircularProgress style={{ color: '#FFF' }} size={20} />
-              ) : (
-                'AUSÊNCIA'
-              )}
-            </StyledCancelButton>
+            {(permissions.includes('CREATE_COMMENTS') ||
+              permissions.includes('USER_TYPE_PROFESSIONAL')) && (
+              <StyledConfirmButton
+                disabled={loading || !permissions.includes('CREATE_COMMENTS')}
+                onClick={() =>
+                  navigate('/comment/creation', { state: eventInfo })
+                }
+              >
+                CONCLUIR
+              </StyledConfirmButton>
+            )}
+            {(permissions.includes('UPDATE_APPOINTMENTS') ||
+              permissions.includes('USER_TYPE_EMPLOYEE')) && (
+              <StyledCancelButton
+                disabled={loading}
+                onClick={() => updateStatus('5')}
+              >
+                {loading ? (
+                  <CircularProgress style={{ color: '#FFF' }} size={20} />
+                ) : (
+                  'AUSÊNCIA'
+                )}
+              </StyledCancelButton>
+            )}
           </ButtonsContainer>
         </Body>
       </StyledBox>

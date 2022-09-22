@@ -106,24 +106,27 @@ const ConcludedEventModal = ({
             </ScheduledAtContainer>
           </AdditionalInfos>
 
-          <ButtonsContainer>
-            <Tooltip
-              title={
-                !permissions.includes('READ_COMMENTS')
-                  ? 'Somente o profissional responsável pode visualizar as anotações'
-                  : ''
-              }
-            >
-              <span>
-                <StyledConfirmButton
-                  disabled={!permissions.includes('READ_COMMENTS')}
-                  onClick={() => navigate('/comment', { state: eventInfo })}
-                >
-                  ABRIR ANOTAÇÃO
-                </StyledConfirmButton>
-              </span>
-            </Tooltip>
-          </ButtonsContainer>
+          {(permissions.includes('READ_COMMENTS') ||
+            permissions.includes('USER_TYPE_PROFESSIONAL')) && (
+            <ButtonsContainer>
+              <Tooltip
+                title={
+                  !permissions.includes('READ_COMMENTS')
+                    ? 'Somente o profissional responsável pode visualizar as anotações'
+                    : ''
+                }
+              >
+                <span>
+                  <StyledConfirmButton
+                    disabled={!permissions.includes('READ_COMMENTS')}
+                    onClick={() => navigate('/comment', { state: eventInfo })}
+                  >
+                    ABRIR ANOTAÇÃO
+                  </StyledConfirmButton>
+                </span>
+              </Tooltip>
+            </ButtonsContainer>
+          )}
         </Body>
       </StyledBox>
     </StyledModal>

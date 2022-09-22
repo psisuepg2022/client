@@ -4,6 +4,7 @@ import {
   Event,
   HeaderProps,
   SlotPropGetter,
+  View,
 } from 'react-big-calendar';
 import { colors } from '@global/colors';
 import {
@@ -58,15 +59,15 @@ export const eventStyleGetter = (
   };
 };
 
-type CustomDateHeaderProps = {
+type CustomDateHeaderProps = DateHeaderProps & {
   events: Event[];
-} & DateHeaderProps;
+};
 
 export const CustomDateHeader = ({
   label,
-  onDrillDown,
   date,
   events,
+  onDrillDown,
 }: CustomDateHeaderProps) => {
   const eventsInDate = events.reduce(
     (prev, cur) =>

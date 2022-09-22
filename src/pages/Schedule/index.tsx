@@ -11,7 +11,15 @@ import {
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';
 import ptBR from 'date-fns/locale/pt-BR';
-import { format, parse, startOfWeek, getDay, isAfter, isEqual } from 'date-fns';
+import {
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  isAfter,
+  isEqual,
+  eachDayOfInterval,
+} from 'date-fns';
 import TopToolbar from '@components/TopToolbar';
 import {
   CustomDateHeader,
@@ -179,12 +187,19 @@ const Schedule = (): JSX.Element => {
             endDate.setMinutes(Number(lock.endTime.split(':')[1]));
             endDate.setSeconds(0);
 
-            return {
-              start: startDate,
-              end: endDate,
-              resource: `${lock.resource}/${lock.id}`,
-            };
+            if (
+              isAfter(startDate, currentDate) ||
+              isEqual(startDate, currentDate)
+            ) {
+              return {
+                start: startDate,
+                end: endDate,
+                resource: `${lock.resource}/${lock.id}`,
+              };
+            }
           }) as Event[];
+
+        const validScheduleLocks = mappedScheduleLocks.filter((lock) => lock);
 
         const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
           (event) => {
@@ -216,7 +231,7 @@ const Schedule = (): JSX.Element => {
         setEvents([
           ...weeklyScheduleEvents,
           ...weeklyScheduleLocksEvents,
-          ...mappedScheduleLocks,
+          ...validScheduleLocks,
           ...mappedEvents,
         ]);
 
@@ -249,6 +264,47 @@ const Schedule = (): JSX.Element => {
 
       if (view === 'month' || ('start' in range && 'end' in range)) {
         setScheduleLoading(true);
+
+        const monthDates = eachDayOfInterval({
+          start: 'start' in range ? range.start : new Date(),
+          end: 'end' in range ? range.end : new Date(),
+        });
+
+        monthDates.forEach((date: Date) => {
+          const currentDate = new Date();
+          currentDate.setHours(0, 0, 0, 0);
+          const dateIndex = getDay(date) + 1;
+          const today = retrievedWeeklySchedule?.find(
+            (item) => item.dayOfTheWeek === dateIndex
+          );
+
+          if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
+            const weeklySchedule: Event[] = buildWeeklySchedule(
+              date,
+              today as WeeklySchedule
+            );
+
+            const weeklyScheduleLocks: Event[] =
+              (today?.locks?.map((lock: WeeklyScheduleLock) => {
+                const newLock = buildWeeklyScheduleLocks(date, lock);
+                return newLock;
+              }) as ScheduleEvent[]) || [];
+
+            allEvents.push(...weeklySchedule);
+            allEvents.push(...weeklyScheduleLocks);
+          }
+        });
+
+        setEvents((prev) => {
+          const removeOldLocks = prev.filter(
+            (item) =>
+              lockFromResource(item.resource) !== 'LOCK' ||
+              isUUID(`${item.title}`)
+          );
+
+          return [...removeOldLocks, ...allEvents];
+        });
+
         getScheduleEvents(
           {
             startDate,
@@ -518,7 +574,8 @@ const Schedule = (): JSX.Element => {
           statusFromResource(event.resource) && setCurrentEvent(event)
         }
         onSelectSlot={(slotInfo: SlotInfo) =>
-          user.permissions.includes('CREATE_APPOINTMENT') &&
+          (user.permissions.includes('CREATE_APPOINTMENT') ||
+            user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
           setCurrentSlotInfo(slotInfo)
         }
         selectable

@@ -41,7 +41,7 @@ const ScheduledEventModal = ({
   eventInfo,
 }: ScheduledEventModalProps): JSX.Element => {
   const { updateAppointmentStatus, setEvents } = useSchedule();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<string>('');
 
   if (!eventInfo) return <></>;
 
@@ -53,7 +53,7 @@ const ScheduledEventModal = ({
 
   const updateStatus = async (status: string) => {
     try {
-      setLoading(true);
+      setLoading(status);
       const appointmentId = idFromResource(eventInfo.resource);
       const { content, message } = await updateAppointmentStatus(
         appointmentId,
@@ -70,18 +70,19 @@ const ScheduledEventModal = ({
       const currentDate = new Date();
 
       setEvents((prev) => {
-        const newEvents: Event[] = isAfter(eventInfo.start as Date, currentDate)
-          ? prev.filter(
-              (event) => idFromResource(event.resource) !== content?.id
-            )
-          : prev.map((event) =>
-              idFromResource(event.resource) === content?.id
-                ? {
-                    ...event,
-                    resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
-                  }
-                : event
-            );
+        const newEvents: Event[] =
+          status === '2' && isAfter(eventInfo.start as Date, currentDate)
+            ? prev.filter(
+                (event) => idFromResource(event.resource) !== content?.id
+              )
+            : prev.map((event) =>
+                idFromResource(event.resource) === content?.id
+                  ? {
+                      ...event,
+                      resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                    }
+                  : event
+              );
 
         return newEvents;
       });
@@ -103,7 +104,7 @@ const ScheduledEventModal = ({
           'Ocorreu um problema ao atualizar a consulta',
       });
     } finally {
-      setLoading(false);
+      setLoading(status);
     }
   };
 
@@ -134,7 +135,7 @@ const ScheduledEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton disabled={loading}>
+          <IconButton disabled={loading !== ''}>
             <MdOutlineStickyNote2
               style={{ fontSize: 35, color: colors.PRIMARY }}
             />
@@ -142,7 +143,7 @@ const ScheduledEventModal = ({
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>
-          <IconButton disabled={loading} onClick={() => closeAll('')}>
+          <IconButton disabled={loading !== ''} onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
@@ -168,20 +169,24 @@ const ScheduledEventModal = ({
 
           <ButtonsContainer>
             <StyledConfirmButton
-              disabled={loading}
+              disabled={loading === '3'}
               onClick={() => updateStatus('3')}
             >
-              {loading ? (
+              {loading === '3' ? (
                 <CircularProgress style={{ color: '#FFF' }} size={20} />
               ) : (
                 'CONFIRMAR'
               )}
             </StyledConfirmButton>
             <StyledCancelButton
-              disabled={loading}
+              disabled={loading === '2'}
               onClick={() => updateStatus('2')}
             >
-              CANCELAR
+              {loading === '2' ? (
+                <CircularProgress style={{ color: '#FFF' }} size={20} />
+              ) : (
+                'CANCELAR'
+              )}
             </StyledCancelButton>
           </ButtonsContainer>
         </Body>

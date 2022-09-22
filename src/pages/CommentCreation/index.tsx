@@ -26,7 +26,7 @@ const CommentCreation = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const { updateAppointmentStatus, setEvents } = useSchedule();
+  const { setEvents } = useSchedule();
   const { create } = useComments();
 
   const concludeAndSaveComment = async (text: string) => {
@@ -34,14 +34,7 @@ const CommentCreation = (): JSX.Element => {
       setLoading(true);
       const appointmentId = idFromResource(state.resource);
 
-      const commentData = await create(appointmentId, text);
-
-      console.log('COMMENTS', commentData);
-
-      const { content, message } = await updateAppointmentStatus(
-        appointmentId,
-        '4'
-      );
+      const { content, message } = await create(appointmentId, text);
 
       if (!content) {
         showAlert({
@@ -52,10 +45,10 @@ const CommentCreation = (): JSX.Element => {
 
       setEvents((prev) => {
         const newEvents: Event[] = prev.map((event) =>
-          idFromResource(event.resource) === content?.id
+          idFromResource(event.resource) === content?.appointmentId
             ? {
                 ...event,
-                resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                resource: `${content?.status}/${content?.appointmentId}/${content?.updatedAt}`,
               }
             : event
         );

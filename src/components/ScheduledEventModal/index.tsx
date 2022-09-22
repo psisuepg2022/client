@@ -104,7 +104,7 @@ const ScheduledEventModal = ({
           'Ocorreu um problema ao atualizar a consulta',
       });
     } finally {
-      setLoading(status);
+      setLoading('');
     }
   };
 

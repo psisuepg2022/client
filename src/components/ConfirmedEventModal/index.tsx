@@ -40,7 +40,7 @@ const ConfirmedEventModal = ({
   eventInfo,
 }: ConfirmedEventModalProps): JSX.Element => {
   const { updateAppointmentStatus, setEvents } = useSchedule();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<string>('');
 
   if (!eventInfo) return <></>;
 
@@ -52,7 +52,7 @@ const ConfirmedEventModal = ({
 
   const updateStatus = async (status: string) => {
     try {
-      setLoading(true);
+      setLoading(status);
       const appointmentId = idFromResource(eventInfo.resource);
       const { content, message } = await updateAppointmentStatus(
         appointmentId,
@@ -96,7 +96,7 @@ const ConfirmedEventModal = ({
           'Ocorreu um problema ao atualizar a consulta',
       });
     } finally {
-      setLoading(false);
+      setLoading('');
     }
   };
 
@@ -127,7 +127,7 @@ const ConfirmedEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton disabled={loading}>
+          <IconButton disabled={loading !== ''}>
             <MdOutlineStickyNote2
               style={{ fontSize: 35, color: colors.PRIMARY }}
             />
@@ -135,7 +135,7 @@ const ConfirmedEventModal = ({
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>
-          <IconButton disabled={loading} onClick={() => closeAll('')}>
+          <IconButton disabled={loading !== ''} onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
@@ -161,20 +161,24 @@ const ConfirmedEventModal = ({
 
           <ButtonsContainer>
             <StyledConfirmButton
-              disabled={loading}
+              disabled={loading !== ''}
               onClick={() => updateStatus('4')}
             >
-              {loading ? (
+              {loading === '4' ? (
                 <CircularProgress style={{ color: '#FFF' }} size={20} />
               ) : (
                 'CONCLUIR'
               )}
             </StyledConfirmButton>
             <StyledCancelButton
-              disabled={loading}
+              disabled={loading !== ''}
               onClick={() => updateStatus('5')}
             >
-              AUSÊNCIA
+              {loading === '5' ? (
+                <CircularProgress style={{ color: '#FFF' }} size={20} />
+              ) : (
+                'AUSÊNCIA'
+              )}
             </StyledCancelButton>
           </ButtonsContainer>
         </Body>

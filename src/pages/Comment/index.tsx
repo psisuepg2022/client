@@ -1,7 +1,7 @@
 import React from 'react';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import { Event } from 'react-big-calendar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppointmentDate,
   BoxHeader,
@@ -14,9 +14,11 @@ import {
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
+import { IconButton } from '@mui/material';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
+  const navigate = useNavigate();
 
   return (
     <Container>
@@ -24,7 +26,9 @@ const Comment = (): JSX.Element => {
       <Content>
         <CustomBox>
           <BoxHeader>
-            <AiOutlineLeft size={40} />
+            <IconButton onClick={() => navigate('/schedule')}>
+              <AiOutlineLeft size={40} />
+            </IconButton>
             <CommentsTitle>Anotações</CommentsTitle>
             <AiOutlineRight size={25} style={{ color: '#707070' }} />
             <PatientName>{state.title} | </PatientName>

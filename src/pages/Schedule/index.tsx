@@ -532,21 +532,6 @@ const Schedule = (): JSX.Element => {
               ...toolbar,
               onRangeChange,
             }),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          dateCellWrapper: (props: any) => {
-            const { event, children } = props;
-            return (
-              <div
-                style={{ backgroundColor: '#000' }}
-                onContextMenu={(e) => {
-                  alert(`${event.title} is clicked.`);
-                  e.preventDefault();
-                }}
-              >
-                {children}
-              </div>
-            );
-          },
           month: {
             dateHeader: (props) => CustomDateHeader({ ...props, events }),
             header: CustomHeaderMonth,

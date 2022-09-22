@@ -88,6 +88,7 @@ export const ButtonsContainer = styled('div')`
   align-items: stretch;
   width: 80%;
   gap: 1rem;
+  padding-bottom: 20px;
 `;
 
 export const StyledConfirmButton = styled(Button)`

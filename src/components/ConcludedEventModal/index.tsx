@@ -20,6 +20,7 @@ import { IconButton } from '@mui/material';
 import { Event } from 'react-big-calendar';
 import { statusFromResource, updatedAtFromResource } from '@utils/schedule';
 import { dateFormat } from '@utils/dateFormat';
+import { useNavigate } from 'react-router-dom';
 
 type ConcludedEventModalProps = {
   open: boolean;
@@ -32,6 +33,8 @@ const ConcludedEventModal = ({
   handleClose,
   eventInfo,
 }: ConcludedEventModalProps): JSX.Element => {
+  const navigate = useNavigate();
+
   if (!eventInfo) return <></>;
 
   if (eventInfo && !eventInfo.title) return <></>;
@@ -100,7 +103,9 @@ const ConcludedEventModal = ({
           </AdditionalInfos>
 
           <ButtonsContainer>
-            <StyledConfirmButton onClick={() => null}>
+            <StyledConfirmButton
+              onClick={() => navigate('/comment', { state: eventInfo })}
+            >
               ABRIR ANOTAÇÃO
             </StyledConfirmButton>
           </ButtonsContainer>

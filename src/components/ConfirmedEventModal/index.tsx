@@ -17,7 +17,7 @@ import {
 import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
-import { CircularProgress, IconButton } from '@mui/material';
+import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { Event } from 'react-big-calendar';
 import { useSchedule } from '@contexts/Schedule';
 import {
@@ -29,6 +29,7 @@ import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@contexts/Auth';
 
 type ConfirmedEventModalProps = {
   open: boolean;
@@ -44,6 +45,9 @@ const ConfirmedEventModal = ({
   const { updateAppointmentStatus, setEvents } = useSchedule();
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const {
+    user: { permissions },
+  } = useAuth();
 
   if (!eventInfo) return <></>;
 
@@ -169,19 +173,18 @@ const ConfirmedEventModal = ({
           </AdditionalInfos>
 
           <ButtonsContainer>
-            <StyledConfirmButton
-              disabled={loading}
-              onClick={() =>
-                navigate('/comment/creation', { state: eventInfo })
-              }
-            >
-              {/* {loading === '4' ? (
-                <CircularProgress style={{ color: '#FFF' }} size={20} />
-              ) : (
-                'CONCLUIR'
-              )} */}
-              CONCLUIR
-            </StyledConfirmButton>
+            <Tooltip title="Somente um profissional pode concluir uma consulta">
+              <span>
+                <StyledConfirmButton
+                  disabled={loading || !permissions.includes('CREATE_COMMENTS')}
+                  onClick={() =>
+                    navigate('/comment/creation', { state: eventInfo })
+                  }
+                >
+                  CONCLUIR
+                </StyledConfirmButton>
+              </span>
+            </Tooltip>
             <StyledCancelButton
               disabled={loading}
               onClick={() => updateStatus('5')}

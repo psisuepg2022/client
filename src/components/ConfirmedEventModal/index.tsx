@@ -28,6 +28,7 @@ import {
 import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 type ConfirmedEventModalProps = {
   open: boolean;
@@ -41,7 +42,8 @@ const ConfirmedEventModal = ({
   eventInfo,
 }: ConfirmedEventModalProps): JSX.Element => {
   const { updateAppointmentStatus, setEvents } = useSchedule();
-  const [loading, setLoading] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   if (!eventInfo) return <></>;
 
@@ -53,7 +55,7 @@ const ConfirmedEventModal = ({
 
   const updateStatus = async (status: string) => {
     try {
-      setLoading(status);
+      setLoading(true);
       const appointmentId = idFromResource(eventInfo.resource);
       const { content, message } = await updateAppointmentStatus(
         appointmentId,
@@ -70,19 +72,18 @@ const ConfirmedEventModal = ({
       const currentDate = new Date();
 
       setEvents((prev) => {
-        const newEvents: Event[] =
-          status === '5' && isAfter(eventInfo.start as Date, currentDate)
-            ? prev.filter(
-                (event) => idFromResource(event.resource) !== content?.id
-              )
-            : prev.map((event) =>
-                idFromResource(event.resource) === content?.id
-                  ? {
-                      ...event,
-                      resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
-                    }
-                  : event
-              );
+        const newEvents: Event[] = isAfter(eventInfo.start as Date, currentDate)
+          ? prev.filter(
+              (event) => idFromResource(event.resource) !== content?.id
+            )
+          : prev.map((event) =>
+              idFromResource(event.resource) === content?.id
+                ? {
+                    ...event,
+                    resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                  }
+                : event
+            );
 
         return newEvents;
       });
@@ -104,7 +105,7 @@ const ConfirmedEventModal = ({
           'Ocorreu um problema ao atualizar a consulta',
       });
     } finally {
-      setLoading('');
+      setLoading(false);
     }
   };
 
@@ -135,7 +136,7 @@ const ConfirmedEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton disabled={loading !== ''}>
+          <IconButton disabled={loading}>
             <MdOutlineStickyNote2
               style={{ fontSize: 35, color: colors.PRIMARY }}
             />
@@ -143,7 +144,7 @@ const ConfirmedEventModal = ({
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>
-          <IconButton disabled={loading !== ''} onClick={() => closeAll('')}>
+          <IconButton disabled={loading} onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
@@ -169,20 +170,23 @@ const ConfirmedEventModal = ({
 
           <ButtonsContainer>
             <StyledConfirmButton
-              disabled={loading !== ''}
-              onClick={() => updateStatus('4')}
+              disabled={loading}
+              onClick={() =>
+                navigate('/comment/creation', { state: eventInfo })
+              }
             >
-              {loading === '4' ? (
+              {/* {loading === '4' ? (
                 <CircularProgress style={{ color: '#FFF' }} size={20} />
               ) : (
                 'CONCLUIR'
-              )}
+              )} */}
+              CONCLUIR
             </StyledConfirmButton>
             <StyledCancelButton
-              disabled={loading !== ''}
+              disabled={loading}
               onClick={() => updateStatus('5')}
             >
-              {loading === '5' ? (
+              {loading ? (
                 <CircularProgress style={{ color: '#FFF' }} size={20} />
               ) : (
                 'AUSÊNCIA'

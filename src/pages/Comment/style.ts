@@ -65,3 +65,8 @@ export const Body = styled('div')`
   align-items: center;
   padding: 0 4rem;
 `;
+
+export const LogoContainer = styled('img')`
+  width: 100px;
+  height: auto;
+`;

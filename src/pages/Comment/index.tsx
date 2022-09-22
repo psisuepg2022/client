@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import { Event } from 'react-big-calendar';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -11,14 +11,83 @@ import {
   CustomBox,
   PatientName,
   Body,
+  LogoContainer,
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
 import { IconButton } from '@mui/material';
+import { useSchedule } from '@contexts/Schedule';
+import { idFromResource } from '@utils/schedule';
+import { showAlert } from '@utils/showAlert';
+import CircularProgressWithContent from '@components/CircularProgressWithContent';
+import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
+import parse from 'html-react-parser';
+import DOMPurify from 'dompurify';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
   const navigate = useNavigate();
+  const { getById } = useSchedule();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [comment, setComment] = useState<string>('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const appointmentId = idFromResource(state.resource);
+        const { content } = await getById(appointmentId);
+
+        if (!content?.comments) {
+          showAlert({
+            icon: 'info',
+            text: 'A consulta não possui anotações. Clique em OK para retornar à agenda',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              navigate('/schedule');
+            }
+          });
+
+          return;
+        }
+
+        const purifiedComment = DOMPurify.sanitize(content.comments);
+
+        setComment(`${parse(purifiedComment)}`);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        showAlert({
+          icon: 'error',
+          text:
+            e?.response?.data?.message ||
+            'Ocorreu um problema ao recuperar as anotações para essa consulta',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            navigate('/schedule');
+          }
+        });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [state.resource]);
+
+  if (loading)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <CircularProgressWithContent
+          content={<LogoContainer src={logoPSIS} />}
+          size={200}
+        />
+      </div>
+    );
 
   return (
     <Container>
@@ -50,8 +119,7 @@ const Comment = (): JSX.Element => {
               })}
             </AppointmentDate>
           </BoxHeader>
-          <Body dangerouslySetInnerHTML={{ __html: 'some <b>bold</b>' }}></Body>
-          {/* https://stackoverflow.com/questions/40952434/how-do-i-display-the-content-of-react-quill-without-the-html-markup */}
+          <Body dangerouslySetInnerHTML={{ __html: comment }}></Body>
         </CustomBox>
       </Content>
     </Container>

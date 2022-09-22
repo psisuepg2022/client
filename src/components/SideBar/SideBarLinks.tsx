@@ -17,12 +17,7 @@ export const sideBarLinks: SideBarLinks[] = [
     title: 'Agenda',
     path: '/schedule',
     icon: <AiOutlineSchedule color="#FFF" fontSize={30} />,
-    requiredPermissions: [
-      //'READ_APPOINTMENTS', // ONLY WAITING FOR PROFESSIONAL TO HAVE THIS PERMISSIONS
-      'READ_SCHEDULE_LOCK',
-      'READ_WEEKLY_SCHEDULE',
-      'READ_WEEKLY_SCHEDULE_LOCK',
-    ],
+    requiredPermissions: ['USER_TYPE_PROFESSIONAL', 'READ_APPOINTMENTS'],
   },
   {
     title: 'Profissionais',
@@ -30,7 +25,7 @@ export const sideBarLinks: SideBarLinks[] = [
     icon: <FaHandHoldingMedical color="#FFF" fontSize={30} />,
     requiredPermissions: [
       'READ_PROFESSIONAL',
-      'CREATE_PROFESSIONAL',
+      // 'CREATE_PROFESSIONAL',
       // 'UPDATE_PROFESSIONAL', UPDATE AND DELETE WILL BE HANDLED AT THE ACCESS ICON ON TABLE
       // 'DELETE_PROFESSIONAL',
     ],
@@ -41,7 +36,7 @@ export const sideBarLinks: SideBarLinks[] = [
     icon: <BsFillPersonLinesFill color="#FFF" fontSize={30} />,
     requiredPermissions: [
       'READ_EMPLOYEE',
-      'CREATE_EMPLOYEE',
+      // 'CREATE_EMPLOYEE',
       // 'UPDATE_EMPLOYEE',
       // 'DELETE_EMPLOYEE',
     ],

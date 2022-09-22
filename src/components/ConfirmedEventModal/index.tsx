@@ -28,28 +28,30 @@ import {
 import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 
-type ScheduledEventModalProps = {
+type ConfirmedEventModalProps = {
   open: boolean;
   handleClose: (reason: 'backdropClick' | 'escapeKeyDown' | '') => void;
   eventInfo: Event | undefined;
 };
 
-const ScheduledEventModal = ({
+const ConfirmedEventModal = ({
   open,
   handleClose,
   eventInfo,
-}: ScheduledEventModalProps): JSX.Element => {
+}: ConfirmedEventModalProps): JSX.Element => {
   const { updateAppointmentStatus, setEvents } = useSchedule();
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   const {
     user: { permissions },
   } = useAuth();
-  const [loading, setLoading] = useState<string>('');
 
   if (!eventInfo) return <></>;
 
-  if (eventInfo && !eventInfo.title && !eventInfo.resource) return <></>;
+  if (eventInfo && !eventInfo.title) return <></>;
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
     handleClose(reason);
@@ -57,7 +59,7 @@ const ScheduledEventModal = ({
 
   const updateStatus = async (status: string) => {
     try {
-      setLoading(status);
+      setLoading(true);
       const appointmentId = idFromResource(eventInfo.resource);
       const { content, message } = await updateAppointmentStatus(
         appointmentId,
@@ -74,19 +76,18 @@ const ScheduledEventModal = ({
       const currentDate = new Date();
 
       setEvents((prev) => {
-        const newEvents: Event[] =
-          status === '2' && isAfter(eventInfo.start as Date, currentDate)
-            ? prev.filter(
-                (event) => idFromResource(event.resource) !== content?.id
-              )
-            : prev.map((event) =>
-                idFromResource(event.resource) === content?.id
-                  ? {
-                      ...event,
-                      resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
-                    }
-                  : event
-              );
+        const newEvents: Event[] = isAfter(eventInfo.start as Date, currentDate)
+          ? prev.filter(
+              (event) => idFromResource(event.resource) !== content?.id
+            )
+          : prev.map((event) =>
+              idFromResource(event.resource) === content?.id
+                ? {
+                    ...event,
+                    resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                  }
+                : event
+            );
 
         return newEvents;
       });
@@ -108,7 +109,7 @@ const ScheduledEventModal = ({
           'Ocorreu um problema ao atualizar a consulta',
       });
     } finally {
-      setLoading('');
+      setLoading(false);
     }
   };
 
@@ -139,7 +140,7 @@ const ScheduledEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton disabled={loading !== ''}>
+          <IconButton disabled={loading}>
             <MdOutlineStickyNote2
               style={{ fontSize: 35, color: colors.PRIMARY }}
             />
@@ -147,7 +148,7 @@ const ScheduledEventModal = ({
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>
-          <IconButton disabled={loading !== ''} onClick={() => closeAll('')}>
+          <IconButton disabled={loading} onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
@@ -166,40 +167,41 @@ const ScheduledEventModal = ({
             <AiFillSchedule style={{ fontSize: 70, color: colors.PRIMARY }} />
 
             <ScheduledAtContainer>
-              <ScheduleAtText>Agendada em:</ScheduleAtText>
+              <ScheduleAtText>Confirmado em:</ScheduleAtText>
               <ScheduleAtDate>{updatedAtDisplay()}</ScheduleAtDate>
             </ScheduledAtContainer>
           </AdditionalInfos>
 
-          {(permissions.includes('UPDATE_APPOINTMENTS') ||
-            permissions.includes('USER_TYPE_EMPLOYEE')) && (
-            <ButtonsContainer>
+          <ButtonsContainer>
+            {(permissions.includes('CREATE_COMMENTS') ||
+              permissions.includes('USER_TYPE_PROFESSIONAL')) && (
               <StyledConfirmButton
-                disabled={loading === '3'}
-                onClick={() => updateStatus('3')}
+                disabled={loading || !permissions.includes('CREATE_COMMENTS')}
+                onClick={() =>
+                  navigate('/comment/creation', { state: eventInfo })
+                }
               >
-                {loading === '3' ? (
-                  <CircularProgress style={{ color: '#FFF' }} size={20} />
-                ) : (
-                  'CONFIRMAR'
-                )}
+                CONCLUIR
               </StyledConfirmButton>
+            )}
+            {(permissions.includes('UPDATE_APPOINTMENTS') ||
+              permissions.includes('USER_TYPE_EMPLOYEE')) && (
               <StyledCancelButton
-                disabled={loading === '2'}
-                onClick={() => updateStatus('2')}
+                disabled={loading}
+                onClick={() => updateStatus('5')}
               >
-                {loading === '2' ? (
+                {loading ? (
                   <CircularProgress style={{ color: '#FFF' }} size={20} />
                 ) : (
-                  'CANCELAR'
+                  'AUSÊNCIA'
                 )}
               </StyledCancelButton>
-            </ButtonsContainer>
-          )}
+            )}
+          </ButtonsContainer>
         </Body>
       </StyledBox>
     </StyledModal>
   );
 };
 
-export default React.memo(ScheduledEventModal);
+export default React.memo(ConfirmedEventModal);

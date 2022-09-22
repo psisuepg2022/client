@@ -70,3 +70,8 @@ export const ConditionalInputs = styled('div')`
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 `;
+
+export const TimePickerContainer = styled('form')`
+  display: flex;
+  gap: 10px;
+`;

@@ -1,9 +1,10 @@
+import { EventStatus } from '@interfaces/EventStatus';
 import { WeeklySchedule } from '@models/WeeklySchedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { eachDayOfInterval } from 'date-fns';
 import { Event } from 'react-big-calendar';
 
-export function weekRange(day: Date) {
+export const weekRange = (day: Date): Date[] => {
   const remainingDays = 7;
 
   const currentDate = day;
@@ -16,14 +17,14 @@ export function weekRange(day: Date) {
   lastWeekDate.setDate(firstWeekDate.getDate() + (remainingDays - 1));
 
   return [firstWeekDate, lastWeekDate];
-}
+};
 
-export function weekRangeDates(start: Date, end: Date) {
+export const weekRangeDates = (start: Date, end: Date): Date[] => {
   return eachDayOfInterval({
     start,
     end,
   });
-}
+};
 
 export const buildWeeklySchedule = (
   date: Date,
@@ -32,7 +33,6 @@ export const buildWeeklySchedule = (
   const newHours: Event[] = [
     {
       resource: 'LOCK',
-      title: 'start',
       start: new Date(
         date.getFullYear(),
         date.getMonth(),
@@ -93,3 +93,24 @@ export const buildWeeklyScheduleLocks = (
     resource: 'LOCK',
   };
 };
+
+export const isUUID = (uuid: string): boolean =>
+  uuid.match(
+    /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+  )
+    ? true
+    : false;
+
+export const statusFromResource = (
+  resource: string
+): keyof typeof EventStatus =>
+  resource.split('/')[0] as keyof typeof EventStatus;
+
+export const lockFromResource = (resource: string): string =>
+  resource.split('/')[0];
+
+export const idFromResource = (resource: string): string =>
+  resource.split('/')[1];
+
+export const updatedAtFromResource = (resource: string): string =>
+  resource.split('/')[2];

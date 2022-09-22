@@ -104,17 +104,3 @@ export const StyledConfirmButton = styled(Button)`
     background-color: ${colors.SECONDARY};
   }
 `;
-
-export const StyledCancelButton = styled(Button)`
-  background-color: ${colors.DANGER};
-  color: #fff;
-  transition: 300ms;
-  width: 100%;
-  font-weight: 400;
-  font-size: 1rem;
-  height: 50px;
-
-  :hover {
-    background-color: ${colors.DANGER_HOVER};
-  }
-`;

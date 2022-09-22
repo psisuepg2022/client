@@ -2,7 +2,6 @@ import { ButtonBase, styled, Typography } from '@mui/material';
 import { colors } from '@global/colors';
 
 export const Container = styled(ButtonBase)`
-  border-bottom: 2px ${colors.PRIMARY} solid;
   width: 200px;
   display: flex;
   justify-content: center;

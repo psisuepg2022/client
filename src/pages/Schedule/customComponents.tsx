@@ -15,16 +15,17 @@ import {
 } from './styles';
 import { EventStatus } from '@interfaces/EventStatus';
 import { eventColor } from '@utils/eventColor';
+import { lockFromResource, statusFromResource } from '@utils/schedule';
 
 export const eventStyleGetter = (
   event: Event
 ): { style?: Record<string, unknown>; className?: string } => {
-  if (event.resource && event.resource === 'LOCK') {
+  if (event.resource && lockFromResource(event.resource) === 'LOCK') {
     const style = {
       backgroundColor: colors.LOCK,
       borderRadius: '0px',
       color: 'transparent',
-      cursor: 'auto',
+      cursor: !event.resource.includes('/') ? 'auto' : 'pointer',
       width: '100%',
       border: '1px',
     };
@@ -35,7 +36,7 @@ export const eventStyleGetter = (
     };
   }
 
-  const status: EventStatus = event.resource;
+  const status: keyof typeof EventStatus = statusFromResource(event.resource);
 
   const style = {
     backgroundColor: eventColor(status),
@@ -57,23 +58,22 @@ export const eventStyleGetter = (
   };
 };
 
-type CustomDateHeaderProps = {
+type CustomDateHeaderProps = DateHeaderProps & {
   events: Event[];
-} & DateHeaderProps;
+};
 
 export const CustomDateHeader = ({
   label,
-  drilldownView,
-  onDrillDown,
   date,
   events,
+  onDrillDown,
 }: CustomDateHeaderProps) => {
   const eventsInDate = events.reduce(
     (prev, cur) =>
       cur.start?.getDate() === date.getDate() &&
       cur.start.getMonth() === date.getMonth() &&
       cur.start.getFullYear() === date.getFullYear() &&
-      cur.resource !== 'LOCK'
+      lockFromResource(cur.resource) !== 'LOCK'
         ? prev + 1
         : prev,
     0
@@ -82,7 +82,7 @@ export const CustomDateHeader = ({
   return (
     <CustomDateHeaderContainer>
       <CustomDateHeaderContent>
-        <CustomDateHeaderText>{eventsInDate}</CustomDateHeaderText>
+        <CustomDateHeaderText>{eventsInDate || ''}</CustomDateHeaderText>
       </CustomDateHeaderContent>
       <CustomDateHeaderLink href="#" onClick={onDrillDown}>
         {label}
@@ -91,7 +91,7 @@ export const CustomDateHeader = ({
   );
 };
 
-export const CustomHeaderMonth = ({ date, label }: HeaderProps) => {
+export const CustomHeaderMonth = ({ label }: HeaderProps) => {
   return (
     <div>
       <CustomHeaderMonthText>{label}</CustomHeaderMonthText>
@@ -123,13 +123,14 @@ export const dayPropGetter = (): {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CustomEventWrapper = (props: any) => {
   const { children } = props;
 
   return <div>{children}</div>;
 };
 
-export const CustomHeaderWeek = ({ date, label }: HeaderProps) => {
+export const CustomHeaderWeek = ({ label }: HeaderProps) => {
   return (
     <div>
       <CustomHeaderMonthText>{label}</CustomHeaderMonthText>

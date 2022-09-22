@@ -2,11 +2,18 @@ import { colors } from '@global/colors';
 import { EventStatus } from '@interfaces/EventStatus';
 
 export const eventColor = (status: keyof typeof EventStatus): string => {
-  if (status === 'Agendado') return colors.SCHEDULED;
-  if (status === 'Cancelado') return colors.CANCELLED;
-  if (status === 'Confirmado') return colors.CONFIRMED;
-  if (status === 'Concluído') return colors.CONCLUDED;
-  if (status === 'Ausência') return colors.ABSENCE;
-
-  return colors.SCHEDULED;
+  switch (status) {
+    case 'Agendado':
+      return colors.SCHEDULED;
+    case 'Cancelado':
+      return colors.CANCELLED;
+    case 'Confirmado':
+      return colors.CONFIRMED;
+    case 'Concluído':
+      return colors.CONCLUDED;
+    case 'Ausência':
+      return colors.ABSENCE;
+    default:
+      return colors.SCHEDULED;
+  }
 };

@@ -17,7 +17,7 @@ import {
 import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
-import { CircularProgress, IconButton, Tooltip } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import { Event } from 'react-big-calendar';
 import { useSchedule } from '@contexts/Schedule';
 import {

@@ -29,7 +29,7 @@ const options: QuillOptionsStatic = {
 };
 
 type TextEditorProps = {
-  saveComment: (data: string) => Promise<void>;
+  saveComment: (text: string) => Promise<void>;
   loading: boolean;
 };
 

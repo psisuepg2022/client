@@ -20,20 +20,27 @@ import { IconButton } from '@mui/material';
 import { idFromResource } from '@utils/schedule';
 import { useSchedule } from '@contexts/Schedule';
 import { showAlert } from '@utils/showAlert';
+import { useComments } from '@contexts/Comments';
 
 const CommentCreation = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const { updateAppointmentStatus, setEvents } = useSchedule();
+  const { create } = useComments();
 
-  const concludeAndSaveComment = async () => {
+  const concludeAndSaveComment = async (text: string) => {
     try {
       setLoading(true);
       const appointmentId = idFromResource(state.resource);
+
+      const commentData = await create(appointmentId, text);
+
+      console.log('COMMENTS', commentData);
+
       const { content, message } = await updateAppointmentStatus(
         appointmentId,
-        status
+        '4'
       );
 
       if (!content) {

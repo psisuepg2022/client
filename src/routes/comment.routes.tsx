@@ -10,28 +10,30 @@ const CommentRoutes = (): JSX.Element => {
     <Routes>
       <Route
         element={<ProtectedRoute requiredPermissions={['READ_COMMENTS']} />}
-      />
-      <Route
-        path="/"
-        element={
-          <div style={{ display: 'flex', overflow: 'hidden' }}>
-            <SideBar />
-            <Comment />
-          </div>
-        }
-      />
+      >
+        <Route
+          path="/"
+          element={
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
+              <SideBar />
+              <Comment />
+            </div>
+          }
+        />
+      </Route>
       <Route
         element={<ProtectedRoute requiredPermissions={['CREATE_COMMENTS']} />}
-      />
-      <Route
-        path="/creation"
-        element={
-          <div style={{ display: 'flex', overflow: 'hidden' }}>
-            <SideBar />
-            <CommentCreation />
-          </div>
-        }
-      />
+      >
+        <Route
+          path="/creation"
+          element={
+            <div style={{ display: 'flex', overflow: 'hidden' }}>
+              <SideBar />
+              <CommentCreation />
+            </div>
+          }
+        />
+      </Route>
     </Routes>
   );
 };

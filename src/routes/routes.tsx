@@ -11,6 +11,7 @@ import AgendaRoutes from './agenda.routes';
 import ProfileRoutes from './profile.routes';
 import { ScheduleProvider } from '@contexts/Schedule';
 import { ProfessionalsProvider } from '@contexts/Professionals';
+import CommentRoutes from './comment.routes';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -31,6 +32,9 @@ const AppRoutes = () => {
           <Routes>
             {/* SCHEDULE PAGES */}
             <Route path="/schedule/*" element={<AgendaRoutes />} />
+
+            {/* COMMENT PAGES */}
+            <Route path="/comment/*" element={<CommentRoutes />} />
 
             {/* PROFESSIONAL PAGES */}
             <Route path="/professionals/*" element={<ProfessionalRoutes />} />

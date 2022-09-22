@@ -16,11 +16,12 @@ import {
 import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { Event } from 'react-big-calendar';
 import { statusFromResource, updatedAtFromResource } from '@utils/schedule';
 import { dateFormat } from '@utils/dateFormat';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@contexts/Auth';
 
 type ConcludedEventModalProps = {
   open: boolean;
@@ -34,6 +35,9 @@ const ConcludedEventModal = ({
   eventInfo,
 }: ConcludedEventModalProps): JSX.Element => {
   const navigate = useNavigate();
+  const {
+    user: { permissions },
+  } = useAuth();
 
   if (!eventInfo) return <></>;
 
@@ -103,11 +107,22 @@ const ConcludedEventModal = ({
           </AdditionalInfos>
 
           <ButtonsContainer>
-            <StyledConfirmButton
-              onClick={() => navigate('/comment', { state: eventInfo })}
+            <Tooltip
+              title={
+                !permissions.includes('READ_COMMENTS')
+                  ? 'Somente o profissional responsável pode visualizar as anotações'
+                  : ''
+              }
             >
-              ABRIR ANOTAÇÃO
-            </StyledConfirmButton>
+              <span>
+                <StyledConfirmButton
+                  disabled={!permissions.includes('READ_COMMENTS')}
+                  onClick={() => navigate('/comment', { state: eventInfo })}
+                >
+                  ABRIR ANOTAÇÃO
+                </StyledConfirmButton>
+              </span>
+            </Tooltip>
           </ButtonsContainer>
         </Body>
       </StyledBox>

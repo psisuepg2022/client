@@ -173,7 +173,13 @@ const ConfirmedEventModal = ({
           </AdditionalInfos>
 
           <ButtonsContainer>
-            <Tooltip title="Somente um profissional pode concluir uma consulta">
+            <Tooltip
+              title={
+                !permissions.includes('CREATE_COMMENTS')
+                  ? 'Somente um profissional pode concluir uma consulta'
+                  : ''
+              }
+            >
               <span>
                 <StyledConfirmButton
                   disabled={loading || !permissions.includes('CREATE_COMMENTS')}

@@ -4,7 +4,6 @@ import {
   Event,
   HeaderProps,
   SlotPropGetter,
-  View,
 } from 'react-big-calendar';
 import { colors } from '@global/colors';
 import {

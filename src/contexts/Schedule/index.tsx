@@ -104,9 +104,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     lockData: LockSave
   ): Promise<Response<SavedLock>> => {
     const { data }: { data: Response<SavedLock> } = await api.post(
-      lockData?.professionalId
-        ? `schedule_locks/${lockData.professionalId}`
-        : 'schedule_locks',
+      'schedule_locks',
       {
         date: lockData.date,
         startTime: lockData.startTime,

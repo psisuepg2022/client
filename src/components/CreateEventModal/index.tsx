@@ -45,11 +45,13 @@ const CreateEventModal = ({
   slotInfo,
   addNewEvent,
 }: CreateEventModalProps): JSX.Element => {
-  const { currentProfessional, saveAppointment } = useSchedule();
+  const { currentProfessional, saveAppointment, saveScheduleLock } =
+    useSchedule();
   const {
     user: { permissions },
   } = useAuth();
-  const formMethods = useForm();
+  const formMethods = useForm<{ start: Date; end: Date }>();
+  const { handleSubmit } = formMethods;
   const [currentPatient, setCurrentPatient] = useState<Patient>();
   const [loading, setLoading] = useState<boolean>(false);
   const [lockMode, setLockMode] = useState<boolean>(false);
@@ -129,6 +131,42 @@ const CreateEventModal = ({
     }
   };
 
+  const createScheduleLocks = async (data: {
+    start: Date;
+    end: Date;
+  }): Promise<void> => {
+    try {
+      const date = dateFormat({
+        date: slotInfo.start,
+        stringFormat: 'yyyy-MM-dd',
+      });
+      const startTime = dateFormat({
+        date: data.start,
+        stringFormat: 'HH:mm',
+      });
+      const endTime = dateFormat({
+        date: data.end,
+        stringFormat: 'HH:mm',
+      });
+      setLoading(true);
+      const { content } = await saveScheduleLock({
+        date,
+        startTime,
+        endTime,
+      });
+
+      console.log('REUTRN', content);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text: e?.response?.data?.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <StyledModal
@@ -157,7 +195,10 @@ const CreateEventModal = ({
               <SectionDivider>Criar uma restrição de horário</SectionDivider>
 
               <FormProvider {...formMethods}>
-                <TimePickerContainer>
+                <TimePickerContainer
+                  id="form"
+                  onSubmit={handleSubmit(createScheduleLocks)}
+                >
                   <ControlledTimePicker
                     name="start"
                     label="Início"
@@ -172,7 +213,7 @@ const CreateEventModal = ({
               </FormProvider>
 
               <ButtonArea>
-                <StyledButton onClick={onSubmit}>
+                <StyledButton form="form" type="submit">
                   {loading ? (
                     <CircularProgress style={{ color: '#FFF' }} size={20} />
                   ) : (

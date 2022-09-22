@@ -10,6 +10,7 @@ import { WeeklySchedule } from '@models/WeeklySchedule';
 import { LockSave } from '@interfaces/LockSave';
 import { SavedLock } from '@interfaces/SavedLock';
 import { UpdatedEvent } from '@interfaces/UpdatedEvent';
+import { AppointmentComments } from '@interfaces/AppointmentComments';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -27,6 +28,7 @@ type ScheduleContextData = {
     appointmentId: string,
     status: string
   ) => Promise<Response<UpdatedEvent>>;
+  getById: (appointmentId: string) => Promise<Response<AppointmentComments>>;
   saveScheduleLock: (lockData: LockSave) => Promise<Response<SavedLock>>;
   currentProfessional: Professional | undefined;
   setCurrentProfessional: (professional: Professional) => void;
@@ -129,6 +131,16 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     return data;
   };
 
+  const getById = async (
+    appointmentId: string
+  ): Promise<Response<AppointmentComments>> => {
+    const { data }: { data: Response<AppointmentComments> } = await api.get(
+      `appointment/${appointmentId}`
+    );
+
+    return data;
+  };
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -146,6 +158,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
         setEvents,
         retrievedWeeklySchedule,
         setRetrievedWeeklySchedule,
+        getById,
       }}
     >
       {children}

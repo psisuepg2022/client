@@ -34,7 +34,7 @@ import { useAuth } from '@contexts/Auth';
 
 type CreateEventModalProps = {
   open: boolean;
-  handleClose: () => void;
+  handleClose: (reason: 'backdropClick' | 'escapeKeyDown' | '') => void;
   slotInfo: SlotInfo | undefined;
   addNewEvent: (event: Event) => void;
 };
@@ -83,9 +83,9 @@ const CreateEventModal = ({
     setCurrentPatient(patient as Patient);
   };
 
-  const closeAll = (): void => {
+  const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
     setCurrentPatient(undefined);
-    handleClose();
+    handleClose(reason);
     setLockMode(false);
   };
 
@@ -127,7 +127,7 @@ const CreateEventModal = ({
       });
     } finally {
       setLoading(false);
-      closeAll();
+      closeAll('');
     }
   };
 
@@ -187,7 +187,7 @@ const CreateEventModal = ({
                   stringFormat: "d 'de' MMMM 'de' yyyy",
                 })}
               </SlotDataText>
-              <IconButton size="small" onClick={closeAll}>
+              <IconButton size="small" onClick={() => closeAll('')}>
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>
@@ -243,7 +243,7 @@ const CreateEventModal = ({
                 | {dateFormat({ date: slotInfo.start, stringFormat: 'HH:mm' })}{' '}
                 - {dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' })}
               </SlotDataText>
-              <IconButton size="small" onClick={closeAll}>
+              <IconButton size="small" onClick={() => closeAll('')}>
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>

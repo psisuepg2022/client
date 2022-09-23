@@ -57,6 +57,7 @@ import { Modal } from '@mui/material';
 import ConfirmedEventModal from '@components/ConfirmedEventModal';
 import { dateFormat } from '@utils/dateFormat';
 import ConcludedEventModal from '@components/ConcludedEventModal';
+import LockEventModal from '@components/LockEventModal';
 
 const locales = {
   'pt-BR': ptBR,
@@ -595,7 +596,11 @@ const Schedule = (): JSX.Element => {
         </>
       </Modal>
       <CreateEventModal
-        handleClose={() => setCurrentSlotInfo(undefined)}
+        handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+          reason !== 'backdropClick' &&
+          reason !== 'escapeKeyDown' &&
+          setCurrentEvent(undefined)
+        }
         open={currentSlotInfo !== undefined}
         slotInfo={currentSlotInfo}
         addNewEvent={(newEvent: Event) =>
@@ -638,6 +643,17 @@ const Schedule = (): JSX.Element => {
             eventInfo={currentEvent}
           />
         )}
+      {currentEvent && lockFromResource(currentEvent.resource) && (
+        <LockEventModal
+          open={currentEvent !== undefined}
+          handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+            reason !== 'backdropClick' &&
+            reason !== 'escapeKeyDown' &&
+            setCurrentEvent(undefined)
+          }
+          eventInfo={currentEvent}
+        />
+      )}
       <Calendar
         localizer={localizer}
         events={events}

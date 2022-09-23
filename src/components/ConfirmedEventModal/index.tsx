@@ -76,18 +76,17 @@ const ConfirmedEventModal = ({
       const currentDate = new Date();
 
       setEvents((prev) => {
-        const newEvents: Event[] = isAfter(eventInfo.start as Date, currentDate)
-          ? prev.filter(
-              (event) => idFromResource(event.resource) !== content?.id
-            )
-          : prev.map((event) =>
-              idFromResource(event.resource) === content?.id
-                ? {
-                    ...event,
-                    resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
-                  }
-                : event
-            );
+        const newEvents: Event[] =
+          status === '5' && isAfter(eventInfo.start as Date, currentDate)
+            ? prev.filter((event) => !idFromResource(event.resource))
+            : prev.map((event) =>
+                idFromResource(event.resource) === content?.id
+                  ? {
+                      ...event,
+                      resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                    }
+                  : event
+              );
 
         return newEvents;
       });

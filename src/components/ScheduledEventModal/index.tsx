@@ -76,9 +76,7 @@ const ScheduledEventModal = ({
       setEvents((prev) => {
         const newEvents: Event[] =
           status === '2' && isAfter(eventInfo.start as Date, currentDate)
-            ? prev.filter(
-                (event) => idFromResource(event.resource) !== content?.id
-              )
+            ? prev.filter((event) => !idFromResource(event.resource))
             : prev.map((event) =>
                 idFromResource(event.resource) === content?.id
                   ? {

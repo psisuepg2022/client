@@ -42,8 +42,7 @@ const TextEditor = ({ saveComment, loading }: TextEditorProps): JSX.Element => {
   const onSubmit = async (): Promise<void> => {
     const data = quill?.root.innerHTML;
 
-    console.log('DATA', data);
-    await saveComment(data || '');
+    await saveComment((data === '<p><br></p>' ? '' : data) || '');
   };
 
   return (

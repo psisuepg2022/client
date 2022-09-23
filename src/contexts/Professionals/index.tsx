@@ -15,6 +15,7 @@ type ProfessionalsContextData = {
   list: (listProps: ListProps) => Promise<Response<ItemList<Professional>>>;
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
   remove: (professionalId: string) => Promise<Response<boolean>>;
+  getProfile: () => Promise<Response<Professional>>;
   professionals: Professional[];
   count: number;
 };
@@ -74,12 +75,21 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const getProfile = async (): Promise<Response<Professional>> => {
+    const { data }: { data: Response<Professional> } = await api.get(
+      'professional/profile'
+    );
+
+    return data;
+  };
+
   return (
     <ProfessionalsContext.Provider
       value={{
         list,
         create,
         remove,
+        getProfile,
         professionals,
         count,
       }}

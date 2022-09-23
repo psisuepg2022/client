@@ -72,3 +72,8 @@ export const StyledButton = styled(Button)`
     background-color: ${colors.SECONDARY};
   }
 `;
+
+export const LogoContainer = styled('img')`
+  width: 100px;
+  height: auto;
+`;

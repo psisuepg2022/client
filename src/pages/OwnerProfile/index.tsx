@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconButton, Typography } from '@mui/material';
 import {
   Box,
@@ -7,6 +7,7 @@ import {
   Content,
   Form,
   Header,
+  LogoContainer,
   PersonalInfo,
   PersonalInfoHalf,
   StyledButton,
@@ -19,6 +20,11 @@ import ControlledInput from '@components/ControlledInput';
 import SectionDivider from '@components/SectionDivider';
 import { useNavigate } from 'react-router-dom';
 import { isAfter } from 'date-fns';
+import { showAlert } from '@utils/showAlert';
+import CircularProgressWithContent from '@components/CircularProgressWithContent';
+import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
+import { useProfessionals } from '@contexts/Professionals';
+import { useAuth } from '@contexts/Auth';
 
 type ProfileFormProps = {
   clinic: {
@@ -32,15 +38,71 @@ type ProfileFormProps = {
   CPF: string;
 };
 
-const Profile = (): JSX.Element => {
-  const formMethods = useForm();
-  const { handleSubmit } = formMethods;
+const OwnerProfile = (): JSX.Element => {
+  const {
+    user: { permissions, clinic },
+  } = useAuth();
+  const formMethods = useForm<ProfileFormProps>({
+    defaultValues: {
+      clinic: {
+        email: clinic?.email,
+        name: clinic?.name,
+      },
+    },
+  });
+  const { getProfile: getUserProfile } = useProfessionals();
+  const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  console.log(clinic);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+
+        if (permissions.includes('USER_TYPE_PROFESSIONAL')) {
+          const { content } = await getUserProfile();
+          return;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        showAlert({
+          icon: 'error',
+          text:
+            e?.response?.data?.message ||
+            'Ocorreu um problema ao carregar seu perfil de usuário',
+        });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const onSubmit = (data: FieldValues): void => {
     const formData: ProfileFormProps = data as ProfileFormProps;
     console.log('DATA', formData);
   };
+
+  if (loading)
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <CircularProgressWithContent
+          content={<LogoContainer src={logoPSIS} />}
+          size={200}
+        />
+      </div>
+    );
 
   return (
     <Container>
@@ -63,7 +125,6 @@ const Profile = (): JSX.Element => {
                 <ControlledInput
                   name="clinic.name"
                   label="Nome"
-                  defaultValue="KLINIK"
                   rules={{
                     required: {
                       value: true,
@@ -74,7 +135,6 @@ const Profile = (): JSX.Element => {
                 <ControlledInput
                   name="clinic.email"
                   label="Email"
-                  defaultValue="klinik@email.com"
                   rules={{
                     required: {
                       value: true,
@@ -178,4 +238,4 @@ const Profile = (): JSX.Element => {
   );
 };
 
-export default Profile;
+export default OwnerProfile;

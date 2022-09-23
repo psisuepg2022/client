@@ -53,7 +53,7 @@ const TopToolbar = ({
   const navigate = useNavigate();
   const {
     signOut,
-    user: { permissions },
+    user: { permissions, clinic },
   } = useAuth();
   const { professionals } = useProfessionals();
   const {
@@ -240,7 +240,7 @@ const TopToolbar = ({
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Container>
         <EarlyContent>
-          <ClinicTitle>KLINIK</ClinicTitle>
+          <ClinicTitle>{clinic?.name}</ClinicTitle>
         </EarlyContent>
 
         <MiddleContent>

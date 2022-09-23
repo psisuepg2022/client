@@ -2,11 +2,22 @@
 import React, { useState } from 'react';
 import { Event } from 'react-big-calendar';
 import { dateFormat } from '@utils/dateFormat';
-import { Header, SlotDataText, StyledBox, StyledModal } from './styles';
-import { MdOutlineClose } from 'react-icons/md';
+import {
+  Body,
+  Header,
+  LockInfoText,
+  SlotDataText,
+  StyledBox,
+  StyledButton,
+  StyledModal,
+} from './styles';
+import { MdOutlineClose, MdLock } from 'react-icons/md';
 import { IconButton } from '@mui/material';
 import { useSchedule } from '@contexts/Schedule';
 import { useAuth } from '@contexts/Auth';
+import { idFromResource } from '@utils/schedule';
+import { colors } from '@global/colors';
+import { showAlert } from '@utils/showAlert';
 
 type LockEventModalProps = {
   open: boolean;
@@ -19,7 +30,7 @@ const LockEventModal = ({
   handleClose,
   eventInfo,
 }: LockEventModalProps): JSX.Element => {
-  const {} = useSchedule();
+  const { deleteScheduleLock, setEvents } = useSchedule();
   const {
     user: { permissions },
   } = useAuth();
@@ -33,16 +44,49 @@ const LockEventModal = ({
     handleClose(reason);
   };
 
+  const handleDelete = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      const lockId = idFromResource(eventInfo.resource);
+
+      await deleteScheduleLock(lockId);
+
+      setEvents((prev) => {
+        const removeDeletedLock = prev.filter(
+          (item) => idFromResource(item.resource) !== lockId
+        );
+
+        return removeDeletedLock;
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao deletar o bloqueio',
+      });
+    } finally {
+      setLoading(false);
+      closeAll('');
+    }
+  };
+
   return (
     <>
       <StyledModal
         open={open}
-        onClose={() => closeAll('')}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClose={(event: any, reason: 'backdropClick' | 'escapeKeyDown') =>
+          closeAll(reason)
+        }
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <StyledBox>
           <Header>
+            <MdOutlineClose size={40} style={{ color: '#FFF' }} />
             <SlotDataText>
               {dateFormat({
                 date: eventInfo.start as Date,
@@ -59,10 +103,23 @@ const LockEventModal = ({
                 stringFormat: 'HH:mm',
               })}
             </SlotDataText>
-            <IconButton size="small" onClick={() => closeAll('')}>
+            <IconButton
+              disabled={loading}
+              size="small"
+              onClick={() => closeAll('')}
+            >
               <MdOutlineClose size={40} />
             </IconButton>
           </Header>
+          <Body>
+            <MdLock size={100} style={{ color: colors.DANGER }} />
+            <LockInfoText>Este horário possui um bloqueio</LockInfoText>
+            {permissions.includes('DELETE_SCHEDULE_LOCK') && (
+              <StyledButton disabled={loading} onClick={handleDelete}>
+                DELETAR BLOQUEIO
+              </StyledButton>
+            )}
+          </Body>
         </StyledBox>
       </StyledModal>
     </>

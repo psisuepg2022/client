@@ -37,22 +37,24 @@ export const Body = styled('div')`
   display: flex;
   height: 100%;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
   padding: 0 1rem;
-`;
-
-export const ButtonArea = styled('div')`
-  padding-top: 3rem;
 `;
 
 export const SlotDataText = styled(Typography)`
   font-size: 1.2rem;
   font-weight: 600;
+`;
+
+export const LockInfoText = styled(Typography)`
+  font-size: 1.2rem;
+  font-weight: 400;
   padding: 1rem 0;
 `;
 
 export const StyledButton = styled(Button)`
-  background-color: ${colors.PRIMARY};
+  background-color: ${colors.DANGER};
   color: #fff;
   transition: 300ms;
   width: 100%;
@@ -61,17 +63,6 @@ export const StyledButton = styled(Button)`
   height: 50px;
 
   :hover {
-    background-color: ${colors.SECONDARY};
+    background-color: ${colors.DANGER_HOVER};
   }
-`;
-
-export const ConditionalInputs = styled('div')`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-`;
-
-export const TimePickerContainer = styled('form')`
-  display: flex;
-  gap: 10px;
 `;

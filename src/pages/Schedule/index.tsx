@@ -52,6 +52,7 @@ import {
   isUUID,
   lockFromResource,
   statusFromResource,
+  idFromResource,
 } from '@utils/schedule';
 import { Modal } from '@mui/material';
 import ConfirmedEventModal from '@components/ConfirmedEventModal';
@@ -174,15 +175,21 @@ const Schedule = (): JSX.Element => {
           }
         ) as ScheduleEvent[];
 
-        console.log('LOCKS', firstSchedule?.content);
-
         const mappedScheduleLocks: Event[] =
           firstSchedule?.content?.scheduleLocks.map((lock) => {
-            const startDate = new Date(lock.date);
+            const startDate = new Date(
+              Number(lock.date.split('/')[2]),
+              Number(lock.date.split('/')[1]) - 1,
+              Number(lock.date.split('/')[0])
+            );
             startDate.setHours(Number(lock.startTime.split(':')[0]));
             startDate.setMinutes(Number(lock.startTime.split(':')[1]));
             startDate.setSeconds(0);
-            const endDate = new Date(lock.date);
+            const endDate = new Date(
+              Number(lock.date.split('/')[2]),
+              Number(lock.date.split('/')[1]) - 1,
+              Number(lock.date.split('/')[0])
+            );
             endDate.setHours(Number(lock.endTime.split(':')[0]));
             endDate.setMinutes(Number(lock.endTime.split(':')[1]));
             endDate.setSeconds(0);
@@ -299,7 +306,8 @@ const Schedule = (): JSX.Element => {
           const removeOldLocks = prev.filter(
             (item) =>
               lockFromResource(item.resource) !== 'LOCK' ||
-              isUUID(`${item.title}`)
+              (lockFromResource(item.resource) === 'LOCK' &&
+                idFromResource(item.resource) !== undefined)
           );
 
           return [...removeOldLocks, ...allEvents];
@@ -317,7 +325,47 @@ const Schedule = (): JSX.Element => {
           .then(({ content }) => {
             setEvents((prev) => {
               const removeOldEvents = prev.filter(
-                (item) => lockFromResource(item.resource) === 'LOCK'
+                (item) =>
+                  lockFromResource(item.resource) === 'LOCK' &&
+                  idFromResource(item.resource) === undefined
+              );
+
+              const currentDate = new Date();
+
+              const mappedScheduleLocks: Event[] = content?.scheduleLocks.map(
+                (lock) => {
+                  const startDate = new Date(
+                    Number(lock.date.split('/')[2]),
+                    Number(lock.date.split('/')[1]) - 1,
+                    Number(lock.date.split('/')[0])
+                  );
+                  startDate.setHours(Number(lock.startTime.split(':')[0]));
+                  startDate.setMinutes(Number(lock.startTime.split(':')[1]));
+                  startDate.setSeconds(0);
+                  const endDate = new Date(
+                    Number(lock.date.split('/')[2]),
+                    Number(lock.date.split('/')[1]) - 1,
+                    Number(lock.date.split('/')[0])
+                  );
+                  endDate.setHours(Number(lock.endTime.split(':')[0]));
+                  endDate.setMinutes(Number(lock.endTime.split(':')[1]));
+                  endDate.setSeconds(0);
+
+                  if (
+                    isAfter(startDate, currentDate) ||
+                    isEqual(startDate, currentDate)
+                  ) {
+                    return {
+                      start: startDate,
+                      end: endDate,
+                      resource: `${lock.resource}/${lock.id}`,
+                    };
+                  }
+                }
+              ) as Event[];
+
+              const validScheduleLocks = mappedScheduleLocks.filter(
+                (lock) => lock
               );
 
               const mappedNewEvents: Event[] = content?.appointments.map(
@@ -346,7 +394,11 @@ const Schedule = (): JSX.Element => {
                 }
               ) as Event[];
 
-              return [...removeOldEvents, ...mappedNewEvents];
+              return [
+                ...removeOldEvents,
+                ...mappedNewEvents,
+                ...validScheduleLocks,
+              ];
             });
           })
           .catch((e) => {
@@ -390,7 +442,8 @@ const Schedule = (): JSX.Element => {
         const removeOldLocks = prev.filter(
           (item) =>
             lockFromResource(item.resource) !== 'LOCK' ||
-            isUUID(`${item.title}`)
+            (lockFromResource(item.resource) === 'LOCK' &&
+              idFromResource(item.resource) !== undefined)
         );
 
         return [...removeOldLocks, ...allEvents];
@@ -405,7 +458,6 @@ const Schedule = (): JSX.Element => {
           dateFormat({ date: date, stringFormat: 'yyyy-MM-dd' })
         );
 
-        console.log('NEW RANGE', weekRangeDatesOnly);
         previousRange.current = weekRangeDatesOnly;
 
         setScheduleLoading(true);
@@ -422,8 +474,46 @@ const Schedule = (): JSX.Element => {
             setEvents((prev) => {
               const removeOldEvents = prev.filter(
                 (item) =>
-                  lockFromResource(item.resource) === 'LOCK' ||
-                  isUUID(`${item.title}`)
+                  lockFromResource(item.resource) === 'LOCK' &&
+                  idFromResource(item.resource) === undefined
+              );
+
+              const currentDate = new Date();
+
+              const mappedScheduleLocks: Event[] = content?.scheduleLocks.map(
+                (lock) => {
+                  const startDate = new Date(
+                    Number(lock.date.split('/')[2]),
+                    Number(lock.date.split('/')[1]) - 1,
+                    Number(lock.date.split('/')[0])
+                  );
+                  startDate.setHours(Number(lock.startTime.split(':')[0]));
+                  startDate.setMinutes(Number(lock.startTime.split(':')[1]));
+                  startDate.setSeconds(0);
+                  const endDate = new Date(
+                    Number(lock.date.split('/')[2]),
+                    Number(lock.date.split('/')[1]) - 1,
+                    Number(lock.date.split('/')[0])
+                  );
+                  endDate.setHours(Number(lock.endTime.split(':')[0]));
+                  endDate.setMinutes(Number(lock.endTime.split(':')[1]));
+                  endDate.setSeconds(0);
+
+                  if (
+                    isAfter(startDate, currentDate) ||
+                    isEqual(startDate, currentDate)
+                  ) {
+                    return {
+                      start: startDate,
+                      end: endDate,
+                      resource: `${lock.resource}/${lock.id}`,
+                    };
+                  }
+                }
+              ) as Event[];
+
+              const validScheduleLocks = mappedScheduleLocks.filter(
+                (lock) => lock
               );
 
               const mappedNewEvents: Event[] = content?.appointments.map(
@@ -452,7 +542,11 @@ const Schedule = (): JSX.Element => {
                 }
               ) as Event[];
 
-              return [...removeOldEvents, ...mappedNewEvents];
+              return [
+                ...removeOldEvents,
+                ...mappedNewEvents,
+                ...validScheduleLocks,
+              ];
             });
           })
           .catch((e) => console.log('ERRO REEWTRIEVE', e))

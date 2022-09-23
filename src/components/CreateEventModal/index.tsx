@@ -85,8 +85,8 @@ const CreateEventModal = ({
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
     setCurrentPatient(undefined);
-    handleClose(reason);
     setLockMode(false);
+    handleClose(reason);
   };
 
   const onSubmit = async (): Promise<void> => {
@@ -171,7 +171,10 @@ const CreateEventModal = ({
     <>
       <StyledModal
         open={open}
-        onClose={closeAll}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClose={(event: any, reason: 'backdropClick' | 'escapeKeyDown') =>
+          closeAll(reason)
+        }
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -187,7 +190,11 @@ const CreateEventModal = ({
                   stringFormat: "d 'de' MMMM 'de' yyyy",
                 })}
               </SlotDataText>
-              <IconButton size="small" onClick={() => closeAll('')}>
+              <IconButton
+                disabled={loading}
+                size="small"
+                onClick={() => closeAll('')}
+              >
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>
@@ -243,7 +250,11 @@ const CreateEventModal = ({
                 | {dateFormat({ date: slotInfo.start, stringFormat: 'HH:mm' })}{' '}
                 - {dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' })}
               </SlotDataText>
-              <IconButton size="small" onClick={() => closeAll('')}>
+              <IconButton
+                disabled={loading}
+                size="small"
+                onClick={() => closeAll('')}
+              >
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>

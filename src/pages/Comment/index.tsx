@@ -39,8 +39,10 @@ const Comment = (): JSX.Element => {
 
         if (!content?.comments) {
           showAlert({
+            title: '',
             icon: 'info',
             text: 'A consulta não possui anotações. Clique em OK para retornar à agenda',
+            allowOutsideClick: false,
           }).then(async (result) => {
             if (result.isConfirmed) {
               navigate('/schedule');
@@ -60,6 +62,7 @@ const Comment = (): JSX.Element => {
           text:
             e?.response?.data?.message ||
             'Ocorreu um problema ao recuperar as anotações para essa consulta',
+          allowOutsideClick: false,
         }).then(async (result) => {
           if (result.isConfirmed) {
             navigate('/schedule');

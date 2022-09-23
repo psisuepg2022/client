@@ -60,6 +60,7 @@ const CommentCreation = (): JSX.Element => {
         title: 'Sucesso!',
         icon: 'success',
         text: message,
+        allowOutsideClick: false,
       }).then(async (result) => {
         if (result.isConfirmed) {
           navigate('/schedule');

@@ -599,7 +599,7 @@ const Schedule = (): JSX.Element => {
         handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
           reason !== 'backdropClick' &&
           reason !== 'escapeKeyDown' &&
-          setCurrentEvent(undefined)
+          setCurrentSlotInfo(undefined)
         }
         open={currentSlotInfo !== undefined}
         slotInfo={currentSlotInfo}
@@ -643,17 +643,20 @@ const Schedule = (): JSX.Element => {
             eventInfo={currentEvent}
           />
         )}
-      {currentEvent && lockFromResource(currentEvent.resource) && (
-        <LockEventModal
-          open={currentEvent !== undefined}
-          handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
-            reason !== 'backdropClick' &&
-            reason !== 'escapeKeyDown' &&
-            setCurrentEvent(undefined)
-          }
-          eventInfo={currentEvent}
-        />
-      )}
+      {currentEvent &&
+        lockFromResource(currentEvent.resource) &&
+        idFromResource(currentEvent.resource) &&
+        !currentEvent.title && (
+          <LockEventModal
+            open={currentEvent !== undefined}
+            handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+              reason !== 'backdropClick' &&
+              reason !== 'escapeKeyDown' &&
+              setCurrentEvent(undefined)
+            }
+            eventInfo={currentEvent}
+          />
+        )}
       <Calendar
         localizer={localizer}
         events={events}

@@ -37,7 +37,7 @@ import {
 } from '@utils/schedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { dateFormat } from '@utils/dateFormat';
-import { getDay } from 'date-fns';
+import { getDay, isAfter, isEqual } from 'date-fns';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -153,12 +153,14 @@ const TopToolbar = ({
           endDate.setMinutes(Number(lock.endTime.split(':')[1]));
           endDate.setSeconds(0);
 
-          return {
-            start: startDate,
-            end: endDate,
-            resource: `${lock.resource}/${lock.id}`,
-            title: lock.id,
-          };
+          if (isAfter(endDate, currentDate) || isEqual(endDate, currentDate)) {
+            return {
+              start: startDate,
+              end: endDate,
+              resource: `${lock.resource}/${lock.id}`,
+              title: lock.id,
+            };
+          }
         }) as Event[];
 
       const mappedEvents: Event[] =

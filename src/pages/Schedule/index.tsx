@@ -195,8 +195,8 @@ const Schedule = (): JSX.Element => {
             endDate.setSeconds(0);
 
             if (
-              isAfter(startDate, currentDate) ||
-              isEqual(startDate, currentDate)
+              isAfter(endDate, currentDate) ||
+              isEqual(endDate, currentDate)
             ) {
               return {
                 start: startDate,
@@ -207,6 +207,7 @@ const Schedule = (): JSX.Element => {
           }) as Event[];
 
         const validScheduleLocks = mappedScheduleLocks.filter((lock) => lock);
+        console.log('VALID', validScheduleLocks);
 
         const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
           (event) => {

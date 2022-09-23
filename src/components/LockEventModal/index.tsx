@@ -12,7 +12,7 @@ import {
   StyledModal,
 } from './styles';
 import { MdOutlineClose, MdLock } from 'react-icons/md';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import { useSchedule } from '@contexts/Schedule';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
@@ -116,7 +116,11 @@ const LockEventModal = ({
             <LockInfoText>Este horário possui um bloqueio</LockInfoText>
             {permissions.includes('DELETE_SCHEDULE_LOCK') && (
               <StyledButton disabled={loading} onClick={handleDelete}>
-                DELETAR BLOQUEIO
+                {loading ? (
+                  <CircularProgress style={{ color: '#FFF' }} size={20} />
+                ) : (
+                  'DELETAR BLOQUEIO'
+                )}
               </StyledButton>
             )}
           </Body>

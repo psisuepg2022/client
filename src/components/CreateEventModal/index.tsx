@@ -155,7 +155,13 @@ const CreateEventModal = ({
         endTime,
       });
 
-      console.log('REUTRN', content);
+      const newLock: Event = {
+        start: slotInfo.start,
+        end: slotInfo.end,
+        resource: `LOCK/${content?.id}`,
+      };
+
+      addNewEvent(newLock);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -164,6 +170,7 @@ const CreateEventModal = ({
       });
     } finally {
       setLoading(false);
+      closeAll('');
     }
   };
 
@@ -220,7 +227,7 @@ const CreateEventModal = ({
               </FormProvider>
 
               <ButtonArea>
-                <StyledButton form="form" type="submit">
+                <StyledButton disabled={loading} form="form" type="submit">
                   {loading ? (
                     <CircularProgress style={{ color: '#FFF' }} size={20} />
                   ) : (

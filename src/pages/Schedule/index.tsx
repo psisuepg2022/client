@@ -49,7 +49,6 @@ import {
   weekRange,
   weekRangeDates,
   buildWeeklySchedule,
-  isUUID,
   lockFromResource,
   statusFromResource,
   idFromResource,

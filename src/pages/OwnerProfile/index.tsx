@@ -23,8 +23,8 @@ import { isAfter } from 'date-fns';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
-import { useProfessionals } from '@contexts/Professionals';
 import { useAuth } from '@contexts/Auth';
+import { useOwner } from '@contexts/Owner';
 
 type ProfileFormProps = {
   clinic: {
@@ -40,7 +40,7 @@ type ProfileFormProps = {
 
 const OwnerProfile = (): JSX.Element => {
   const {
-    user: { permissions, clinic },
+    user: { clinic },
   } = useAuth();
   const formMethods = useForm<ProfileFormProps>({
     defaultValues: {
@@ -50,7 +50,7 @@ const OwnerProfile = (): JSX.Element => {
       },
     },
   });
-  const { getProfile: getUserProfile } = useProfessionals();
+  const { getProfile } = useOwner();
   const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
@@ -62,10 +62,15 @@ const OwnerProfile = (): JSX.Element => {
       try {
         setLoading(true);
 
-        if (permissions.includes('USER_TYPE_PROFESSIONAL')) {
-          const { content } = await getUserProfile();
-          return;
-        }
+        const { content } = await getProfile();
+
+        console.log('GET PROFILE', content);
+
+        setValue('name', content?.name || '');
+        setValue('email', content?.email || '');
+        setValue('CPF', content?.CPF || '');
+        setValue('birthdate', content?.birthDate || '');
+        setValue('contactNumber', content?.contactNumber || '');
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -150,7 +155,6 @@ const OwnerProfile = (): JSX.Element => {
                 <ControlledInput
                   name="name"
                   label="Nome"
-                  defaultValue="Peter Doppler"
                   rules={{
                     required: {
                       value: true,
@@ -158,17 +162,12 @@ const OwnerProfile = (): JSX.Element => {
                     },
                   }}
                 />
-                <ControlledInput
-                  name="email"
-                  label="Email"
-                  defaultValue="peter.doppler@email.com"
-                />
+                <ControlledInput name="email" label="Email" />
 
                 <PersonalInfoHalf>
                   <ControlledInput
-                    name="cpf"
+                    name="CPF"
                     label="CPF"
-                    defaultValue="000.000.000-00"
                     mask={(s: string): string =>
                       `${s
                         .replace(/\D/g, '')
@@ -195,7 +194,6 @@ const OwnerProfile = (): JSX.Element => {
                   <ControlledDatePicker
                     name="birthdate"
                     label="Data de nascimento"
-                    defaultValue={new Date()}
                     rules={{
                       required: {
                         value: true,
@@ -211,9 +209,8 @@ const OwnerProfile = (): JSX.Element => {
 
                 <PersonalInfoHalf>
                   <ControlledInput
-                    name="phone"
+                    name="contactNumber"
                     label="Telefone"
-                    defaultValue="00000000000"
                     mask={(s: string): string =>
                       `${s
                         .replace(/\D/g, '')

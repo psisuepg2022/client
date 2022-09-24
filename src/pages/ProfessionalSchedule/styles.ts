@@ -53,7 +53,14 @@ export const TimesLabel = styled(Typography)`
 
 export const WorkHoursContainer = styled('div')`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   column-gap: 1rem;
-  width: 50%;
+  width: 60%;
+`;
+
+export const IntervalsContainer = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 1rem;
+  width: 60%;
 `;

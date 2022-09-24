@@ -7,11 +7,13 @@ import {
   Content,
   DayHoursAndLocks,
   Header,
+  IntervalsContainer,
   LogoContainer,
   TimesLabel,
   WorkHoursContainer,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
+import { AiOutlinePlus } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { showAlert } from '@utils/showAlert';
 import { useProfessionals } from '@contexts/Professionals';
@@ -117,6 +119,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                       endTime: timeToDate(item.endTime),
                     });
                   }}
+                  disabled={loading}
                   style={{ padding: '0.3rem' }}
                   textStyle={{
                     color: colors.TEXT,
@@ -144,7 +147,35 @@ const ProfessionalSchedule = (): JSX.Element => {
                       defaultValue={timeToDate(currentDay.endTime)}
                     />
                   </WorkHoursContainer>
-                  <button type="submit">la</button>
+
+                  <TimesLabel>Intervalos</TimesLabel>
+                  {currentDay &&
+                    currentDay.locks &&
+                    currentDay.locks.length > 0 &&
+                    currentDay.locks.map((lock) => (
+                      <IntervalsContainer key={lock.id}>
+                        <ControlledTimePicker
+                          label="Início"
+                          name="lock.startTime"
+                          required
+                          defaultValue={timeToDate(lock.startTime)}
+                        />
+                        <ControlledTimePicker
+                          label="Fim"
+                          name="lock.endTime"
+                          required
+                          defaultValue={timeToDate(lock.endTime)}
+                        />
+                        <IconButton
+                          style={{ width: 60, height: 60, marginLeft: 20 }}
+                        >
+                          <AiOutlinePlus
+                            size={60}
+                            style={{ color: colors.PRIMARY }}
+                          />
+                        </IconButton>
+                      </IntervalsContainer>
+                    ))}
                 </form>
               </FormProvider>
             )}

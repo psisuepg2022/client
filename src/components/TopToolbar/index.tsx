@@ -163,6 +163,10 @@ const TopToolbar = ({
           }
         }) as Event[];
 
+      const validScheduleLocks: Event[] = mappedScheduleLocks.filter(
+        (lock) => lock
+      );
+
       const mappedEvents: Event[] =
         professionalSchedule?.content?.appointments.map((event) => {
           const startTime = event.startDate.split('T')[1].substring(0, 5);
@@ -191,7 +195,7 @@ const TopToolbar = ({
       setEvents([
         ...weeklyScheduleEvents,
         ...weeklyScheduleLocksEvents,
-        ...mappedScheduleLocks,
+        ...validScheduleLocks,
         ...mappedEvents,
       ]);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

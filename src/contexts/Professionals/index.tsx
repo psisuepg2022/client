@@ -4,6 +4,7 @@ import { api } from '@service/index';
 import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
 import { FormProfessional, Professional } from '@models/Professional';
+import { WeeklySchedule } from '@models/WeeklySchedule';
 
 type ListProps = {
   page?: number;
@@ -16,6 +17,7 @@ type ProfessionalsContextData = {
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
   remove: (professionalId: string) => Promise<Response<boolean>>;
   getProfile: () => Promise<Response<Professional>>;
+  getWeeklySchedule: () => Promise<Response<WeeklySchedule[]>>;
   professionals: Professional[];
   count: number;
 };
@@ -83,6 +85,14 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const getWeeklySchedule = async (): Promise<Response<WeeklySchedule[]>> => {
+    const { data }: { data: Response<WeeklySchedule[]> } = await api.get(
+      'weekly_schedule'
+    );
+
+    return data;
+  };
+
   return (
     <ProfessionalsContext.Provider
       value={{
@@ -90,6 +100,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
         create,
         remove,
         getProfile,
+        getWeeklySchedule,
         professionals,
         count,
       }}

@@ -7,6 +7,7 @@ type CardSelectorProps = {
   onSelect: () => void;
   style?: React.CSSProperties;
   textStyle?: React.CSSProperties;
+  disabled?: boolean;
 };
 
 const CardSelector = ({
@@ -15,6 +16,7 @@ const CardSelector = ({
   onSelect,
   style,
   textStyle,
+  disabled,
 }: CardSelectorProps): JSX.Element => {
   return (
     <Container
@@ -23,6 +25,7 @@ const CardSelector = ({
           ? { borderBottom: '2px #419D78 solid', ...style }
           : { ...style }
       }
+      disabled={disabled}
       onClick={onSelect}
     >
       <CardName style={{ ...textStyle }}>{name}</CardName>

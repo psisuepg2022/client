@@ -78,7 +78,9 @@ const ConfirmedEventModal = ({
       setEvents((prev) => {
         const newEvents: Event[] =
           status === '5' && isAfter(eventInfo.start as Date, currentDate)
-            ? prev.filter((event) => !idFromResource(event.resource))
+            ? prev.filter(
+                (event) => appointmentId !== idFromResource(event.resource)
+              )
             : prev.map((event) =>
                 idFromResource(event.resource) === content?.id
                   ? {

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { colors } from '@global/colors';
 
@@ -37,4 +37,23 @@ export const Header = styled('div')`
 export const LogoContainer = styled('img')`
   width: 100px;
   height: auto;
+`;
+
+export const DayHoursAndLocks = styled('div')`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const TimesLabel = styled(Typography)`
+  color: ${colors.TEXT};
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 2rem 0 1rem 0;
+`;
+
+export const WorkHoursContainer = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1rem;
+  width: 50%;
 `;

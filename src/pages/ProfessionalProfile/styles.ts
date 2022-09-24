@@ -77,3 +77,21 @@ export const LogoContainer = styled('img')`
   width: 100px;
   height: auto;
 `;
+
+export const AuxDataFirst = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  column-gap: 1rem;
+`;
+
+export const AuxDataSecond = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  column-gap: 1rem;
+`;
+
+export const ProfessionalData = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 1rem;
+`;

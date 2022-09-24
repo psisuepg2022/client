@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import OwnerProfile from '@pages/OwnerProfile';
 import { useAuth } from '@contexts/Auth';
 import ProfessionalProfile from '@pages/ProfessionalProfile';
+import ProtectedRoute from './ProtectedRoute';
+import ProfessionalSchedule from '@pages/ProfessionalSchedule';
 
 const ProfileRoutes = (): JSX.Element => {
   const {
@@ -23,6 +25,26 @@ const ProfileRoutes = (): JSX.Element => {
           )
         }
       />
+      <Route
+        element={
+          <ProtectedRoute
+            requiredPermissions={[
+              'READ_WEEKLY_SCHEDULE',
+              'CREATE_WEEKLY_SCHEDULE',
+              'UPDATE_WEEKLY_SCHEDULE',
+              'CREATE_WEEKLY_SCHEDULE_LOCK',
+              'DELETE_WEEKLY_SCHEDULE_LOCK',
+              'READ_WEEKLY_SCHEDULE_LOCK',
+              'UPDATE_WEEKLY_SCHEDULE_LOCK',
+            ]}
+          />
+        }
+      >
+        <Route
+          path="/professional_schedule"
+          element={<ProfessionalSchedule />}
+        />
+      </Route>
     </Routes>
   );
 };

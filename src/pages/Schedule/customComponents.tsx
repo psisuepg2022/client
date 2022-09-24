@@ -30,11 +30,11 @@ export const eventStyleGetter = (
         idFromResource(event.resource) === undefined
           ? colors.LOCK
           : colors.LOCK_DARKER,
-      borderRadius: '0px',
       color: 'transparent',
       cursor: idFromResource(event.resource) === undefined ? 'auto' : 'pointer',
       width: '100%',
       border: '1px',
+      //boxShadow: '0px 5px 10px rgba(18, 18, 18, 0.48)',
     };
 
     return {
@@ -47,7 +47,6 @@ export const eventStyleGetter = (
 
   const style = {
     backgroundColor: eventColor(status),
-    borderRadius: '2px',
     color: colors.TEXT,
     whiteSpace: 'nowrap',
     overflow: 'hidden',

@@ -73,7 +73,7 @@ const ProfessionalProfile = (): JSX.Element => {
         setValue('specialization', content?.specialization || '');
 
         if (content?.address) {
-          setValue('address.zipCode', content.address.zipCode);
+          setValue('address.zipCode', content.address?.zipCode);
           setCepInfos({
             cep: content?.address.zipCode,
             localidade: content?.address.city,
@@ -176,6 +176,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledInput
                     name="CPF"
                     label="CPF"
+                    defaultValue=""
                     mask={(s: string): string =>
                       `${s
                         .replace(/\D/g, '')
@@ -214,20 +215,6 @@ const ProfessionalProfile = (): JSX.Element => {
                     }}
                   />
                 </PersonalInfoHalf>
-
-                <PersonalInfoHalf>
-                  <ControlledInput
-                    name="contactNumber"
-                    label="Telefone"
-                    mask={(s: string): string =>
-                      `${s
-                        .replace(/\D/g, '')
-                        .replace(/(\d{2})(\d)/, '($1) $2')
-                        .replace(/(\d{5})(\d)/, '$1-$2')
-                        .replace(/(-\d{4})\d+?$/, '$1')}`
-                    }
-                  />
-                </PersonalInfoHalf>
               </PersonalInfo>
 
               <SectionDivider>Dados Auxiliares</SectionDivider>
@@ -235,6 +222,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <AsyncInput
                   name="address.zipCode"
                   label="CEP"
+                  defaultValue=""
                   onCompleteCep={handleCepComplete}
                   inputLoading={inputLoading}
                   maxLength={9}
@@ -290,6 +278,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="contactNumber"
                   label="Telefone"
+                  defaultValue=""
                   style={{ width: '50%' }}
                   maxLength={15}
                   mask={(s: string): string =>

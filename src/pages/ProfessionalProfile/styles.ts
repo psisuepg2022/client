@@ -29,7 +29,9 @@ export const Content = styled('div')`
 
 export const Header = styled('div')`
   height: 10%;
+  width: 100%;
   display: flex;
+  justify-content: space-between;
   align-items: center;
 `;
 

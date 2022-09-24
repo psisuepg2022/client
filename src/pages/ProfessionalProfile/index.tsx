@@ -32,6 +32,7 @@ import SimpleInput from '@components/SimpleInput';
 import { CepInfos } from '@interfaces/CepInfos';
 import AsyncInput from '@components/AsyncInput';
 import { searchForCep } from '@utils/zipCode';
+import { AiOutlineClockCircle } from 'react-icons/ai';
 
 type ProfileFormProps = {
   name: string;
@@ -147,12 +148,24 @@ const ProfessionalProfile = (): JSX.Element => {
       <Box>
         <Content>
           <Header>
-            <IconButton onClick={() => navigate(-1)}>
-              <FiChevronLeft
-                style={{ color: colors.TEXT, fontSize: '2.5rem' }}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton onClick={() => navigate(-1)}>
+                <FiChevronLeft
+                  style={{ color: colors.TEXT, fontSize: '2.5rem' }}
+                />
+              </IconButton>
+              <Typography fontSize={'2.5rem'}>
+                Perfil do Profissional
+              </Typography>
+            </div>
+            <IconButton
+              disabled={loading || inputLoading}
+              onClick={() => navigate('/profile/professional_schedule')}
+            >
+              <AiOutlineClockCircle
+                style={{ color: colors.PRIMARY, fontSize: '2.5rem' }}
               />
             </IconButton>
-            <Typography fontSize={'2.5rem'}>Perfil do Profissional</Typography>
           </Header>
 
           <FormProvider {...formMethods}>

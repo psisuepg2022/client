@@ -5,6 +5,7 @@ import { Owner } from '@models/Owner';
 
 type OwnerContextData = {
   getProfile: () => Promise<Response<Owner>>;
+  updateProfile: () => Promise<Response<Owner>>;
 };
 
 type OwnerProviderProps = {
@@ -22,10 +23,17 @@ export const OwnerProvider: React.FC<OwnerProviderProps> = ({
     return data;
   };
 
+  const updateProfile = async (): Promise<Response<Owner>> => {
+    const { data }: { data: Response<Owner> } = await api.put('owner');
+
+    return data;
+  };
+
   return (
     <OwnerContext.Provider
       value={{
         getProfile,
+        updateProfile,
       }}
     >
       {children}

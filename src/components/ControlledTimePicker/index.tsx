@@ -20,7 +20,7 @@ type ControlledTimePickerProps = {
   name: string;
   label: string;
   disabled?: boolean;
-  defaultValue?: string;
+  defaultValue?: Date;
   required?: boolean;
   rules?: Omit<
     RegisterOptions<FieldValues, FieldPath<FieldValues>>,
@@ -75,7 +75,6 @@ const ControlledTimePicker = ({
               />
             )}
             disabled={disabled}
-            inputFormat="HH:mm"
           />
         </LocalizationProvider>
       )}

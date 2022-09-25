@@ -24,6 +24,7 @@ import CardSelector from '@components/CardSelector';
 import SectionDivider from '@components/SectionDivider';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledTimePicker from '@components/ControlledTimePicker';
+import { timeToDate } from '@utils/timeToDate';
 
 const ProfessionalSchedule = (): JSX.Element => {
   const navigate = useNavigate();
@@ -60,14 +61,6 @@ const ProfessionalSchedule = (): JSX.Element => {
 
   const onSubmit = (data: any) => {
     console.log('data', data);
-  };
-
-  const timeToDate = (time: string): Date => {
-    const [hour, minute] = time.split(':');
-    const currentDate = new Date();
-    currentDate.setHours(Number(hour), Number(minute), 0);
-
-    return currentDate;
   };
 
   if (loading)

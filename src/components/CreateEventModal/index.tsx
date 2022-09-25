@@ -50,7 +50,12 @@ const CreateEventModal = ({
   const {
     user: { permissions },
   } = useAuth();
-  const formMethods = useForm<{ start: Date; end: Date }>();
+  const formMethods = useForm<{ start: Date; end: Date }>({
+    defaultValues: {
+      start: slotInfo?.start,
+      end: slotInfo?.end,
+    },
+  });
   const { handleSubmit } = formMethods;
   const [currentPatient, setCurrentPatient] = useState<Patient>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -118,6 +123,7 @@ const CreateEventModal = ({
       };
 
       addNewEvent(newAppointment);
+      closeAll('');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -127,7 +133,6 @@ const CreateEventModal = ({
       });
     } finally {
       setLoading(false);
-      closeAll('');
     }
   };
 
@@ -156,12 +161,13 @@ const CreateEventModal = ({
       });
 
       const newLock: Event = {
-        start: slotInfo.start,
-        end: slotInfo.end,
+        start: data.start,
+        end: data.end,
         resource: `LOCK/${content?.id}`,
       };
 
       addNewEvent(newLock);
+      closeAll('');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -170,7 +176,6 @@ const CreateEventModal = ({
       });
     } finally {
       setLoading(false);
-      closeAll('');
     }
   };
 
@@ -216,12 +221,12 @@ const CreateEventModal = ({
                   <ControlledTimePicker
                     name="start"
                     label="Início"
-                    defaultValue={'11:00'}
+                    defaultValue={slotInfo.start}
                   />
                   <ControlledTimePicker
                     name="end"
                     label="Fim"
-                    defaultValue={'11:00'}
+                    defaultValue={slotInfo.end}
                   />
                 </TimePickerContainer>
               </FormProvider>

@@ -597,6 +597,7 @@ const Schedule = (): JSX.Element => {
         </>
       </Modal>
       <CreateEventModal
+        key={`${Math.random()}`}
         handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
           reason !== 'backdropClick' &&
           reason !== 'escapeKeyDown' &&
@@ -604,9 +605,9 @@ const Schedule = (): JSX.Element => {
         }
         open={currentSlotInfo !== undefined}
         slotInfo={currentSlotInfo}
-        addNewEvent={(newEvent: Event) =>
-          setEvents((prev) => [...prev, newEvent])
-        }
+        addNewEvent={(newEvent: Event) => {
+          setEvents((prev) => [...prev, newEvent]);
+        }}
       />
       {currentEvent &&
         statusFromResource(currentEvent.resource) === 'Agendado' && (

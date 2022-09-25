@@ -20,6 +20,7 @@ type ControlledTimePickerProps = {
   name: string;
   label: string;
   disabled?: boolean;
+  minutesStep?: number;
   defaultValue?: Date;
   required?: boolean;
   rules?: Omit<
@@ -32,6 +33,7 @@ const ControlledTimePicker = ({
   name,
   label,
   disabled,
+  minutesStep,
   defaultValue,
   rules,
   required,
@@ -65,6 +67,7 @@ const ControlledTimePicker = ({
             {...rest}
             label={label}
             value={value}
+            minutesStep={minutesStep}
             onChange={onChange}
             renderInput={(params) => (
               <CustomTextField

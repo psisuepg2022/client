@@ -25,6 +25,9 @@ export const Content = styled('div')`
   width: 90%;
   height: 90%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
 `;
 
 export const Header = styled('div')`
@@ -62,5 +65,22 @@ export const IntervalsContainer = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 1rem;
+  padding-bottom: 10px;
   width: 60%;
+`;
+
+export const StyledButton = styled(Button)`
+  background-color: ${colors.PRIMARY};
+  color: #fff;
+  transition: 300ms;
+  width: 350px;
+  font-weight: 400;
+  font-size: 1rem;
+  height: 50px;
+  margin-top: 20px;
+  align-self: flex-end;
+
+  :hover {
+    background-color: ${colors.SECONDARY};
+  }
 `;

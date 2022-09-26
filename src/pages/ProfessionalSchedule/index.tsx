@@ -9,11 +9,13 @@ import {
   Header,
   IntervalsContainer,
   LogoContainer,
+  StyledButton,
   TimesLabel,
   WorkHoursContainer,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
 import { AiOutlinePlus } from 'react-icons/ai';
+import { MdDelete } from 'react-icons/md';
 import { colors } from '@global/colors';
 import { showAlert } from '@utils/showAlert';
 import { useProfessionals } from '@contexts/Professionals';
@@ -25,6 +27,15 @@ import SectionDivider from '@components/SectionDivider';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledTimePicker from '@components/ControlledTimePicker';
 import { timeToDate } from '@utils/timeToDate';
+import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
+import { differenceInMinutes } from 'date-fns';
+import { useSchedule } from '@contexts/Schedule';
+
+type FormLock = {
+  id?: string;
+  startTime: string;
+  endTime: string;
+};
 
 const ProfessionalSchedule = (): JSX.Element => {
   const navigate = useNavigate();
@@ -34,6 +45,8 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentDay, setCurrentDay] = useState<WeeklySchedule>();
   const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule[]>([]);
+  const [intervals, setIntervals] = useState<FormLock[]>([]);
+  const [counter, setCounter] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
@@ -41,8 +54,33 @@ const ProfessionalSchedule = (): JSX.Element => {
         const { content } = await getWeeklySchedule();
 
         if (content && content.length > 0) {
+          const initialDay = content[0] as WeeklySchedule;
+          const [start, end] = [initialDay.startTime, initialDay.endTime];
+          const startTime = timeToDate(start);
+          const endTime = timeToDate(end);
+          const totalTime = differenceInMinutes(endTime, startTime);
+
+          let totalLockTime = 0;
+          initialDay?.locks?.forEach((lock) => {
+            const lockStartTime = timeToDate(lock.startTime);
+            const lockEndTime = timeToDate(lock.endTime);
+
+            totalLockTime += differenceInMinutes(lockEndTime, lockStartTime);
+          });
+
+          console.log('DIFF', startTime, endTime, totalTime);
+          console.log('LOCK TOTAL', totalLockTime);
+
+          const slotsWithoutLock = totalTime / 60;
+          const lockSlots = totalLockTime / 60;
+
+          const remainingSlots = slotsWithoutLock - lockSlots;
+
+          console.log('SUMA', slotsWithoutLock, lockSlots, remainingSlots);
+
           setWeeklySchedule(content);
-          setCurrentDay(content[0]);
+          setCurrentDay(initialDay);
+          setIntervals(initialDay.locks as FormLock[]);
         }
         console.log('WEEKYL', content);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,7 +98,25 @@ const ProfessionalSchedule = (): JSX.Element => {
   }, []);
 
   const onSubmit = (data: any) => {
-    console.log('data', data);
+    console.log('data', data, intervals);
+  };
+
+  const addInterval = (): void => {
+    setIntervals((prev) => [...prev, { startTime: '12:00', endTime: '13:00' }]);
+  };
+
+  const removeInterval = (lock: WeeklyScheduleLock): void => {
+    // setIndexes(prevIndexes => [...prevIndexes.filter(item => item !== index)]);
+    // setCounter(prevCounter => prevCounter - 1);
+  };
+
+  const handleDayChange = (day: WeeklySchedule): void => {
+    setCurrentDay(day);
+    setIntervals(day.locks as FormLock[]);
+    reset({
+      startTime: timeToDate(day.startTime),
+      endTime: timeToDate(day.endTime),
+    });
   };
 
   if (loading)
@@ -105,13 +161,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                   key={item.id}
                   name={`${item.dayOfTheWeek}`}
                   selected={currentDay?.id === item.id}
-                  onSelect={() => {
-                    setCurrentDay(item);
-                    reset({
-                      startTime: timeToDate(item.startTime),
-                      endTime: timeToDate(item.endTime),
-                    });
-                  }}
+                  onSelect={() => handleDayChange(item)}
                   disabled={loading}
                   style={{ padding: '0.3rem' }}
                   textStyle={{
@@ -124,7 +174,7 @@ const ProfessionalSchedule = (): JSX.Element => {
             </div>
             {currentDay && (
               <FormProvider {...formMethods}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form id="form" onSubmit={handleSubmit(onSubmit)}>
                   <TimesLabel>Início e fim do expediente</TimesLabel>
                   <WorkHoursContainer>
                     <ControlledTimePicker
@@ -132,47 +182,92 @@ const ProfessionalSchedule = (): JSX.Element => {
                       name="startTime"
                       required
                       defaultValue={timeToDate(currentDay.startTime)}
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'O tempo de início é obrigatório',
+                        },
+                      }}
                     />
                     <ControlledTimePicker
                       label="Fim"
                       name="endTime"
                       required
                       defaultValue={timeToDate(currentDay.endTime)}
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'O tempo final é obrigatório',
+                        },
+                      }}
                     />
                   </WorkHoursContainer>
 
-                  <TimesLabel>Intervalos</TimesLabel>
+                  <div
+                    style={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
+                    <TimesLabel>Intervalos</TimesLabel>
+                    <TimesLabel>{counter} intervalos restantes</TimesLabel>
+                  </div>
                   {currentDay &&
-                    currentDay.locks &&
-                    currentDay.locks.length > 0 &&
-                    currentDay.locks.map((lock) => (
-                      <IntervalsContainer key={lock.id}>
+                    intervals &&
+                    intervals.length > 0 &&
+                    intervals.map((lock, index) => (
+                      <IntervalsContainer key={index}>
                         <ControlledTimePicker
                           label="Início"
-                          name="lock.startTime"
-                          required
+                          name={`${index}.startTime`}
                           defaultValue={timeToDate(lock.startTime)}
+                          rules={{
+                            required: {
+                              value: true,
+                              message: 'O tempo de início é obrigatório',
+                            },
+                          }}
                         />
                         <ControlledTimePicker
                           label="Fim"
-                          name="lock.endTime"
-                          required
+                          name={`${index}.endTime`}
                           defaultValue={timeToDate(lock.endTime)}
+                          rules={{
+                            required: {
+                              value: true,
+                              message: 'O tempo final é obrigatório',
+                            },
+                          }}
                         />
-                        <IconButton
-                          style={{ width: 60, height: 60, marginLeft: 20 }}
-                        >
-                          <AiOutlinePlus
-                            size={60}
-                            style={{ color: colors.PRIMARY }}
-                          />
-                        </IconButton>
+                        {index === 0 ? (
+                          <IconButton
+                            size="small"
+                            style={{ width: 60, height: 60, marginLeft: 20 }}
+                            onClick={addInterval}
+                          >
+                            <AiOutlinePlus
+                              size={40}
+                              style={{ color: colors.PRIMARY }}
+                            />
+                          </IconButton>
+                        ) : (
+                          <IconButton
+                            size="small"
+                            style={{ width: 60, height: 60, marginLeft: 20 }}
+                            onClick={addInterval}
+                          >
+                            <MdDelete
+                              size={40}
+                              style={{ color: colors.PRIMARY }}
+                            />
+                          </IconButton>
+                        )}
                       </IntervalsContainer>
                     ))}
                 </form>
               </FormProvider>
             )}
           </DayHoursAndLocks>
+          <StyledButton type="submit" form="form">
+            SALVAR
+          </StyledButton>
         </Content>
       </Box>
     </Container>

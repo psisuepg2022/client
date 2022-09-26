@@ -58,6 +58,7 @@ import ConfirmedEventModal from '@components/ConfirmedEventModal';
 import { dateFormat } from '@utils/dateFormat';
 import ConcludedEventModal from '@components/ConcludedEventModal';
 import LockEventModal from '@components/LockEventModal';
+import CancelledAbsenceEventModal from '@components/CancelledAbsenceEventModal';
 
 const locales = {
   'pt-BR': ptBR,
@@ -646,6 +647,19 @@ const Schedule = (): JSX.Element => {
           />
         )}
       {currentEvent &&
+        (statusFromResource(currentEvent.resource) === 'Cancelado' ||
+          statusFromResource(currentEvent.resource) === 'Ausência') && (
+          <CancelledAbsenceEventModal
+            open={currentEvent !== undefined}
+            handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+              reason !== 'backdropClick' &&
+              reason !== 'escapeKeyDown' &&
+              setCurrentEvent(undefined)
+            }
+            eventInfo={currentEvent}
+          />
+        )}
+      {currentEvent &&
         lockFromResource(currentEvent.resource) &&
         idFromResource(currentEvent.resource) &&
         !currentEvent.title && (
@@ -690,6 +704,7 @@ const Schedule = (): JSX.Element => {
         onSelectSlot={(slotInfo: SlotInfo) =>
           (user.permissions.includes('CREATE_APPOINTMENT') ||
             user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
+          isAfter(slotInfo.start, new Date()) &&
           setCurrentSlotInfo(slotInfo)
         }
         selectable

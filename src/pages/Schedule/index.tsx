@@ -661,8 +661,7 @@ const Schedule = (): JSX.Element => {
         )}
       {currentEvent &&
         lockFromResource(currentEvent.resource) &&
-        idFromResource(currentEvent.resource) &&
-        !currentEvent.title && (
+        idFromResource(currentEvent.resource) && (
           <LockEventModal
             open={currentEvent !== undefined}
             handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>

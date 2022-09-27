@@ -293,20 +293,6 @@ const OwnerProfile = (): JSX.Element => {
                     }}
                   />
                 </PersonalInfoHalf>
-
-                <PersonalInfoHalf>
-                  <ControlledInput
-                    name="contactNumber"
-                    label="Telefone"
-                    mask={(s: string): string =>
-                      `${s
-                        .replace(/\D/g, '')
-                        .replace(/(\d{2})(\d)/, '($1) $2')
-                        .replace(/(\d{5})(\d)/, '$1-$2')
-                        .replace(/(-\d{4})\d+?$/, '$1')}`
-                    }
-                  />
-                </PersonalInfoHalf>
               </PersonalInfo>
 
               <SectionDivider>Dados Auxiliares</SectionDivider>

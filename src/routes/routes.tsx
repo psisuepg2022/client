@@ -14,6 +14,7 @@ import { ProfessionalsProvider } from '@contexts/Professionals';
 import CommentRoutes from './comment.routes';
 import { CommentsProvider } from '@contexts/Comments';
 import { OwnerProvider } from '@contexts/Owner';
+import { EmployeesProvider } from '@contexts/Employees';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -30,38 +31,40 @@ const AppRoutes = () => {
   return (
     <PatientsProvider>
       <ProfessionalsProvider>
-        <OwnerProvider>
-          <ScheduleProvider>
-            <CommentsProvider>
-              <Routes>
-                {/* SCHEDULE PAGES */}
-                <Route path="/schedule/*" element={<AgendaRoutes />} />
+        <EmployeesProvider>
+          <OwnerProvider>
+            <ScheduleProvider>
+              <CommentsProvider>
+                <Routes>
+                  {/* SCHEDULE PAGES */}
+                  <Route path="/schedule/*" element={<AgendaRoutes />} />
 
-                {/* COMMENT PAGES */}
-                <Route path="/comment/*" element={<CommentRoutes />} />
+                  {/* COMMENT PAGES */}
+                  <Route path="/comment/*" element={<CommentRoutes />} />
 
-                {/* PROFESSIONAL PAGES */}
-                <Route
-                  path="/professionals/*"
-                  element={<ProfessionalRoutes />}
-                />
+                  {/* PROFESSIONAL PAGES */}
+                  <Route
+                    path="/professionals/*"
+                    element={<ProfessionalRoutes />}
+                  />
 
-                {/* EMPLOYEE PAGES */}
-                <Route path="/employees/*" element={<EmployeeRoutes />} />
+                  {/* EMPLOYEE PAGES */}
+                  <Route path="/employees/*" element={<EmployeeRoutes />} />
 
-                {/* PATIENTS PAGES */}
-                <Route path="/patients/*" element={<PatientRoutes />} />
+                  {/* PATIENTS PAGES */}
+                  <Route path="/patients/*" element={<PatientRoutes />} />
 
-                {/* PROFILE PAGES */}
-                <Route path="/profile/*" element={<ProfileRoutes />} />
+                  {/* PROFILE PAGES */}
+                  <Route path="/profile/*" element={<ProfileRoutes />} />
 
-                {/* REDIRECT */}
-                <Route path="/" element={<Navigate to="/schedule" />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </CommentsProvider>
-          </ScheduleProvider>
-        </OwnerProvider>
+                  {/* REDIRECT */}
+                  <Route path="/" element={<Navigate to="/schedule" />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </CommentsProvider>
+            </ScheduleProvider>
+          </OwnerProvider>
+        </EmployeesProvider>
       </ProfessionalsProvider>
     </PatientsProvider>
   );

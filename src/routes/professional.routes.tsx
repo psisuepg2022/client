@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import SideBar from '@components/SideBar';
 import Professionals from '@pages/Professionals';
 import ProtectedRoute from './ProtectedRoute';
+import ProfessionalsForm from '@pages/ProfessionalsForm';
 
 const ProfessionalRoutes = (): JSX.Element => {
   return (
@@ -30,7 +31,7 @@ const ProfessionalRoutes = (): JSX.Element => {
           element={
             <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
-              <Professionals />
+              <ProfessionalsForm />
             </div>
           }
         />

@@ -10,15 +10,16 @@ export type Professional = {
   address?: Address;
 } & User;
 
-export type FormProfessional = {
+export type FormProfessional = Omit<
+  User,
+  'accessCode' | 'permissions' | 'id'
+> & {
   profession: string;
   specialization?: string;
-  baseDuration: number;
   registry: string;
   password: string;
-  address?: Address;
-} & User &
-  FormPerson;
+  address?: FormAddress;
+} & FormPerson;
 
 export type UpdateProfessional = Omit<
   User,

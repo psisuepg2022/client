@@ -1,3 +1,5 @@
+import { dateFormat } from './dateFormat';
+
 export const timeToDate = (time: string): Date => {
   const [hour, minute] = time.split(':');
   const currentDate = new Date();
@@ -5,3 +7,9 @@ export const timeToDate = (time: string): Date => {
 
   return currentDate;
 };
+
+export const dateToTime = (date: Date): string =>
+  dateFormat({
+    date,
+    stringFormat: 'HH:mm',
+  });

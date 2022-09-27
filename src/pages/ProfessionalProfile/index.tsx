@@ -129,7 +129,13 @@ const ProfessionalProfile = (): JSX.Element => {
 
     try {
       setLoading(true);
-      await updateProfile(professional);
+      const { message } = await updateProfile(professional);
+
+      showAlert({
+        title: 'Sucesso!',
+        icon: 'success',
+        text: message,
+      });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

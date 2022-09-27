@@ -141,7 +141,13 @@ const OwnerProfile = (): JSX.Element => {
 
     try {
       setLoading(true);
-      await updateProfile(owner);
+      const { message } = await updateProfile(owner);
+
+      showAlert({
+        title: 'Sucesso!',
+        icon: 'success',
+        text: message,
+      });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

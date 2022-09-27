@@ -10,7 +10,6 @@ import ControlledInput from '@components/ControlledInput';
 import SectionDivider from '@components/SectionDivider';
 import SimpleInput from '@components/SimpleInput';
 import { FormAddress } from '@models/Address';
-import { FormProfessional, Professional } from '@models/Professional';
 import { searchForCep } from '@utils/zipCode';
 import {
   AuxDataFirst,
@@ -29,7 +28,8 @@ import {
 } from './styles';
 import { showAlert } from '@utils/showAlert';
 import { CepInfos } from '@interfaces/CepInfos';
-import { useProfessionals } from '@contexts/Professionals';
+import { useEmployees } from '@contexts/Employees';
+import { Employee, FormEmployee } from '@models/Employee';
 
 type FormProps = {
   name: string;
@@ -38,51 +38,45 @@ type FormProps = {
   CPF: string;
   contactNumber: string;
   address?: FormAddress;
-  profession: '';
-  registry: '';
-  specialization?: '';
 };
 
-const ProfessionalsForm = (): JSX.Element => {
-  const { state }: { state: Professional } = useLocation() as {
-    state: Professional;
+const EmployeesForm = (): JSX.Element => {
+  const { state }: { state: Employee } = useLocation() as {
+    state: Employee;
   };
-  const [professionalToEdit] = useState<Professional>(state);
+  const [employeeToEdit] = useState<Employee>(state);
 
   const formMethods = useForm({
-    defaultValues: professionalToEdit && {
-      id: professionalToEdit.id,
-      name: professionalToEdit.name,
-      email: professionalToEdit?.email || '',
-      CPF: professionalToEdit?.CPF || '',
+    defaultValues: employeeToEdit && {
+      id: employeeToEdit.id,
+      name: employeeToEdit.name,
+      email: employeeToEdit?.email || '',
+      CPF: employeeToEdit?.CPF || '',
       birthDate: new Date(
-        professionalToEdit.birthDate.split('/').reverse().join('-') + 'GMT-0300'
+        employeeToEdit.birthDate.split('/').reverse().join('-') + 'GMT-0300'
       ),
-      contactNumber: professionalToEdit?.contactNumber || '',
-      profession: professionalToEdit?.profession || '',
-      registry: professionalToEdit?.registry || '',
-      specialization: professionalToEdit.specialization || '',
-      userName: professionalToEdit?.userName || '',
+      contactNumber: employeeToEdit?.contactNumber || '',
+      userName: employeeToEdit?.userName || '',
       address: {
-        zipCode: professionalToEdit?.address?.zipCode || '',
+        zipCode: employeeToEdit?.address?.zipCode || '',
       },
     },
   });
   const { handleSubmit, reset } = formMethods;
-  const { create } = useProfessionals();
+  const { create } = useEmployees();
   const navigate = useNavigate();
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (professionalToEdit && professionalToEdit.address) {
+    if (employeeToEdit && employeeToEdit.address) {
       setCepInfos({
-        cep: professionalToEdit.address.zipCode,
-        localidade: professionalToEdit.address.city,
-        logradouro: professionalToEdit.address.publicArea,
-        bairro: professionalToEdit.address.district,
-        uf: professionalToEdit.address.state,
+        cep: employeeToEdit.address.zipCode,
+        localidade: employeeToEdit.address.city,
+        logradouro: employeeToEdit.address.publicArea,
+        bairro: employeeToEdit.address.district,
+        uf: employeeToEdit.address.state,
       });
     }
   }, []);
@@ -90,14 +84,10 @@ const ProfessionalsForm = (): JSX.Element => {
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: FormProps = data as FormProps;
 
-    const professional: FormProfessional = {
-      ...(professionalToEdit &&
-        professionalToEdit?.id && { id: professionalToEdit.id }),
+    const employee: FormEmployee = {
+      ...(employeeToEdit && employeeToEdit?.id && { id: employeeToEdit.id }),
       userName: '',
       password: '',
-      profession: '',
-      registry: '',
-      specialization: '',
       name: formData.name,
       email: formData.email || '',
       CPF: formData.CPF || '',
@@ -112,8 +102,8 @@ const ProfessionalsForm = (): JSX.Element => {
           state: cepInfos?.uf || '',
           publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
           district: formData.address.district || cepInfos?.bairro || '',
-          ...(professionalToEdit?.address?.id && {
-            id: professionalToEdit.address.id,
+          ...(employeeToEdit?.address?.id && {
+            id: employeeToEdit.address.id,
           }),
         },
       }),
@@ -121,13 +111,13 @@ const ProfessionalsForm = (): JSX.Element => {
 
     setLoading(true);
     try {
-      const response = await create(professional);
+      const response = await create(employee);
       showAlert({
         title: 'Sucesso!',
         text: response.message,
         icon: 'success',
       });
-      if (!professionalToEdit) {
+      if (!employeeToEdit) {
         reset();
         setCepInfos(undefined);
       }
@@ -171,7 +161,7 @@ const ProfessionalsForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Profissional</PageTitle>
+              <PageTitle>Criar Funcionário</PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm
@@ -185,7 +175,7 @@ const ProfessionalsForm = (): JSX.Element => {
                     rules={{
                       required: {
                         value: true,
-                        message: 'O nome do profissional é obrigatório',
+                        message: 'O nome do funcionário é obrigatório',
                       },
                     }}
                     name="name"
@@ -218,7 +208,7 @@ const ProfessionalsForm = (): JSX.Element => {
                       },
                       required: {
                         value: true,
-                        message: 'O CPF do profissional é obrigatório',
+                        message: 'O CPF do funcionário é obrigatório',
                       },
                     }}
                     required
@@ -230,7 +220,7 @@ const ProfessionalsForm = (): JSX.Element => {
                       required: {
                         value: true,
                         message:
-                          'A data de nascimento do profissional é obrigatória',
+                          'A data de nascimento do funcionário é obrigatória',
                       },
                       validate: (date) => {
                         if (!isValid(date))
@@ -256,7 +246,7 @@ const ProfessionalsForm = (): JSX.Element => {
                     label="Nome de usuário"
                     required
                   />
-                  {!professionalToEdit && (
+                  {!employeeToEdit && (
                     <ControlledInput
                       rules={{
                         required: {
@@ -345,36 +335,6 @@ const ProfessionalsForm = (): JSX.Element => {
                     }
                   />
                 </AuxDataSecond>
-
-                <SectionDivider>Dados Profissionais</SectionDivider>
-                <AuxDataFirst>
-                  <ControlledInput
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'A profissão é obrigatória',
-                      },
-                    }}
-                    name="profession"
-                    label="Profissão"
-                    required
-                  />
-                  <ControlledInput
-                    name="registry"
-                    label="Registro"
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'O registro do profissional é obrigatório',
-                      },
-                    }}
-                    required
-                  />
-                  <ControlledInput
-                    name="specialization"
-                    label="Especialização"
-                  />
-                </AuxDataFirst>
               </StyledForm>
             </FormProvider>
           </div>
@@ -394,7 +354,7 @@ const ProfessionalsForm = (): JSX.Element => {
             </StyledButton>
             <StyledButtonInverted
               disabled={loading}
-              onClick={() => navigate('/professionals', { replace: true })}
+              onClick={() => navigate('/employees', { replace: true })}
               style={{ gridColumnStart: 4 }}
             >
               CANCELAR
@@ -406,4 +366,4 @@ const ProfessionalsForm = (): JSX.Element => {
   );
 };
 
-export default React.memo(ProfessionalsForm);
+export default React.memo(EmployeesForm);

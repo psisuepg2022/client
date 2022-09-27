@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import SideBar from '@components/SideBar';
 import ProtectedRoute from './ProtectedRoute';
 import Employees from '@pages/Employees';
+import EmployeesForm from '@pages/EmployeesForm';
 
 const EmployeeRoutes = (): JSX.Element => {
   return (
@@ -28,7 +29,7 @@ const EmployeeRoutes = (): JSX.Element => {
           element={
             <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
-              <Employees />
+              <EmployeesForm />
             </div>
           }
         />
@@ -41,7 +42,7 @@ const EmployeeRoutes = (): JSX.Element => {
           element={
             <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
-              <Employees />
+              <EmployeesForm />
             </div>
           }
         />

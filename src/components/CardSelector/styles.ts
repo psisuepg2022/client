@@ -14,4 +14,7 @@ export const CardName = styled(Typography)`
   color: ${colors.PRIMARY};
   font-size: 1.2rem;
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;

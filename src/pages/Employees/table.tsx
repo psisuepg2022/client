@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageSize } from '@global/constants';
 import { useAuth } from '@contexts/Auth';
 import { Employee } from '@models/Employee';
+import UpdateEmployeePasswordModal from '@components/UpdateEmployeePasswordModal';
 
 type EmployeesTableProps = {
   employees: Employee[];
@@ -119,7 +120,7 @@ const EmployeesTable = ({
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      {/* <UpdateProfissionalPasswordModal
+                      <UpdateEmployeePasswordModal
                         open={openModal}
                         handleClose={(
                           reason: 'backdropClick' | 'escapeKeyDown' | ''
@@ -129,7 +130,7 @@ const EmployeesTable = ({
                           setOpenModal(false)
                         }
                         employee={row}
-                      /> */}
+                      />
                       {permissions.includes('USER_TYPE_OWNER') && (
                         <Tooltip title="Atualizar senha">
                           <IconButton onClick={() => setOpenModal(true)}>

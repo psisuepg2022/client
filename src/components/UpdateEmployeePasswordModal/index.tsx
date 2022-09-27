@@ -12,29 +12,29 @@ import {
 import { MdOutlineClose } from 'react-icons/md';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
-import { Professional } from '@models/Professional';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '@components/ControlledInput';
+import { Employee } from '@models/Employee';
 
-type UpdateProfessionalPasswordModalProps = {
+type UpdateEmployeePasswordModalProps = {
   open: boolean;
   handleClose: (reason: 'backdropClick' | 'escapeKeyDown' | '') => void;
-  professional: Professional;
+  employee: Employee;
 };
 
-const UpdateProfessionalPasswordModal = ({
+const UpdateEmployeePasswordModal = ({
   open,
   handleClose,
-  professional,
-}: UpdateProfessionalPasswordModalProps): JSX.Element => {
+  employee,
+}: UpdateEmployeePasswordModalProps): JSX.Element => {
   const formMethods = useForm();
   const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState<boolean>(false);
   const randomKey = Math.random();
 
-  if (!professional) return <></>;
+  if (!employee) return <></>;
 
-  if (professional && !professional.id) return <></>;
+  if (employee && !employee.id) return <></>;
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
     handleClose(reason);
@@ -57,7 +57,7 @@ const UpdateProfessionalPasswordModal = ({
       <StyledBox>
         <Header>
           <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
-          <StatusText>{professional.name}</StatusText>
+          <StatusText>{employee.name}</StatusText>
           <IconButton onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
@@ -113,4 +113,4 @@ const UpdateProfessionalPasswordModal = ({
   );
 };
 
-export default React.memo(UpdateProfessionalPasswordModal);
+export default React.memo(UpdateEmployeePasswordModal);

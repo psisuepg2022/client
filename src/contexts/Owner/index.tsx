@@ -1,11 +1,11 @@
 import React, { createContext, useContext } from 'react';
 import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
-import { Owner } from '@models/Owner';
+import { Owner, UpdateOwner } from '@models/Owner';
 
 type OwnerContextData = {
   getProfile: () => Promise<Response<Owner>>;
-  updateProfile: () => Promise<Response<Owner>>;
+  updateProfile: (owner: UpdateOwner) => Promise<Response<Owner>>;
 };
 
 type OwnerProviderProps = {
@@ -23,8 +23,12 @@ export const OwnerProvider: React.FC<OwnerProviderProps> = ({
     return data;
   };
 
-  const updateProfile = async (): Promise<Response<Owner>> => {
-    const { data }: { data: Response<Owner> } = await api.put('owner');
+  const updateProfile = async (
+    owner: UpdateOwner
+  ): Promise<Response<Owner>> => {
+    const { data }: { data: Response<Owner> } = await api.put('owner', {
+      ...owner,
+    });
 
     return data;
   };

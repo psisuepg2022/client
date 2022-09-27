@@ -33,11 +33,12 @@ import { CepInfos } from '@interfaces/CepInfos';
 import AsyncInput from '@components/AsyncInput';
 import { searchForCep } from '@utils/zipCode';
 import { AiOutlineClockCircle } from 'react-icons/ai';
+import { dateFormat } from '@utils/dateFormat';
 
 type ProfileFormProps = {
   name: string;
   email?: string;
-  birthdate: string;
+  birthDate: Date;
   CPF: string;
   contactNumber?: string;
   profession: string;
@@ -48,7 +49,7 @@ type ProfileFormProps = {
 
 const ProfessionalProfile = (): JSX.Element => {
   const formMethods = useForm<ProfileFormProps>();
-  const { getProfile } = useProfessionals();
+  const { getProfile, updateProfile } = useProfessionals();
   const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
@@ -62,18 +63,24 @@ const ProfessionalProfile = (): JSX.Element => {
 
         const { content } = await getProfile();
 
-        console.log('GET PROFILE', content);
+        const [day, month, year] = (content?.birthDate as string).split('/');
+        const birthDate = new Date(
+          Number(year),
+          Number(month) - 1,
+          Number(day)
+        );
 
         setValue('name', content?.name || '');
         setValue('email', content?.email || '');
         setValue('CPF', content?.CPF || '');
-        setValue('birthdate', content?.birthDate || '');
+        setValue('birthDate', birthDate || new Date());
         setValue('contactNumber', content?.contactNumber || '');
         setValue('profession', content?.profession || '');
         setValue('registry', content?.registry || '');
         setValue('specialization', content?.specialization || '');
 
         if (content?.address) {
+          setValue('address.id', content.address?.id);
           setValue('address.zipCode', content.address?.zipCode);
           setCepInfos({
             cep: content?.address.zipCode,
@@ -98,9 +105,43 @@ const ProfessionalProfile = (): JSX.Element => {
     })();
   }, []);
 
-  const onSubmit = (data: FieldValues): void => {
+  const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: ProfileFormProps = data as ProfileFormProps;
-    console.log('DATA', formData);
+    const birthDateAltered = dateFormat({
+      date: formData.birthDate,
+      stringFormat: 'yyyy-MM-dd',
+    });
+
+    const professional = {
+      ...formData,
+      birthDate: birthDateAltered,
+      ...(formData.address?.zipCode && {
+        address: {
+          id: formData.address.id,
+          zipCode: formData.address.zipCode,
+          city: cepInfos?.localidade || '',
+          state: cepInfos?.uf || '',
+          publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
+          district: formData.address.district || cepInfos?.bairro || '',
+        },
+      }),
+    };
+
+    try {
+      setLoading(true);
+      await updateProfile(professional);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao atualizar o perfil',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCepComplete = async (value: string): Promise<CepInfos | void> => {
@@ -214,13 +255,12 @@ const ProfessionalProfile = (): JSX.Element => {
                     }}
                   />
                   <ControlledDatePicker
-                    name="birthdate"
+                    name="birthDate"
                     label="Data de nascimento"
                     rules={{
                       required: {
                         value: true,
-                        message:
-                          'A data de nascimento do responsável é obrigatória',
+                        message: 'A data de nascimento é obrigatória',
                       },
                       validate: (date) =>
                         !isAfter(date, new Date()) ||

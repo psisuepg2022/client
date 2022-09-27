@@ -3,7 +3,11 @@ import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
 import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
-import { FormProfessional, Professional } from '@models/Professional';
+import {
+  FormProfessional,
+  Professional,
+  UpdateProfessional,
+} from '@models/Professional';
 import { WeeklySchedule } from '@models/WeeklySchedule';
 
 type ListProps = {
@@ -17,6 +21,9 @@ type ProfessionalsContextData = {
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
   remove: (professionalId: string) => Promise<Response<boolean>>;
   getProfile: () => Promise<Response<Professional>>;
+  updateProfile: (
+    professional: UpdateProfessional
+  ) => Promise<Response<Professional>>;
   getWeeklySchedule: () => Promise<Response<WeeklySchedule[]>>;
   professionals: Professional[];
   count: number;
@@ -85,6 +92,19 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const updateProfile = async (
+    professional: UpdateProfessional
+  ): Promise<Response<Professional>> => {
+    const { data }: { data: Response<Professional> } = await api.put(
+      'professional',
+      {
+        ...professional,
+      }
+    );
+
+    return data;
+  };
+
   const getWeeklySchedule = async (): Promise<Response<WeeklySchedule[]>> => {
     const { data }: { data: Response<WeeklySchedule[]> } = await api.get(
       'weekly_schedule'
@@ -100,6 +120,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
         create,
         remove,
         getProfile,
+        updateProfile,
         getWeeklySchedule,
         professionals,
         count,

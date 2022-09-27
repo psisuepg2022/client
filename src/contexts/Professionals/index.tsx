@@ -25,6 +25,9 @@ type ProfessionalsContextData = {
     professional: UpdateProfessional
   ) => Promise<Response<Professional>>;
   getWeeklySchedule: () => Promise<Response<WeeklySchedule[]>>;
+  topBar: () => Promise<
+    Response<ItemList<{ id: string; name: string; baseDuration: number }>>
+  >;
   professionals: Professional[];
   count: number;
 };
@@ -113,6 +116,20 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const topBar = async (): Promise<
+    Response<ItemList<{ id: string; name: string; baseDuration: number }>>
+  > => {
+    const {
+      data,
+    }: {
+      data: Response<
+        ItemList<{ id: string; name: string; baseDuration: number }>
+      >;
+    } = await api.get('professional/top_bar');
+
+    return data;
+  };
+
   return (
     <ProfessionalsContext.Provider
       value={{
@@ -122,6 +139,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
         getProfile,
         updateProfile,
         getWeeklySchedule,
+        topBar,
         professionals,
         count,
       }}

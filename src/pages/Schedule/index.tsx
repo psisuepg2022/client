@@ -100,7 +100,7 @@ type Ranges = {
 
 const Schedule = (): JSX.Element => {
   const { user } = useAuth();
-  const { list } = useProfessionals();
+  const { topBar } = useProfessionals();
   const {
     getScheduleEvents,
     setCurrentProfessional,
@@ -128,11 +128,7 @@ const Schedule = (): JSX.Element => {
           'USER_TYPE_PROFESSIONAL'
         )
           ? { content: { items: [user] } }
-          : await list({
-              // List Professionals
-              page: 0,
-              size: 100,
-            });
+          : await topBar();
         const [startOfWeek, endOfWeek] = weekRange(new Date());
         const startOfWeekDate = dateFormat({
           date: startOfWeek,

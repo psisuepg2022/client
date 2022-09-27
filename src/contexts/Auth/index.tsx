@@ -19,6 +19,7 @@ type AuthContextData = {
   signIn: (credentials: AuthCredentials) => Promise<void>;
   signOut: () => void;
   user: User;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
   isAuthenticated: boolean;
 };
 
@@ -33,13 +34,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 }: AuthProviderProps) => {
   const [user, setUser] = useState<User>(() => {
     const storageAccessToken = localStorage.getItem('@psis:accessToken');
+    const storageUserData = localStorage.getItem('@psis:userData');
 
-    if (storageAccessToken) {
+    if (storageAccessToken && storageUserData) {
       api.defaults.headers.common[
         'authorization'
       ] = `Bearer ${storageAccessToken}`;
 
-      const decodedUser: User = decodeToken(storageAccessToken) as User;
+      const decodedUser: User = JSON.parse(storageUserData) as User;
       return decodedUser;
     }
     return {} as User;
@@ -55,6 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     ) as User;
 
     localStorage.setItem('@psis:accessToken', data.content?.accessToken || '');
+    localStorage.setItem('@psis:userData', JSON.stringify(decodedToken));
     api.defaults.headers.common[
       'authorization'
     ] = `Bearer ${data.content?.accessToken}`;
@@ -73,6 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         signIn,
         signOut,
         user,
+        setUser,
         isAuthenticated: Object.keys(user).length !== 0,
       }}
     >

@@ -33,6 +33,7 @@ import { CepInfos } from '@interfaces/CepInfos';
 import { searchForCep } from '@utils/zipCode';
 import AsyncInput from '@components/AsyncInput';
 import SimpleInput from '@components/SimpleInput';
+import { User } from '@models/User';
 
 type ProfileFormProps = {
   clinic: {
@@ -50,6 +51,7 @@ type ProfileFormProps = {
 const OwnerProfile = (): JSX.Element => {
   const {
     user: { clinic },
+    setUser,
   } = useAuth();
   const formMethods = useForm<ProfileFormProps>({
     defaultValues: {
@@ -141,7 +143,23 @@ const OwnerProfile = (): JSX.Element => {
 
     try {
       setLoading(true);
-      const { message } = await updateProfile(owner);
+      const { message, content } = await updateProfile(owner);
+
+      if (content && content.clinic) {
+        setUser((prev) => {
+          const newUser: User = {
+            ...prev,
+            clinic: {
+              ...prev.clinic,
+              name: content.clinic?.name || clinic?.name,
+              email: content.clinic?.email || clinic?.email,
+            },
+          } as User;
+          localStorage.setItem('@psis:userData', JSON.stringify(newUser));
+
+          return newUser;
+        });
+      }
 
       showAlert({
         title: 'Sucesso!',

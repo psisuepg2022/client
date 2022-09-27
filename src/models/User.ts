@@ -9,4 +9,5 @@ export type User = {
   email: string;
   permissions: Permissions;
   clinic?: Clinic;
+  baseDuration?: number;
 } & Person;

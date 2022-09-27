@@ -35,6 +35,7 @@ import { SearchFilter } from '@interfaces/SearchFilter';
 import { PageSize } from '@global/constants';
 import { colors } from '@global/colors';
 import { Patient } from '@models/Patient';
+import { useAuth } from '@contexts/Auth';
 
 const columns: Column[] = [
   {
@@ -69,6 +70,9 @@ const columns: Column[] = [
 const Patients = (): JSX.Element => {
   const { patients, list, count, remove } = usePatients();
   const formMethods = useForm();
+  const {
+    user: { permissions },
+  } = useAuth();
   const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
   const searchActive = useRef(false);
@@ -249,7 +253,7 @@ const Patients = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
-                disabled={loading}
+                disabled={loading || !permissions.includes('CREATE_PATIENT')}
                 onClick={() => navigate('/patients/form')}
               >
                 ADICIONAR

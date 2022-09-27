@@ -191,8 +191,7 @@ const EmployeesTable = ({
                               {row.birthDate}
                             </TextExpand>
                           </PersonalDataExpand>
-                          {(row.address ||
-                            (row.contactNumber && row.address)) && (
+                          {row.address && (
                             <>
                               <SectionDivider fontSize={14}>
                                 Dados auxiliares
@@ -218,6 +217,20 @@ const EmployeesTable = ({
                                   <span>CEP: </span>
                                   {row.address.zipCode}
                                 </TextExpand>
+                                <TextExpand>
+                                  <span>Telefone: </span>
+                                  {row.contactNumber}
+                                </TextExpand>
+                              </AuxDataExpand>
+                            </>
+                          )}
+
+                          {!row.address && row.contactNumber && (
+                            <>
+                              <SectionDivider fontSize={14}>
+                                Dados auxiliares
+                              </SectionDivider>
+                              <AuxDataExpand>
                                 <TextExpand>
                                   <span>Telefone: </span>
                                   {row.contactNumber}

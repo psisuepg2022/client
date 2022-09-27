@@ -228,6 +228,19 @@ const PatientsTable = ({
                               </AuxDataExpand>
                             </>
                           )}
+                          {!row.address && row.contactNumber && (
+                            <>
+                              <SectionDivider fontSize={14}>
+                                Dados auxiliares
+                              </SectionDivider>
+                              <AuxDataExpand>
+                                <TextExpand>
+                                  <span>Telefone: </span>
+                                  {row.contactNumber}
+                                </TextExpand>
+                              </AuxDataExpand>
+                            </>
+                          )}
 
                           {row.liable && (
                             <>

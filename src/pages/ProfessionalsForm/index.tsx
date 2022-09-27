@@ -262,24 +262,21 @@ const ProfessionalsForm = (): JSX.Element => {
                     label="Nome de usuário"
                     required
                   />
-                  <ControlledInput
-                    rules={{
-                      required: {
-                        value:
-                          professionalToEdit && professionalToEdit.id
-                            ? false
-                            : true,
-                        message: 'A senha é obrigatória',
-                      },
-                    }}
-                    type="password"
-                    endFunction="password"
-                    name="password"
-                    label="Senha"
-                    required={
-                      professionalToEdit && professionalToEdit.id ? false : true
-                    }
-                  />
+                  {!professionalToEdit && (
+                    <ControlledInput
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'A senha é obrigatória',
+                        },
+                      }}
+                      type="password"
+                      endFunction="password"
+                      name="password"
+                      label="Senha"
+                      required
+                    />
+                  )}
                 </PersonalDataSecond>
 
                 <SectionDivider>Dados Auxiliares</SectionDivider>

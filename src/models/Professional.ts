@@ -23,11 +23,10 @@ export type FormProfessional = Omit<
 
 export type UpdateProfessional = Omit<
   User,
-  'accessCode' | 'userName' | 'permissions' | 'id' | 'email'
+  'accessCode' | 'userName' | 'permissions' | 'id'
 > & {
   profession: string;
   specialization?: string;
   registry: string;
   address?: FormAddress;
-  email?: string;
 } & FormPerson;

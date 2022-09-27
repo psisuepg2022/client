@@ -29,6 +29,7 @@ import { colors } from '@global/colors';
 import ProfessionalsTable from './table';
 import { useProfessionals } from '@contexts/Professionals';
 import { Professional } from '@models/Professional';
+import { useAuth } from '@contexts/Auth';
 
 const columns: Column[] = [
   {
@@ -62,6 +63,9 @@ const Professionals = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('name');
   const [page, setPage] = useState<number>(0);
+  const {
+    user: { permissions },
+  } = useAuth();
 
   useEffect(() => {
     if (searchActive.current) return;
@@ -236,7 +240,9 @@ const Professionals = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
-                disabled={loading}
+                disabled={
+                  loading || !permissions.includes('CREATE_PROFESSIONAL')
+                }
                 onClick={() => navigate('/professionals/form')}
               >
                 ADICIONAR

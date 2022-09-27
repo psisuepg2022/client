@@ -660,7 +660,7 @@ const Schedule = (): JSX.Element => {
           />
         )}
       {currentEvent &&
-        lockFromResource(currentEvent.resource) &&
+        lockFromResource(currentEvent.resource) === 'LOCK' &&
         idFromResource(currentEvent.resource) && (
           <LockEventModal
             open={currentEvent !== undefined}

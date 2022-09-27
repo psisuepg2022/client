@@ -30,6 +30,7 @@ import ControlledTimePicker from '@components/ControlledTimePicker';
 import { timeToDate } from '@utils/timeToDate';
 import { differenceInMinutes } from 'date-fns';
 import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
+import { useAuth } from '@contexts/Auth';
 
 type FormLock = {
   id?: string;
@@ -40,6 +41,7 @@ type FormLock = {
 const ProfessionalSchedule = (): JSX.Element => {
   const navigate = useNavigate();
   const formMethods = useForm();
+  const { user } = useAuth();
   const { reset, handleSubmit } = formMethods;
   const { getWeeklySchedule } = useProfessionals();
   const [loading, setLoading] = useState<boolean>(true);
@@ -69,8 +71,8 @@ const ProfessionalSchedule = (): JSX.Element => {
             totalLockTime += differenceInMinutes(lockEndTime, lockStartTime);
           });
 
-          const slotsWithoutLock = totalTime / 60;
-          const lockSlots = totalLockTime / 60;
+          const slotsWithoutLock = totalTime / (user.baseDuration as number);
+          const lockSlots = totalLockTime / (user.baseDuration as number);
 
           const remainingSlots = slotsWithoutLock - lockSlots;
 

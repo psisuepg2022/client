@@ -356,7 +356,7 @@ const ProfessionalsForm = (): JSX.Element => {
                 </AuxDataSecond>
 
                 <SectionDivider>Dados Profissionais</SectionDivider>
-                <PersonalDataFirst>
+                <AuxDataFirst>
                   <ControlledInput
                     rules={{
                       required: {
@@ -369,12 +369,6 @@ const ProfessionalsForm = (): JSX.Element => {
                     required
                   />
                   <ControlledInput
-                    name="specialization"
-                    label="Especialização"
-                  />
-                </PersonalDataFirst>
-                <PersonalDataSecond>
-                  <ControlledInput
                     name="registry"
                     label="Registro"
                     rules={{
@@ -385,7 +379,11 @@ const ProfessionalsForm = (): JSX.Element => {
                     }}
                     required
                   />
-                </PersonalDataSecond>
+                  <ControlledInput
+                    name="specialization"
+                    label="Especialização"
+                  />
+                </AuxDataFirst>
               </StyledForm>
             </FormProvider>
           </div>

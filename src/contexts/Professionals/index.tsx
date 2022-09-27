@@ -127,6 +127,9 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
       >;
     } = await api.get('professional/top_bar');
 
+    setProfessionals(data.content?.items as Professional[]);
+    setCount(data.content?.totalItems || 0);
+
     return data;
   };
 

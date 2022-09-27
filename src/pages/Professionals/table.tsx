@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { Column } from './types';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
-import { MdModeEdit, MdDelete } from 'react-icons/md';
+import { MdModeEdit, MdDelete, MdLock } from 'react-icons/md';
 import SectionDivider from '@components/SectionDivider';
 import {
   AuxDataExpand,
@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageSize } from '@global/constants';
 import { useAuth } from '@contexts/Auth';
 import { Professional } from '@models/Professional';
+import UpdateProfissionalPasswordModal from '@components/UpdateProfissionalPasswordModal';
 
 type ProfessionalsTableProps = {
   professionals: Professional[];
@@ -48,6 +49,7 @@ const ProfessionalsTable = ({
     user: { permissions },
   } = useAuth();
   const [open, setOpen] = useState<string>('');
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const navigate = useNavigate();
 
   return (
@@ -118,6 +120,24 @@ const ProfessionalsTable = ({
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
+                      <UpdateProfissionalPasswordModal
+                        open={openModal}
+                        handleClose={(
+                          reason: 'backdropClick' | 'escapeKeyDown' | ''
+                        ) =>
+                          reason !== 'backdropClick' &&
+                          reason !== 'escapeKeyDown' &&
+                          setOpenModal(false)
+                        }
+                        professional={row}
+                      />
+                      {permissions.includes('USER_TYPE_OWNER') && (
+                        <Tooltip title="Atualizar senha">
+                          <IconButton onClick={() => setOpenModal(true)}>
+                            <MdLock />
+                          </IconButton>
+                        </Tooltip>
+                      )}
                       {permissions.includes('UPDATE_PROFESSIONAL') && (
                         <Tooltip title="Editar">
                           <IconButton

@@ -76,7 +76,9 @@ const CreateScheduleLockModal = ({
         endTime: dateToTime(data.end),
       })
     ) {
-      setDurationError('Já existe um intervalo com os mesmos início e fim');
+      setDurationError(
+        'Já existe um intervalo que compreende início e fim escolhidos'
+      );
       return;
     }
 

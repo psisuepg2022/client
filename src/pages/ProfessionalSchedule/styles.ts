@@ -64,6 +64,7 @@ export const WorkHoursContainer = styled('div')`
 export const IntervalsContainer = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
   column-gap: 1rem;
   padding-bottom: 10px;
   width: 60%;
@@ -82,5 +83,14 @@ export const StyledButton = styled(Button)`
 
   :hover {
     background-color: ${colors.SECONDARY};
+  }
+`;
+
+export const IntervalRow = styled(Typography)`
+  font-size: 1rem;
+
+  span {
+    font-weight: 600;
+    padding-left: 10px;
   }
 `;

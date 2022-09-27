@@ -7,6 +7,7 @@ import {
   Content,
   DayHoursAndLocks,
   Header,
+  IntervalRow,
   IntervalsContainer,
   LogoContainer,
   StyledButton,
@@ -27,9 +28,8 @@ import SectionDivider from '@components/SectionDivider';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledTimePicker from '@components/ControlledTimePicker';
 import { timeToDate } from '@utils/timeToDate';
-import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { differenceInMinutes } from 'date-fns';
-import { useSchedule } from '@contexts/Schedule';
+import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
 
 type FormLock = {
   id?: string;
@@ -45,8 +45,9 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentDay, setCurrentDay] = useState<WeeklySchedule>();
   const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule[]>([]);
-  const [intervals, setIntervals] = useState<FormLock[]>([]);
   const [counter, setCounter] = useState<number>(0);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [intervals, setIntervals] = useState<FormLock[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -68,19 +69,16 @@ const ProfessionalSchedule = (): JSX.Element => {
             totalLockTime += differenceInMinutes(lockEndTime, lockStartTime);
           });
 
-          console.log('DIFF', startTime, endTime, totalTime);
-          console.log('LOCK TOTAL', totalLockTime);
-
           const slotsWithoutLock = totalTime / 60;
           const lockSlots = totalLockTime / 60;
 
           const remainingSlots = slotsWithoutLock - lockSlots;
 
-          console.log('SUMA', slotsWithoutLock, lockSlots, remainingSlots);
+          setCounter(remainingSlots);
 
           setWeeklySchedule(content);
           setCurrentDay(initialDay);
-          setIntervals(initialDay.locks as FormLock[]);
+          setIntervals(initialDay.locks || []);
         }
         console.log('WEEKYL', content);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,22 +95,15 @@ const ProfessionalSchedule = (): JSX.Element => {
     })();
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (data: any) => {
-    console.log('data', data, intervals);
-  };
-
-  const addInterval = (): void => {
-    setIntervals((prev) => [...prev, { startTime: '12:00', endTime: '13:00' }]);
-  };
-
-  const removeInterval = (lock: WeeklyScheduleLock): void => {
-    // setIndexes(prevIndexes => [...prevIndexes.filter(item => item !== index)]);
-    // setCounter(prevCounter => prevCounter - 1);
+    const dayHours: FormLock = data as FormLock;
+    console.log('data', dayHours);
   };
 
   const handleDayChange = (day: WeeklySchedule): void => {
     setCurrentDay(day);
-    setIntervals(day.locks as FormLock[]);
+    setIntervals(day.locks || []);
     reset({
       startTime: timeToDate(day.startTime),
       endTime: timeToDate(day.endTime),
@@ -139,6 +130,28 @@ const ProfessionalSchedule = (): JSX.Element => {
 
   return (
     <Container>
+      <CreateScheduleLockModal
+        open={openModal}
+        handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+          reason !== 'backdropClick' &&
+          reason !== 'escapeKeyDown' &&
+          setOpenModal(false)
+        }
+        addNewLock={(lock) => {
+          setIntervals((prev) => [...prev, lock]);
+          setCounter((prev) => prev - 1);
+        }}
+        checkDuplicates={(lock) => {
+          const findDuplicates = intervals.find(
+            (interval) =>
+              (lock.startTime === interval.startTime &&
+                lock.endTime === interval.endTime) ||
+              lock.startTime === interval.startTime
+          );
+
+          return findDuplicates === undefined ? false : true;
+        }}
+      />
       <Box>
         <Content>
           <Header>
@@ -180,7 +193,6 @@ const ProfessionalSchedule = (): JSX.Element => {
                     <ControlledTimePicker
                       label="Início"
                       name="startTime"
-                      required
                       defaultValue={timeToDate(currentDay.startTime)}
                       rules={{
                         required: {
@@ -192,7 +204,6 @@ const ProfessionalSchedule = (): JSX.Element => {
                     <ControlledTimePicker
                       label="Fim"
                       name="endTime"
-                      required
                       defaultValue={timeToDate(currentDay.endTime)}
                       rules={{
                         required: {
@@ -204,61 +215,44 @@ const ProfessionalSchedule = (): JSX.Element => {
                   </WorkHoursContainer>
 
                   <div
-                    style={{ display: 'flex', justifyContent: 'space-between' }}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
                   >
                     <TimesLabel>Intervalos</TimesLabel>
+                    <IconButton
+                      size="small"
+                      style={{ width: 60, height: 60, marginLeft: 20 }}
+                      onClick={() => setOpenModal(true)}
+                    >
+                      <AiOutlinePlus
+                        size={40}
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
                     <TimesLabel>{counter} intervalos restantes</TimesLabel>
                   </div>
-                  {currentDay &&
-                    intervals &&
+                  {intervals &&
                     intervals.length > 0 &&
                     intervals.map((lock, index) => (
                       <IntervalsContainer key={index}>
-                        <ControlledTimePicker
-                          label="Início"
-                          name={`${index}.startTime`}
-                          defaultValue={timeToDate(lock.startTime)}
-                          rules={{
-                            required: {
-                              value: true,
-                              message: 'O tempo de início é obrigatório',
-                            },
-                          }}
-                        />
-                        <ControlledTimePicker
-                          label="Fim"
-                          name={`${index}.endTime`}
-                          defaultValue={timeToDate(lock.endTime)}
-                          rules={{
-                            required: {
-                              value: true,
-                              message: 'O tempo final é obrigatório',
-                            },
-                          }}
-                        />
-                        {index === 0 ? (
-                          <IconButton
-                            size="small"
-                            style={{ width: 60, height: 60, marginLeft: 20 }}
-                            onClick={addInterval}
-                          >
-                            <AiOutlinePlus
-                              size={40}
-                              style={{ color: colors.PRIMARY }}
-                            />
-                          </IconButton>
-                        ) : (
-                          <IconButton
-                            size="small"
-                            style={{ width: 60, height: 60, marginLeft: 20 }}
-                            onClick={addInterval}
-                          >
-                            <MdDelete
-                              size={40}
-                              style={{ color: colors.PRIMARY }}
-                            />
-                          </IconButton>
-                        )}
+                        <IntervalRow>
+                          Início: <span>{lock.startTime}</span>
+                        </IntervalRow>
+                        <IntervalRow>
+                          Fim: <span>{lock.endTime}</span>
+                        </IntervalRow>
+                        <IconButton
+                          size="small"
+                          style={{ width: 60, height: 60, marginLeft: 20 }}
+                        >
+                          <MdDelete
+                            size={40}
+                            style={{ color: colors.PRIMARY }}
+                          />
+                        </IconButton>
                       </IntervalsContainer>
                     ))}
                 </form>

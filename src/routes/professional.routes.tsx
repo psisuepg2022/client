@@ -46,7 +46,7 @@ const ProfessionalRoutes = (): JSX.Element => {
           element={
             <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
-              <Professionals />
+              <ProfessionalsForm />
             </div>
           }
         />

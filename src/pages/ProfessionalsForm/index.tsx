@@ -65,6 +65,10 @@ const ProfessionalsForm = (): JSX.Element => {
         professionalToEdit.birthDate.split('/').reverse().join('-') + 'GMT-0300'
       ),
       contactNumber: professionalToEdit?.contactNumber || '',
+      profession: professionalToEdit?.profession || '',
+      registry: professionalToEdit?.registry || '',
+      specialization: professionalToEdit.specialization || '',
+      userName: professionalToEdit?.userName || '',
       address: {
         zipCode: professionalToEdit?.address?.zipCode || '',
       },
@@ -261,13 +265,20 @@ const ProfessionalsForm = (): JSX.Element => {
                   <ControlledInput
                     rules={{
                       required: {
-                        value: true,
+                        value:
+                          professionalToEdit && professionalToEdit.id
+                            ? false
+                            : true,
                         message: 'A senha é obrigatória',
                       },
                     }}
+                    type="password"
+                    endFunction="password"
                     name="password"
                     label="Senha"
-                    required
+                    required={
+                      professionalToEdit && professionalToEdit.id ? false : true
+                    }
                   />
                 </PersonalDataSecond>
 

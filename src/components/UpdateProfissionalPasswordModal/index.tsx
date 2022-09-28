@@ -74,7 +74,6 @@ const UpdateProfessionalPasswordModal = ({
       });
     } finally {
       setLoading(false);
-      reset({ confirmNewPassword: '', newPassword: '' });
     }
   };
 

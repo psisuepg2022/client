@@ -75,7 +75,6 @@ const UpdateEmployeePasswordModal = ({
       });
     } finally {
       setLoading(false);
-      reset({ confirmNewPassword: '', newPassword: '' });
     }
   };
 

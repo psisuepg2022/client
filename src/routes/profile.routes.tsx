@@ -5,6 +5,8 @@ import { useAuth } from '@contexts/Auth';
 import ProfessionalProfile from '@pages/ProfessionalProfile';
 import ProtectedRoute from './ProtectedRoute';
 import ProfessionalSchedule from '@pages/ProfessionalSchedule';
+import EmployeeProfile from '@pages/EmployeeProfile';
+import NotFound from '@pages/NotFound';
 
 const ProfileRoutes = (): JSX.Element => {
   const {
@@ -20,8 +22,10 @@ const ProfileRoutes = (): JSX.Element => {
             <OwnerProfile />
           ) : permissions.includes('USER_TYPE_PROFESSIONAL') ? (
             <ProfessionalProfile />
+          ) : permissions.includes('USER_TYPE_EMPLOYEE') ? (
+            <EmployeeProfile />
           ) : (
-            <OwnerProfile />
+            <NotFound />
           )
         }
       />

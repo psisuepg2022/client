@@ -34,22 +34,26 @@ import EmployeesTable from './table';
 const columns: Column[] = [
   {
     id: 0,
-    label: 'Nome',
+    label: 'Código de acesso',
   },
   {
     id: 1,
-    label: 'CPF',
+    label: 'Nome',
   },
   {
     id: 2,
-    label: 'Data de nascimento',
+    label: 'CPF',
   },
   {
     id: 3,
-    label: 'Telefone',
+    label: 'Data de nascimento',
   },
   {
     id: 4,
+    label: 'Telefone',
+  },
+  {
+    id: 5,
     label: 'Ações',
   },
 ];

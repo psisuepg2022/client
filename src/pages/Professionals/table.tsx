@@ -110,6 +110,9 @@ const ProfessionalsTable = ({
                       </Tooltip>
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
+                      {row.accessCode}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
                       {row.name}
                     </StyledTableCell>
                     <StyledTableCell align="left">{row.CPF}</StyledTableCell>
@@ -252,10 +255,12 @@ const ProfessionalsTable = ({
                               <span>Registro: </span>
                               {row.registry}
                             </TextExpand>
-                            <TextExpand>
-                              <span>Especialização: </span>
-                              {row.specialization}
-                            </TextExpand>
+                            {row.specialization && (
+                              <TextExpand>
+                                <span>Especialização: </span>
+                                {row.specialization}
+                              </TextExpand>
+                            )}
                           </AuxDataExpand>
                         </Box>
                       </Collapse>

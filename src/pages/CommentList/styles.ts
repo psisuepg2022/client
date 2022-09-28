@@ -30,13 +30,14 @@ export const CustomBox = styled('div')`
   flex-direction: column;
   justify-content: flex-start;
   padding: 2rem;
+  overflow-y: scroll;
 `;
 
 export const BoxHeader = styled('div')`
   display: flex;
   align-items: center;
   gap: 15px;
-  padding-bottom: 50px;
+  padding-bottom: 20px;
   /* display: grid;
   grid-template-columns: 3fr 1fr;
   padding: 0 0 2rem 0; */
@@ -71,12 +72,12 @@ export const CommentBox = styled('div')`
   height: 50px;
   width: 90%;
   display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   align-items: center;
 `;
 
 export const ScheduleStatus = styled(Typography)`
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: ${colors.TEXT};
   padding: 0 1rem;
 

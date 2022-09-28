@@ -41,6 +41,7 @@ type ProfileFormProps = {
   birthDate: Date;
   CPF: string;
   contactNumber?: string;
+  userName: string;
   profession: string;
   registry: string;
   specialization?: string;
@@ -78,6 +79,7 @@ const ProfessionalProfile = (): JSX.Element => {
         setValue('profession', content?.profession || '');
         setValue('registry', content?.registry || '');
         setValue('specialization', content?.specialization || '');
+        setValue('userName', content?.userName || '');
 
         if (content?.address) {
           setValue('address.id', content.address?.id);
@@ -271,6 +273,18 @@ const ProfessionalProfile = (): JSX.Element => {
                       validate: (date) =>
                         !isAfter(date, new Date()) ||
                         'A Data escolhida não pode ser superior à data atual',
+                    }}
+                  />
+                </PersonalInfoHalf>
+                <PersonalInfoHalf>
+                  <ControlledInput
+                    name="userName"
+                    label="Nome de usuário"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'O nome de usuário é obrigatório',
+                      },
                     }}
                   />
                 </PersonalInfoHalf>

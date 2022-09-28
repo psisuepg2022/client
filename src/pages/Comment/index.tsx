@@ -24,6 +24,7 @@ import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
 import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
+import { idFromResource } from '@utils/schedule';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
@@ -38,7 +39,7 @@ const Comment = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
-        const appointmentId = state.resource;
+        const appointmentId = idFromResource(state.resource);
         const { content } = await getById(appointmentId);
 
         if (!content?.comments) {

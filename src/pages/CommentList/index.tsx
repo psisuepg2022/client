@@ -147,7 +147,7 @@ const CommentList = (): JSX.Element => {
                           state: {
                             start: comment.appointmentDate,
                             title: state.name,
-                            resource: comment.id,
+                            resource: `CONCLUDED/${comment.id}`,
                           },
                         });
                       }}

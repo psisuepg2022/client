@@ -87,7 +87,14 @@ const CommentList = (): JSX.Element => {
             <AiOutlineRight size={25} style={{ color: '#707070' }} />
             <PatientName>{state.name}</PatientName>
           </BoxHeader>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
             {comments.map((comment) => (
               <CommentBox key={comment.scheduledAt}>
                 <ScheduleStatus>
@@ -107,10 +114,9 @@ const CommentList = (): JSX.Element => {
                     onClick={() => {
                       navigate('/comment', {
                         state: {
-                          start: '',
-                          end: '',
+                          start: comment.appointmentDate,
                           title: state.name,
-                          resource: '',
+                          resource: comment.id,
                         },
                       });
                     }}

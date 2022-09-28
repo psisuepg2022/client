@@ -104,7 +104,7 @@ const Login = (): JSX.Element => {
               />
             </PasswordBox>
 
-            <StyledButton type="submit" form="form">
+            <StyledButton disabled={loading} type="submit" form="form">
               {loading ? (
                 <CircularProgress style={{ color: '#FFF' }} size={20} />
               ) : (

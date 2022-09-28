@@ -22,15 +22,15 @@ import CircularProgressWithContent from '@components/CircularProgressWithContent
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
+import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
-import { addMinutes } from 'date-fns';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
+  const navigate = useNavigate();
   const {
     user: { baseDuration },
   } = useAuth();
-  const navigate = useNavigate();
   const { getById } = useSchedule();
   const [loading, setLoading] = useState<boolean>(true);
   const [comment, setComment] = useState<string>('');
@@ -96,17 +96,6 @@ const Comment = (): JSX.Element => {
       </div>
     );
 
-  const isoToDate = (iso: string): Date => {
-    const hour = iso.split('T')[1].substring(0, 2);
-    const minute = iso.split('T')[1].substring(3, 5);
-
-    const date = new Date(iso);
-    date.setHours(Number(hour));
-    date.setMinutes(Number(minute));
-    date.setSeconds(0);
-    return date;
-  };
-
   return (
     <Container>
       <AlterTopToolbar />
@@ -130,11 +119,15 @@ const Comment = (): JSX.Element => {
                 date: isoToDate(`${state.start}`) as Date,
                 stringFormat: 'HH:mm',
               })}
-              {/* {' - '}
+              {' - '}
               {dateFormat({
-                date: isoToDate(`${state.start}`, true) as Date,
+                date: isoToDate(
+                  `${state.start}`,
+                  true,
+                  Number(baseDuration)
+                ) as Date,
                 stringFormat: 'HH:mm',
-              })} */}
+              })}
             </AppointmentDate>
           </BoxHeader>
           <Body dangerouslySetInnerHTML={{ __html: comment }}></Body>

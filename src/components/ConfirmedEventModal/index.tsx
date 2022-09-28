@@ -14,7 +14,7 @@ import {
   StyledConfirmButton,
   StyledModal,
 } from './styles';
-import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
+import { MdOutlineClose } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
@@ -141,11 +141,7 @@ const ConfirmedEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton disabled={loading}>
-            <MdOutlineStickyNote2
-              style={{ fontSize: 35, color: colors.PRIMARY }}
-            />
-          </IconButton>
+          <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>

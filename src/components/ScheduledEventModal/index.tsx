@@ -141,14 +141,7 @@ const ScheduledEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton
-            disabled={loading !== ''}
-            onClick={() => navigate('/comment/list', { state: eventInfo })}
-          >
-            <MdOutlineStickyNote2
-              style={{ fontSize: 35, color: colors.PRIMARY }}
-            />
-          </IconButton>
+          <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>

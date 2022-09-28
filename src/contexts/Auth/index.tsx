@@ -20,6 +20,11 @@ type AuthContextData = {
   signOut: () => void;
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
+  changePassword: (
+    oldPassword: string,
+    newPassword: string,
+    confirmNewPassword: string
+  ) => Promise<Response<boolean>>;
   isAuthenticated: boolean;
 };
 
@@ -70,6 +75,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     localStorage.clear();
   };
 
+  const changePassword = async (
+    oldPassword: string,
+    newPassword: string,
+    confirmNewPassword: string
+  ): Promise<Response<boolean>> => {
+    const { data }: { data: Response<boolean> } = await api.post(
+      'auth/reset_password',
+      {
+        oldPassword,
+        newPassword,
+        confirmNewPassword,
+      }
+    );
+
+    return data;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -77,6 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         signOut,
         user,
         setUser,
+        changePassword,
         isAuthenticated: Object.keys(user).length !== 0,
       }}
     >

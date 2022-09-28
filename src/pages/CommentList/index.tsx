@@ -80,7 +80,7 @@ const CommentList = (): JSX.Element => {
       <Content>
         <CustomBox>
           <BoxHeader>
-            <IconButton onClick={() => navigate('/schedule')}>
+            <IconButton onClick={() => navigate(-1)}>
               <AiOutlineLeft size={40} />
             </IconButton>
             <CommentsTitle>Anotações</CommentsTitle>

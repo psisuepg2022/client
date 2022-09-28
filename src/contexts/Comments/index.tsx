@@ -8,6 +8,7 @@ import { ReadComments } from '@interfaces/ReadComments';
 type ListProps = {
   page?: number;
   size?: number;
+  filter?: { start: string; end: string };
 };
 
 type CommentsContextData = {
@@ -41,9 +42,14 @@ export const CommentsProvider: React.FC<CommentsProviderProps> = ({
     listProps: ListProps,
     patientId: string
   ): Promise<Response<ItemList<ReadComments>>> => {
-    const { size, page } = listProps;
-    const { data }: { data: Response<ItemList<ReadComments>> } = await api.get(
-      `comments/${patientId}?page=${page}&size=${size}`
+    const { size, page, filter } = listProps;
+    const { data }: { data: Response<ItemList<ReadComments>> } = await api.post(
+      `comments/search/${patientId}?page=${page}&size=${size}`,
+      {
+        appointmentDate: {
+          ...filter,
+        },
+      }
     );
 
     setComments(data.content?.items as ReadComments[]);

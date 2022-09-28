@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import { IconButton, TablePagination, Tooltip } from '@mui/material';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
@@ -46,8 +46,10 @@ const CommentList = (): JSX.Element => {
   const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(0);
+  const searchActive = useRef(false);
 
   useEffect(() => {
+    if (searchActive.current) return;
     (async () => {
       try {
         setLoading(true);
@@ -82,7 +84,33 @@ const CommentList = (): JSX.Element => {
       stringFormat: 'yyyy-MM-dd',
     });
 
-    console.log('FILTRO', start, end);
+    setLoading(true);
+    searchActive.current = true;
+    setPage(0);
+    try {
+      await list(
+        {
+          size: PageSize,
+          page,
+          filter: {
+            start,
+            end,
+          },
+        },
+        state.id
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao filtrar as anotações',
+        icon: 'error',
+      });
+    } finally {
+      searchActive.current = false;
+      setLoading(false);
+    }
   };
 
   if (loading)

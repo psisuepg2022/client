@@ -7,6 +7,7 @@ import ProtectedRoute from './ProtectedRoute';
 import ProfessionalSchedule from '@pages/ProfessionalSchedule';
 import EmployeeProfile from '@pages/EmployeeProfile';
 import NotFound from '@pages/NotFound';
+import ChangePassword from '@pages/ChangePassword';
 
 const ProfileRoutes = (): JSX.Element => {
   const {
@@ -49,6 +50,7 @@ const ProfileRoutes = (): JSX.Element => {
           element={<ProfessionalSchedule />}
         />
       </Route>
+      <Route path="/change-password" element={<ChangePassword />} />
     </Routes>
   );
 };

@@ -306,6 +306,9 @@ const TopToolbar = ({
             sx={{ zIndex: 999 }}
           >
             <MenuItem onClick={() => navigate('/profile')}>Perfil</MenuItem>
+            <MenuItem onClick={() => navigate('/profile/change-password')}>
+              Alterar Senha
+            </MenuItem>
             <hr />
             <MenuItem onClick={signOut}>Logout</MenuItem>
           </Menu>

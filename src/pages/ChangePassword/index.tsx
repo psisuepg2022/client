@@ -6,7 +6,6 @@ import {
   Content,
   Form,
   Header,
-  LogoContainer,
   PersonalInfo,
   StyledButton,
 } from './styles';
@@ -17,8 +16,6 @@ import ControlledInput from '@components/ControlledInput';
 import SectionDivider from '@components/SectionDivider';
 import { useNavigate } from 'react-router-dom';
 import { showAlert } from '@utils/showAlert';
-import CircularProgressWithContent from '@components/CircularProgressWithContent';
-import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { useAuth } from '@contexts/Auth';
 
 type ProfileFormProps = {

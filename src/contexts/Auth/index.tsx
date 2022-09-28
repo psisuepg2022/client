@@ -62,6 +62,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     ) as User;
 
     localStorage.setItem('@psis:accessToken', data.content?.accessToken || '');
+    localStorage.setItem(
+      '@psis:refreshToken',
+      data.content?.refreshToken || ''
+    );
     localStorage.setItem('@psis:userData', JSON.stringify(decodedToken));
     api.defaults.headers.common[
       'authorization'

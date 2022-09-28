@@ -15,6 +15,8 @@ import { CircularProgress, IconButton } from '@mui/material';
 import { Professional } from '@models/Professional';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '@components/ControlledInput';
+import { useOwner } from '@contexts/Owner';
+import { showAlert } from '@utils/showAlert';
 
 type UpdateProfessionalPasswordModalProps = {
   open: boolean;
@@ -22,12 +24,18 @@ type UpdateProfessionalPasswordModalProps = {
   professional: Professional;
 };
 
+type PasswordFormProps = {
+  newPassword: string;
+  confirmNewPassword: string;
+};
+
 const UpdateProfessionalPasswordModal = ({
   open,
   handleClose,
   professional,
 }: UpdateProfessionalPasswordModalProps): JSX.Element => {
-  const formMethods = useForm();
+  const formMethods = useForm<PasswordFormProps>();
+  const { resetPassword } = useOwner();
   const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState<boolean>(false);
   const randomKey = Math.random();
@@ -40,8 +48,32 @@ const UpdateProfessionalPasswordModal = ({
     handleClose(reason);
   };
 
-  const onSubmit = async (data: any): Promise<void> => {
-    console.log('data', data);
+  const onSubmit = async (data: PasswordFormProps): Promise<void> => {
+    try {
+      setLoading(true);
+      const { message } = await resetPassword(
+        professional.id,
+        data.newPassword,
+        data.confirmNewPassword
+      );
+
+      showAlert({
+        title: 'Sucesso!',
+        text: `${message}`,
+        icon: 'success',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          `Ocorreu um problema ao atualizar a senha de ${professional.name}`,
+      });
+    } finally {
+      setLoading(false);
+      closeAll('');
+    }
   };
 
   return (
@@ -67,6 +99,7 @@ const UpdateProfessionalPasswordModal = ({
             <Form
               id={`${randomKey}-password`}
               onSubmit={handleSubmit(onSubmit)}
+              autoComplete="off"
             >
               <ControlledInput
                 rules={{
@@ -77,7 +110,7 @@ const UpdateProfessionalPasswordModal = ({
                 }}
                 type="password"
                 endFunction="password"
-                name="password"
+                name="newPassword"
                 label="Nova senha"
               />
               <ControlledInput
@@ -89,7 +122,7 @@ const UpdateProfessionalPasswordModal = ({
                 }}
                 type="password"
                 endFunction="password"
-                name="confirmPassword"
+                name="confirmNewPassword"
                 label="Confirme a senha"
               />
             </Form>

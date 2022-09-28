@@ -6,6 +6,11 @@ import { Owner, UpdateOwner } from '@models/Owner';
 type OwnerContextData = {
   getProfile: () => Promise<Response<Owner>>;
   updateProfile: (owner: UpdateOwner) => Promise<Response<Owner>>;
+  resetPassword: (
+    userId: string,
+    newPassword: string,
+    confirmNewPassword: string
+  ) => Promise<Response<boolean>>;
 };
 
 type OwnerProviderProps = {
@@ -33,11 +38,28 @@ export const OwnerProvider: React.FC<OwnerProviderProps> = ({
     return data;
   };
 
+  const resetPassword = async (
+    userId: string,
+    newPassword: string,
+    confirmNewPassword: string
+  ): Promise<Response<boolean>> => {
+    const { data }: { data: Response<boolean> } = await api.post(
+      `auth/adm_reset_password/${userId}`,
+      {
+        newPassword,
+        confirmNewPassword,
+      }
+    );
+
+    return data;
+  };
+
   return (
     <OwnerContext.Provider
       value={{
         getProfile,
         updateProfile,
+        resetPassword,
       }}
     >
       {children}

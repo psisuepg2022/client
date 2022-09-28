@@ -36,6 +36,7 @@ export const BoxHeader = styled('div')`
   display: flex;
   align-items: center;
   gap: 15px;
+  padding-bottom: 50px;
   /* display: grid;
   grid-template-columns: 3fr 1fr;
   padding: 0 0 2rem 0; */
@@ -62,4 +63,24 @@ export const AppointmentDate = styled(Typography)`
 export const LogoContainer = styled('img')`
   width: 100px;
   height: auto;
+`;
+
+export const CommentBox = styled('div')`
+  border-radius: 5px;
+  border: 1px solid ${colors.PRIMARY};
+  height: 50px;
+  width: 90%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  align-items: center;
+`;
+
+export const ScheduleStatus = styled(Typography)`
+  font-size: 1.1rem;
+  color: ${colors.TEXT};
+  padding: 0 1rem;
+
+  span {
+    font-weight: 600;
+  }
 `;

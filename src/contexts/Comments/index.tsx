@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
-import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
 import { SavedComment } from '@interfaces/SavedComment';
 import { ReadComments } from '@interfaces/ReadComments';
@@ -9,11 +8,13 @@ import { ReadComments } from '@interfaces/ReadComments';
 type ListProps = {
   page?: number;
   size?: number;
-  filter?: SearchFilter;
 };
 
 type CommentsContextData = {
-  list: (listProps: ListProps) => Promise<Response<ItemList<ReadComments>>>;
+  list: (
+    listProps: ListProps,
+    patientId: string
+  ) => Promise<Response<ItemList<ReadComments>>>;
   create: (
     appointmentId: string,
     text: string
@@ -36,18 +37,13 @@ export const CommentsProvider: React.FC<CommentsProviderProps> = ({
   const [comments, setComments] = useState<ReadComments[]>([]);
   const [count, setCount] = useState<number>(0);
 
-  const list = async ({
-    size,
-    page,
-    filter,
-  }: ListProps): Promise<Response<ItemList<ReadComments>>> => {
-    const { data }: { data: Response<ItemList<ReadComments>> } = await api.post(
-      page && size
-        ? `professional/search?page=${page}&size=${size}`
-        : 'professional/search',
-      {
-        ...filter,
-      }
+  const list = async (
+    listProps: ListProps,
+    patientId: string
+  ): Promise<Response<ItemList<ReadComments>>> => {
+    const { size, page } = listProps;
+    const { data }: { data: Response<ItemList<ReadComments>> } = await api.get(
+      `comments/${patientId}?page=${page}&size=${size}`
     );
 
     setComments(data.content?.items as ReadComments[]);

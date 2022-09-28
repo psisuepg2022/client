@@ -13,6 +13,8 @@ import {
   PatientName,
   CommentBox,
   ScheduleStatus,
+  InputsForm,
+  StyledButton,
 } from './styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { showAlert } from '@utils/showAlert';
@@ -25,6 +27,13 @@ import { colors } from '@global/colors';
 import { isoToDate } from '@utils/isoToDate';
 import { dateFormat } from '@utils/dateFormat';
 import { useAuth } from '@contexts/Auth';
+import { FormProvider, useForm } from 'react-hook-form';
+import ControlledDatePicker from '@components/ControlledDatePicker';
+
+type SearchProps = {
+  start: Date;
+  end: Date;
+};
 
 const CommentList = (): JSX.Element => {
   const { state }: { state: Patient } = useLocation() as { state: Patient };
@@ -33,6 +42,8 @@ const CommentList = (): JSX.Element => {
     user: { baseDuration },
   } = useAuth();
   const { list, comments, count } = useComments();
+  const formMethods = useForm<SearchProps>();
+  const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(0);
 
@@ -61,6 +72,19 @@ const CommentList = (): JSX.Element => {
     })();
   }, [page]);
 
+  const onSubmit = async (data: SearchProps): Promise<void> => {
+    const start = dateFormat({
+      date: data.start,
+      stringFormat: 'yyyy-MM-dd',
+    });
+    const end = dateFormat({
+      date: data.end,
+      stringFormat: 'yyyy-MM-dd',
+    });
+
+    console.log('FILTRO', start, end);
+  };
+
   if (loading)
     return (
       <div
@@ -85,12 +109,31 @@ const CommentList = (): JSX.Element => {
       <Content>
         <CustomBox>
           <BoxHeader>
-            <IconButton onClick={() => navigate(-1)}>
-              <AiOutlineLeft size={40} />
-            </IconButton>
-            <CommentsTitle>Anotações</CommentsTitle>
-            <AiOutlineRight size={25} style={{ color: '#707070' }} />
-            <PatientName>{state.name}</PatientName>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton onClick={() => navigate(-1)}>
+                <AiOutlineLeft size={40} />
+              </IconButton>
+              <CommentsTitle>Anotações</CommentsTitle>
+              <AiOutlineRight size={25} style={{ color: '#707070' }} />
+              <PatientName>{state.name}</PatientName>
+            </div>
+            <FormProvider {...formMethods}>
+              <InputsForm id="search" onSubmit={handleSubmit(onSubmit)}>
+                <ControlledDatePicker
+                  name="start"
+                  label="Data inicial"
+                  defaultValue={new Date()}
+                />
+                <ControlledDatePicker
+                  name="end"
+                  label="Data final"
+                  defaultValue={new Date()}
+                />
+              </InputsForm>
+            </FormProvider>
+            <StyledButton disabled={loading} form="search" type="submit">
+              BUSCAR
+            </StyledButton>
           </BoxHeader>
           <div
             style={{

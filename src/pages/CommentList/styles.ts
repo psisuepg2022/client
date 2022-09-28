@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { colors } from '@global/colors';
 
@@ -34,23 +34,26 @@ export const CustomBox = styled('div')`
 `;
 
 export const BoxHeader = styled('div')`
-  display: flex;
+  /* display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 15px; */
   padding-bottom: 20px;
-  /* display: grid;
-  grid-template-columns: 3fr 1fr;
-  padding: 0 0 2rem 0; */
+  display: grid;
+  width: 100%;
+  align-self: center;
+  grid-template-columns: 1.6fr 1.4fr 1fr;
+  gap: 1rem;
+  align-items: center;
 `;
 
 export const CommentsTitle = styled(Typography)`
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: ${colors.TEXT};
   font-weight: 600;
 `;
 
 export const PatientName = styled(Typography)`
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: ${colors.TEXT};
   font-weight: 400;
 `;
@@ -70,9 +73,9 @@ export const CommentBox = styled('div')`
   border-radius: 5px;
   border: 1px solid ${colors.PRIMARY};
   height: 50px;
-  width: 90%;
+  width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1.2fr 1fr 0.8fr;
   align-items: center;
 `;
 
@@ -83,5 +86,31 @@ export const ScheduleStatus = styled(Typography)`
 
   span {
     font-weight: 600;
+  }
+`;
+
+export const InputsForm = styled('form')`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+`;
+
+export const ButtonsContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const StyledButton = styled(Button)`
+  background-color: ${colors.PRIMARY};
+  color: #fff;
+  transition: 300ms;
+  width: 100%;
+  font-weight: 400;
+  font-size: 1rem;
+  height: 56px;
+
+  :hover {
+    background-color: ${colors.SECONDARY};
   }
 `;

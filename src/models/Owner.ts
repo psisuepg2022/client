@@ -7,7 +7,7 @@ export type Owner = User & {
 
 export type UpdateOwner = Omit<
   Owner,
-  'accessCode' | 'userName' | 'permissions' | 'id' | 'email' | 'clinic'
+  'accessCode' | 'permissions' | 'id' | 'email' | 'clinic'
 > & {
   email?: string;
   clinic?: {

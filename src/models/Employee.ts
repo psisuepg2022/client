@@ -16,7 +16,7 @@ export type FormEmployee = Omit<
 
 export type UpdateEmployee = Omit<
   User,
-  'accessCode' | 'userName' | 'permissions' | 'id' | 'baseDuration' | 'clinic'
+  'accessCode' | 'permissions' | 'id' | 'baseDuration' | 'clinic'
 > & {
   address?: Address;
 };

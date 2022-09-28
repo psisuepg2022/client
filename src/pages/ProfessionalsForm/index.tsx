@@ -38,9 +38,11 @@ type FormProps = {
   CPF: string;
   contactNumber: string;
   address?: FormAddress;
-  profession: '';
-  registry: '';
-  specialization?: '';
+  profession: string;
+  registry: string;
+  specialization?: string;
+  userName: string;
+  password?: string;
 };
 
 const ProfessionalsForm = (): JSX.Element => {
@@ -93,11 +95,11 @@ const ProfessionalsForm = (): JSX.Element => {
     const professional: FormProfessional = {
       ...(professionalToEdit &&
         professionalToEdit?.id && { id: professionalToEdit.id }),
-      userName: '',
-      password: '',
-      profession: '',
-      registry: '',
-      specialization: '',
+      userName: formData.userName || '',
+      password: formData?.password || '',
+      profession: formData.profession || '',
+      registry: formData.registry || '',
+      specialization: formData?.specialization || '',
       name: formData.name,
       email: formData.email || '',
       CPF: formData.CPF || '',
@@ -121,10 +123,10 @@ const ProfessionalsForm = (): JSX.Element => {
 
     setLoading(true);
     try {
-      const response = await create(professional);
+      const { content, message } = await create(professional);
       showAlert({
         title: 'Sucesso!',
-        text: response.message,
+        text: `${message} Código de acesso: ${content?.accessCode}`,
         icon: 'success',
       });
       if (!professionalToEdit) {

@@ -38,6 +38,8 @@ type FormProps = {
   CPF: string;
   contactNumber: string;
   address?: FormAddress;
+  userName: string;
+  password?: string;
 };
 
 const EmployeesForm = (): JSX.Element => {
@@ -86,8 +88,8 @@ const EmployeesForm = (): JSX.Element => {
 
     const employee: FormEmployee = {
       ...(employeeToEdit && employeeToEdit?.id && { id: employeeToEdit.id }),
-      userName: '',
-      password: '',
+      userName: formData.userName,
+      password: formData.password || '',
       name: formData.name,
       email: formData.email || '',
       CPF: formData.CPF || '',
@@ -111,10 +113,10 @@ const EmployeesForm = (): JSX.Element => {
 
     setLoading(true);
     try {
-      const response = await create(employee);
+      const { content, message } = await create(employee);
       showAlert({
         title: 'Sucesso!',
-        text: response.message,
+        text: `${message} Código de acesso: ${content?.accessCode}`,
         icon: 'success',
       });
       if (!employeeToEdit) {

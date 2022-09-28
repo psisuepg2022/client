@@ -15,6 +15,9 @@ type PatientsContextData = {
   list: (listProps: ListProps) => Promise<void>;
   create: (patient: FormPatient) => Promise<Response<Patient>>;
   remove: (patientId: string) => Promise<Response<boolean>>;
+  professionalPatients: (
+    listProps: ListProps
+  ) => Promise<Response<ItemList<Patient>>>;
   patients: Patient[];
   count: number;
 };
@@ -63,6 +66,26 @@ export const PatientsProvider: React.FC<PatientsProviderProps> = ({
     return data;
   };
 
+  const professionalPatients = async ({
+    size,
+    page,
+    filter,
+  }: ListProps): Promise<Response<ItemList<Patient>>> => {
+    const { data }: { data: Response<ItemList<Patient>> } = await api.post(
+      page && size
+        ? `professional/my_patients?page=${page}&size=${size}`
+        : 'professional/my_patients',
+      {
+        ...filter,
+      }
+    );
+
+    setPatients(data.content?.items as Patient[]);
+    setCount(data.content?.totalItems || 0);
+
+    return data;
+  };
+
   return (
     <PatientsContext.Provider
       value={{
@@ -70,6 +93,7 @@ export const PatientsProvider: React.FC<PatientsProviderProps> = ({
         create,
         remove,
         patients,
+        professionalPatients,
         count,
       }}
     >

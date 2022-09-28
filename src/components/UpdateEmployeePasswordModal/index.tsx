@@ -15,6 +15,8 @@ import { CircularProgress, IconButton } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '@components/ControlledInput';
 import { Employee } from '@models/Employee';
+import { useOwner } from '@contexts/Owner';
+import { showAlert } from '@utils/showAlert';
 
 type UpdateEmployeePasswordModalProps = {
   open: boolean;
@@ -22,13 +24,19 @@ type UpdateEmployeePasswordModalProps = {
   employee: Employee;
 };
 
+type PasswordFormProps = {
+  newPassword: string;
+  confirmNewPassword: string;
+};
+
 const UpdateEmployeePasswordModal = ({
   open,
   handleClose,
   employee,
 }: UpdateEmployeePasswordModalProps): JSX.Element => {
-  const formMethods = useForm();
-  const { handleSubmit } = formMethods;
+  const formMethods = useForm<PasswordFormProps>();
+  const { handleSubmit, reset } = formMethods;
+  const { resetPassword } = useOwner();
   const [loading, setLoading] = useState<boolean>(false);
   const randomKey = Math.random();
 
@@ -37,11 +45,38 @@ const UpdateEmployeePasswordModal = ({
   if (employee && !employee.id) return <></>;
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
+    reset({ confirmNewPassword: '', newPassword: '' });
     handleClose(reason);
   };
 
-  const onSubmit = async (data: any): Promise<void> => {
-    console.log('data', data);
+  const onSubmit = async (data: PasswordFormProps): Promise<void> => {
+    try {
+      setLoading(true);
+      const { message } = await resetPassword(
+        employee.id,
+        data.newPassword,
+        data.confirmNewPassword
+      );
+
+      showAlert({
+        title: 'Sucesso!',
+        text: `${message}`,
+        icon: 'success',
+      });
+
+      closeAll('');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          `Ocorreu um problema ao atualizar a senha de ${employee.name}`,
+      });
+    } finally {
+      setLoading(false);
+      reset({ confirmNewPassword: '', newPassword: '' });
+    }
   };
 
   return (
@@ -77,7 +112,7 @@ const UpdateEmployeePasswordModal = ({
                 }}
                 type="password"
                 endFunction="password"
-                name="password"
+                name="newPassword"
                 label="Nova senha"
               />
               <ControlledInput
@@ -89,7 +124,7 @@ const UpdateEmployeePasswordModal = ({
                 }}
                 type="password"
                 endFunction="password"
-                name="confirmPassword"
+                name="confirmNewPassword"
                 label="Confirme a senha"
               />
             </Form>

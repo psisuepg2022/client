@@ -36,7 +36,7 @@ const UpdateProfessionalPasswordModal = ({
 }: UpdateProfessionalPasswordModalProps): JSX.Element => {
   const formMethods = useForm<PasswordFormProps>();
   const { resetPassword } = useOwner();
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, reset } = formMethods;
   const [loading, setLoading] = useState<boolean>(false);
   const randomKey = Math.random();
 
@@ -45,6 +45,7 @@ const UpdateProfessionalPasswordModal = ({
   if (professional && !professional.id) return <></>;
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
+    reset({ confirmNewPassword: '', newPassword: '' });
     handleClose(reason);
   };
 
@@ -62,6 +63,7 @@ const UpdateProfessionalPasswordModal = ({
         text: `${message}`,
         icon: 'success',
       });
+      closeAll('');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -72,7 +74,7 @@ const UpdateProfessionalPasswordModal = ({
       });
     } finally {
       setLoading(false);
-      closeAll('');
+      reset({ confirmNewPassword: '', newPassword: '' });
     }
   };
 

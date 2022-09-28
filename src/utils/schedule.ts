@@ -30,6 +30,32 @@ export const buildWeeklySchedule = (
   date: Date,
   today: WeeklySchedule
 ): Event[] => {
+  if (!today.startTime && !today.endTime) {
+    const newHours: Event[] = [
+      {
+        resource: 'LOCK',
+        start: new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate(),
+          0,
+          0,
+          0
+        ),
+        end: new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate(),
+          23,
+          59,
+          59
+        ),
+      },
+    ];
+
+    return newHours;
+  }
+
   const newHours: Event[] = [
     {
       resource: 'LOCK',

@@ -166,11 +166,12 @@ const Schedule = (): JSX.Element => {
           today
         ) as ScheduleEvent[];
 
-        const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
-          (lock: WeeklyScheduleLock) => {
-            return buildWeeklyScheduleLocks(currentDate, lock);
-          }
-        ) as ScheduleEvent[];
+        const weeklyScheduleLocksEvents: ScheduleEvent[] =
+          !today.startTime && !today.endTime
+            ? []
+            : (today?.locks?.map((lock: WeeklyScheduleLock) => {
+                return buildWeeklyScheduleLocks(currentDate, lock);
+              }) as ScheduleEvent[]);
 
         const mappedScheduleLocks: Event[] =
           firstSchedule?.content?.scheduleLocks.map((lock) => {

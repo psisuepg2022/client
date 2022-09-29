@@ -38,6 +38,7 @@ import { differenceInMinutes } from 'date-fns';
 import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
 import { useAuth } from '@contexts/Auth';
 import { dateFormat } from '@utils/dateFormat';
+import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
 
 type FormLock = {
   id?: string;
@@ -137,7 +138,9 @@ const ProfessionalSchedule = (): JSX.Element => {
       id: currentDay?.id as string,
       locks: newIntervals,
       ...(disableDay && { disableDay }),
-      dayOfTheWeek: currentDay?.dayOfTheWeek,
+      dayOfTheWeek: Number(
+        DaysOfTheWeek[currentDay?.dayOfTheWeek as DaysOfTheWeek]
+      ) as number,
     };
 
     changesRef.current = false;

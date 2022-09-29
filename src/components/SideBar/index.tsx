@@ -14,6 +14,7 @@ import { SideBarLinks, sideBarLinks } from './SideBarLinks';
 import { colors } from '@global/colors';
 import { AiOutlineRight, AiOutlineClose } from 'react-icons/ai';
 import { useAuth } from '@contexts/Auth';
+import { BsQuestionCircle } from 'react-icons/bs';
 
 const SideBar = (): JSX.Element => {
   const {
@@ -68,18 +69,31 @@ const SideBar = (): JSX.Element => {
         </IconButton>
       </Header>
       <Content>
-        {renderLinks().map((item) => (
-          <NavItem
-            key={item.title}
-            to={item.path}
-            style={({ isActive }) => ({
-              backgroundColor: isActive ? colors.SECONDARY : colors.PRIMARY,
-            })}
-          >
-            {item.icon}
-            <NavItemTitle>{item.title}</NavItemTitle>
-          </NavItem>
-        ))}
+        <div>
+          {renderLinks().map((item) => (
+            <NavItem
+              key={item.title}
+              to={item.path}
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? colors.SECONDARY : colors.PRIMARY,
+              })}
+            >
+              {item.icon}
+              <NavItemTitle>{item.title}</NavItemTitle>
+            </NavItem>
+          ))}
+        </div>
+        <div
+          style={{
+            justifySelf: 'flex-end',
+            alignSelf: 'center',
+            marginBottom: 20,
+          }}
+        >
+          <IconButton>
+            <BsQuestionCircle size={40} style={{ color: '#FFF' }} />
+          </IconButton>
+        </div>
       </Content>
     </Container>
   );

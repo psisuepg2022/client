@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TextEditor from '@components/TextEditor';
 import { Event } from 'react-big-calendar';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -25,13 +25,11 @@ import { useComments } from '@contexts/Comments';
 const CommentCreation = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
   const navigate = useNavigate();
-  const [loading, setLoading] = useState<boolean>(false);
   const { setEvents } = useSchedule();
   const { create } = useComments();
 
   const concludeAndSaveComment = async (text: string) => {
     try {
-      setLoading(true);
       const appointmentId = idFromResource(state.resource);
 
       const { content, message } = await create(appointmentId, text);
@@ -75,8 +73,6 @@ const CommentCreation = (): JSX.Element => {
           e?.response?.data?.message ||
           'Ocorreu um problema ao concluir a consulta',
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -111,10 +107,7 @@ const CommentCreation = (): JSX.Element => {
             </AppointmentDate>
           </BoxHeader>
           <Body>
-            <TextEditor
-              loading={loading}
-              saveComment={concludeAndSaveComment}
-            />
+            <TextEditor saveComment={concludeAndSaveComment} />
           </Body>
         </CustomBox>
       </Content>

@@ -10,7 +10,6 @@ import {
   Content,
   CustomBox,
   PatientName,
-  Body,
   LogoContainer,
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
@@ -25,6 +24,7 @@ import DOMPurify from 'dompurify';
 import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
+import TextEditor from '@components/TextEditor';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
@@ -133,7 +133,7 @@ const Comment = (): JSX.Element => {
               })}
             </AppointmentDate>
           </BoxHeader>
-          <Body dangerouslySetInnerHTML={{ __html: comment }}></Body>
+          <TextEditor comment={comment} />
         </CustomBox>
       </Content>
     </Container>

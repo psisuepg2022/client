@@ -273,7 +273,12 @@ const Professionals = (): JSX.Element => {
           ) : (
             <ProfessionalsTable
               professionals={professionals}
-              columns={columns}
+              columns={
+                permissions.includes('DELETE_PROFESSIONAL') ||
+                permissions.includes('UPDATE_PROFESSIONAL')
+                  ? columns
+                  : columns.filter((column) => column.id !== 5)
+              }
               count={count}
               page={page}
               setPage={(page: number) => setPage(page)}

@@ -8,23 +8,22 @@ import { CircularProgress } from '@mui/material';
 
 const options: QuillOptionsStatic = {
   modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+    toolbar: '#toolbar',
+    // [
+    //   ['bold', 'italic', 'underline', 'strike'], // toggled buttons
 
-      [{ header: 1 }, { header: 2 }], // custom button values
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-      [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-      [{ direction: 'rtl' }], // text direction
+    //   [{ header: 1 }, { header: 2 }, { header: 3 }], // custom button values
+    //   [{ list: 'ordered' }, { list: 'bullet' }],
+    //   [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+    //   [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+    //   [{ direction: 'rtl' }], // text direction
 
-      [{ size: ['large', 'huge'] }], // custom dropdown
-      // [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    //   [{ size: ['large', 'huge'] }], // custom dropdown
+    //   // [{ header: [1, 2, 3, 4, 5, 6, false] }],
 
-      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-      [{ align: [] }],
-
-      ['clean'],
-    ],
+    //   [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    //   [{ align: [] }],
+    // ],
   },
 };
 
@@ -48,7 +47,41 @@ const TextEditor = ({ saveComment, loading }: TextEditorProps): JSX.Element => {
   return (
     <Container>
       <Content>
-        <div style={{ height: '80%', width: '100%' }} ref={quillRef} />
+        <div id="toolbar">
+          <select className="ql-size" style={{ marginLeft: 10 }}>
+            <option value="small">Pequena</option>
+            <option selected>Média</option>
+            <option value="large">Grande</option>
+            <option value="huge">Enorme</option>
+          </select>
+          <span
+            className="ql-formats"
+            style={{ marginLeft: 10, marginRight: 10 }}
+          >
+            <button className="ql-bold" />
+            <button className="ql-italic" />
+            <button className="ql-underline" />
+            <button className="ql-strike" />
+          </span>
+          <span className="ql-formats">
+            <button className="ql-list" value="ordered" />
+            <button className="ql-list" value="bullet" />
+          </span>
+          <span className="ql-formats">
+            <select style={{ marginLeft: 10 }} className="ql-align" />
+            <select style={{ marginLeft: 10 }} className="ql-color" />
+            <select className="ql-background" />
+          </span>
+        </div>
+        <div
+          style={{
+            height: '80%',
+            width: '100%',
+            fontFamily: 'Poppins',
+            fontSize: '1.2rem',
+          }}
+          ref={quillRef}
+        />
         <StyledButton onClick={onSubmit}>
           {loading ? (
             <CircularProgress style={{ color: '#FFF' }} size={20} />

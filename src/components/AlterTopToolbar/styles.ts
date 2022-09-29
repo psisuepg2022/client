@@ -25,7 +25,7 @@ export const LatterContent = styled('div')`
 `;
 
 export const ClinicTitle = styled(Typography)`
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   text-transform: capitalize;
   color: #fff;
   overflow: hidden;

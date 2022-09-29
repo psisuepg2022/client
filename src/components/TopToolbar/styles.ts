@@ -32,12 +32,12 @@ export const MiddleContent = styled('div')`
 `;
 
 export const DayTitle = styled(Typography)`
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #fff;
   padding: 0 1rem;
 
   @media (max-width: 1080px) {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   @media (max-width: 990px) {
     font-size: 1rem;
@@ -70,7 +70,7 @@ export const TodayButton = styled(Button)`
 `;
 
 export const ClinicTitle = styled(Typography)`
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   text-transform: capitalize;
   color: #fff;
   overflow: hidden;

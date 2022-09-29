@@ -111,22 +111,24 @@ const Comment = (): JSX.Element => {
             <PatientName>{state.title} | </PatientName>
             <AppointmentDate>
               {dateFormat({
-                date: isoToDate(`${state.start}`) as Date,
+                date: !state.end
+                  ? isoToDate(`${state.start}`)
+                  : (state.start as Date),
                 // eslint-disable-next-line quotes
                 stringFormat: "d 'de' MMMM 'de' yyyy",
               })}{' '}
               <AiOutlineRight size={20} style={{ color: '#707070' }} />{' '}
               {dateFormat({
-                date: isoToDate(`${state.start}`) as Date,
+                date: !state.end
+                  ? isoToDate(`${state.start}`)
+                  : (state.start as Date),
                 stringFormat: 'HH:mm',
               })}
               {' - '}
               {dateFormat({
-                date: isoToDate(
-                  `${state.start}`,
-                  true,
-                  Number(baseDuration)
-                ) as Date,
+                date: !state.end
+                  ? isoToDate(`${state.start}`, true, Number(baseDuration))
+                  : (state.end as Date),
                 stringFormat: 'HH:mm',
               })}
             </AppointmentDate>

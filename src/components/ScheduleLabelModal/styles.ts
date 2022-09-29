@@ -9,7 +9,7 @@ export const StyledModal = styled(Modal)`
 `;
 
 export const StyledBox = styled(Box)`
-  width: 25%;
+  width: 30%;
   height: auto;
   background-color: #fff;
   outline: none;
@@ -43,15 +43,36 @@ export const Body = styled('div')`
   height: 100%;
   flex-direction: column;
   gap: 1rem;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
 `;
 
 export const StatusText = styled(Typography)`
   color: ${colors.TEXT};
   font-size: 1.2rem;
+  font-weight: 600;
 
   & span {
     color: ${colors.PRIMARY};
     font-weight: 600;
   }
+`;
+
+export const ColorRow = styled('div')`
+  width: 90%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+export const ColorBox = styled('div')(({ color }) => ({
+  width: 30,
+  height: 30,
+  backgroundColor: color,
+  border: '1px solid #707070',
+}));
+
+export const ColorText = styled(Typography)`
+  font-size: 1rem;
+  font-weight: 500;
 `;

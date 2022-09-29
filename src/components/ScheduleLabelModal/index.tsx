@@ -2,7 +2,16 @@ import { colors } from '@global/colors';
 import { IconButton } from '@mui/material';
 import React from 'react';
 import { MdOutlineClose } from 'react-icons/md';
-import { Body, Header, StatusText, StyledBox, StyledModal } from './styles';
+import {
+  Body,
+  ColorBox,
+  ColorRow,
+  ColorText,
+  Header,
+  StatusText,
+  StyledBox,
+  StyledModal,
+} from './styles';
 
 type ScheduleLabelModalProps = {
   open: boolean;
@@ -37,7 +46,28 @@ const ScheduleLabelModal = ({
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
-        <Body></Body>
+        <Body>
+          <ColorRow>
+            <ColorBox color={colors.SCHEDULED} />
+            <ColorText>Consulta agendada</ColorText>
+          </ColorRow>
+          <ColorRow>
+            <ColorBox color={colors.CONFIRMED} />
+            <ColorText>Consulta confirmada</ColorText>
+          </ColorRow>
+          <ColorRow>
+            <ColorBox color={colors.CONCLUDED} />
+            <ColorText>Consulta concluída</ColorText>
+          </ColorRow>
+          <ColorRow>
+            <ColorBox color={colors.CANCELLED} />
+            <ColorText>Consulta cancelada (antes da confirmação)</ColorText>
+          </ColorRow>
+          <ColorRow>
+            <ColorBox color={colors.ABSENCE} />
+            <ColorText>Consulta com ausência do paciente</ColorText>
+          </ColorRow>
+        </Body>
       </StyledBox>
     </StyledModal>
   );

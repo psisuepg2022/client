@@ -8,3 +8,15 @@ export type WeeklySchedule = {
   dayOfTheWeek: DaysOfTheWeek;
   locks?: WeeklyScheduleLock[];
 };
+
+export type UpdateWeeklySchedule = {
+  id: string;
+  startTime: string;
+  endTime: string;
+  dayOfTheWeek?: DaysOfTheWeek;
+  locks?: {
+    startTime: string;
+    endTime: string;
+    id?: string;
+  }[];
+};

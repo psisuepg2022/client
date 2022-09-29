@@ -8,7 +8,7 @@ import {
   Professional,
   UpdateProfessional,
 } from '@models/Professional';
-import { WeeklySchedule } from '@models/WeeklySchedule';
+import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
 
 type ListProps = {
   page?: number;
@@ -25,6 +25,10 @@ type ProfessionalsContextData = {
     professional: UpdateProfessional
   ) => Promise<Response<Professional>>;
   getWeeklySchedule: () => Promise<Response<WeeklySchedule[]>>;
+  updateWeeklySchedule: (
+    weeklySchedule: UpdateWeeklySchedule
+  ) => Promise<Response<WeeklySchedule>>;
+  deleteLock: (weeklyId: string, lockId: string) => Promise<Response<boolean>>;
   topBar: () => Promise<
     Response<ItemList<{ id: string; name: string; baseDuration: number }>>
   >;
@@ -116,6 +120,30 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const updateWeeklySchedule = async (
+    weeklySchedule: UpdateWeeklySchedule
+  ): Promise<Response<WeeklySchedule>> => {
+    const { data }: { data: Response<WeeklySchedule> } = await api.post(
+      'weekly_schedule',
+      {
+        ...weeklySchedule,
+      }
+    );
+
+    return data;
+  };
+
+  const deleteLock = async (
+    weeklyId: string,
+    lockId: string
+  ): Promise<Response<boolean>> => {
+    const { data }: { data: Response<boolean> } = await api.delete(
+      `weekly_schedule/${weeklyId}/${lockId}`
+    );
+
+    return data;
+  };
+
   const topBar = async (): Promise<
     Response<ItemList<{ id: string; name: string; baseDuration: number }>>
   > => {
@@ -142,6 +170,8 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
         getProfile,
         updateProfile,
         getWeeklySchedule,
+        updateWeeklySchedule,
+        deleteLock,
         topBar,
         professionals,
         count,

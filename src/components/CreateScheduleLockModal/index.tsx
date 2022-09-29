@@ -101,7 +101,7 @@ const CreateScheduleLockModal = ({
     >
       <StyledBox>
         <Header>
-          <MdOutlineClose size={40} style={{ color: '#FFF' }} />
+          <MdOutlineClose size={40} style={{ color: 'transparent' }} />
           <SlotDataText>Criar novo intervalo</SlotDataText>
           <IconButton size="small" onClick={() => closeAll('')}>
             <MdOutlineClose size={40} />

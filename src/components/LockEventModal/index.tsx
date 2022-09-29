@@ -86,7 +86,7 @@ const LockEventModal = ({
       >
         <StyledBox>
           <Header>
-            <MdOutlineClose size={40} style={{ color: '#FFF' }} />
+            <MdOutlineClose size={40} style={{ color: 'transparent' }} />
             <SlotDataText>
               {dateFormat({
                 date: eventInfo.start as Date,

@@ -27,7 +27,7 @@ type ProfessionalsContextData = {
   getWeeklySchedule: () => Promise<Response<WeeklySchedule[]>>;
   updateWeeklySchedule: (
     weeklySchedule: UpdateWeeklySchedule
-  ) => Promise<Response<WeeklySchedule>>;
+  ) => Promise<Response<WeeklySchedule | boolean>>;
   deleteLock: (weeklyId: string, lockId: string) => Promise<Response<boolean>>;
   topBar: () => Promise<
     Response<ItemList<{ id: string; name: string; baseDuration: number }>>
@@ -122,13 +122,11 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
 
   const updateWeeklySchedule = async (
     weeklySchedule: UpdateWeeklySchedule
-  ): Promise<Response<WeeklySchedule>> => {
-    const { data }: { data: Response<WeeklySchedule> } = await api.post(
-      'weekly_schedule',
-      {
+  ): Promise<Response<WeeklySchedule | boolean>> => {
+    const { data }: { data: Response<WeeklySchedule | boolean> } =
+      await api.post('weekly_schedule', {
         ...weeklySchedule,
-      }
-    );
+      });
 
     return data;
   };

@@ -56,7 +56,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentDay, setCurrentDay] = useState<WeeklySchedule>();
   const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule[]>([]);
-  const [counter, setCounter] = useState<number>(0);
+  const [counter, setCounter] = useState<number>(-1);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [intervals, setIntervals] = useState<FormLock[]>([]);
   const [lockDelete, setLockDelete] = useState<number>(-1);
@@ -71,11 +71,16 @@ const ProfessionalSchedule = (): JSX.Element => {
 
         if (content && content.length > 0) {
           const initialDay = content[0] as WeeklySchedule;
-          countLockSlots(initialDay);
-          setWeeklySchedule(content);
+
           setCurrentDay(initialDay);
-          setIntervals(initialDay.locks || []);
-          if (!initialDay.startTime && !initialDay.endTime) setDisableDay(true);
+          setWeeklySchedule(content);
+          if (initialDay.startTime) {
+            countLockSlots(initialDay);
+            setIntervals(initialDay.locks || []);
+          } else {
+            setIntervals([]);
+            setDisableDay(true);
+          }
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -132,6 +137,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       id: currentDay?.id as string,
       locks: newIntervals,
       ...(disableDay && { disableDay }),
+      dayOfTheWeek: currentDay?.dayOfTheWeek,
     };
 
     changesRef.current = false;
@@ -141,7 +147,7 @@ const ProfessionalSchedule = (): JSX.Element => {
         newWeeklySchedule
       );
 
-      content && countLockSlots(content);
+      if (content && typeof content !== 'boolean') countLockSlots(content);
 
       showAlert({
         title: 'Sucesso!',
@@ -177,26 +183,46 @@ const ProfessionalSchedule = (): JSX.Element => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           setCurrentDay(day);
-          setIntervals(day.locks || []);
-          reset({
-            startTime: timeToDate(day.startTime),
-            endTime: timeToDate(day.endTime),
-          });
-          !day.startTime && !day.endTime
-            ? setDisableDay(true)
-            : setDisableDay(false);
+          if (day.startTime && day.endTime) {
+            setIntervals(day.locks || []);
+            countLockSlots(day);
+            reset({
+              startTime: timeToDate(day.startTime),
+              endTime: timeToDate(day.endTime),
+            });
+            setDisableDay(false);
+          } else {
+            setCounter(-1);
+            setIntervals([]);
+            reset({
+              startTime: disabledDayDate(),
+              endTime: disabledDayDate(),
+            });
+            setDisableDay(true);
+          }
           changesRef.current = false;
         }
       });
       return;
     }
     setCurrentDay(day);
-    setIntervals(day.locks || []);
-    reset({
-      startTime: timeToDate(day.startTime),
-      endTime: timeToDate(day.endTime),
-    });
-    !day.startTime && !day.endTime ? setDisableDay(true) : setDisableDay(false);
+    if (day.startTime && day.endTime) {
+      setIntervals(day.locks || []);
+      countLockSlots(day);
+      reset({
+        startTime: timeToDate(day.startTime),
+        endTime: timeToDate(day.endTime),
+      });
+      setDisableDay(false);
+    } else {
+      setIntervals([]);
+      setCounter(-1);
+      reset({
+        startTime: disabledDayDate(),
+        endTime: disabledDayDate(),
+      });
+      setDisableDay(true);
+    }
   };
 
   const removeInterval = async (interval: FormLock): Promise<void> => {
@@ -245,6 +271,16 @@ const ProfessionalSchedule = (): JSX.Element => {
       return newIntervals;
     });
     setCounter((prev) => prev + 1);
+  };
+
+  const disabledDayDate = (): Date => {
+    const date = new Date();
+
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+
+    return date;
   };
 
   if (loading)
@@ -321,9 +357,9 @@ const ProfessionalSchedule = (): JSX.Element => {
               >
                 {weeklySchedule.map((item) => (
                   <CardSelector
-                    key={item.id}
+                    key={item.dayOfTheWeek}
                     name={`${item.dayOfTheWeek}`}
-                    selected={currentDay?.id === item.id}
+                    selected={currentDay?.dayOfTheWeek === item.dayOfTheWeek}
                     onSelect={() => handleDayChange(item)}
                     disabled={loading || lockDelete !== -1 || savingWeekly}
                     style={{ padding: '0.3rem' }}
@@ -344,7 +380,11 @@ const ProfessionalSchedule = (): JSX.Element => {
                         <ControlledTimePicker
                           label="Início"
                           name="startTime"
-                          defaultValue={timeToDate(currentDay.startTime)}
+                          defaultValue={
+                            currentDay.startTime
+                              ? timeToDate(currentDay.startTime)
+                              : disabledDayDate()
+                          }
                           disabled={disableDay}
                           rules={{
                             required: {
@@ -359,7 +399,11 @@ const ProfessionalSchedule = (): JSX.Element => {
                           label="Fim"
                           name="endTime"
                           disabled={disableDay}
-                          defaultValue={timeToDate(currentDay.endTime)}
+                          defaultValue={
+                            currentDay.endTime
+                              ? timeToDate(currentDay.endTime)
+                              : disabledDayDate()
+                          }
                           rules={{
                             required: {
                               value: true,
@@ -391,21 +435,33 @@ const ProfessionalSchedule = (): JSX.Element => {
                         alignItems: 'center',
                       }}
                     >
-                      <TimesLabel>Intervalos - {counter} restantes</TimesLabel>
-                      <IconButton
-                        size="small"
-                        style={{ width: 60, height: 60, marginLeft: 20 }}
-                        onClick={() => {
-                          changesRef.current = true;
-                          setOpenModal(true);
-                        }}
-                        disabled={loading || lockDelete !== -1 || savingWeekly}
-                      >
-                        <AiOutlinePlus
-                          size={40}
-                          style={{ color: colors.PRIMARY }}
-                        />
-                      </IconButton>
+                      {counter !== -1 && (
+                        <>
+                          <TimesLabel>
+                            Intervalos - {counter} restantes
+                          </TimesLabel>
+
+                          <IconButton
+                            size="small"
+                            style={{ width: 60, height: 60, marginLeft: 20 }}
+                            onClick={() => {
+                              changesRef.current = true;
+                              setOpenModal(true);
+                            }}
+                            disabled={
+                              loading ||
+                              lockDelete !== -1 ||
+                              savingWeekly ||
+                              disableDay
+                            }
+                          >
+                            <AiOutlinePlus
+                              size={40}
+                              style={{ color: colors.PRIMARY }}
+                            />
+                          </IconButton>
+                        </>
+                      )}
                     </div>
                     {intervals &&
                       intervals.length > 0 &&

@@ -147,6 +147,7 @@ const ProfessionalSchedule = (): JSX.Element => {
         icon: 'success',
         text: message,
       });
+      changesRef.current = false;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -446,7 +447,12 @@ const ProfessionalSchedule = (): JSX.Element => {
             </DayHoursAndLocks>
           </div>
           <StyledButton
-            disabled={loading || lockDelete !== -1 || savingWeekly}
+            disabled={
+              loading ||
+              lockDelete !== -1 ||
+              savingWeekly ||
+              !changesRef.current
+            }
             type="submit"
             form="form"
           >

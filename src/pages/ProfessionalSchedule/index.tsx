@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CircularProgress, IconButton, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -55,6 +55,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [intervals, setIntervals] = useState<FormLock[]>([]);
   const [lockDelete, setLockDelete] = useState<number>(-1);
   const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
+  const changesRef = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -152,6 +153,30 @@ const ProfessionalSchedule = (): JSX.Element => {
   };
 
   const handleDayChange = (day: WeeklySchedule): void => {
+    if (changesRef.current) {
+      showAlert({
+        title: 'Deseja continuar?',
+        text: 'É possível que existam campos alterados não salvos. Se continuar, as alterações serão perdidas!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: colors.PRIMARY,
+        confirmButtonText: 'CONTINUAR',
+        cancelButtonColor: colors.BACKGREY,
+        cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
+        reverseButtons: true,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          setCurrentDay(day);
+          setIntervals(day.locks || []);
+          reset({
+            startTime: timeToDate(day.startTime),
+            endTime: timeToDate(day.endTime),
+          });
+          changesRef.current = false;
+        }
+      });
+      return;
+    }
     setCurrentDay(day);
     setIntervals(day.locks || []);
     reset({
@@ -295,28 +320,32 @@ const ProfessionalSchedule = (): JSX.Element => {
                   <form id="form" onSubmit={handleSubmit(onSubmit)}>
                     <TimesLabel>Início e fim do expediente</TimesLabel>
                     <WorkHoursContainer>
-                      <ControlledTimePicker
-                        label="Início"
-                        name="startTime"
-                        defaultValue={timeToDate(currentDay.startTime)}
-                        rules={{
-                          required: {
-                            value: true,
-                            message: 'O tempo de início é obrigatório',
-                          },
-                        }}
-                      />
-                      <ControlledTimePicker
-                        label="Fim"
-                        name="endTime"
-                        defaultValue={timeToDate(currentDay.endTime)}
-                        rules={{
-                          required: {
-                            value: true,
-                            message: 'O tempo final é obrigatório',
-                          },
-                        }}
-                      />
+                      <div onBlur={() => (changesRef.current = true)}>
+                        <ControlledTimePicker
+                          label="Início"
+                          name="startTime"
+                          defaultValue={timeToDate(currentDay.startTime)}
+                          rules={{
+                            required: {
+                              value: true,
+                              message: 'O tempo de início é obrigatório',
+                            },
+                          }}
+                        />
+                      </div>
+                      <div onBlur={() => (changesRef.current = true)}>
+                        <ControlledTimePicker
+                          label="Fim"
+                          name="endTime"
+                          defaultValue={timeToDate(currentDay.endTime)}
+                          rules={{
+                            required: {
+                              value: true,
+                              message: 'O tempo final é obrigatório',
+                            },
+                          }}
+                        />
+                      </div>
                     </WorkHoursContainer>
 
                     <div
@@ -330,7 +359,10 @@ const ProfessionalSchedule = (): JSX.Element => {
                       <IconButton
                         size="small"
                         style={{ width: 60, height: 60, marginLeft: 20 }}
-                        onClick={() => setOpenModal(true)}
+                        onClick={() => {
+                          changesRef.current = true;
+                          setOpenModal(true);
+                        }}
                         disabled={loading || lockDelete !== -1 || savingWeekly}
                       >
                         <AiOutlinePlus
@@ -355,7 +387,10 @@ const ProfessionalSchedule = (): JSX.Element => {
                               loading || lockDelete !== -1 || savingWeekly
                             }
                             style={{ width: 60, height: 60, marginLeft: 20 }}
-                            onClick={() => removeInterval({ ...lock, index })}
+                            onClick={() => {
+                              changesRef.current = true;
+                              removeInterval({ ...lock, index });
+                            }}
                           >
                             {lockDelete === index ? (
                               <CircularProgress

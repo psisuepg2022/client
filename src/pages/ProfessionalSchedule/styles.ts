@@ -34,6 +34,7 @@ export const Content = styled('div')`
 export const Header = styled('div')`
   height: 10%;
   width: 100%;
+  padding-top: 10px;
   display: flex;
   align-items: center;
 `;

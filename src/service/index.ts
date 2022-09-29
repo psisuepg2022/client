@@ -51,7 +51,12 @@ api.interceptors.response.use(
 
     if (err.response) {
       // Access Token was expired
-      if (err.response.status === 401 && !originalConfig._retry) {
+      if (
+        err.response.status === 401 &&
+        !originalConfig._retry &&
+        err.response.data.message ===
+          'As credenciais de autenticação expiraram. Por favor, realize a autenticação novamente.'
+      ) {
         originalConfig._retry = true;
 
         try {

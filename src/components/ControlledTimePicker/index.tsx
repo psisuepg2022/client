@@ -20,7 +20,8 @@ type ControlledTimePickerProps = {
   name: string;
   label: string;
   disabled?: boolean;
-  defaultValue?: string;
+  minutesStep?: number;
+  defaultValue?: Date;
   required?: boolean;
   rules?: Omit<
     RegisterOptions<FieldValues, FieldPath<FieldValues>>,
@@ -32,6 +33,7 @@ const ControlledTimePicker = ({
   name,
   label,
   disabled,
+  minutesStep,
   defaultValue,
   rules,
   required,
@@ -65,6 +67,7 @@ const ControlledTimePicker = ({
             {...rest}
             label={label}
             value={value}
+            minutesStep={minutesStep}
             onChange={onChange}
             renderInput={(params) => (
               <CustomTextField
@@ -75,7 +78,6 @@ const ControlledTimePicker = ({
               />
             )}
             disabled={disabled}
-            inputFormat="HH:mm"
           />
         </LocalizationProvider>
       )}

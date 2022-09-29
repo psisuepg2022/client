@@ -15,7 +15,7 @@ import {
 import { Patient } from '@models/Patient';
 import { Column } from './types';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
-import { MdModeEdit, MdDelete } from 'react-icons/md';
+import { MdModeEdit, MdDelete, MdStickyNote2 } from 'react-icons/md';
 import SectionDivider from '@components/SectionDivider';
 import {
   AuxDataExpand,
@@ -120,24 +120,39 @@ const PatientsTable = ({
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      <Tooltip title="Editar">
-                        <IconButton
-                          disabled={!permissions.includes('UPDATE_PATIENT')}
-                          onClick={() =>
-                            navigate(`/patients/form/${row.id}`, { state: row })
-                          }
-                        >
-                          <MdModeEdit />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Deletar">
-                        <IconButton
-                          disabled={!permissions.includes('DELETE_PATIENT')}
-                          onClick={() => deleteItem(row)}
-                        >
-                          <MdDelete />
-                        </IconButton>
-                      </Tooltip>
+                      {permissions.includes('USER_TYPE_PROFESSIONAL') && (
+                        <Tooltip title="Anotações">
+                          <IconButton
+                            onClick={() =>
+                              navigate('/comment/list', {
+                                state: row,
+                              })
+                            }
+                          >
+                            <MdStickyNote2 />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      {permissions.includes('UPDATE_PATIENT') && (
+                        <Tooltip title="Editar">
+                          <IconButton
+                            onClick={() =>
+                              navigate(`/patients/form/${row.id}`, {
+                                state: row,
+                              })
+                            }
+                          >
+                            <MdModeEdit />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      {permissions.includes('DELETE_PATIENT') && (
+                        <Tooltip title="Deletar">
+                          <IconButton onClick={() => deleteItem(row)}>
+                            <MdDelete />
+                          </IconButton>
+                        </Tooltip>
+                      )}
                     </StyledTableCell>
                   </TableRow>
                   <TableRow>
@@ -206,6 +221,19 @@ const PatientsTable = ({
                                   <span>CEP: </span>
                                   {row.address.zipCode}
                                 </TextExpand>
+                                <TextExpand>
+                                  <span>Telefone: </span>
+                                  {row.contactNumber}
+                                </TextExpand>
+                              </AuxDataExpand>
+                            </>
+                          )}
+                          {!row.address && row.contactNumber && (
+                            <>
+                              <SectionDivider fontSize={14}>
+                                Dados auxiliares
+                              </SectionDivider>
+                              <AuxDataExpand>
                                 <TextExpand>
                                   <span>Telefone: </span>
                                   {row.contactNumber}

@@ -3,7 +3,12 @@ import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
 import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
-import { FormProfessional, Professional } from '@models/Professional';
+import {
+  FormProfessional,
+  Professional,
+  UpdateProfessional,
+} from '@models/Professional';
+import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
 
 type ListProps = {
   page?: number;
@@ -15,6 +20,18 @@ type ProfessionalsContextData = {
   list: (listProps: ListProps) => Promise<Response<ItemList<Professional>>>;
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
   remove: (professionalId: string) => Promise<Response<boolean>>;
+  getProfile: () => Promise<Response<Professional>>;
+  updateProfile: (
+    professional: UpdateProfessional
+  ) => Promise<Response<Professional>>;
+  getWeeklySchedule: () => Promise<Response<WeeklySchedule[]>>;
+  updateWeeklySchedule: (
+    weeklySchedule: UpdateWeeklySchedule
+  ) => Promise<Response<WeeklySchedule>>;
+  deleteLock: (weeklyId: string, lockId: string) => Promise<Response<boolean>>;
+  topBar: () => Promise<
+    Response<ItemList<{ id: string; name: string; baseDuration: number }>>
+  >;
   professionals: Professional[];
   count: number;
 };
@@ -74,12 +91,88 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const getProfile = async (): Promise<Response<Professional>> => {
+    const { data }: { data: Response<Professional> } = await api.get(
+      'professional/profile'
+    );
+
+    return data;
+  };
+
+  const updateProfile = async (
+    professional: UpdateProfessional
+  ): Promise<Response<Professional>> => {
+    const { data }: { data: Response<Professional> } = await api.put(
+      'professional',
+      {
+        ...professional,
+      }
+    );
+
+    return data;
+  };
+
+  const getWeeklySchedule = async (): Promise<Response<WeeklySchedule[]>> => {
+    const { data }: { data: Response<WeeklySchedule[]> } = await api.get(
+      'weekly_schedule'
+    );
+
+    return data;
+  };
+
+  const updateWeeklySchedule = async (
+    weeklySchedule: UpdateWeeklySchedule
+  ): Promise<Response<WeeklySchedule>> => {
+    const { data }: { data: Response<WeeklySchedule> } = await api.post(
+      'weekly_schedule',
+      {
+        ...weeklySchedule,
+      }
+    );
+
+    return data;
+  };
+
+  const deleteLock = async (
+    weeklyId: string,
+    lockId: string
+  ): Promise<Response<boolean>> => {
+    const { data }: { data: Response<boolean> } = await api.delete(
+      `weekly_schedule/${weeklyId}/${lockId}`
+    );
+
+    return data;
+  };
+
+  const topBar = async (): Promise<
+    Response<ItemList<{ id: string; name: string; baseDuration: number }>>
+  > => {
+    const {
+      data,
+    }: {
+      data: Response<
+        ItemList<{ id: string; name: string; baseDuration: number }>
+      >;
+    } = await api.get('professional/top_bar');
+
+    setProfessionals(data.content?.items as Professional[]);
+    setCount(data.content?.totalItems || 0);
+
+    return data;
+  };
+
   return (
     <ProfessionalsContext.Provider
       value={{
         list,
         create,
         remove,
+        getProfile,
+        updateProfile,
+        getWeeklySchedule,
+        updateWeeklySchedule,
+        deleteLock,
+        topBar,
         professionals,
         count,
       }}

@@ -30,6 +30,7 @@ type ScheduleContextData = {
   ) => Promise<Response<UpdatedEvent>>;
   getById: (appointmentId: string) => Promise<Response<AppointmentComments>>;
   saveScheduleLock: (lockData: LockSave) => Promise<Response<SavedLock>>;
+  deleteScheduleLock: (lockId: string) => Promise<Response<boolean>>;
   currentProfessional: Professional | undefined;
   setCurrentProfessional: (professional: Professional) => void;
   currentSchedule: AllScheduleEvents | undefined;
@@ -115,6 +116,16 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     return data;
   };
 
+  const deleteScheduleLock = async (
+    lockId: string
+  ): Promise<Response<boolean>> => {
+    const { data }: { data: Response<boolean> } = await api.delete(
+      `schedule_locks/${lockId}`
+    );
+
+    return data;
+  };
+
   const updateAppointmentStatus = async (
     appointmentId: string,
     status: string
@@ -145,6 +156,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
         getScheduleEvents,
         saveAppointment,
         saveScheduleLock,
+        deleteScheduleLock,
         updateAppointmentStatus,
         currentProfessional,
         setCurrentProfessional,

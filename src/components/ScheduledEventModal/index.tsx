@@ -29,6 +29,7 @@ import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
 import { useAuth } from '@contexts/Auth';
+import { useNavigate } from 'react-router-dom';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -46,6 +47,7 @@ const ScheduledEventModal = ({
     user: { permissions },
   } = useAuth();
   const [loading, setLoading] = useState<string>('');
+  const navigate = useNavigate();
 
   if (!eventInfo) return <></>;
 
@@ -77,7 +79,7 @@ const ScheduledEventModal = ({
         const newEvents: Event[] =
           status === '2' && isAfter(eventInfo.start as Date, currentDate)
             ? prev.filter(
-                (event) => idFromResource(event.resource) !== content?.id
+                (event) => appointmentId !== idFromResource(event.resource)
               )
             : prev.map((event) =>
                 idFromResource(event.resource) === content?.id
@@ -139,11 +141,7 @@ const ScheduledEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton disabled={loading !== ''}>
-            <MdOutlineStickyNote2
-              style={{ fontSize: 35, color: colors.PRIMARY }}
-            />
-          </IconButton>
+          <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>

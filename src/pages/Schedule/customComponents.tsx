@@ -15,19 +15,26 @@ import {
 } from './styles';
 import { EventStatus } from '@interfaces/EventStatus';
 import { eventColor } from '@utils/eventColor';
-import { lockFromResource, statusFromResource } from '@utils/schedule';
+import {
+  idFromResource,
+  lockFromResource,
+  statusFromResource,
+} from '@utils/schedule';
 
 export const eventStyleGetter = (
   event: Event
 ): { style?: Record<string, unknown>; className?: string } => {
   if (event.resource && lockFromResource(event.resource) === 'LOCK') {
     const style = {
-      backgroundColor: colors.LOCK,
-      borderRadius: '0px',
+      backgroundColor:
+        idFromResource(event.resource) === undefined
+          ? colors.LOCK
+          : colors.LOCK_DARKER,
       color: 'transparent',
-      cursor: !event.resource.includes('/') ? 'auto' : 'pointer',
+      cursor: idFromResource(event.resource) === undefined ? 'auto' : 'pointer',
       width: '100%',
       border: '1px',
+      //boxShadow: '0px 5px 10px rgba(18, 18, 18, 0.48)',
     };
 
     return {
@@ -40,7 +47,6 @@ export const eventStyleGetter = (
 
   const style = {
     backgroundColor: eventColor(status),
-    borderRadius: '2px',
     color: colors.TEXT,
     whiteSpace: 'nowrap',
     overflow: 'hidden',

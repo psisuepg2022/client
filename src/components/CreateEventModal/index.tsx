@@ -34,7 +34,7 @@ import { useAuth } from '@contexts/Auth';
 
 type CreateEventModalProps = {
   open: boolean;
-  handleClose: () => void;
+  handleClose: (reason: 'backdropClick' | 'escapeKeyDown' | '') => void;
   slotInfo: SlotInfo | undefined;
   addNewEvent: (event: Event) => void;
 };
@@ -50,7 +50,12 @@ const CreateEventModal = ({
   const {
     user: { permissions },
   } = useAuth();
-  const formMethods = useForm<{ start: Date; end: Date }>();
+  const formMethods = useForm<{ start: Date; end: Date }>({
+    defaultValues: {
+      start: slotInfo?.start,
+      end: slotInfo?.end,
+    },
+  });
   const { handleSubmit } = formMethods;
   const [currentPatient, setCurrentPatient] = useState<Patient>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -83,10 +88,10 @@ const CreateEventModal = ({
     setCurrentPatient(patient as Patient);
   };
 
-  const closeAll = (): void => {
+  const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
     setCurrentPatient(undefined);
-    handleClose();
     setLockMode(false);
+    handleClose(reason);
   };
 
   const onSubmit = async (): Promise<void> => {
@@ -118,6 +123,7 @@ const CreateEventModal = ({
       };
 
       addNewEvent(newAppointment);
+      closeAll('');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -127,7 +133,6 @@ const CreateEventModal = ({
       });
     } finally {
       setLoading(false);
-      closeAll();
     }
   };
 
@@ -155,7 +160,14 @@ const CreateEventModal = ({
         endTime,
       });
 
-      console.log('REUTRN', content);
+      const newLock: Event = {
+        start: data.start,
+        end: data.end,
+        resource: `LOCK/${content?.id}`,
+      };
+
+      addNewEvent(newLock);
+      closeAll('');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -171,7 +183,10 @@ const CreateEventModal = ({
     <>
       <StyledModal
         open={open}
-        onClose={closeAll}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClose={(event: any, reason: 'backdropClick' | 'escapeKeyDown') =>
+          closeAll(reason)
+        }
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -187,7 +202,11 @@ const CreateEventModal = ({
                   stringFormat: "d 'de' MMMM 'de' yyyy",
                 })}
               </SlotDataText>
-              <IconButton size="small" onClick={closeAll}>
+              <IconButton
+                disabled={loading}
+                size="small"
+                onClick={() => closeAll('')}
+              >
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>
@@ -202,18 +221,18 @@ const CreateEventModal = ({
                   <ControlledTimePicker
                     name="start"
                     label="Início"
-                    defaultValue={'11:00'}
+                    defaultValue={slotInfo.start}
                   />
                   <ControlledTimePicker
                     name="end"
                     label="Fim"
-                    defaultValue={'11:00'}
+                    defaultValue={slotInfo.end}
                   />
                 </TimePickerContainer>
               </FormProvider>
 
               <ButtonArea>
-                <StyledButton form="form" type="submit">
+                <StyledButton disabled={loading} form="form" type="submit">
                   {loading ? (
                     <CircularProgress style={{ color: '#FFF' }} size={20} />
                   ) : (
@@ -243,7 +262,11 @@ const CreateEventModal = ({
                 | {dateFormat({ date: slotInfo.start, stringFormat: 'HH:mm' })}{' '}
                 - {dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' })}
               </SlotDataText>
-              <IconButton size="small" onClick={closeAll}>
+              <IconButton
+                disabled={loading}
+                size="small"
+                onClick={() => closeAll('')}
+              >
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>

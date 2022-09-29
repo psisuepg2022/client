@@ -14,7 +14,7 @@ import {
   StyledConfirmButton,
   StyledModal,
 } from './styles';
-import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
+import { MdOutlineClose } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
@@ -76,18 +76,19 @@ const ConfirmedEventModal = ({
       const currentDate = new Date();
 
       setEvents((prev) => {
-        const newEvents: Event[] = isAfter(eventInfo.start as Date, currentDate)
-          ? prev.filter(
-              (event) => idFromResource(event.resource) !== content?.id
-            )
-          : prev.map((event) =>
-              idFromResource(event.resource) === content?.id
-                ? {
-                    ...event,
-                    resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
-                  }
-                : event
-            );
+        const newEvents: Event[] =
+          status === '5' && isAfter(eventInfo.start as Date, currentDate)
+            ? prev.filter(
+                (event) => appointmentId !== idFromResource(event.resource)
+              )
+            : prev.map((event) =>
+                idFromResource(event.resource) === content?.id
+                  ? {
+                      ...event,
+                      resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                    }
+                  : event
+              );
 
         return newEvents;
       });
@@ -140,11 +141,7 @@ const ConfirmedEventModal = ({
     >
       <StyledBox>
         <Header>
-          <IconButton disabled={loading}>
-            <MdOutlineStickyNote2
-              style={{ fontSize: 35, color: colors.PRIMARY }}
-            />
-          </IconButton>
+          <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>

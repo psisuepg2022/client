@@ -70,9 +70,12 @@ export const TodayButton = styled(Button)`
 `;
 
 export const ClinicTitle = styled(Typography)`
-  font-size: 2rem;
+  font-size: 1.6rem;
   text-transform: capitalize;
   color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 export const StyledSelect = styled(Select)`

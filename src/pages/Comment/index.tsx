@@ -17,16 +17,21 @@ import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
 import { IconButton } from '@mui/material';
 import { useSchedule } from '@contexts/Schedule';
-import { idFromResource } from '@utils/schedule';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
+import { isoToDate } from '@utils/isoToDate';
+import { useAuth } from '@contexts/Auth';
+import { idFromResource } from '@utils/schedule';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
   const navigate = useNavigate();
+  const {
+    user: { baseDuration },
+  } = useAuth();
   const { getById } = useSchedule();
   const [loading, setLoading] = useState<boolean>(true);
   const [comment, setComment] = useState<string>('');
@@ -39,8 +44,10 @@ const Comment = (): JSX.Element => {
 
         if (!content?.comments) {
           showAlert({
+            title: '',
             icon: 'info',
             text: 'A consulta não possui anotações. Clique em OK para retornar à agenda',
+            allowOutsideClick: false,
           }).then(async (result) => {
             if (result.isConfirmed) {
               navigate('/schedule');
@@ -60,6 +67,7 @@ const Comment = (): JSX.Element => {
           text:
             e?.response?.data?.message ||
             'Ocorreu um problema ao recuperar as anotações para essa consulta',
+          allowOutsideClick: false,
         }).then(async (result) => {
           if (result.isConfirmed) {
             navigate('/schedule');
@@ -95,7 +103,7 @@ const Comment = (): JSX.Element => {
       <Content>
         <CustomBox>
           <BoxHeader>
-            <IconButton onClick={() => navigate('/schedule')}>
+            <IconButton onClick={() => navigate(-1)}>
               <AiOutlineLeft size={40} />
             </IconButton>
             <CommentsTitle>Anotações</CommentsTitle>
@@ -103,18 +111,22 @@ const Comment = (): JSX.Element => {
             <PatientName>{state.title} | </PatientName>
             <AppointmentDate>
               {dateFormat({
-                date: state.start as Date,
+                date: isoToDate(`${state.start}`) as Date,
                 // eslint-disable-next-line quotes
                 stringFormat: "d 'de' MMMM 'de' yyyy",
               })}{' '}
               <AiOutlineRight size={20} style={{ color: '#707070' }} />{' '}
               {dateFormat({
-                date: state.start as Date,
+                date: isoToDate(`${state.start}`) as Date,
                 stringFormat: 'HH:mm',
               })}
               {' - '}
               {dateFormat({
-                date: state.end as Date,
+                date: isoToDate(
+                  `${state.start}`,
+                  true,
+                  Number(baseDuration)
+                ) as Date,
                 stringFormat: 'HH:mm',
               })}
             </AppointmentDate>

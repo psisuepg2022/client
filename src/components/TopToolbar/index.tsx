@@ -37,7 +37,7 @@ import {
 } from '@utils/schedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { dateFormat } from '@utils/dateFormat';
-import { getDay } from 'date-fns';
+import { getDay, isAfter, isEqual } from 'date-fns';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -53,7 +53,7 @@ const TopToolbar = ({
   const navigate = useNavigate();
   const {
     signOut,
-    user: { permissions },
+    user: { permissions, clinic },
   } = useAuth();
   const { professionals } = useProfessionals();
   const {
@@ -153,13 +153,19 @@ const TopToolbar = ({
           endDate.setMinutes(Number(lock.endTime.split(':')[1]));
           endDate.setSeconds(0);
 
-          return {
-            start: startDate,
-            end: endDate,
-            resource: `${lock.resource}/${lock.id}`,
-            title: lock.id,
-          };
+          if (isAfter(endDate, currentDate) || isEqual(endDate, currentDate)) {
+            return {
+              start: startDate,
+              end: endDate,
+              resource: `${lock.resource}/${lock.id}`,
+              title: lock.id,
+            };
+          }
         }) as Event[];
+
+      const validScheduleLocks: Event[] = mappedScheduleLocks.filter(
+        (lock) => lock
+      );
 
       const mappedEvents: Event[] =
         professionalSchedule?.content?.appointments.map((event) => {
@@ -189,7 +195,7 @@ const TopToolbar = ({
       setEvents([
         ...weeklyScheduleEvents,
         ...weeklyScheduleLocksEvents,
-        ...mappedScheduleLocks,
+        ...validScheduleLocks,
         ...mappedEvents,
       ]);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -240,7 +246,7 @@ const TopToolbar = ({
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Container>
         <EarlyContent>
-          <ClinicTitle>KLINIK</ClinicTitle>
+          <ClinicTitle>{clinic?.name}</ClinicTitle>
         </EarlyContent>
 
         <MiddleContent>
@@ -300,6 +306,9 @@ const TopToolbar = ({
             sx={{ zIndex: 999 }}
           >
             <MenuItem onClick={() => navigate('/profile')}>Perfil</MenuItem>
+            <MenuItem onClick={() => navigate('/profile/change-password')}>
+              Alterar Senha
+            </MenuItem>
             <hr />
             <MenuItem onClick={signOut}>Logout</MenuItem>
           </Menu>

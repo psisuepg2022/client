@@ -7,7 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 
 const AlterTopToolbar = (): JSX.Element => {
-  const { signOut } = useAuth();
+  const {
+    signOut,
+    user: { clinic },
+  } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -24,7 +27,7 @@ const AlterTopToolbar = (): JSX.Element => {
     <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
       <Container>
         <EarlyContent>
-          <ClinicTitle>KLINIK</ClinicTitle>
+          <ClinicTitle>{clinic?.name}</ClinicTitle>
         </EarlyContent>
 
         <LatterContent>
@@ -50,6 +53,9 @@ const AlterTopToolbar = (): JSX.Element => {
             sx={{ zIndex: 999 }}
           >
             <MenuItem onClick={() => navigate('/profile')}>Perfil</MenuItem>
+            <MenuItem onClick={() => navigate('/profile/change-password')}>
+              Alterar Senha
+            </MenuItem>
             <hr />
             <MenuItem onClick={signOut}>Logout</MenuItem>
           </Menu>

@@ -6,7 +6,8 @@ export type User = {
   accessCode: number;
   userName: string;
   name: string;
-  email: string;
+  email?: string;
   permissions: Permissions;
   clinic?: Clinic;
+  baseDuration?: number;
 } & Person;

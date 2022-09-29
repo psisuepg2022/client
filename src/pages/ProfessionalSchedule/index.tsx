@@ -310,7 +310,13 @@ const ProfessionalSchedule = (): JSX.Element => {
             <SectionDivider>Dias da semana</SectionDivider>
 
             <DayHoursAndLocks>
-              <div style={{ display: 'flex', marginTop: 30 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: 30,
+                  justifyContent: 'space-between',
+                }}
+              >
                 {weeklySchedule.map((item) => (
                   <CardSelector
                     key={item.id}

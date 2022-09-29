@@ -397,35 +397,9 @@ const PatientsForm = (): JSX.Element => {
                           },
                         }}
                       />
-                      {/* {liable?.email ? (
-                        <SimpleInput
-                          name="liable.email"
-                          label="Email"
-                          contentEditable={false}
-                          value={liable && liable?.email }
-                        />
-                      ) : ( */}
                       <ControlledInput name="liable.email" label="Email" />
-                      {/* )} */}
                     </PersonalDataFirst>
                     <PersonalDataSecond>
-                      {/* {state.liable ? (
-                        <SimpleInput
-                          name="liable.CPF"
-                          label="CPF"
-                          contentEditable={false}
-                          value={state.liable?.CPF || ''}
-                          mask={(s: string): string =>
-                            `${s
-                              .replace(/\D/g, '')
-                              .replace(/(\d{3})(\d)/, '$1.$2')
-                              .replace(/(\d{3})(\d)/, '$1.$2')
-                              .replace(/(\d{3})(\d)/, '$1-$2')
-                              .replace(/(-\d{2})\d+?$/, '$1')}`
-                          }
-                          required
-                        />
-                      ) : ( */}
                       <ControlledInput
                         name="liable.CPF"
                         label="CPF"
@@ -454,29 +428,6 @@ const PatientsForm = (): JSX.Element => {
                         }
                         required
                       />
-                      {/* )} */}
-
-                      {/* {state.liable ? (
-                        <SimpleDatePicker
-                          name="liable.birthDate"
-                          label="Data de nascimento"
-                          value={
-                            new Date(
-                              state.liable?.birthDate
-                                .split('/')
-                                .reverse()
-                                .join('-') + 'GMT-0300'
-                            )
-                          }
-                          onChange={() => null}
-                          renderInput={(params) => (
-                            <CustomTextField
-                              {...params}
-                              contentEditable={false}
-                            />
-                          )}
-                        />
-                      ) : ( */}
                       <ControlledDatePicker
                         name="liable.birthDate"
                         label="Data de nascimento"

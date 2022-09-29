@@ -134,6 +134,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       ...(disableDay && { disableDay }),
     };
 
+    changesRef.current = false;
     setSavingWeekly(true);
     try {
       const { content, message } = await updateWeeklySchedule(

@@ -1,4 +1,4 @@
-import { Button, Typography } from '@mui/material';
+import { Button, Checkbox, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { colors } from '@global/colors';
 
@@ -57,9 +57,9 @@ export const TimesLabel = styled(Typography)`
 
 export const WorkHoursContainer = styled('div')`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 2fr;
   column-gap: 1rem;
-  width: 60%;
+  width: 80%;
 `;
 
 export const IntervalsContainer = styled('div')`
@@ -96,3 +96,5 @@ export const IntervalRow = styled(Typography)`
     padding-left: 10px;
   }
 `;
+
+export const StyledCheckbox = styled(Checkbox)``;

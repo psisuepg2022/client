@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CircularProgress, IconButton, Typography } from '@mui/material';
+import {
+  CircularProgress,
+  FormControlLabel,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -11,6 +16,7 @@ import {
   IntervalsContainer,
   LogoContainer,
   StyledButton,
+  StyledCheckbox,
   TimesLabel,
   WorkHoursContainer,
 } from './styles';
@@ -56,6 +62,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [lockDelete, setLockDelete] = useState<number>(-1);
   const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
   const changesRef = useRef(false);
+  const [disableDay, setDisableDay] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -65,10 +72,10 @@ const ProfessionalSchedule = (): JSX.Element => {
         if (content && content.length > 0) {
           const initialDay = content[0] as WeeklySchedule;
           countLockSlots(initialDay);
-
           setWeeklySchedule(content);
           setCurrentDay(initialDay);
           setIntervals(initialDay.locks || []);
+          if (!initialDay.startTime && !initialDay.endTime) setDisableDay(true);
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -124,6 +131,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       }),
       id: currentDay?.id as string,
       locks: newIntervals,
+      ...(disableDay && { disableDay }),
     };
 
     setSavingWeekly(true);
@@ -172,6 +180,9 @@ const ProfessionalSchedule = (): JSX.Element => {
             startTime: timeToDate(day.startTime),
             endTime: timeToDate(day.endTime),
           });
+          !day.startTime && !day.endTime
+            ? setDisableDay(true)
+            : setDisableDay(false);
           changesRef.current = false;
         }
       });
@@ -183,6 +194,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       startTime: timeToDate(day.startTime),
       endTime: timeToDate(day.endTime),
     });
+    !day.startTime && !day.endTime ? setDisableDay(true) : setDisableDay(false);
   };
 
   const removeInterval = async (interval: FormLock): Promise<void> => {
@@ -325,6 +337,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                           label="Início"
                           name="startTime"
                           defaultValue={timeToDate(currentDay.startTime)}
+                          disabled={disableDay}
                           rules={{
                             required: {
                               value: true,
@@ -337,6 +350,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                         <ControlledTimePicker
                           label="Fim"
                           name="endTime"
+                          disabled={disableDay}
                           defaultValue={timeToDate(currentDay.endTime)}
                           rules={{
                             required: {
@@ -346,6 +360,20 @@ const ProfessionalSchedule = (): JSX.Element => {
                           }}
                         />
                       </div>
+                      <FormControlLabel
+                        style={{ maxWidth: 400 }}
+                        control={
+                          <StyledCheckbox
+                            checked={disableDay}
+                            onChange={() => {
+                              setDisableDay((prev) => !prev);
+                              changesRef.current = true;
+                            }}
+                            inputProps={{ 'aria-label': 'controlled' }}
+                          />
+                        }
+                        label="Dia da semana sem expediente"
+                      />
                     </WorkHoursContainer>
 
                     <div

@@ -28,6 +28,7 @@ export const Content = styled('div')`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  justify-content: space-between;
 `;
 
 export const Header = styled('div')`
@@ -80,6 +81,7 @@ export const StyledButton = styled(Button)`
   height: 50px;
   margin-top: 20px;
   align-self: flex-end;
+  padding-bottom: 5px;
 
   :hover {
     background-color: ${colors.SECONDARY};

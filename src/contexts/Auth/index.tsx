@@ -16,7 +16,7 @@ type LoginResponse = {
 };
 
 type AuthContextData = {
-  signIn: (credentials: AuthCredentials) => Promise<void>;
+  signIn: (credentials: AuthCredentials) => Promise<User>;
   signOut: () => void;
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     return {} as User;
   });
 
-  const signIn = async (credentials: AuthCredentials): Promise<void> => {
+  const signIn = async (credentials: AuthCredentials): Promise<User> => {
     const { data }: { data: Response<LoginResponse> } = await api.post('auth', {
       ...credentials,
     });
@@ -72,6 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     ] = `Bearer ${data.content?.accessToken}`;
 
     setUser(decodedToken);
+    return decodedToken;
   };
 
   const signOut = (): void => {

@@ -101,7 +101,6 @@ const ControlledInput = ({
           }}
           inputProps={{
             maxLength: maxLength,
-            autoComplete: 'new-password',
           }}
           helperText={getError().message}
           error={getError().value}

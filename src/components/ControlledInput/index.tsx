@@ -81,7 +81,7 @@ const ControlledInput = ({
           required={required}
           disabled={disabled}
           label={label}
-          type={visibility ? 'text' : 'password'}
+          type={visibility ? type || 'text' : 'password'}
           InputProps={{
             endAdornment:
               endFunction === 'password' ? (

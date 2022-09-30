@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CircularProgress,
   FormControlLabel,
@@ -62,7 +62,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [intervals, setIntervals] = useState<FormLock[]>([]);
   const [lockDelete, setLockDelete] = useState<number>(-1);
   const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
-  const changesRef = useRef(false);
+  const [changes, setChanges] = useState<boolean>(false);
   const [disableDay, setDisableDay] = useState<boolean>(false);
 
   useEffect(() => {
@@ -143,7 +143,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       ) as number,
     };
 
-    changesRef.current = false;
+    setChanges(false);
     setSavingWeekly(true);
     try {
       const { content, message } = await updateWeeklySchedule(
@@ -157,7 +157,7 @@ const ProfessionalSchedule = (): JSX.Element => {
         icon: 'success',
         text: message,
       });
-      changesRef.current = false;
+      setChanges(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -172,7 +172,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   };
 
   const handleDayChange = (day: WeeklySchedule): void => {
-    if (changesRef.current) {
+    if (changes) {
       showAlert({
         title: 'Deseja continuar?',
         text: 'É possível que existam campos alterados não salvos. Se continuar, as alterações serão perdidas!',
@@ -203,7 +203,7 @@ const ProfessionalSchedule = (): JSX.Element => {
             });
             setDisableDay(true);
           }
-          changesRef.current = false;
+          setChanges(false);
         }
       });
       return;
@@ -379,7 +379,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                   <form id="form" onSubmit={handleSubmit(onSubmit)}>
                     <TimesLabel>Início e fim do expediente</TimesLabel>
                     <WorkHoursContainer>
-                      <div onBlur={() => (changesRef.current = true)}>
+                      <div onBlur={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Início"
                           name="startTime"
@@ -397,7 +397,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                           }}
                         />
                       </div>
-                      <div onBlur={() => (changesRef.current = true)}>
+                      <div onBlur={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Fim"
                           name="endTime"
@@ -422,7 +422,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                             checked={disableDay}
                             onChange={() => {
                               setDisableDay((prev) => !prev);
-                              changesRef.current = true;
+                              setChanges(true);
                             }}
                             inputProps={{ 'aria-label': 'controlled' }}
                           />
@@ -448,7 +448,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                             size="small"
                             style={{ width: 60, height: 60, marginLeft: 20 }}
                             onClick={() => {
-                              changesRef.current = true;
+                              setChanges(true);
                               setOpenModal(true);
                             }}
                             disabled={
@@ -483,7 +483,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                             }
                             style={{ width: 60, height: 60, marginLeft: 20 }}
                             onClick={() => {
-                              changesRef.current = true;
+                              setChanges(true);
                               removeInterval({ ...lock, index });
                             }}
                           >
@@ -507,12 +507,7 @@ const ProfessionalSchedule = (): JSX.Element => {
             </DayHoursAndLocks>
           </div>
           <StyledButton
-            disabled={
-              loading ||
-              lockDelete !== -1 ||
-              savingWeekly ||
-              !changesRef.current
-            }
+            disabled={loading || lockDelete !== -1 || savingWeekly || !changes}
             type="submit"
             form="form"
           >

@@ -15,6 +15,8 @@ import CommentRoutes from './comment.routes';
 import { CommentsProvider } from '@contexts/Comments';
 import { OwnerProvider } from '@contexts/Owner';
 import { EmployeesProvider } from '@contexts/Employees';
+import ProfessionalConfigRoutes from './professional.config.routes';
+import ProfessionalInitialConfig from '@pages/ProfessionalInitialConfig';
 
 const AppRoutes = () => {
   const {
@@ -53,9 +55,12 @@ const AppRoutes = () => {
     return (
       <ProfessionalsProvider>
         <Routes>
-          <Route path="/config" element={<NotFound />} />
+          <Route
+            path="/professional-config"
+            element={<ProfessionalInitialConfig />}
+          />
           {/* REDIRECT */}
-          <Route path="/" element={<Navigate to="/config" />} />
+          <Route path="/" element={<Navigate to="/professional-config" />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ProfessionalsProvider>
@@ -89,6 +94,12 @@ const AppRoutes = () => {
 
                   {/* PROFILE PAGES */}
                   <Route path="/profile/*" element={<ProfileRoutes />} />
+
+                  {/* PROFESSIONAL INITIAL CONFIG PAGES */}
+                  <Route
+                    path="/professional-config/*"
+                    element={<ProfessionalConfigRoutes />}
+                  />
 
                   {/* REDIRECT */}
                   <Route path="/" element={<Navigate to="/schedule" />} />

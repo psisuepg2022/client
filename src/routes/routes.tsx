@@ -17,7 +17,10 @@ import { OwnerProvider } from '@contexts/Owner';
 import { EmployeesProvider } from '@contexts/Employees';
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+  const {
+    isAuthenticated,
+    user: { permissions },
+  } = useAuth();
 
   useEffect(() => {
     window.addEventListener('offline', isOffline);
@@ -45,6 +48,18 @@ const AppRoutes = () => {
       </Routes>
     );
   }
+
+  if (permissions.includes('USER_TYPE_PROFESSIONAL_UNCONFIGURED'))
+    return (
+      <ProfessionalsProvider>
+        <Routes>
+          <Route path="/config" element={<NotFound />} />
+          {/* REDIRECT */}
+          <Route path="/" element={<Navigate to="/config" />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ProfessionalsProvider>
+    );
 
   return (
     <PatientsProvider>

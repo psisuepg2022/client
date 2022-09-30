@@ -65,7 +65,7 @@ const CancelledAbsenceEventModal = ({
     >
       <StyledBox>
         <Header>
-          <MdOutlineClose style={{ fontSize: 35, color: '#FFF' }} />
+          <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
           <StatusText>
             Situação: <span>{statusFromResource(eventInfo.resource)}</span>
           </StatusText>

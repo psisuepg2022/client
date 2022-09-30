@@ -62,8 +62,8 @@ export const AppointmentDate = styled(Typography)`
 export const Body = styled('div')`
   display: flex;
   height: 100%;
-  align-items: center;
-  padding: 0 4rem;
+  align-items: flex-start;
+  padding: 2rem 4rem 0 4rem;
 `;
 
 export const LogoContainer = styled('img')`

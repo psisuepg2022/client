@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import {
   Container,
   Header,
@@ -14,12 +14,15 @@ import { SideBarLinks, sideBarLinks } from './SideBarLinks';
 import { colors } from '@global/colors';
 import { AiOutlineRight, AiOutlineClose } from 'react-icons/ai';
 import { useAuth } from '@contexts/Auth';
+import { BsQuestionCircle } from 'react-icons/bs';
+import ScheduleLabelModal from '@components/ScheduleLabelModal';
 
 const SideBar = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
   const [expanded, setExpanded] = useState<boolean>(true);
+  const [labelModal, setLabelModal] = useState<boolean>(false);
 
   const renderLinks = (): SideBarLinks[] => {
     const resultRoutes: SideBarLinks[] = [];
@@ -68,18 +71,45 @@ const SideBar = (): JSX.Element => {
         </IconButton>
       </Header>
       <Content>
-        {renderLinks().map((item) => (
-          <NavItem
-            key={item.title}
-            to={item.path}
-            style={({ isActive }) => ({
-              backgroundColor: isActive ? colors.SECONDARY : colors.PRIMARY,
-            })}
-          >
-            {item.icon}
-            <NavItemTitle>{item.title}</NavItemTitle>
-          </NavItem>
-        ))}
+        <div>
+          {renderLinks().map((item) => (
+            <NavItem
+              key={item.title}
+              to={item.path}
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? colors.SECONDARY : colors.PRIMARY,
+              })}
+            >
+              {item.icon}
+              <NavItemTitle>{item.title}</NavItemTitle>
+            </NavItem>
+          ))}
+        </div>
+        <div
+          style={{
+            justifySelf: 'flex-end',
+            alignSelf: 'center',
+            marginBottom: 20,
+          }}
+        >
+          {location.pathname === '/schedule' && (
+            <Tooltip title="Legenda de consultas da agenda">
+              <IconButton onClick={() => setLabelModal(true)}>
+                <BsQuestionCircle size={40} style={{ color: '#FFF' }} />
+              </IconButton>
+            </Tooltip>
+          )}
+          {labelModal && (
+            <ScheduleLabelModal
+              open={labelModal}
+              handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
+                reason !== 'backdropClick' &&
+                reason !== 'escapeKeyDown' &&
+                setLabelModal(false)
+              }
+            />
+          )}
+        </div>
       </Content>
     </Container>
   );

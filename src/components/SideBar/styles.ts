@@ -56,6 +56,8 @@ export const Content = styled('div')`
   display: flex;
   flex-direction: column;
   width: 100%;
+  justify-content: space-between;
+  height: 100%;
 `;
 
 export const NavItem = styled(NavLink)`

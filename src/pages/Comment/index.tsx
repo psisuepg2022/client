@@ -10,7 +10,6 @@ import {
   Content,
   CustomBox,
   PatientName,
-  Body,
   LogoContainer,
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
@@ -25,6 +24,7 @@ import DOMPurify from 'dompurify';
 import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
+import TextEditor from '@components/TextEditor';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
@@ -111,27 +111,29 @@ const Comment = (): JSX.Element => {
             <PatientName>{state.title} | </PatientName>
             <AppointmentDate>
               {dateFormat({
-                date: isoToDate(`${state.start}`) as Date,
+                date: !state.end
+                  ? isoToDate(`${state.start}`)
+                  : (state.start as Date),
                 // eslint-disable-next-line quotes
                 stringFormat: "d 'de' MMMM 'de' yyyy",
               })}{' '}
               <AiOutlineRight size={20} style={{ color: '#707070' }} />{' '}
               {dateFormat({
-                date: isoToDate(`${state.start}`) as Date,
+                date: !state.end
+                  ? isoToDate(`${state.start}`)
+                  : (state.start as Date),
                 stringFormat: 'HH:mm',
               })}
               {' - '}
               {dateFormat({
-                date: isoToDate(
-                  `${state.start}`,
-                  true,
-                  Number(baseDuration)
-                ) as Date,
+                date: !state.end
+                  ? isoToDate(`${state.start}`, true, Number(baseDuration))
+                  : (state.end as Date),
                 stringFormat: 'HH:mm',
               })}
             </AppointmentDate>
           </BoxHeader>
-          <Body dangerouslySetInnerHTML={{ __html: comment }}></Body>
+          <TextEditor comment={comment} />
         </CustomBox>
       </Content>
     </Container>

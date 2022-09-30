@@ -1,6 +1,5 @@
-import { Box, Modal, Typography } from '@mui/material';
-import { styled } from '@mui/system';
 import { colors } from '@global/colors';
+import { Box, Modal, styled, Typography } from '@mui/material';
 
 export const StyledModal = styled(Modal)`
   background-color: rgba(0, 0, 0, 0.2);
@@ -10,7 +9,7 @@ export const StyledModal = styled(Modal)`
 `;
 
 export const StyledBox = styled(Box)`
-  width: 25%;
+  width: 30%;
   height: auto;
   background-color: #fff;
   outline: none;
@@ -44,12 +43,13 @@ export const Body = styled('div')`
   height: 100%;
   flex-direction: column;
   gap: 1rem;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
 `;
 
 export const StatusText = styled(Typography)`
   color: ${colors.TEXT};
   font-size: 1.2rem;
+  font-weight: 600;
 
   & span {
     color: ${colors.PRIMARY};
@@ -57,27 +57,22 @@ export const StatusText = styled(Typography)`
   }
 `;
 
-export const EventPrimaryText = styled(Typography)`
-  font-size: 1.5rem;
-  color: ${colors.TEXT};
-  font-weight: 600;
-`;
-
-export const AdditionalInfos = styled('div')`
-  display: flex;
+export const ColorRow = styled('div')`
+  width: 90%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
   align-items: center;
-  gap: 4rem;
+  justify-content: space-around;
 `;
 
-export const ScheduledAtContainer = styled('div')`
-  display: flex;
-  flex-direction: column;
-`;
+export const ColorBox = styled('div')(({ color }) => ({
+  width: 30,
+  height: 30,
+  backgroundColor: color,
+  border: '1px solid #707070',
+}));
 
-export const ScheduleAtText = styled('div')`
-  color: ${colors.TEXT};
-`;
-
-export const ScheduleAtDate = styled('div')`
+export const ColorText = styled(Typography)`
+  font-size: 1rem;
   font-weight: 500;
 `;

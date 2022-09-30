@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 import { PatientsProvider } from '@contexts/Patients';
@@ -18,6 +18,24 @@ import { EmployeesProvider } from '@contexts/Employees';
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    window.addEventListener('offline', isOffline);
+    window.addEventListener('online', isOnline);
+
+    return () => {
+      window.removeEventListener('offline', isOffline);
+      window.removeEventListener('online', isOnline);
+    };
+  }, []);
+
+  const isOffline = (e: Event) => {
+    console.log('offline', e);
+  };
+
+  const isOnline = (e: Event) => {
+    console.log('online', e);
+  };
 
   if (!isAuthenticated) {
     return (

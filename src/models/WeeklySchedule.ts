@@ -13,7 +13,7 @@ export type UpdateWeeklySchedule = {
   id: string;
   startTime: string;
   endTime: string;
-  dayOfTheWeek?: DaysOfTheWeek;
+  dayOfTheWeek?: number;
   locks?: {
     startTime: string;
     endTime: string;

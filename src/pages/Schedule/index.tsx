@@ -205,7 +205,6 @@ const Schedule = (): JSX.Element => {
           }) as Event[];
 
         const validScheduleLocks = mappedScheduleLocks.filter((lock) => lock);
-        console.log('VALID', validScheduleLocks);
 
         const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
           (event) => {

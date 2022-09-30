@@ -1,5 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { CircularProgress, IconButton, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+  CircularProgress,
+  FormControlLabel,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -11,6 +16,7 @@ import {
   IntervalsContainer,
   LogoContainer,
   StyledButton,
+  StyledCheckbox,
   TimesLabel,
   WorkHoursContainer,
 } from './styles';
@@ -32,12 +38,14 @@ import { differenceInMinutes } from 'date-fns';
 import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
 import { useAuth } from '@contexts/Auth';
 import { dateFormat } from '@utils/dateFormat';
+import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
 
 type FormLock = {
   id?: string;
   startTime: string;
   endTime: string;
   index?: number;
+  resource?: string;
 };
 
 const ProfessionalSchedule = (): JSX.Element => {
@@ -50,12 +58,13 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentDay, setCurrentDay] = useState<WeeklySchedule>();
   const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule[]>([]);
-  const [counter, setCounter] = useState<number>(0);
+  const [counter, setCounter] = useState<number>(-1);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [intervals, setIntervals] = useState<FormLock[]>([]);
   const [lockDelete, setLockDelete] = useState<number>(-1);
   const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
-  const changesRef = useRef(false);
+  const [changes, setChanges] = useState<boolean>(false);
+  const [disableDay, setDisableDay] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -64,11 +73,16 @@ const ProfessionalSchedule = (): JSX.Element => {
 
         if (content && content.length > 0) {
           const initialDay = content[0] as WeeklySchedule;
-          countLockSlots(initialDay);
 
-          setWeeklySchedule(content);
           setCurrentDay(initialDay);
-          setIntervals(initialDay.locks || []);
+          setWeeklySchedule(content);
+          if (initialDay.startTime) {
+            countLockSlots(initialDay);
+            setIntervals(initialDay.locks || []);
+          } else {
+            setIntervals([]);
+            setDisableDay(true);
+          }
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -123,22 +137,58 @@ const ProfessionalSchedule = (): JSX.Element => {
         stringFormat: 'HH:mm',
       }),
       id: currentDay?.id as string,
-      locks: newIntervals,
+      ...(!disableDay && { locks: newIntervals }),
+      ...(disableDay && { disableDay }),
+      dayOfTheWeek: Number(
+        DaysOfTheWeek[currentDay?.dayOfTheWeek as DaysOfTheWeek]
+      ) as number,
     };
 
+    setChanges(false);
     setSavingWeekly(true);
     try {
       const { content, message } = await updateWeeklySchedule(
         newWeeklySchedule
       );
 
-      content && countLockSlots(content);
+      if (content && typeof content !== 'boolean') {
+        setCurrentDay(content);
+        setWeeklySchedule((prev) => {
+          const newWeekly = prev.map((item) =>
+            item.dayOfTheWeek === currentDay?.dayOfTheWeek ? content : item
+          );
+
+          return newWeekly;
+        });
+        setIntervals(content.locks || []);
+        countLockSlots(content);
+      }
+      if (content && typeof content === 'boolean') {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { startTime, endTime, id, ...treatedWeekly } = newWeeklySchedule;
+        setCurrentDay({
+          ...treatedWeekly,
+          dayOfTheWeek: currentDay?.dayOfTheWeek,
+        } as WeeklySchedule);
+        setWeeklySchedule((prev) => {
+          const newWeekly = prev.map((item) =>
+            item.dayOfTheWeek === currentDay?.dayOfTheWeek
+              ? { ...treatedWeekly, dayOfTheWeek: currentDay?.dayOfTheWeek }
+              : item
+          ) as WeeklySchedule[];
+
+          return newWeekly;
+        });
+        setIntervals([]);
+        setCounter(-1);
+      }
 
       showAlert({
         title: 'Sucesso!',
         icon: 'success',
         text: message,
       });
+      setChanges(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -153,7 +203,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   };
 
   const handleDayChange = (day: WeeklySchedule): void => {
-    if (changesRef.current) {
+    if (changes) {
       showAlert({
         title: 'Deseja continuar?',
         text: 'É possível que existam campos alterados não salvos. Se continuar, as alterações serão perdidas!',
@@ -167,22 +217,46 @@ const ProfessionalSchedule = (): JSX.Element => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           setCurrentDay(day);
-          setIntervals(day.locks || []);
-          reset({
-            startTime: timeToDate(day.startTime),
-            endTime: timeToDate(day.endTime),
-          });
-          changesRef.current = false;
+          if (day.startTime && day.endTime) {
+            setIntervals(day.locks || []);
+            countLockSlots(day);
+            reset({
+              startTime: timeToDate(day.startTime),
+              endTime: timeToDate(day.endTime),
+            });
+            setDisableDay(false);
+          } else {
+            setCounter(-1);
+            setIntervals([]);
+            reset({
+              startTime: disabledDayDate(),
+              endTime: disabledDayDate(),
+            });
+            setDisableDay(true);
+          }
+          setChanges(false);
         }
       });
       return;
     }
     setCurrentDay(day);
-    setIntervals(day.locks || []);
-    reset({
-      startTime: timeToDate(day.startTime),
-      endTime: timeToDate(day.endTime),
-    });
+    if (day.startTime && day.endTime) {
+      setIntervals(day.locks || []);
+      countLockSlots(day);
+      reset({
+        startTime: timeToDate(day.startTime),
+        endTime: timeToDate(day.endTime),
+      });
+      setDisableDay(false);
+    } else {
+      setIntervals([]);
+      setCounter(-1);
+      reset({
+        startTime: disabledDayDate(),
+        endTime: disabledDayDate(),
+      });
+      setDisableDay(true);
+    }
   };
 
   const removeInterval = async (interval: FormLock): Promise<void> => {
@@ -206,6 +280,23 @@ const ProfessionalSchedule = (): JSX.Element => {
               const newIntervals = [...prev];
               newIntervals.splice(interval.index as number, 1);
 
+              console.log('NEW', newIntervals);
+              setCurrentDay((prev) => {
+                return {
+                  ...prev,
+                  locks: newIntervals,
+                } as WeeklySchedule;
+              });
+
+              setWeeklySchedule((prev) => {
+                const newWeekly = prev.map((item) =>
+                  item.dayOfTheWeek === currentDay?.dayOfTheWeek
+                    ? { ...item, locks: newIntervals }
+                    : item
+                ) as WeeklySchedule[];
+
+                return newWeekly;
+              });
               return newIntervals;
             });
             setCounter((prev) => prev + 1);
@@ -228,9 +319,36 @@ const ProfessionalSchedule = (): JSX.Element => {
       const newIntervals = [...prev];
       newIntervals.splice(interval.index as number, 1);
 
+      setCurrentDay((prev) => {
+        return {
+          ...prev,
+          locks: newIntervals,
+        } as WeeklySchedule;
+      });
+
+      setWeeklySchedule((prev) => {
+        const newWeekly = prev.map((item) =>
+          item.dayOfTheWeek === currentDay?.dayOfTheWeek
+            ? { ...item, locks: newIntervals }
+            : item
+        ) as WeeklySchedule[];
+
+        return newWeekly;
+      });
+
       return newIntervals;
     });
     setCounter((prev) => prev + 1);
+  };
+
+  const disabledDayDate = (): Date => {
+    const date = new Date();
+
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+
+    return date;
   };
 
   if (loading)
@@ -298,12 +416,18 @@ const ProfessionalSchedule = (): JSX.Element => {
             <SectionDivider>Dias da semana</SectionDivider>
 
             <DayHoursAndLocks>
-              <div style={{ display: 'flex', marginTop: 30 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: 30,
+                  justifyContent: 'space-between',
+                }}
+              >
                 {weeklySchedule.map((item) => (
                   <CardSelector
-                    key={item.id}
+                    key={item.dayOfTheWeek}
                     name={`${item.dayOfTheWeek}`}
-                    selected={currentDay?.id === item.id}
+                    selected={currentDay?.dayOfTheWeek === item.dayOfTheWeek}
                     onSelect={() => handleDayChange(item)}
                     disabled={loading || lockDelete !== -1 || savingWeekly}
                     style={{ padding: '0.3rem' }}
@@ -320,11 +444,16 @@ const ProfessionalSchedule = (): JSX.Element => {
                   <form id="form" onSubmit={handleSubmit(onSubmit)}>
                     <TimesLabel>Início e fim do expediente</TimesLabel>
                     <WorkHoursContainer>
-                      <div onBlur={() => (changesRef.current = true)}>
+                      <div onBlur={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Início"
                           name="startTime"
-                          defaultValue={timeToDate(currentDay.startTime)}
+                          defaultValue={
+                            currentDay.startTime
+                              ? timeToDate(currentDay.startTime)
+                              : disabledDayDate()
+                          }
+                          disabled={disableDay}
                           rules={{
                             required: {
                               value: true,
@@ -333,11 +462,16 @@ const ProfessionalSchedule = (): JSX.Element => {
                           }}
                         />
                       </div>
-                      <div onBlur={() => (changesRef.current = true)}>
+                      <div onBlur={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Fim"
                           name="endTime"
-                          defaultValue={timeToDate(currentDay.endTime)}
+                          disabled={disableDay}
+                          defaultValue={
+                            currentDay.endTime
+                              ? timeToDate(currentDay.endTime)
+                              : disabledDayDate()
+                          }
                           rules={{
                             required: {
                               value: true,
@@ -346,6 +480,20 @@ const ProfessionalSchedule = (): JSX.Element => {
                           }}
                         />
                       </div>
+                      <FormControlLabel
+                        style={{ maxWidth: 400 }}
+                        control={
+                          <StyledCheckbox
+                            checked={disableDay}
+                            onChange={() => {
+                              setDisableDay((prev) => !prev);
+                              setChanges(true);
+                            }}
+                            inputProps={{ 'aria-label': 'controlled' }}
+                          />
+                        }
+                        label="Dia da semana sem expediente"
+                      />
                     </WorkHoursContainer>
 
                     <div
@@ -355,21 +503,33 @@ const ProfessionalSchedule = (): JSX.Element => {
                         alignItems: 'center',
                       }}
                     >
-                      <TimesLabel>Intervalos - {counter} restantes</TimesLabel>
-                      <IconButton
-                        size="small"
-                        style={{ width: 60, height: 60, marginLeft: 20 }}
-                        onClick={() => {
-                          changesRef.current = true;
-                          setOpenModal(true);
-                        }}
-                        disabled={loading || lockDelete !== -1 || savingWeekly}
-                      >
-                        <AiOutlinePlus
-                          size={40}
-                          style={{ color: colors.PRIMARY }}
-                        />
-                      </IconButton>
+                      {counter !== -1 && (
+                        <>
+                          <TimesLabel>
+                            Intervalos - {counter} restantes
+                          </TimesLabel>
+
+                          <IconButton
+                            size="small"
+                            style={{ width: 60, height: 60, marginLeft: 20 }}
+                            onClick={() => {
+                              setChanges(true);
+                              setOpenModal(true);
+                            }}
+                            disabled={
+                              loading ||
+                              lockDelete !== -1 ||
+                              savingWeekly ||
+                              disableDay
+                            }
+                          >
+                            <AiOutlinePlus
+                              size={40}
+                              style={{ color: colors.PRIMARY }}
+                            />
+                          </IconButton>
+                        </>
+                      )}
                     </div>
                     {intervals &&
                       intervals.length > 0 &&
@@ -388,7 +548,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                             }
                             style={{ width: 60, height: 60, marginLeft: 20 }}
                             onClick={() => {
-                              changesRef.current = true;
+                              setChanges(true);
                               removeInterval({ ...lock, index });
                             }}
                           >
@@ -412,7 +572,7 @@ const ProfessionalSchedule = (): JSX.Element => {
             </DayHoursAndLocks>
           </div>
           <StyledButton
-            disabled={loading || lockDelete !== -1 || savingWeekly}
+            disabled={loading || lockDelete !== -1 || savingWeekly || !changes}
             type="submit"
             form="form"
           >

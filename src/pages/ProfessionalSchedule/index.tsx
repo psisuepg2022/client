@@ -45,6 +45,7 @@ type FormLock = {
   startTime: string;
   endTime: string;
   index?: number;
+  resource?: string;
 };
 
 const ProfessionalSchedule = (): JSX.Element => {
@@ -150,7 +151,18 @@ const ProfessionalSchedule = (): JSX.Element => {
         newWeeklySchedule
       );
 
-      if (content && typeof content !== 'boolean') countLockSlots(content);
+      if (content && typeof content !== 'boolean') {
+        setCurrentDay(content);
+        setWeeklySchedule((prev) => {
+          const newWeekly = prev.map((item) =>
+            item.dayOfTheWeek === currentDay?.dayOfTheWeek ? content : item
+          );
+
+          return newWeekly;
+        });
+        setIntervals(content.locks || []);
+        countLockSlots(content);
+      }
 
       showAlert({
         title: 'Sucesso!',
@@ -172,6 +184,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   };
 
   const handleDayChange = (day: WeeklySchedule): void => {
+    console.log('DAY', day);
     if (changes) {
       showAlert({
         title: 'Deseja continuar?',
@@ -249,6 +262,23 @@ const ProfessionalSchedule = (): JSX.Element => {
               const newIntervals = [...prev];
               newIntervals.splice(interval.index as number, 1);
 
+              console.log('NEW', newIntervals);
+              setCurrentDay((prev) => {
+                return {
+                  ...prev,
+                  locks: newIntervals,
+                } as WeeklySchedule;
+              });
+
+              setWeeklySchedule((prev) => {
+                const newWeekly = prev.map((item) =>
+                  item.dayOfTheWeek === currentDay?.dayOfTheWeek
+                    ? { ...item, locks: newIntervals }
+                    : item
+                ) as WeeklySchedule[];
+
+                return newWeekly;
+              });
               return newIntervals;
             });
             setCounter((prev) => prev + 1);
@@ -270,6 +300,23 @@ const ProfessionalSchedule = (): JSX.Element => {
     setIntervals((prev) => {
       const newIntervals = [...prev];
       newIntervals.splice(interval.index as number, 1);
+
+      setCurrentDay((prev) => {
+        return {
+          ...prev,
+          locks: newIntervals,
+        } as WeeklySchedule;
+      });
+
+      setWeeklySchedule((prev) => {
+        const newWeekly = prev.map((item) =>
+          item.dayOfTheWeek === currentDay?.dayOfTheWeek
+            ? { ...item, locks: newIntervals }
+            : item
+        ) as WeeklySchedule[];
+
+        return newWeekly;
+      });
 
       return newIntervals;
     });

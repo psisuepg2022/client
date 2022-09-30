@@ -65,7 +65,12 @@ const Login = (): JSX.Element => {
         </TitleAndSubTitle>
 
         <FormProvider {...formMethods}>
-          <InputsContainer id="form" onSubmit={handleSubmit(onSubmit)}>
+          <InputsContainer
+            id="form"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            autoComplete="new-password"
+          >
             <CodeAndUser>
               <ControlledInput
                 name="accessCode"
@@ -76,6 +81,7 @@ const Login = (): JSX.Element => {
                     message: 'O código é obrigatório',
                   },
                 }}
+                autoComplete="off"
               />
               <ControlledInput
                 name="userName"

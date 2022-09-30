@@ -180,6 +180,7 @@ const ProfessionalsForm = (): JSX.Element => {
                 id="form"
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
+                autoComplete="off"
               >
                 <SectionDivider>Dados Pessoais</SectionDivider>
                 <PersonalDataFirst>
@@ -256,6 +257,7 @@ const ProfessionalsForm = (): JSX.Element => {
                     }}
                     name="userName"
                     label="Nome de usuário"
+                    autoComplete="new-password"
                     required
                   />
                   {!professionalToEdit && (
@@ -270,6 +272,7 @@ const ProfessionalsForm = (): JSX.Element => {
                       endFunction="password"
                       name="password"
                       label="Senha"
+                      autoComplete="new-password"
                       required
                     />
                   )}

@@ -137,7 +137,7 @@ const ProfessionalSchedule = (): JSX.Element => {
         stringFormat: 'HH:mm',
       }),
       id: currentDay?.id as string,
-      locks: newIntervals,
+      ...(!disableDay && { locks: newIntervals }),
       ...(disableDay && { disableDay }),
       dayOfTheWeek: Number(
         DaysOfTheWeek[currentDay?.dayOfTheWeek as DaysOfTheWeek]
@@ -163,6 +163,25 @@ const ProfessionalSchedule = (): JSX.Element => {
         setIntervals(content.locks || []);
         countLockSlots(content);
       }
+      if (content && typeof content === 'boolean') {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { startTime, endTime, id, ...treatedWeekly } = newWeeklySchedule;
+        setCurrentDay({
+          ...treatedWeekly,
+          dayOfTheWeek: currentDay?.dayOfTheWeek,
+        } as WeeklySchedule);
+        setWeeklySchedule((prev) => {
+          const newWeekly = prev.map((item) =>
+            item.dayOfTheWeek === currentDay?.dayOfTheWeek
+              ? { ...treatedWeekly, dayOfTheWeek: currentDay?.dayOfTheWeek }
+              : item
+          ) as WeeklySchedule[];
+
+          return newWeekly;
+        });
+        setIntervals([]);
+        setCounter(-1);
+      }
 
       showAlert({
         title: 'Sucesso!',
@@ -184,7 +203,6 @@ const ProfessionalSchedule = (): JSX.Element => {
   };
 
   const handleDayChange = (day: WeeklySchedule): void => {
-    console.log('DAY', day);
     if (changes) {
       showAlert({
         title: 'Deseja continuar?',

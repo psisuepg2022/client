@@ -39,6 +39,14 @@ export const Header = styled('div')`
   align-items: center;
 `;
 
+export const Body = styled('div')`
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1rem 0 0;
+`;
+
 export const LogoContainer = styled('img')`
   width: 100px;
   height: auto;
@@ -99,3 +107,23 @@ export const IntervalRow = styled(Typography)`
 `;
 
 export const StyledCheckbox = styled(Checkbox)``;
+
+export const Form = styled('form')`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const PasswordSection = styled('div')`
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+  width: 30%;
+`;
+
+export const BaseDurationSection = styled('div')`
+  display: grid;
+  width: 30%;
+`;
+
+export const WeeklyScheduleSection = styled('div')``;

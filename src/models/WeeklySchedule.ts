@@ -20,3 +20,15 @@ export type UpdateWeeklySchedule = {
     id?: string;
   }[];
 };
+
+export type CreateWeeklySchedule = {
+  startTime: string;
+  endTime: string;
+  disableDay: boolean;
+  dayOfTheWeek: string;
+  locks?: {
+    startTime: string;
+    endTime: string;
+  }[];
+  altered?: boolean;
+};

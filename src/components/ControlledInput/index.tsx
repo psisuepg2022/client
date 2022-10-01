@@ -75,13 +75,19 @@ const ControlledInput = ({
       render={({ field: { value, onChange } }) => (
         <CustomTextField
           {...rest}
-          autoComplete={autoComplete || 'text'}
+          autoComplete={autoComplete || 'off'}
           onChange={onChange}
           value={mask ? mask(value || '') : value || ''}
           required={required}
           disabled={disabled}
           label={label}
-          type={visibility ? type || 'text' : 'password'}
+          type={
+            type === 'password'
+              ? visibility
+                ? 'text'
+                : 'password'
+              : type || 'text'
+          }
           InputProps={{
             endAdornment:
               endFunction === 'password' ? (

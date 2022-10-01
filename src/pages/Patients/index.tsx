@@ -115,6 +115,18 @@ const Patients = (): JSX.Element => {
     searchActive.current = true;
     setPage(0);
     try {
+      if (permissions.includes('USER_TYPE_PROFESSIONAL')) {
+        await professionalPatients({
+          size: PageSize,
+          page,
+          filter: {
+            name: searchData?.name || '',
+            CPF: searchData?.CPF || '',
+            email: searchData?.email || '',
+          },
+        });
+        return;
+      }
       await list({
         size: PageSize,
         filter: {

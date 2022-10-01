@@ -31,8 +31,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import ControlledDatePicker from '@components/ControlledDatePicker';
 
 type SearchProps = {
-  start: Date;
-  end: Date;
+  start: Date | null;
+  end: Date | null;
 };
 
 const CommentList = (): JSX.Element => {
@@ -42,7 +42,12 @@ const CommentList = (): JSX.Element => {
     user: { baseDuration },
   } = useAuth();
   const { list, comments, count } = useComments();
-  const formMethods = useForm<SearchProps>();
+  const formMethods = useForm<SearchProps>({
+    defaultValues: {
+      start: null,
+      end: null,
+    },
+  });
   const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(0);
@@ -76,11 +81,11 @@ const CommentList = (): JSX.Element => {
 
   const onSubmit = async (data: SearchProps): Promise<void> => {
     const start = dateFormat({
-      date: data.start,
+      date: data.start || new Date(),
       stringFormat: 'yyyy-MM-dd',
     });
     const end = dateFormat({
-      date: data.end,
+      date: data.end || new Date(),
       stringFormat: 'yyyy-MM-dd',
     });
 
@@ -150,12 +155,22 @@ const CommentList = (): JSX.Element => {
                 <ControlledDatePicker
                   name="start"
                   label="Data inicial"
-                  defaultValue={new Date()}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'A data inicial é obrigatória',
+                    },
+                  }}
                 />
                 <ControlledDatePicker
                   name="end"
                   label="Data final"
-                  defaultValue={new Date()}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'A data final é obrigatória',
+                    },
+                  }}
                 />
               </InputsForm>
             </FormProvider>

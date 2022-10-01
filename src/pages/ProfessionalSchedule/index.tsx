@@ -548,7 +548,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                             }
                             style={{ width: 60, height: 60, marginLeft: 20 }}
                             onClick={() => {
-                              setChanges(true);
+                              // setChanges(true);
                               removeInterval({ ...lock, index });
                             }}
                           >

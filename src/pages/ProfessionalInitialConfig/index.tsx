@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ControlledInput from '@components/ControlledInput';
 import SectionDivider from '@components/SectionDivider';
 import { useAuth } from '@contexts/Auth';
@@ -42,7 +42,7 @@ import {
   disabledDayDate,
 } from './utils';
 import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
-import { differenceInMinutes } from 'date-fns';
+import { differenceInMinutes, isAfter, isEqual } from 'date-fns';
 import { dateFormat } from '@utils/dateFormat';
 
 const initialWeeklySchedule = createInitialWeeklySchedule();
@@ -58,7 +58,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       confirmNewPassword: '',
     },
   });
-  const { handleSubmit, reset, control } = formMethods;
+  const { handleSubmit, reset, control, setError } = formMethods;
   const randomKey = Math.random();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentDay, setCurrentDay] = useState<CreateWeeklySchedule>(
@@ -70,16 +70,33 @@ const ProfessionalInitialConfig = (): JSX.Element => {
   const [counter, setCounter] = useState<number>(0);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [intervals, setIntervals] = useState<FormLock[]>([]);
-  const [lockDelete, setLockDelete] = useState<number>(-1);
   const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
   const [changes, setChanges] = useState<boolean>(false);
 
-  const { baseDuration, startTime, endTime } = useWatch({ control });
+  const { baseDuration, startTime, endTime, ...formValues } = useWatch({
+    control,
+  });
+
+  useEffect(() => {
+    if (!baseDuration) {
+      const newWeekly = createInitialWeeklySchedule();
+      setCurrentDay(newWeekly[0]);
+      setWeeklySchedule(newWeekly);
+      setIntervals([]);
+      reset({
+        ...formValues,
+      });
+      return;
+    }
+    if (startTime && endTime && baseDuration) {
+      countCurrentLockSlots(currentDay);
+    }
+  }, [startTime, endTime, baseDuration]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any): Promise<void> => {
     const formData: ConfigFormProps = { ...data } as ConfigFormProps;
-    console.log('data', formData);
+    console.log('data', formData, weeklySchedule);
   };
 
   const signOutConfirm = (): void => {
@@ -123,7 +140,25 @@ const ProfessionalInitialConfig = (): JSX.Element => {
     setCounter(remainingSlots);
   };
 
-  console.log('WEEKLY SCHEDULES', weeklySchedule, currentDay);
+  const countCurrentLockSlots = (day: CreateWeeklySchedule): void => {
+    const totalTime = differenceInMinutes(endTime as Date, startTime as Date);
+
+    let totalLockTime = 0;
+    day?.locks?.forEach((lock) => {
+      const lockStartTime = timeToDate(lock.startTime);
+      const lockEndTime = timeToDate(lock.endTime);
+
+      totalLockTime += differenceInMinutes(lockEndTime, lockStartTime);
+    });
+
+    const slotsWithoutLock = totalTime / (Number(baseDuration) as number);
+    const lockSlots = totalLockTime / (Number(baseDuration) as number);
+
+    const remainingSlots = slotsWithoutLock - lockSlots;
+    console.log('remainging', remainingSlots);
+
+    setCounter(remainingSlots);
+  };
 
   const removeInterval = async (interval: FormLock): Promise<void> => {
     setIntervals((prev) => {
@@ -161,6 +196,30 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       date: endTime as Date,
       stringFormat: 'HH:mm',
     });
+
+    if (
+      differenceInMinutes(endTime as Date, startTime as Date) %
+      Number(baseDuration)
+    ) {
+      setError('endTime', {
+        message: `O intervalo entre os horários deve corresponder à duração base: ${baseDuration} minutos`,
+      });
+      setError('startTime', {
+        message: `O intervalo entre os horários deve corresponder à duração base: ${baseDuration} minutos`,
+      });
+      return;
+    }
+
+    if (
+      (isAfter(startTime as Date, endTime as Date) ||
+        isEqual(startTime as Date, endTime as Date)) &&
+      !currentDay.disableDay
+    ) {
+      setError('endTime', {
+        message: 'O horário final deve ser maior que o inicial',
+      });
+      return;
+    }
     setIntervals(day.locks || []);
     setCurrentDay((prevDay) => {
       setWeeklySchedule((prevWeekly) => {
@@ -175,7 +234,6 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                 altered: true,
               };
             }
-            console.log('start', startTime, endTime);
             return item;
           }
           return item;
@@ -186,18 +244,9 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       return day;
     });
 
-    // if ((start === '00:00' || end === '00:00') && !day.altered) {
-    //   reset({
-    //     startTime: disabledDayDate(),
-    //     endTime: disabledDayDate(),
-    //   });
-    //   setDisableDay(false);
-    //   // true === dia desabilitado
-    //   return;
-    // }
-    // console.log('DISABLE', start, end);
-    // setDisableDay(true);
     reset({
+      ...formValues,
+      baseDuration,
       startTime: timeToDate(day.startTime),
       endTime: timeToDate(day.endTime),
     });
@@ -214,6 +263,21 @@ const ProfessionalInitialConfig = (): JSX.Element => {
         }
         addNewLock={(lock) => {
           setIntervals((prev) => [...prev, lock]);
+          setCurrentDay((prevDay) => {
+            setWeeklySchedule((prevWeekly) => {
+              const newWeekly = [...prevWeekly].map((item) =>
+                item.dayOfTheWeek === prevDay.dayOfTheWeek
+                  ? { ...item, locks: [...(item.locks || []), lock] }
+                  : item
+              );
+
+              return newWeekly;
+            });
+            return {
+              ...prevDay,
+              locks: [...(prevDay.locks || []), lock],
+            };
+          });
           setCounter((prev) => prev - 1);
         }}
         checkDuplicates={(lock) => {
@@ -247,236 +311,249 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                 autoComplete="off"
                 noValidate
               >
-                <SectionDivider>Nova senha</SectionDivider>
-                <PasswordSection>
-                  <ControlledInput
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'A nova senha é obrigatória',
-                      },
-                    }}
-                    type="password"
-                    endFunction="password"
-                    name="newPassword"
-                    label="Nova senha"
-                    autoComplete="new-password"
-                  />
-                  <ControlledInput
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'A confirmação da senha é obrigatória',
-                      },
-                    }}
-                    type="password"
-                    endFunction="password"
-                    name="confirmNewPassword"
-                    label="Confirme a senha"
-                    autoComplete="new-password"
-                  />
-                </PasswordSection>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem',
+                  }}
+                >
+                  <SectionDivider>Nova senha</SectionDivider>
+                  <PasswordSection>
+                    <ControlledInput
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'A nova senha é obrigatória',
+                        },
+                      }}
+                      type="password"
+                      endFunction="password"
+                      name="newPassword"
+                      label="Nova senha"
+                      autoComplete="new-password"
+                    />
+                    <ControlledInput
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'A confirmação da senha é obrigatória',
+                        },
+                      }}
+                      type="password"
+                      endFunction="password"
+                      name="confirmNewPassword"
+                      label="Confirme a senha"
+                      autoComplete="new-password"
+                    />
+                  </PasswordSection>
 
-                <SectionDivider>Duração das consultas</SectionDivider>
-                <BaseDurationSection>
-                  <ControlledInput
-                    name="baseDuration"
-                    label="Duração (em minutos)"
-                    type="number"
-                    autoComplete="off"
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'A duração base das consultas é obrigatória',
-                      },
-                    }}
-                  />
-                </BaseDurationSection>
+                  <SectionDivider>Duração das consultas</SectionDivider>
+                  <BaseDurationSection>
+                    <ControlledInput
+                      name="baseDuration"
+                      label="Duração (em minutos)"
+                      type="number"
+                      autoComplete="off"
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'A duração base das consultas é obrigatória',
+                        },
+                      }}
+                    />
+                  </BaseDurationSection>
 
-                <SectionDivider>Horários da agenda</SectionDivider>
-                <DayHoursAndLocks>
-                  <div
-                    style={{
-                      display: 'flex',
-                      marginTop: 30,
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    {weeklySchedule.map((item) => (
-                      <CardSelector
-                        key={item.dayOfTheWeek}
-                        name={`${item.dayOfTheWeek}`}
-                        selected={
-                          currentDay?.dayOfTheWeek === item.dayOfTheWeek
-                        }
-                        onSelect={() => handleDayChange(item)}
-                        disabled={loading || lockDelete !== -1 || savingWeekly}
-                        style={{ padding: '0.3rem' }}
-                        textStyle={{
-                          color: colors.TEXT,
-                          fontWeight: '600',
-                          textTransform: 'none',
-                        }}
-                      />
-                    ))}
-                  </div>
-                  {currentDay && (
+                  {baseDuration && (
                     <>
-                      <TimesLabel>Início e fim do expediente</TimesLabel>
-                      <WorkHoursContainer>
-                        <div onBlur={() => setChanges(true)}>
-                          <ControlledTimePicker
-                            label="Início"
-                            name="startTime"
-                            defaultValue={
-                              currentDay.startTime
-                                ? timeToDate(currentDay.startTime)
-                                : disabledDayDate()
-                            }
-                            disabled={currentDay.disableDay}
-                            rules={{
-                              required: {
-                                value: true,
-                                message: 'O tempo de início é obrigatório',
-                              },
-                            }}
-                          />
-                        </div>
-                        <div onBlur={() => setChanges(true)}>
-                          <ControlledTimePicker
-                            label="Fim"
-                            name="endTime"
-                            disabled={currentDay.disableDay}
-                            defaultValue={
-                              currentDay.endTime
-                                ? timeToDate(currentDay.endTime)
-                                : disabledDayDate()
-                            }
-                            rules={{
-                              required: {
-                                value: true,
-                                message: 'O tempo final é obrigatório',
-                              },
-                            }}
-                          />
-                        </div>
-                        <FormControlLabel
-                          style={{ maxWidth: 400 }}
-                          control={
-                            <StyledCheckbox
-                              checked={currentDay.disableDay}
-                              onChange={() => {
-                                // setDisableDay((prev) => !prev);
-                                setCurrentDay((prev) => ({
-                                  ...prev,
-                                  disableDay: !currentDay.disableDay,
-                                }));
-                                setWeeklySchedule((prevWeekly) => {
-                                  const newWeekly = [...prevWeekly].map(
-                                    (item) =>
-                                      item.dayOfTheWeek ===
-                                      currentDay.dayOfTheWeek
-                                        ? {
-                                            ...item,
-                                            disableDay: !currentDay.disableDay,
-                                          }
-                                        : item
-                                  );
-
-                                  return newWeekly;
-                                });
-                                setChanges(true);
+                      <SectionDivider>Horários da agenda</SectionDivider>
+                      <DayHoursAndLocks>
+                        <div
+                          style={{
+                            display: 'flex',
+                            marginTop: 30,
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          {weeklySchedule.map((item) => (
+                            <CardSelector
+                              key={item.dayOfTheWeek}
+                              name={`${item.dayOfTheWeek}`}
+                              selected={
+                                currentDay?.dayOfTheWeek === item.dayOfTheWeek
+                              }
+                              onSelect={() => handleDayChange(item)}
+                              disabled={loading || savingWeekly}
+                              style={{ padding: '0.3rem' }}
+                              textStyle={{
+                                color: colors.TEXT,
+                                fontWeight: '600',
+                                textTransform: 'none',
                               }}
-                              inputProps={{ 'aria-label': 'controlled' }}
                             />
-                          }
-                          label="Dia da semana sem expediente"
-                        />
-                      </WorkHoursContainer>
-
-                      {!currentDay.disableDay && (
-                        <>
-                          <div
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <>
-                              <TimesLabel>
-                                Intervalos - {counter} restantes
-                              </TimesLabel>
-
-                              <IconButton
-                                size="small"
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  marginLeft: 20,
-                                }}
-                                onClick={() => {
-                                  setChanges(true);
-                                  setOpenModal(true);
-                                }}
-                                disabled={
-                                  loading ||
-                                  lockDelete !== -1 ||
-                                  savingWeekly ||
-                                  currentDay.disableDay
-                                }
-                              >
-                                <AiOutlinePlus
-                                  size={40}
-                                  style={{ color: colors.PRIMARY }}
-                                />
-                              </IconButton>
-                            </>
-                          </div>
-                          {intervals &&
-                            intervals.length > 0 &&
-                            intervals.map((lock, index) => (
-                              <IntervalsContainer key={index}>
-                                <IntervalRow>
-                                  Início: <span>{lock.startTime}</span>
-                                </IntervalRow>
-                                <IntervalRow>
-                                  Fim: <span>{lock.endTime}</span>
-                                </IntervalRow>
-                                <IconButton
-                                  size="small"
-                                  disabled={
-                                    loading || lockDelete !== -1 || savingWeekly
+                          ))}
+                        </div>
+                        {currentDay && (
+                          <>
+                            <TimesLabel>Início e fim do expediente</TimesLabel>
+                            <WorkHoursContainer>
+                              <div onBlur={() => setChanges(true)}>
+                                <ControlledTimePicker
+                                  label="Início"
+                                  name="startTime"
+                                  defaultValue={
+                                    currentDay.startTime
+                                      ? timeToDate(currentDay.startTime)
+                                      : disabledDayDate()
                                   }
-                                  style={{
-                                    width: 60,
-                                    height: 60,
-                                    marginLeft: 20,
+                                  disabled={currentDay.disableDay}
+                                  rules={{
+                                    required: {
+                                      value: true,
+                                      message:
+                                        'O tempo de início é obrigatório',
+                                    },
                                   }}
-                                  onClick={() => {
-                                    setChanges(true);
-                                    removeInterval({ ...lock, index });
+                                />
+                              </div>
+                              <div onBlur={() => setChanges(true)}>
+                                <ControlledTimePicker
+                                  label="Fim"
+                                  name="endTime"
+                                  disabled={currentDay.disableDay}
+                                  defaultValue={
+                                    currentDay.endTime
+                                      ? timeToDate(currentDay.endTime)
+                                      : disabledDayDate()
+                                  }
+                                  rules={{
+                                    required: {
+                                      value: true,
+                                      message: 'O tempo final é obrigatório',
+                                    },
+                                  }}
+                                />
+                              </div>
+                              <FormControlLabel
+                                style={{ maxWidth: 400 }}
+                                control={
+                                  <StyledCheckbox
+                                    checked={currentDay.disableDay}
+                                    onChange={() => {
+                                      // setDisableDay((prev) => !prev);
+                                      setCurrentDay((prev) => ({
+                                        ...prev,
+                                        disableDay: !currentDay.disableDay,
+                                      }));
+                                      setWeeklySchedule((prevWeekly) => {
+                                        const newWeekly = [...prevWeekly].map(
+                                          (item) =>
+                                            item.dayOfTheWeek ===
+                                            currentDay.dayOfTheWeek
+                                              ? {
+                                                  ...item,
+                                                  disableDay:
+                                                    !currentDay.disableDay,
+                                                }
+                                              : item
+                                        );
+
+                                        return newWeekly;
+                                      });
+                                      setError('endTime', {
+                                        message: '',
+                                      });
+                                      setError('startTime', {
+                                        message: '',
+                                      });
+                                      setChanges(true);
+                                    }}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                  />
+                                }
+                                label="Dia da semana sem expediente"
+                              />
+                            </WorkHoursContainer>
+
+                            {!currentDay.disableDay && (
+                              <>
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
                                   }}
                                 >
-                                  {lockDelete === index ? (
-                                    <CircularProgress
-                                      size={20}
-                                      style={{ color: colors.PRIMARY }}
-                                    />
-                                  ) : (
-                                    <MdDelete
-                                      size={40}
-                                      style={{ color: colors.PRIMARY }}
-                                    />
-                                  )}
-                                </IconButton>
-                              </IntervalsContainer>
-                            ))}
-                        </>
-                      )}
+                                  <>
+                                    <TimesLabel>
+                                      {counter - Math.floor(counter) === 0
+                                        ? `Intervalos - ${counter} restantes`
+                                        : 'Não é possível cadastrar intervalos com os atuais início e fim de expediente'}
+                                    </TimesLabel>
+
+                                    <IconButton
+                                      size="small"
+                                      style={{
+                                        width: 60,
+                                        height: 60,
+                                        marginLeft: 20,
+                                      }}
+                                      onClick={() => {
+                                        setChanges(true);
+                                        setOpenModal(true);
+                                      }}
+                                      disabled={
+                                        loading ||
+                                        savingWeekly ||
+                                        currentDay.disableDay ||
+                                        counter - Math.floor(counter) !== 0
+                                      }
+                                    >
+                                      <AiOutlinePlus
+                                        size={40}
+                                        style={{ color: colors.PRIMARY }}
+                                      />
+                                    </IconButton>
+                                  </>
+                                </div>
+                                {intervals &&
+                                  intervals.length > 0 &&
+                                  intervals.map((lock, index) => (
+                                    <IntervalsContainer key={index}>
+                                      <IntervalRow>
+                                        Início: <span>{lock.startTime}</span>
+                                      </IntervalRow>
+                                      <IntervalRow>
+                                        Fim: <span>{lock.endTime}</span>
+                                      </IntervalRow>
+                                      <IconButton
+                                        size="small"
+                                        disabled={loading || savingWeekly}
+                                        style={{
+                                          width: 60,
+                                          height: 60,
+                                          marginLeft: 20,
+                                        }}
+                                        onClick={() => {
+                                          setChanges(true);
+                                          removeInterval({ ...lock, index });
+                                        }}
+                                      >
+                                        <MdDelete
+                                          size={40}
+                                          style={{ color: colors.PRIMARY }}
+                                        />
+                                      </IconButton>
+                                    </IntervalsContainer>
+                                  ))}
+                              </>
+                            )}
+                          </>
+                        )}
+                      </DayHoursAndLocks>
                     </>
                   )}
-                </DayHoursAndLocks>
+                </div>
 
                 <StyledButton type="submit" disabled={loading}>
                   {loading ? (

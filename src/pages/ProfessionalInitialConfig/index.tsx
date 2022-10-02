@@ -130,11 +130,8 @@ const ProfessionalInitialConfig = (): JSX.Element => {
         title: 'Sucesso!',
         text: 'O profissional foi configurado com sucesso! Ao clicar no botão OK você será redirecionado para a página inicial.',
         icon: 'success',
-        showCancelButton: true,
         confirmButtonColor: colors.PRIMARY,
         confirmButtonText: 'OK',
-        cancelButtonColor: colors.BACKGREY,
-        cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
         reverseButtons: true,
         allowOutsideClick: false,
       }).then(async (result) => {

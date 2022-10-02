@@ -10,11 +10,19 @@ import {
   UpdateProfessional,
 } from '@models/Professional';
 import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
+import { useAuth } from '@contexts/Auth';
+import { User } from '@models/User';
+import { decodeToken } from 'react-jwt';
 
 type ListProps = {
   page?: number;
   size?: number;
   filter?: SearchFilter;
+};
+
+type ConfigureResponse = {
+  accessToken: string;
+  refreshToken: string;
 };
 
 type ProfessionalsContextData = {
@@ -29,7 +37,9 @@ type ProfessionalsContextData = {
   updateWeeklySchedule: (
     weeklySchedule: UpdateWeeklySchedule
   ) => Promise<Response<WeeklySchedule | boolean>>;
-  configure: (configs: ConfigureProfessional) => Promise<Response<boolean>>;
+  configure: (
+    configs: ConfigureProfessional
+  ) => Promise<Response<ConfigureResponse>>;
   deleteLock: (weeklyId: string, lockId: string) => Promise<Response<boolean>>;
   topBar: () => Promise<
     Response<ItemList<{ id: string; name: string; baseDuration: number }>>
@@ -49,6 +59,7 @@ const ProfessionalsContext = createContext<ProfessionalsContextData>(
 export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
   children,
 }: ProfessionalsProviderProps) => {
+  const { setUser } = useAuth();
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [count, setCount] = useState<number>(0);
 
@@ -163,13 +174,29 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
 
   const configure = async (
     configs: ConfigureProfessional
-  ): Promise<Response<boolean>> => {
-    const { data }: { data: Response<boolean> } = await api.post(
+  ): Promise<Response<ConfigureResponse>> => {
+    const { data }: { data: Response<ConfigureResponse> } = await api.post(
       'professional/configure',
       {
         ...configs,
       }
     );
+
+    const decodedToken: User = decodeToken(
+      data.content?.accessToken || ''
+    ) as User;
+
+    localStorage.setItem('@psis:accessToken', data.content?.accessToken || '');
+    localStorage.setItem(
+      '@psis:refreshToken',
+      data.content?.refreshToken || ''
+    );
+    localStorage.setItem('@psis:userData', JSON.stringify(decodedToken));
+    api.defaults.headers.common[
+      'authorization'
+    ] = `Bearer ${data.content?.accessToken}`;
+
+    setUser(decodedToken);
 
     return data;
   };

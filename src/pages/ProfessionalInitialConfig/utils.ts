@@ -2,6 +2,7 @@ import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
 import { CreateWeeklySchedule } from '@models/WeeklySchedule';
 
 export type ConfigFormProps = {
+  oldPassword: string;
   newPassword: string;
   confirmNewPassword: string;
   baseDuration: string;

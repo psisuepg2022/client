@@ -44,6 +44,7 @@ import {
 import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
 import { differenceInMinutes, isAfter, isEqual } from 'date-fns';
 import { dateFormat } from '@utils/dateFormat';
+import { ConfigureProfessional } from '@models/Professional';
 
 const initialWeeklySchedule = createInitialWeeklySchedule();
 
@@ -96,7 +97,25 @@ const ProfessionalInitialConfig = (): JSX.Element => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any): Promise<void> => {
     const formData: ConfigFormProps = { ...data } as ConfigFormProps;
-    console.log('data', formData, weeklySchedule);
+
+    const emptyDay = weeklySchedule.find((item) => item.altered === false);
+    if (emptyDay !== undefined) {
+      showAlert({
+        title: 'Atenção!',
+        text: `Insira um horário para ${emptyDay.dayOfTheWeek}. Se o dia não tiver expediente, marque a caixa de seleção.`,
+        icon: 'warning',
+      });
+      return;
+    }
+
+    const configs: ConfigureProfessional = {
+      oldPassword: formData.oldPassword,
+      newPassword: formData.newPassword,
+      confirmNewPassword: formData.confirmNewPassword,
+      baseDuration: `${formData.baseDuration}`,
+      weeklySchedule: [...weeklySchedule],
+    };
+    console.log('data', configs);
   };
 
   const signOutConfirm = (): void => {
@@ -118,28 +137,6 @@ const ProfessionalInitialConfig = (): JSX.Element => {
     });
   };
 
-  const countLockSlots = (day: CreateWeeklySchedule): void => {
-    const [start, end] = [day.startTime, day.endTime];
-    const startTime = timeToDate(start);
-    const endTime = timeToDate(end);
-    const totalTime = differenceInMinutes(endTime, startTime);
-
-    let totalLockTime = 0;
-    day?.locks?.forEach((lock) => {
-      const lockStartTime = timeToDate(lock.startTime);
-      const lockEndTime = timeToDate(lock.endTime);
-
-      totalLockTime += differenceInMinutes(lockEndTime, lockStartTime);
-    });
-
-    const slotsWithoutLock = totalTime / (Number(baseDuration) as number);
-    const lockSlots = totalLockTime / (Number(baseDuration) as number);
-
-    const remainingSlots = slotsWithoutLock - lockSlots;
-
-    setCounter(remainingSlots);
-  };
-
   const countCurrentLockSlots = (day: CreateWeeklySchedule): void => {
     const totalTime = differenceInMinutes(endTime as Date, startTime as Date);
 
@@ -155,7 +152,6 @@ const ProfessionalInitialConfig = (): JSX.Element => {
     const lockSlots = totalLockTime / (Number(baseDuration) as number);
 
     const remainingSlots = slotsWithoutLock - lockSlots;
-    console.log('remainging', remainingSlots);
 
     setCounter(remainingSlots);
   };
@@ -324,6 +320,19 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                       rules={{
                         required: {
                           value: true,
+                          message: 'A senha atual é obrigatória',
+                        },
+                      }}
+                      type="password"
+                      endFunction="password"
+                      name="oldPassword"
+                      label="Senha atual"
+                      autoComplete="new-password"
+                    />
+                    <ControlledInput
+                      rules={{
+                        required: {
+                          value: true,
                           message: 'A nova senha é obrigatória',
                         },
                       }}
@@ -413,6 +422,11 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                       message:
                                         'O tempo de início é obrigatório',
                                     },
+                                    validate: (date) =>
+                                      currentDay.disableDay
+                                        ? undefined
+                                        : !isEqual(endTime as Date, date) ||
+                                          'Horário inválido',
                                   }}
                                 />
                               </div>
@@ -431,6 +445,11 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                       value: true,
                                       message: 'O tempo final é obrigatório',
                                     },
+                                    validate: (date) =>
+                                      currentDay.disableDay
+                                        ? undefined
+                                        : !isEqual(startTime as Date, date) ||
+                                          'Horário inválido',
                                   }}
                                 />
                               </div>
@@ -444,6 +463,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                       setCurrentDay((prev) => ({
                                         ...prev,
                                         disableDay: !currentDay.disableDay,
+                                        altered: true,
                                       }));
                                       setWeeklySchedule((prevWeekly) => {
                                         const newWeekly = [...prevWeekly].map(
@@ -454,6 +474,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                                   ...item,
                                                   disableDay:
                                                     !currentDay.disableDay,
+                                                  altered: true,
                                                 }
                                               : item
                                         );
@@ -506,7 +527,8 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                         loading ||
                                         savingWeekly ||
                                         currentDay.disableDay ||
-                                        counter - Math.floor(counter) !== 0
+                                        counter - Math.floor(counter) !== 0 ||
+                                        counter === 0
                                       }
                                     >
                                       <AiOutlinePlus

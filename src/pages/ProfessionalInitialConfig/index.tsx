@@ -71,8 +71,6 @@ const ProfessionalInitialConfig = (): JSX.Element => {
   const [counter, setCounter] = useState<number>(0);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [intervals, setIntervals] = useState<FormLock[]>([]);
-  const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
-  const [changes, setChanges] = useState<boolean>(false);
 
   const { baseDuration, startTime, endTime, ...formValues } = useWatch({
     control,
@@ -98,7 +96,13 @@ const ProfessionalInitialConfig = (): JSX.Element => {
   const onSubmit = async (data: any): Promise<void> => {
     const formData: ConfigFormProps = { ...data } as ConfigFormProps;
 
-    const emptyDay = weeklySchedule.find((item) => item.altered === false);
+    const emptyDay = weeklySchedule.find(
+      (item) =>
+        item.altered === false ||
+        (item.startTime === '00:00' &&
+          item.endTime === '00:00' &&
+          !item.disableDay)
+    );
     if (emptyDay !== undefined) {
       showAlert({
         title: 'Atenção!',
@@ -116,6 +120,20 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       weeklySchedule: [...weeklySchedule],
     };
     console.log('data', configs);
+
+    try {
+      setLoading(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao configurar o profissional',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOutConfirm = (): void => {
@@ -392,7 +410,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                 currentDay?.dayOfTheWeek === item.dayOfTheWeek
                               }
                               onSelect={() => handleDayChange(item)}
-                              disabled={loading || savingWeekly}
+                              disabled={loading}
                               style={{ padding: '0.3rem' }}
                               textStyle={{
                                 color: colors.TEXT,
@@ -406,53 +424,48 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                           <>
                             <TimesLabel>Início e fim do expediente</TimesLabel>
                             <WorkHoursContainer>
-                              <div onBlur={() => setChanges(true)}>
-                                <ControlledTimePicker
-                                  label="Início"
-                                  name="startTime"
-                                  defaultValue={
-                                    currentDay.startTime
-                                      ? timeToDate(currentDay.startTime)
-                                      : disabledDayDate()
-                                  }
-                                  disabled={currentDay.disableDay}
-                                  rules={{
-                                    required: {
-                                      value: true,
-                                      message:
-                                        'O tempo de início é obrigatório',
-                                    },
-                                    validate: (date) =>
-                                      currentDay.disableDay
-                                        ? undefined
-                                        : !isEqual(endTime as Date, date) ||
-                                          'Horário inválido',
-                                  }}
-                                />
-                              </div>
-                              <div onBlur={() => setChanges(true)}>
-                                <ControlledTimePicker
-                                  label="Fim"
-                                  name="endTime"
-                                  disabled={currentDay.disableDay}
-                                  defaultValue={
-                                    currentDay.endTime
-                                      ? timeToDate(currentDay.endTime)
-                                      : disabledDayDate()
-                                  }
-                                  rules={{
-                                    required: {
-                                      value: true,
-                                      message: 'O tempo final é obrigatório',
-                                    },
-                                    validate: (date) =>
-                                      currentDay.disableDay
-                                        ? undefined
-                                        : !isEqual(startTime as Date, date) ||
-                                          'Horário inválido',
-                                  }}
-                                />
-                              </div>
+                              <ControlledTimePicker
+                                label="Início"
+                                name="startTime"
+                                defaultValue={
+                                  currentDay.startTime
+                                    ? timeToDate(currentDay.startTime)
+                                    : disabledDayDate()
+                                }
+                                disabled={currentDay.disableDay}
+                                rules={{
+                                  required: {
+                                    value: true,
+                                    message: 'O tempo de início é obrigatório',
+                                  },
+                                  validate: (date) =>
+                                    currentDay.disableDay
+                                      ? undefined
+                                      : !isEqual(endTime as Date, date) ||
+                                        'Horário inválido',
+                                }}
+                              />
+                              <ControlledTimePicker
+                                label="Fim"
+                                name="endTime"
+                                disabled={currentDay.disableDay}
+                                defaultValue={
+                                  currentDay.endTime
+                                    ? timeToDate(currentDay.endTime)
+                                    : disabledDayDate()
+                                }
+                                rules={{
+                                  required: {
+                                    value: true,
+                                    message: 'O tempo final é obrigatório',
+                                  },
+                                  validate: (date) =>
+                                    currentDay.disableDay
+                                      ? undefined
+                                      : !isEqual(startTime as Date, date) ||
+                                        'Horário inválido',
+                                }}
+                              />
                               <FormControlLabel
                                 style={{ maxWidth: 400 }}
                                 control={
@@ -487,7 +500,6 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                       setError('startTime', {
                                         message: '',
                                       });
-                                      setChanges(true);
                                     }}
                                     inputProps={{ 'aria-label': 'controlled' }}
                                   />
@@ -520,12 +532,10 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                         marginLeft: 20,
                                       }}
                                       onClick={() => {
-                                        setChanges(true);
                                         setOpenModal(true);
                                       }}
                                       disabled={
                                         loading ||
-                                        savingWeekly ||
                                         currentDay.disableDay ||
                                         counter - Math.floor(counter) !== 0 ||
                                         counter === 0
@@ -550,14 +560,13 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                       </IntervalRow>
                                       <IconButton
                                         size="small"
-                                        disabled={loading || savingWeekly}
+                                        disabled={loading}
                                         style={{
                                           width: 60,
                                           height: 60,
                                           marginLeft: 20,
                                         }}
                                         onClick={() => {
-                                          setChanges(true);
                                           removeInterval({ ...lock, index });
                                         }}
                                       >

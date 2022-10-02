@@ -4,6 +4,7 @@ import { api } from '@service/index';
 import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
 import {
+  ConfigureProfessional,
   FormProfessional,
   Professional,
   UpdateProfessional,
@@ -28,6 +29,7 @@ type ProfessionalsContextData = {
   updateWeeklySchedule: (
     weeklySchedule: UpdateWeeklySchedule
   ) => Promise<Response<WeeklySchedule | boolean>>;
+  configure: (configs: ConfigureProfessional) => Promise<Response<boolean>>;
   deleteLock: (weeklyId: string, lockId: string) => Promise<Response<boolean>>;
   topBar: () => Promise<
     Response<ItemList<{ id: string; name: string; baseDuration: number }>>
@@ -159,6 +161,19 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const configure = async (
+    configs: ConfigureProfessional
+  ): Promise<Response<boolean>> => {
+    const { data }: { data: Response<boolean> } = await api.post(
+      'professional/configure',
+      {
+        ...configs,
+      }
+    );
+
+    return data;
+  };
+
   return (
     <ProfessionalsContext.Provider
       value={{
@@ -171,6 +186,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
         updateWeeklySchedule,
         deleteLock,
         topBar,
+        configure,
         professionals,
         count,
       }}

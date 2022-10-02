@@ -1,6 +1,7 @@
 import { Address, FormAddress } from './Address';
 import { FormPerson } from './Person';
 import { User } from './User';
+import { CreateWeeklySchedule } from './WeeklySchedule';
 
 export type Professional = {
   profession: string;
@@ -30,3 +31,11 @@ export type UpdateProfessional = Omit<
   registry: string;
   address?: FormAddress;
 } & FormPerson;
+
+export type ConfigureProfessional = {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+  baseDuration: string;
+  weeklySchedule: CreateWeeklySchedule[];
+};

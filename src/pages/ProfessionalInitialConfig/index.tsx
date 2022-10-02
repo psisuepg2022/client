@@ -45,6 +45,7 @@ import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
 import { differenceInMinutes, isAfter, isEqual } from 'date-fns';
 import { dateFormat } from '@utils/dateFormat';
 import { ConfigureProfessional } from '@models/Professional';
+import { useNavigate } from 'react-router-dom';
 
 const initialWeeklySchedule = createInitialWeeklySchedule();
 
@@ -59,6 +60,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       confirmNewPassword: '',
     },
   });
+  const navigate = useNavigate();
   const { handleSubmit, reset, control, setError } = formMethods;
   const randomKey = Math.random();
   const [loading, setLoading] = useState<boolean>(false);
@@ -123,6 +125,23 @@ const ProfessionalInitialConfig = (): JSX.Element => {
 
     try {
       setLoading(true);
+
+      showAlert({
+        title: 'Sucesso!',
+        text: 'O profissional foi configurado com sucesso! Ao clicar no botão OK você será redirecionado para a página inicial.',
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonColor: colors.PRIMARY,
+        confirmButtonText: 'OK',
+        cancelButtonColor: colors.BACKGREY,
+        cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
+        reverseButtons: true,
+        allowOutsideClick: false,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          navigate('/schedule', { replace: true });
+        }
+      });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({

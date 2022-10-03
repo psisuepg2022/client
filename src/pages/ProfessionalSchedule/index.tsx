@@ -39,6 +39,7 @@ import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
 import { useAuth } from '@contexts/Auth';
 import { dateFormat } from '@utils/dateFormat';
 import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
+import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 
 type FormLock = {
   id?: string;
@@ -126,6 +127,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       startTime: Date;
       endTime: Date;
     };
+    const oldIntervals = intervals.filter((item) => item.id);
     const newIntervals = intervals.filter((item) => !item.id);
     const newWeeklySchedule: UpdateWeeklySchedule = {
       startTime: dateFormat({
@@ -160,8 +162,17 @@ const ProfessionalSchedule = (): JSX.Element => {
 
           return newWeekly;
         });
-        setIntervals(content.locks || []);
-        countLockSlots(content);
+        setIntervals(
+          [...oldIntervals, ...(content.locks as WeeklyScheduleLock[])] || []
+        );
+        countLockSlots({
+          ...content,
+          locks:
+            [
+              ...(oldIntervals as WeeklyScheduleLock[]),
+              ...(content.locks as WeeklyScheduleLock[]),
+            ] || [],
+        });
       }
       if (content && typeof content === 'boolean') {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

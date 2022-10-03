@@ -346,6 +346,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
 
           return findDuplicates === undefined ? false : true;
         }}
+        baseDuration={`${baseDuration}`}
       />
       <Box>
         <Content>

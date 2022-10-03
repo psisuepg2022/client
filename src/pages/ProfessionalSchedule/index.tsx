@@ -372,6 +372,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   return (
     <Container>
       <CreateScheduleLockModal
+        baseDuration={`${user.baseDuration}`}
         open={openModal}
         handleClose={(reason: 'backdropClick' | 'escapeKeyDown' | '') =>
           reason !== 'backdropClick' &&

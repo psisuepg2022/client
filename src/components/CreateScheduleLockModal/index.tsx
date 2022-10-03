@@ -18,7 +18,6 @@ import SectionDivider from '@components/SectionDivider';
 import { dateToTime, timeToDate } from '@utils/timeToDate';
 import { differenceInMinutes, isAfter } from 'date-fns';
 import { isEqual } from 'lodash';
-import { useAuth } from '@contexts/Auth';
 import { colors } from '@global/colors';
 
 type FormLock = {
@@ -32,6 +31,7 @@ type CreateScheduleLockModalProps = {
   handleClose: (reason: 'backdropClick' | 'escapeKeyDown' | '') => void;
   addNewLock: (lock: FormLock) => void;
   checkDuplicates: (lock: FormLock) => boolean;
+  baseDuration: string;
 };
 
 const CreateScheduleLockModal = ({
@@ -39,10 +39,10 @@ const CreateScheduleLockModal = ({
   handleClose,
   open,
   checkDuplicates,
+  baseDuration,
 }: CreateScheduleLockModalProps): JSX.Element => {
   const formMethods = useForm<{ start: Date; end: Date }>();
   const { handleSubmit, setError } = formMethods;
-  const { user } = useAuth();
   const [durationError, setDurationError] = useState<string>('');
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
@@ -60,12 +60,13 @@ const CreateScheduleLockModal = ({
     }
 
     if (
-      differenceInMinutes(data.end, data.start) % (user.baseDuration as number)
+      differenceInMinutes(data.end, data.start) %
+      (Number(baseDuration) as number)
     ) {
       setError('end', { message: '' });
       setError('start', { message: '' });
       setDurationError(
-        `O intervalo entre os horários deve corresponder à duração base: ${user.baseDuration} minutos`
+        `O intervalo entre os horários deve corresponder à duração base: ${baseDuration} minutos`
       );
       return;
     }

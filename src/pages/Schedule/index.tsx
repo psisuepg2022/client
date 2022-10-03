@@ -59,6 +59,7 @@ import { dateFormat } from '@utils/dateFormat';
 import ConcludedEventModal from '@components/ConcludedEventModal';
 import LockEventModal from '@components/LockEventModal';
 import CancelledAbsenceEventModal from '@components/CancelledAbsenceEventModal';
+import AlterSchedule from '@pages/AlterSchedule';
 
 const locales = {
   'pt-BR': ptBR,
@@ -668,7 +669,8 @@ const Schedule = (): JSX.Element => {
             eventInfo={currentEvent}
           />
         )}
-      <Calendar
+      <AlterSchedule />
+      {/* <Calendar
         localizer={localizer}
         events={events}
         style={{ height: '100vh', width: '100%', fontFamily: 'Poppins' }}
@@ -723,7 +725,7 @@ const Schedule = (): JSX.Element => {
           },
           eventWrapper: CustomEventWrapper,
         }}
-      />
+      /> */}
     </>
   );
 };

@@ -56,6 +56,7 @@ export const eventStyleGetter = (
     padding: '10px',
     fontSize: '16px',
     fontWeight: 500,
+    maxHeight: '50px !important',
   };
 
   return {
@@ -114,6 +115,7 @@ export const slotPropGetter: SlotPropGetter = () => {
     style: {
       backgroundColor: '#FFF',
       color: colors.TEXT,
+      maxHeight: '20px !important',
       cursor: 'pointer !important',
     },
   };

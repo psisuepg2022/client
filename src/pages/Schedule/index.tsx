@@ -119,6 +119,9 @@ const Schedule = (): JSX.Element => {
     undefined
   );
   const [loading, setLoading] = useState<boolean>(true);
+  const [currentStart, setCurrentStart] = useState<Date>(new Date());
+  const [currentEnd, setCurrentEnd] = useState<Date>(new Date());
+  const [currentView, setCurrentView] = useState<string>('day');
   const previousRange = useRef<string[]>();
 
   useEffect(() => {
@@ -161,10 +164,21 @@ const Schedule = (): JSX.Element => {
           (item) => item.dayOfTheWeek === dayIndex
         ) as WeeklySchedule;
 
-        const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-          currentDate,
-          today
-        ) as ScheduleEvent[];
+        const initialStart = new Date();
+        initialStart.setHours(Number(today.startTime.split(':')[0]));
+        initialStart.setMinutes(Number(today.startTime.split(':')[1]));
+
+        const initialEnd = new Date();
+        initialEnd.setHours(Number(today.endTime.split(':')[0]));
+        initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
+
+        setCurrentStart(initialStart);
+        setCurrentEnd(initialEnd);
+
+        // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+        //   currentDate,
+        //   today
+        // ) as ScheduleEvent[];
 
         const weeklyScheduleLocksEvents: ScheduleEvent[] =
           !today.startTime && !today.endTime
@@ -234,7 +248,7 @@ const Schedule = (): JSX.Element => {
           firstSchedule?.content?.weeklySchedule || []
         );
         setEvents([
-          ...weeklyScheduleEvents,
+          //...weeklyScheduleEvents,
           ...weeklyScheduleLocksEvents,
           ...validScheduleLocks,
           ...mappedEvents,
@@ -254,7 +268,9 @@ const Schedule = (): JSX.Element => {
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, view?: View | undefined) => {
-      console.log('RANGE', range);
+      console.log('RANGE', range, view);
+
+      setCurrentView((prev) => (view === undefined ? prev : (view as string)));
 
       const allEvents: Event[] = [];
       const dates: Date[] = range as Date[];
@@ -420,10 +436,14 @@ const Schedule = (): JSX.Element => {
         );
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-          const weeklySchedule: Event[] = buildWeeklySchedule(
-            date,
-            today as WeeklySchedule
-          );
+          if (view === 'week' || currentView === 'week') {
+            console.log('ENTREI NA WEEK');
+            const weeklySchedule: Event[] = buildWeeklySchedule(
+              date,
+              today as WeeklySchedule
+            );
+            allEvents.push(...weeklySchedule);
+          }
 
           const weeklyScheduleLocks: Event[] =
             (today?.locks?.map((lock: WeeklyScheduleLock) => {
@@ -431,7 +451,6 @@ const Schedule = (): JSX.Element => {
               return newLock;
             }) as ScheduleEvent[]) || [];
 
-          allEvents.push(...weeklySchedule);
           allEvents.push(...weeklyScheduleLocks);
         }
       });
@@ -443,9 +462,56 @@ const Schedule = (): JSX.Element => {
             (lockFromResource(item.resource) === 'LOCK' &&
               idFromResource(item.resource) !== undefined)
         );
-
+        console.log('REMOVED OLD LOCKS 2', removeOldLocks);
         return [...removeOldLocks, ...allEvents];
       });
+
+      const dayIndex = getDay('start' in range ? new Date() : range[0]) + 1;
+      const today = retrievedWeeklySchedule.find(
+        (item) => item.dayOfTheWeek === dayIndex
+      ) as WeeklySchedule;
+
+      const newCurrentStart = new Date(range[0] as Date);
+      if (today.startTime) {
+        newCurrentStart.setHours(Number(today.startTime.split(':')[0]));
+        newCurrentStart.setMinutes(Number(today.startTime.split(':')[1]));
+      }
+
+      const newCurrentEnd = new Date(range[0] as Date);
+
+      if (today.endTime) {
+        newCurrentEnd.setHours(Number(today.endTime.split(':')[0]));
+        newCurrentEnd.setMinutes(Number(today.endTime.split(':')[1]));
+      }
+      setCurrentStart(newCurrentStart);
+      setCurrentEnd(newCurrentEnd);
+
+      // const scheduleWeekly: ScheduleEvent[] = [];
+      // if (view === 'week') {
+      //   const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+      //     range[0],
+      //     today
+      //   ) as ScheduleEvent[];
+
+      //   scheduleWeekly.push(...weeklyScheduleEvents);
+      //   setEvents((prev) => [...prev, ...scheduleWeekly]);
+      // }
+
+      // if (currentView === 'day') {
+      //   console.log('VIEW DAY AQUIIII');
+      //   setEvents((prev) => {
+      //     const removeOldLocks = prev.filter(
+      //       (item) =>
+      //         lockFromResource(item.resource) !== 'LOCK' ||
+      //         (lockFromResource(item.resource) === 'LOCK' &&
+      //           idFromResource(item.resource) !== undefined)
+      //     );
+
+      //     console.log('REMOVED', removeOldLocks);
+
+      //     return removeOldLocks;
+      //   });
+      // }
 
       if (!previousRange.current?.includes(startDate)) {
         console.log('RANGES', startDate, endDate);
@@ -546,6 +612,19 @@ const Schedule = (): JSX.Element => {
                 ...validScheduleLocks,
               ];
             });
+
+            if (view === 'day') {
+              console.log('VIEW DAY AQUIIII');
+              setEvents((prev) => {
+                const removeOldEvents = prev.filter(
+                  (item) =>
+                    lockFromResource(item.resource) === 'LOCK' &&
+                    idFromResource(item.resource) === undefined
+                );
+
+                return removeOldEvents;
+              });
+            }
           })
           .catch((e) => console.log('ERRO REEWTRIEVE', e))
           .finally(() => setScheduleLoading(false));
@@ -703,6 +782,8 @@ const Schedule = (): JSX.Element => {
           setCurrentSlotInfo(slotInfo)
         }
         selectable
+        min={currentView === 'day' ? currentStart : undefined}
+        max={currentView === 'day' ? currentEnd : undefined}
         onSelecting={() => false}
         popup={true}
         tooltipAccessor={() => ''}

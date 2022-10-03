@@ -741,6 +741,7 @@ const Schedule = (): JSX.Element => {
           (user.permissions.includes('CREATE_APPOINTMENT') ||
             user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
           isAfter(slotInfo.start, new Date()) &&
+          currentView === 'day' &&
           setCurrentSlotInfo(slotInfo)
         }
         selectable

@@ -30,11 +30,7 @@ import { Professional } from '@models/Professional';
 import { showAlert } from '@utils/showAlert';
 import { WeeklySchedule } from '@models/WeeklySchedule';
 import { ScheduleEvent } from '@interfaces/ScheduleEvent';
-import {
-  buildWeeklySchedule,
-  buildWeeklyScheduleLocks,
-  weekRange,
-} from '@utils/schedule';
+import { buildWeeklyScheduleLocks, weekRange } from '@utils/schedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { dateFormat } from '@utils/dateFormat';
 import { getDay, isAfter, isEqual } from 'date-fns';

@@ -10,7 +10,6 @@ import {
   UpdateProfessional,
 } from '@models/Professional';
 import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
-import { useAuth } from '@contexts/Auth';
 import { User } from '@models/User';
 import { decodeToken } from 'react-jwt';
 
@@ -25,6 +24,12 @@ type ConfigureResponse = {
   refreshToken: string;
 };
 
+type ConfigureReturn = {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+};
+
 type ProfessionalsContextData = {
   list: (listProps: ListProps) => Promise<Response<ItemList<Professional>>>;
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
@@ -37,9 +42,7 @@ type ProfessionalsContextData = {
   updateWeeklySchedule: (
     weeklySchedule: UpdateWeeklySchedule
   ) => Promise<Response<WeeklySchedule | boolean>>;
-  configure: (
-    configs: ConfigureProfessional
-  ) => Promise<Response<ConfigureResponse>>;
+  configure: (configs: ConfigureProfessional) => Promise<ConfigureReturn>;
   deleteLock: (weeklyId: string, lockId: string) => Promise<Response<boolean>>;
   topBar: () => Promise<
     Response<ItemList<{ id: string; name: string; baseDuration: number }>>
@@ -59,7 +62,6 @@ const ProfessionalsContext = createContext<ProfessionalsContextData>(
 export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
   children,
 }: ProfessionalsProviderProps) => {
-  const { setUser } = useAuth();
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [count, setCount] = useState<number>(0);
 
@@ -174,7 +176,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
 
   const configure = async (
     configs: ConfigureProfessional
-  ): Promise<Response<ConfigureResponse>> => {
+  ): Promise<ConfigureReturn> => {
     const { data }: { data: Response<ConfigureResponse> } = await api.post(
       'professional/configure',
       {
@@ -186,19 +188,11 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
       data.content?.accessToken || ''
     ) as User;
 
-    localStorage.setItem('@psis:accessToken', data.content?.accessToken || '');
-    localStorage.setItem(
-      '@psis:refreshToken',
-      data.content?.refreshToken || ''
-    );
-    localStorage.setItem('@psis:userData', JSON.stringify(decodedToken));
-    api.defaults.headers.common[
-      'authorization'
-    ] = `Bearer ${data.content?.accessToken}`;
-
-    setUser(decodedToken);
-
-    return data;
+    return {
+      accessToken: data.content?.accessToken as string,
+      refreshToken: data.content?.refreshToken as string,
+      user: decodedToken,
+    };
   };
 
   return (

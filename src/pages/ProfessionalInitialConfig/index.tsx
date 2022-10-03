@@ -48,11 +48,12 @@ import { ConfigureProfessional } from '@models/Professional';
 import { useNavigate } from 'react-router-dom';
 import { useProfessionals } from '@contexts/Professionals';
 import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
+import { api } from '@service/index';
 
 const initialWeeklySchedule = createInitialWeeklySchedule();
 
 const ProfessionalInitialConfig = (): JSX.Element => {
-  const { signOut } = useAuth();
+  const { signOut, setUser } = useAuth();
   const { configure } = useProfessionals();
   const formMethods = useForm({
     defaultValues: {
@@ -141,7 +142,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
     try {
       setLoading(true);
 
-      await configure(configs);
+      const { accessToken, user, refreshToken } = await configure(configs);
 
       showAlert({
         title: 'Sucesso!',
@@ -153,6 +154,14 @@ const ProfessionalInitialConfig = (): JSX.Element => {
         allowOutsideClick: false,
       }).then(async (result) => {
         if (result.isConfirmed) {
+          localStorage.setItem('@psis:accessToken', accessToken || '');
+          localStorage.setItem('@psis:refreshToken', refreshToken || '');
+          localStorage.setItem('@psis:userData', JSON.stringify(user));
+          api.defaults.headers.common[
+            'authorization'
+          ] = `Bearer ${accessToken}`;
+
+          setUser(user);
           navigate('/schedule', { replace: true });
         }
       });

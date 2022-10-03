@@ -462,7 +462,7 @@ const Schedule = (): JSX.Element => {
             (lockFromResource(item.resource) === 'LOCK' &&
               idFromResource(item.resource) !== undefined)
         );
-        console.log('REMOVED OLD LOCKS 2', removeOldLocks);
+
         return [...removeOldLocks, ...allEvents];
       });
 
@@ -485,33 +485,6 @@ const Schedule = (): JSX.Element => {
       }
       setCurrentStart(newCurrentStart);
       setCurrentEnd(newCurrentEnd);
-
-      // const scheduleWeekly: ScheduleEvent[] = [];
-      // if (view === 'week') {
-      //   const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-      //     range[0],
-      //     today
-      //   ) as ScheduleEvent[];
-
-      //   scheduleWeekly.push(...weeklyScheduleEvents);
-      //   setEvents((prev) => [...prev, ...scheduleWeekly]);
-      // }
-
-      // if (currentView === 'day') {
-      //   console.log('VIEW DAY AQUIIII');
-      //   setEvents((prev) => {
-      //     const removeOldLocks = prev.filter(
-      //       (item) =>
-      //         lockFromResource(item.resource) !== 'LOCK' ||
-      //         (lockFromResource(item.resource) === 'LOCK' &&
-      //           idFromResource(item.resource) !== undefined)
-      //     );
-
-      //     console.log('REMOVED', removeOldLocks);
-
-      //     return removeOldLocks;
-      //   });
-      // }
 
       if (!previousRange.current?.includes(startDate)) {
         console.log('RANGES', startDate, endDate);
@@ -612,19 +585,6 @@ const Schedule = (): JSX.Element => {
                 ...validScheduleLocks,
               ];
             });
-
-            if (view === 'day') {
-              console.log('VIEW DAY AQUIIII');
-              setEvents((prev) => {
-                const removeOldEvents = prev.filter(
-                  (item) =>
-                    lockFromResource(item.resource) === 'LOCK' &&
-                    idFromResource(item.resource) === undefined
-                );
-
-                return removeOldEvents;
-              });
-            }
           })
           .catch((e) => console.log('ERRO REEWTRIEVE', e))
           .finally(() => setScheduleLoading(false));

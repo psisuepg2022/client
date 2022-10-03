@@ -46,11 +46,14 @@ import { differenceInMinutes, isAfter, isEqual } from 'date-fns';
 import { dateFormat } from '@utils/dateFormat';
 import { ConfigureProfessional } from '@models/Professional';
 import { useNavigate } from 'react-router-dom';
+import { useProfessionals } from '@contexts/Professionals';
+import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
 
 const initialWeeklySchedule = createInitialWeeklySchedule();
 
 const ProfessionalInitialConfig = (): JSX.Element => {
   const { signOut } = useAuth();
+  const { configure } = useProfessionals();
   const formMethods = useForm({
     defaultValues: {
       startTime: disabledDayDate(),
@@ -114,17 +117,31 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       return;
     }
 
+    const weeklyMapped = weeklySchedule.map((item) => {
+      const dayOfTheWeek: DaysOfTheWeek =
+        item.dayOfTheWeek as unknown as DaysOfTheWeek;
+
+      return {
+        ...item,
+        dayOfTheWeek: Number(
+          DaysOfTheWeek[dayOfTheWeek as DaysOfTheWeek]
+        ) as number,
+      };
+    });
+
     const configs: ConfigureProfessional = {
       oldPassword: formData.oldPassword,
       newPassword: formData.newPassword,
       confirmNewPassword: formData.confirmNewPassword,
       baseDuration: `${formData.baseDuration}`,
-      weeklySchedule: [...weeklySchedule],
+      weeklySchedule: [...weeklyMapped],
     };
     console.log('data', configs);
 
     try {
       setLoading(true);
+
+      await configure(configs);
 
       showAlert({
         title: 'Sucesso!',

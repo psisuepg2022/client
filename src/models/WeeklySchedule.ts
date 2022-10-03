@@ -25,7 +25,7 @@ export type CreateWeeklySchedule = {
   startTime: string;
   endTime: string;
   disableDay: boolean;
-  dayOfTheWeek: string;
+  dayOfTheWeek: string | number;
   locks?: {
     startTime: string;
     endTime: string;

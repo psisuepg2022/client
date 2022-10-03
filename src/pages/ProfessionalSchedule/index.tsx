@@ -31,7 +31,7 @@ import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
 import CardSelector from '@components/CardSelector';
 import SectionDivider from '@components/SectionDivider';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import ControlledTimePicker from '@components/ControlledTimePicker';
 import { timeToDate } from '@utils/timeToDate';
 import { differenceInMinutes } from 'date-fns';
@@ -52,7 +52,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   const navigate = useNavigate();
   const formMethods = useForm();
   const { user } = useAuth();
-  const { reset, handleSubmit } = formMethods;
+  const { reset, handleSubmit, control } = formMethods;
   const { getWeeklySchedule, updateWeeklySchedule, deleteLock } =
     useProfessionals();
   const [loading, setLoading] = useState<boolean>(true);
@@ -65,6 +65,10 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
   const [changes, setChanges] = useState<boolean>(false);
   const [disableDay, setDisableDay] = useState<boolean>(false);
+
+  const { startTime, endTime } = useWatch({
+    control,
+  });
 
   useEffect(() => {
     (async () => {
@@ -97,6 +101,31 @@ const ProfessionalSchedule = (): JSX.Element => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (startTime && endTime) {
+      countCurrentLockSlots(currentDay as WeeklySchedule);
+    }
+  }, [startTime, endTime]);
+
+  const countCurrentLockSlots = (day: WeeklySchedule): void => {
+    const totalTime = differenceInMinutes(endTime as Date, startTime as Date);
+
+    let totalLockTime = 0;
+    day?.locks?.forEach((lock) => {
+      const lockStartTime = timeToDate(lock.startTime);
+      const lockEndTime = timeToDate(lock.endTime);
+
+      totalLockTime += differenceInMinutes(lockEndTime, lockStartTime);
+    });
+
+    const slotsWithoutLock = totalTime / (Number(user.baseDuration) as number);
+    const lockSlots = totalLockTime / (Number(user.baseDuration) as number);
+
+    const remainingSlots = slotsWithoutLock - lockSlots;
+
+    setCounter(remainingSlots);
+  };
 
   const countLockSlots = (day: WeeklySchedule): void => {
     const [start, end] = [day.startTime, day.endTime];

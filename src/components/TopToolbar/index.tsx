@@ -122,10 +122,10 @@ const TopToolbar = ({
         (item) => item.dayOfTheWeek === dayIndex
       ) as WeeklySchedule;
 
-      const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-        currentDate,
-        today
-      ) as ScheduleEvent[];
+      // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+      //   currentDate,
+      //   today
+      // ) as ScheduleEvent[];
 
       const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
         (lock: WeeklyScheduleLock) => {
@@ -193,7 +193,7 @@ const TopToolbar = ({
         professionalSchedule?.content?.weeklySchedule || []
       );
       setEvents([
-        ...weeklyScheduleEvents,
+        //...weeklyScheduleEvents,
         ...weeklyScheduleLocksEvents,
         ...validScheduleLocks,
         ...mappedEvents,

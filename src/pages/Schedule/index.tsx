@@ -300,10 +300,13 @@ const Schedule = (): JSX.Element => {
           );
 
           if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-            const weeklySchedule: Event[] = buildWeeklySchedule(
-              date,
-              today as WeeklySchedule
-            );
+            if (view === 'week' || currentView === 'week') {
+              const weeklySchedule: Event[] = buildWeeklySchedule(
+                date,
+                today as WeeklySchedule
+              );
+              allEvents.push(...weeklySchedule);
+            }
 
             const weeklyScheduleLocks: Event[] =
               (today?.locks?.map((lock: WeeklyScheduleLock) => {
@@ -311,7 +314,6 @@ const Schedule = (): JSX.Element => {
                 return newLock;
               }) as ScheduleEvent[]) || [];
 
-            allEvents.push(...weeklySchedule);
             allEvents.push(...weeklyScheduleLocks);
           }
         });

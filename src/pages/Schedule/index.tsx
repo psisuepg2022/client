@@ -59,6 +59,7 @@ import { dateFormat } from '@utils/dateFormat';
 import ConcludedEventModal from '@components/ConcludedEventModal';
 import LockEventModal from '@components/LockEventModal';
 import CancelledAbsenceEventModal from '@components/CancelledAbsenceEventModal';
+import AlterTopToolbar from '@components/AlterTopToolbar';
 
 const locales = {
   'pt-BR': ptBR,
@@ -148,114 +149,142 @@ const Schedule = (): JSX.Element => {
 
         previousRange.current = weekRangeDatesOnly;
 
-        const firstSchedule = await getScheduleEvents(
-          { startDate: startOfWeekDate, endDate: endOfWeekDate },
-          user.permissions.includes('USER_TYPE_PROFESSIONAL')
-            ? undefined
-            : professionals.content?.items[0].id,
-          true
-        );
+        const firstSchedule =
+          professionals.content && professionals.content.items.length !== 0
+            ? await getScheduleEvents(
+                { startDate: startOfWeekDate, endDate: endOfWeekDate },
+                user.permissions.includes('USER_TYPE_PROFESSIONAL')
+                  ? undefined
+                  : professionals.content?.items[0].id,
+                true
+              )
+            : {
+                content: {
+                  weeklySchedule: [],
+                  appointments: [],
+                  scheduleLocks: [],
+                },
+              };
 
-        setCurrentProfessional(professionals.content?.items[0] as Professional);
+        const initialProfessional =
+          professionals.content && professionals.content.items.length > 0
+            ? professionals.content.items[0]
+            : {
+                baseDuration: 60,
+              };
 
-        const currentDate = new Date();
-        const dayIndex = getDay(currentDate) + 1;
-        const today = firstSchedule?.content?.weeklySchedule.find(
-          (item) => item.dayOfTheWeek === dayIndex
-        ) as WeeklySchedule;
+        setCurrentProfessional(initialProfessional as Professional);
 
-        const initialStart = new Date();
-        initialStart.setHours(Number(today.startTime.split(':')[0]));
-        initialStart.setMinutes(Number(today.startTime.split(':')[1]));
+        firstSchedule.content &&
+          firstSchedule.content.weeklySchedule.length === 0 &&
+          showAlert({
+            title: 'Sem profissionais',
+            text: 'Não existem profissionais cadastrados ou configurados. Cadastre um novo profissional no menu ao lado e peça ao profissional que acesse a conta e cadastre seus horários.',
+          });
 
-        const initialEnd = new Date();
-        initialEnd.setHours(Number(today.endTime.split(':')[0]));
-        initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
+        if (
+          firstSchedule.content &&
+          firstSchedule.content?.weeklySchedule.length > 0
+        ) {
+          const currentDate = new Date();
+          const dayIndex = getDay(currentDate) + 1;
+          const today = firstSchedule?.content?.weeklySchedule.find(
+            (item) => item.dayOfTheWeek === dayIndex
+          ) as WeeklySchedule;
 
-        setCurrentStart(initialStart);
-        setCurrentEnd(initialEnd);
+          const initialStart = new Date();
+          initialStart.setHours(Number(today.startTime.split(':')[0]));
+          initialStart.setMinutes(Number(today.startTime.split(':')[1]));
 
-        // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-        //   currentDate,
-        //   today
-        // ) as ScheduleEvent[];
+          const initialEnd = new Date();
+          initialEnd.setHours(Number(today.endTime.split(':')[0]));
+          initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
 
-        const weeklyScheduleLocksEvents: ScheduleEvent[] =
-          !today.startTime && !today.endTime
-            ? []
-            : (today?.locks?.map((lock: WeeklyScheduleLock) => {
-                return buildWeeklyScheduleLocks(currentDate, lock);
-              }) as ScheduleEvent[]);
+          setCurrentStart(initialStart);
+          setCurrentEnd(initialEnd);
 
-        const mappedScheduleLocks: Event[] =
-          firstSchedule?.content?.scheduleLocks.map((lock) => {
-            const startDate = new Date(
-              Number(lock.date.split('/')[2]),
-              Number(lock.date.split('/')[1]) - 1,
-              Number(lock.date.split('/')[0])
-            );
-            startDate.setHours(Number(lock.startTime.split(':')[0]));
-            startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-            startDate.setSeconds(0);
-            const endDate = new Date(
-              Number(lock.date.split('/')[2]),
-              Number(lock.date.split('/')[1]) - 1,
-              Number(lock.date.split('/')[0])
-            );
-            endDate.setHours(Number(lock.endTime.split(':')[0]));
-            endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-            endDate.setSeconds(0);
+          // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+          //   currentDate,
+          //   today
+          // ) as ScheduleEvent[];
 
-            if (
-              isAfter(endDate, currentDate) ||
-              isEqual(endDate, currentDate)
-            ) {
+          const weeklyScheduleLocksEvents: ScheduleEvent[] =
+            !today.startTime && !today.endTime
+              ? []
+              : (today?.locks?.map((lock: WeeklyScheduleLock) => {
+                  return buildWeeklyScheduleLocks(currentDate, lock);
+                }) as ScheduleEvent[]);
+
+          const mappedScheduleLocks: Event[] =
+            firstSchedule?.content?.scheduleLocks.map((lock) => {
+              const startDate = new Date(
+                Number(lock.date.split('/')[2]),
+                Number(lock.date.split('/')[1]) - 1,
+                Number(lock.date.split('/')[0])
+              );
+              startDate.setHours(Number(lock.startTime.split(':')[0]));
+              startDate.setMinutes(Number(lock.startTime.split(':')[1]));
+              startDate.setSeconds(0);
+              const endDate = new Date(
+                Number(lock.date.split('/')[2]),
+                Number(lock.date.split('/')[1]) - 1,
+                Number(lock.date.split('/')[0])
+              );
+              endDate.setHours(Number(lock.endTime.split(':')[0]));
+              endDate.setMinutes(Number(lock.endTime.split(':')[1]));
+              endDate.setSeconds(0);
+
+              if (
+                isAfter(endDate, currentDate) ||
+                isEqual(endDate, currentDate)
+              ) {
+                return {
+                  start: startDate,
+                  end: endDate,
+                  resource: `${lock.resource}/${lock.id}`,
+                };
+              }
+            }) as Event[];
+
+          const validScheduleLocks = mappedScheduleLocks.filter((lock) => lock);
+
+          const mappedEvents: Event[] =
+            firstSchedule?.content?.appointments.map((event) => {
+              const startTime = event.startDate.split('T')[1].substring(0, 5);
+              const startDate = new Date(event.startDate);
+              startDate.setHours(Number(startTime.split(':')[0]));
+              startDate.setMinutes(Number(startTime.split(':')[1]));
+              startDate.setSeconds(0);
+              const endTime = event.endDate.split('T')[1].substring(0, 5);
+              const endDate = new Date(event.endDate);
+              endDate.setHours(Number(endTime.split(':')[0]));
+              endDate.setMinutes(Number(endTime.split(':')[1]));
+              endDate.setSeconds(0);
+
               return {
                 start: startDate,
                 end: endDate,
-                resource: `${lock.resource}/${lock.id}`,
+                title: event.title,
+                resource: event?.updatedAt
+                  ? `${event.resource}/${event.id}/${event.updatedAt}`
+                  : `${event.resource}/${event.id}`,
               };
-            }
-          }) as Event[];
+            }) as Event[];
 
-        const validScheduleLocks = mappedScheduleLocks.filter((lock) => lock);
-
-        const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
-          (event) => {
-            const startTime = event.startDate.split('T')[1].substring(0, 5);
-            const startDate = new Date(event.startDate);
-            startDate.setHours(Number(startTime.split(':')[0]));
-            startDate.setMinutes(Number(startTime.split(':')[1]));
-            startDate.setSeconds(0);
-            const endTime = event.endDate.split('T')[1].substring(0, 5);
-            const endDate = new Date(event.endDate);
-            endDate.setHours(Number(endTime.split(':')[0]));
-            endDate.setMinutes(Number(endTime.split(':')[1]));
-            endDate.setSeconds(0);
-
-            return {
-              start: startDate,
-              end: endDate,
-              title: event.title,
-              resource: event?.updatedAt
-                ? `${event.resource}/${event.id}/${event.updatedAt}`
-                : `${event.resource}/${event.id}`,
-            };
-          }
-        ) as Event[];
-
-        setRetrievedWeeklySchedule(
-          firstSchedule?.content?.weeklySchedule || []
-        );
-        setEvents([
-          //...weeklyScheduleEvents,
-          ...weeklyScheduleLocksEvents,
-          ...validScheduleLocks,
-          ...mappedEvents,
-        ]);
+          setRetrievedWeeklySchedule(
+            firstSchedule?.content?.weeklySchedule || []
+          );
+          setEvents([
+            //...weeklyScheduleEvents,
+            ...weeklyScheduleLocksEvents,
+            ...validScheduleLocks,
+            ...mappedEvents,
+          ]);
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
+        console.log('ERROR', e);
         showAlert({
           text: e?.response?.data?.message || 'Ocorreu um problema inesperado',
           icon: 'error',
@@ -752,11 +781,14 @@ const Schedule = (): JSX.Element => {
         tooltipAccessor={() => ''}
         dayPropGetter={dayPropGetter}
         components={{
-          toolbar: (toolbar: ToolbarProps) =>
-            TopToolbar({
-              ...toolbar,
-              onRangeChange,
-            }),
+          toolbar:
+            retrievedWeeklySchedule.length > 0
+              ? (toolbar: ToolbarProps) =>
+                  TopToolbar({
+                    ...toolbar,
+                    onRangeChange,
+                  })
+              : () => AlterTopToolbar(),
           month: {
             dateHeader: (props) => CustomDateHeader({ ...props, events }),
             header: CustomHeaderMonth,

@@ -33,10 +33,21 @@ import { ScheduleEvent } from '@interfaces/ScheduleEvent';
 import { buildWeeklyScheduleLocks, weekRange } from '@utils/schedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { dateFormat } from '@utils/dateFormat';
-import { getDay, isAfter, isEqual } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  getDay,
+  isAfter,
+  isEqual,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
+  setDate: (date: Date) => void;
 } & ToolbarProps;
 
 const TopToolbar = ({
@@ -45,6 +56,7 @@ const TopToolbar = ({
   onView,
   view,
   date,
+  setDate,
 }: CustomToolbarProps): JSX.Element => {
   const navigate = useNavigate();
   const {
@@ -72,17 +84,68 @@ const TopToolbar = ({
   };
 
   const goToBack = () => {
-    onNavigate('PREV');
+    switch (view) {
+      case 'day': {
+        onNavigate('PREV');
+        const newDate = subDays(date, 1);
+        setDate(newDate);
+        break;
+      }
+      case 'week': {
+        onNavigate('PREV');
+        const newDate = subWeeks(date, 1);
+        setDate(newDate);
+        break;
+      }
+      case 'month': {
+        onNavigate('PREV');
+        const newDate = subMonths(date, 1);
+        setDate(newDate);
+        break;
+      }
+      default: {
+        onNavigate('PREV');
+        const newDate = subDays(date, 1);
+        setDate(newDate);
+        break;
+      }
+    }
   };
 
   const goToNext = () => {
-    onNavigate('NEXT');
+    switch (view) {
+      case 'day': {
+        onNavigate('NEXT');
+        const newDate = addDays(date, 1);
+        setDate(newDate);
+        break;
+      }
+      case 'week': {
+        onNavigate('NEXT');
+        const newDate = addWeeks(date, 1);
+        setDate(newDate);
+        break;
+      }
+      case 'month': {
+        onNavigate('NEXT');
+        const newDate = addMonths(date, 1);
+        setDate(newDate);
+        break;
+      }
+      default: {
+        onNavigate('NEXT');
+        const newDate = addDays(date, 1);
+        setDate(newDate);
+        break;
+      }
+    }
   };
 
   const goToCurrent = () => {
     onNavigate('TODAY');
     onView('day');
     onRangeChange([new Date()], 'day');
+    setDate(new Date());
   };
 
   const onChangeProfessional = async (

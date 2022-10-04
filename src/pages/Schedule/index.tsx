@@ -7,6 +7,7 @@ import {
   Messages,
   ToolbarProps,
   SlotInfo,
+  NavigateAction,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';
@@ -124,6 +125,9 @@ const Schedule = (): JSX.Element => {
   const [currentEnd, setCurrentEnd] = useState<Date>(new Date());
   const [currentView, setCurrentView] = useState<string>('day');
   const previousRange = useRef<string[]>();
+  const viewRef = useRef('day');
+  const [view, setView] = useState<View>('day');
+  const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
     (async () => {
@@ -299,7 +303,8 @@ const Schedule = (): JSX.Element => {
     (range: Date[] | Ranges, view?: View | undefined) => {
       console.log('RANGE', range, view);
 
-      setCurrentView((prev) => (view === undefined ? prev : (view as string)));
+      //setCurrentView((prev) => (view === undefined ? prev : (view as string)));
+      viewRef.current = view === undefined ? viewRef.current : view;
 
       const allEvents: Event[] = [];
       const dates: Date[] = range as Date[];
@@ -329,7 +334,7 @@ const Schedule = (): JSX.Element => {
           );
 
           if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-            if (view === 'week' || currentView === 'week') {
+            if (view === 'week' || viewRef.current === 'week') {
               const weeklySchedule: Event[] = buildWeeklySchedule(
                 date,
                 today as WeeklySchedule
@@ -458,8 +463,6 @@ const Schedule = (): JSX.Element => {
         return;
       }
 
-      console.log('CURRR', currentView);
-
       dates.forEach((date: Date) => {
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
@@ -469,15 +472,13 @@ const Schedule = (): JSX.Element => {
         );
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-          if (view === 'week' || currentView === 'week') {
-            console.log('ENTREI NA WEEK');
+          if (view === 'week' || viewRef.current === 'week') {
             const weeklySchedule: Event[] = buildWeeklySchedule(
               date,
               today as WeeklySchedule
             );
             allEvents.push(...weeklySchedule);
           }
-
           const weeklyScheduleLocks: Event[] =
             (today?.locks?.map((lock: WeeklyScheduleLock) => {
               const newLock = buildWeeklyScheduleLocks(date, lock);
@@ -504,21 +505,17 @@ const Schedule = (): JSX.Element => {
         (item) => item.dayOfTheWeek === dayIndex
       ) as WeeklySchedule;
 
-      const newCurrentStart = range[0] as Date;
-      if (today.startTime) {
+      if (today.startTime && today.endTime) {
+        const newCurrentStart = new Date(range[0].getTime()) as Date;
         newCurrentStart.setHours(Number(today.startTime.split(':')[0]));
         newCurrentStart.setMinutes(Number(today.startTime.split(':')[1]));
-      }
+        setCurrentStart(newCurrentStart);
 
-      const newCurrentEnd = range[0] as Date;
-
-      if (today.endTime) {
+        const newCurrentEnd = new Date(range[0].getTime()) as Date;
         newCurrentEnd.setHours(Number(today.endTime.split(':')[0]));
         newCurrentEnd.setMinutes(Number(today.endTime.split(':')[1]));
+        setCurrentEnd(newCurrentEnd);
       }
-      setCurrentStart(newCurrentStart);
-      setCurrentEnd(newCurrentEnd);
-      console.log('tdoday', today, newCurrentStart, newCurrentEnd);
 
       if (!previousRange.current?.includes(startDate)) {
         console.log('RANGES', startDate, endDate);
@@ -624,10 +621,20 @@ const Schedule = (): JSX.Element => {
           .finally(() => setScheduleLoading(false));
       }
     },
-    [retrievedWeeklySchedule]
+    [retrievedWeeklySchedule, viewRef]
   );
 
   console.log('EVENTS,', events);
+
+  const onDrillDown = (date: Date, view?: View) => {
+    onRangeChange([date], view);
+    setView(view as View);
+    setDate(date);
+  };
+
+  const onNavigate = (newDate: Date) => {
+    setDate(newDate);
+  };
 
   if (loading)
     return (
@@ -749,6 +756,7 @@ const Schedule = (): JSX.Element => {
         culture="pt-BR"
         step={currentProfessional?.baseDuration}
         defaultView="day"
+        drilldownView="day"
         formats={{
           eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
         }}
@@ -765,6 +773,11 @@ const Schedule = (): JSX.Element => {
         dayLayoutAlgorithm="no-overlap"
         slotPropGetter={slotPropGetter}
         eventPropGetter={eventStyleGetter}
+        view={view}
+        date={date}
+        onView={(view: View) => setView(view)}
+        onDrillDown={onDrillDown}
+        onNavigate={onNavigate}
         messages={messages}
         onSelectEvent={(event: Event) =>
           statusFromResource(event.resource) && setCurrentEvent(event)
@@ -777,8 +790,8 @@ const Schedule = (): JSX.Element => {
           setCurrentSlotInfo(slotInfo)
         }
         selectable
-        min={currentView === 'day' ? currentStart : undefined}
-        max={currentView === 'day' ? currentEnd : undefined}
+        min={viewRef.current === 'day' ? currentStart : undefined}
+        max={viewRef.current === 'day' ? currentEnd : undefined}
         onSelecting={() => false}
         popup={true}
         tooltipAccessor={() => ''}
@@ -790,10 +803,17 @@ const Schedule = (): JSX.Element => {
                   TopToolbar({
                     ...toolbar,
                     onRangeChange,
+                    date,
+                    setDate,
+                    view,
                   })
               : () => AlterTopToolbar(),
           month: {
-            dateHeader: (props) => CustomDateHeader({ ...props, events }),
+            dateHeader: (props) =>
+              CustomDateHeader({
+                ...props,
+                events,
+              }),
             header: CustomHeaderMonth,
             event: CustomEventMonth,
           },

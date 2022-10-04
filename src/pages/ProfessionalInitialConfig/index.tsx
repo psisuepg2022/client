@@ -103,11 +103,7 @@ const ProfessionalInitialConfig = (): JSX.Element => {
     const formData: ConfigFormProps = { ...data } as ConfigFormProps;
 
     const emptyDay = weeklySchedule.find(
-      (item) =>
-        item.altered === false ||
-        (item.startTime === '00:00' &&
-          item.endTime === '00:00' &&
-          !item.disableDay)
+      (item) => item.altered === false && !item.disableDay
     );
     if (emptyDay !== undefined) {
       showAlert({

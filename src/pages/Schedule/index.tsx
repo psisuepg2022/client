@@ -458,6 +458,8 @@ const Schedule = (): JSX.Element => {
         return;
       }
 
+      console.log('CURRR', currentView);
+
       dates.forEach((date: Date) => {
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
@@ -502,13 +504,13 @@ const Schedule = (): JSX.Element => {
         (item) => item.dayOfTheWeek === dayIndex
       ) as WeeklySchedule;
 
-      const newCurrentStart = new Date(range[0] as Date);
+      const newCurrentStart = range[0] as Date;
       if (today.startTime) {
         newCurrentStart.setHours(Number(today.startTime.split(':')[0]));
         newCurrentStart.setMinutes(Number(today.startTime.split(':')[1]));
       }
 
-      const newCurrentEnd = new Date(range[0] as Date);
+      const newCurrentEnd = range[0] as Date;
 
       if (today.endTime) {
         newCurrentEnd.setHours(Number(today.endTime.split(':')[0]));
@@ -516,6 +518,7 @@ const Schedule = (): JSX.Element => {
       }
       setCurrentStart(newCurrentStart);
       setCurrentEnd(newCurrentEnd);
+      console.log('tdoday', today, newCurrentStart, newCurrentEnd);
 
       if (!previousRange.current?.includes(startDate)) {
         console.log('RANGES', startDate, endDate);

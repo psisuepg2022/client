@@ -11,7 +11,7 @@ export const CustomDateHeaderContainer = styled('div')`
 `;
 
 export const CustomDateHeaderContent = styled('div')`
-  background-color: ${colors.PRIMARY};
+  // background-color: ${colors.PRIMARY};
   border-radius: 20px;
   width: 40px;
   height: 40px;
@@ -22,9 +22,9 @@ export const CustomDateHeaderContent = styled('div')`
 `;
 
 export const CustomDateHeaderText = styled(Typography)`
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 600;
-  color: #fff;
+  color: ${colors.PRIMARY};
 `;
 
 export const CustomDateHeaderLink = styled('a')`

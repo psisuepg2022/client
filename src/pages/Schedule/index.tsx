@@ -7,7 +7,6 @@ import {
   Messages,
   ToolbarProps,
   SlotInfo,
-  NavigateAction,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';
@@ -123,7 +122,6 @@ const Schedule = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentStart, setCurrentStart] = useState<Date>(new Date());
   const [currentEnd, setCurrentEnd] = useState<Date>(new Date());
-  const [currentView, setCurrentView] = useState<string>('day');
   const previousRange = useRef<string[]>();
   const viewRef = useRef('day');
   const [view, setView] = useState<View>('day');
@@ -793,7 +791,7 @@ const Schedule = (): JSX.Element => {
           (user.permissions.includes('CREATE_APPOINTMENT') ||
             user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
           isAfter(slotInfo.start, new Date()) &&
-          currentView === 'day' &&
+          viewRef.current === 'day' &&
           setCurrentSlotInfo(slotInfo)
         }
         selectable

@@ -515,6 +515,13 @@ const Schedule = (): JSX.Element => {
         newCurrentEnd.setHours(Number(today.endTime.split(':')[0]));
         newCurrentEnd.setMinutes(Number(today.endTime.split(':')[1]));
         setCurrentEnd(newCurrentEnd);
+      } else {
+        const empty = new Date();
+        empty.setHours(0);
+        empty.setMinutes(0);
+        empty.setSeconds(0);
+        setCurrentEnd(empty);
+        setCurrentStart(empty);
       }
 
       if (!previousRange.current?.includes(startDate)) {

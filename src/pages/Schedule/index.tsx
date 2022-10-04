@@ -112,6 +112,10 @@ const Schedule = (): JSX.Element => {
     setEvents,
     retrievedWeeklySchedule,
     setRetrievedWeeklySchedule,
+    currentEnd,
+    currentStart,
+    setCurrentEnd,
+    setCurrentStart,
   } = useSchedule();
   const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(
     undefined
@@ -120,8 +124,7 @@ const Schedule = (): JSX.Element => {
     undefined
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentStart, setCurrentStart] = useState<Date>(new Date());
-  const [currentEnd, setCurrentEnd] = useState<Date>(new Date());
+
   const previousRange = useRef<string[]>();
   const viewRef = useRef('day');
   const [view, setView] = useState<View>('day');
@@ -197,10 +200,12 @@ const Schedule = (): JSX.Element => {
           const initialStart = new Date();
           initialStart.setHours(Number(today.startTime.split(':')[0]));
           initialStart.setMinutes(Number(today.startTime.split(':')[1]));
+          initialStart.setSeconds(0);
 
           const initialEnd = new Date();
           initialEnd.setHours(Number(today.endTime.split(':')[0]));
           initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
+          initialEnd.setSeconds(0);
 
           setCurrentStart(initialStart);
           setCurrentEnd(initialEnd);
@@ -507,11 +512,13 @@ const Schedule = (): JSX.Element => {
         const newCurrentStart = new Date(range[0].getTime()) as Date;
         newCurrentStart.setHours(Number(today.startTime.split(':')[0]));
         newCurrentStart.setMinutes(Number(today.startTime.split(':')[1]));
+        newCurrentStart.setSeconds(0);
         setCurrentStart(newCurrentStart);
 
         const newCurrentEnd = new Date(range[0].getTime()) as Date;
         newCurrentEnd.setHours(Number(today.endTime.split(':')[0]));
         newCurrentEnd.setMinutes(Number(today.endTime.split(':')[1]));
+        newCurrentEnd.setSeconds(0);
         setCurrentEnd(newCurrentEnd);
       } else {
         const empty = new Date();
@@ -659,6 +666,7 @@ const Schedule = (): JSX.Element => {
       </div>
     );
 
+  console.log('slot', currentSlotInfo);
   return (
     <>
       <Modal

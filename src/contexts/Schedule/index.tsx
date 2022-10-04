@@ -41,6 +41,10 @@ type ScheduleContextData = {
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
   retrievedWeeklySchedule: WeeklySchedule[];
   setRetrievedWeeklySchedule: (weeklySchedule: WeeklySchedule[]) => void;
+  currentStart: Date;
+  setCurrentStart: React.Dispatch<React.SetStateAction<Date>>;
+  currentEnd: Date;
+  setCurrentEnd: React.Dispatch<React.SetStateAction<Date>>;
 };
 
 type ScheduleProviderProps = {
@@ -65,6 +69,8 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   const [retrievedWeeklySchedule, setRetrievedWeeklySchedule] = useState<
     WeeklySchedule[]
   >([]);
+  const [currentStart, setCurrentStart] = useState<Date>(new Date());
+  const [currentEnd, setCurrentEnd] = useState<Date>(new Date());
 
   const getScheduleEvents = async (
     filter: {
@@ -169,6 +175,10 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
         retrievedWeeklySchedule,
         setRetrievedWeeklySchedule,
         getById,
+        currentStart,
+        setCurrentStart,
+        currentEnd,
+        setCurrentEnd,
       }}
     >
       {children}

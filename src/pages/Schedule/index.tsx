@@ -814,7 +814,9 @@ const Schedule = (): JSX.Element => {
           onSelecting={() => false}
           popup={true}
           tooltipAccessor={() => ''}
-          dayPropGetter={() => dayPropGetter(isEqual(currentStart, currentEnd))}
+          dayPropGetter={() =>
+            dayPropGetter(isEqual(currentStart, currentEnd) && view === 'day')
+          }
           components={{
             toolbar:
               retrievedWeeklySchedule.length > 0

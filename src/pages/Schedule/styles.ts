@@ -47,3 +47,18 @@ export const LogoContainer = styled('img')`
   width: 100px;
   height: auto;
 `;
+
+export const DisableDayContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  justify-content: center;
+  height: 100%;
+`;
+
+export const DisableDayContent = styled('div')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;

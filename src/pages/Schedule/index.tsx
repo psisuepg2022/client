@@ -37,7 +37,7 @@ import ScheduledEventModal from '@components/ScheduledEventModal';
 import { ScheduleEvent } from '@interfaces/ScheduleEvent';
 import { useAuth } from '@contexts/Auth';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
-import { LogoContainer } from '@pages/Schedule/styles';
+import { DisableDayContainer, LogoContainer } from '@pages/Schedule/styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { useSchedule } from '@contexts/Schedule';
@@ -763,7 +763,9 @@ const Schedule = (): JSX.Element => {
           />
         )}
       {scheduleLoading ? (
-        <AlterTopToolbar />
+        <DisableDayContainer>
+          <AlterTopToolbar />
+        </DisableDayContainer>
       ) : (
         <Calendar
           localizer={localizer}

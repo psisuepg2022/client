@@ -324,7 +324,7 @@ const TopToolbar = ({
     }
   };
 
-  const label = () => {
+  const dayLabel = () => {
     const toFormatDate = date;
     return (
       <DayTitle>
@@ -352,7 +352,7 @@ const TopToolbar = ({
           <IconButton onClick={goToBack}>
             <AiOutlineLeft style={{ color: '#FFF', fontSize: 30 }} />
           </IconButton>
-          {label()}
+          {dayLabel()}
           <IconButton onClick={goToNext}>
             <AiOutlineRight style={{ color: '#FFF', fontSize: 30 }} />
           </IconButton>

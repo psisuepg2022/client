@@ -20,8 +20,9 @@ import ScheduleLabelModal from '@components/ScheduleLabelModal';
 const SideBar = (): JSX.Element => {
   const {
     user: { permissions },
+    sideBarExpanded,
+    setSideBarExpanded,
   } = useAuth();
-  const [expanded, setExpanded] = useState<boolean>(true);
   const [labelModal, setLabelModal] = useState<boolean>(false);
 
   const renderLinks = (): SideBarLinks[] => {
@@ -40,11 +41,11 @@ const SideBar = (): JSX.Element => {
     return resultRoutes;
   };
 
-  if (!expanded) {
+  if (!sideBarExpanded) {
     return (
       <CollapsedContainer>
         <CollapsedHeader>
-          <IconButton size="small" onClick={() => setExpanded(true)}>
+          <IconButton size="small" onClick={() => setSideBarExpanded(true)}>
             <AiOutlineRight style={{ color: '#FFF', fontSize: 35 }} />
           </IconButton>
         </CollapsedHeader>
@@ -66,7 +67,7 @@ const SideBar = (): JSX.Element => {
   return (
     <Container>
       <Header>
-        <IconButton size="small" onClick={() => setExpanded(false)}>
+        <IconButton size="small" onClick={() => setSideBarExpanded(false)}>
           <AiOutlineClose style={{ color: '#FFF', fontSize: 35 }} />
         </IconButton>
       </Header>

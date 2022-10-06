@@ -26,6 +26,8 @@ type AuthContextData = {
     confirmNewPassword: string
   ) => Promise<Response<boolean>>;
   isAuthenticated: boolean;
+  sideBarExpanded: boolean;
+  setSideBarExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type AuthProviderProps = {
@@ -51,6 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }
     return {} as User;
   });
+  const [sideBarExpanded, setSideBarExpanded] = useState<boolean>(true);
 
   const signIn = async (credentials: AuthCredentials): Promise<User> => {
     const { data }: { data: Response<LoginResponse> } = await api.post('auth', {
@@ -106,6 +109,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         setUser,
         changePassword,
         isAuthenticated: Object.keys(user).length !== 0,
+        sideBarExpanded,
+        setSideBarExpanded,
       }}
     >
       {children}

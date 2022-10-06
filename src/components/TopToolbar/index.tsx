@@ -189,27 +189,26 @@ const TopToolbar = ({
 
         if (today.startTime && today.endTime) {
           const initialStart = new Date();
-          initialStart.setHours(Number(today.startTime.split(':')[0]));
-          initialStart.setMinutes(Number(today.startTime.split(':')[1]));
-          initialStart.setSeconds(0);
-
+          initialStart.setHours(
+            Number(today.startTime.split(':')[0]),
+            Number(today.startTime.split(':')[1]),
+            0
+          );
           const initialEnd = new Date();
-          initialEnd.setHours(Number(today.endTime.split(':')[0]));
-          initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
-          initialEnd.setSeconds(0);
+          initialEnd.setHours(
+            Number(today.endTime.split(':')[0]),
+            Number(today.endTime.split(':')[1]),
+            0
+          );
 
           setCurrentStart(initialStart);
           setCurrentEnd(initialEnd);
         } else {
           const initialStart = new Date();
-          initialStart.setHours(0);
-          initialStart.setMinutes(0);
-          initialStart.setSeconds(0);
+          initialStart.setHours(0, 0, 0);
 
           const initialEnd = new Date();
-          initialEnd.setHours(0);
-          initialEnd.setMinutes(0);
-          initialEnd.setSeconds(0);
+          initialEnd.setHours(0, 0, 0);
 
           setCurrentStart(initialStart);
           setCurrentEnd(initialEnd);
@@ -235,17 +234,21 @@ const TopToolbar = ({
               Number(month) - 1,
               Number(day)
             );
-            startDate.setHours(Number(lock.startTime.split(':')[0]));
-            startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-            startDate.setSeconds(0);
+            startDate.setHours(
+              Number(lock.startTime.split(':')[0]),
+              Number(lock.startTime.split(':')[1]),
+              0
+            );
             const endDate = new Date(
               Number(year),
               Number(month) - 1,
               Number(day)
             );
-            endDate.setHours(Number(lock.endTime.split(':')[0]));
-            endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-            endDate.setSeconds(0);
+            endDate.setHours(
+              Number(lock.endTime.split(':')[0]),
+              Number(lock.endTime.split(':')[1]),
+              0
+            );
 
             if (
               isAfter(endDate, currentDate) ||
@@ -268,14 +271,18 @@ const TopToolbar = ({
           professionalSchedule?.content?.appointments.map((event) => {
             const startTime = event.startDate.split('T')[1].substring(0, 5);
             const startDate = new Date(event.startDate);
-            startDate.setHours(Number(startTime.split(':')[0]));
-            startDate.setMinutes(Number(startTime.split(':')[1]));
-            startDate.setSeconds(0);
+            startDate.setHours(
+              Number(startTime.split(':')[0]),
+              Number(startTime.split(':')[1]),
+              0
+            );
             const endTime = event.endDate.split('T')[1].substring(0, 5);
             const endDate = new Date(event.endDate);
-            endDate.setHours(Number(endTime.split(':')[0]));
-            endDate.setMinutes(Number(endTime.split(':')[1]));
-            endDate.setSeconds(0);
+            endDate.setHours(
+              Number(endTime.split(':')[0]),
+              Number(endTime.split(':')[1]),
+              0
+            );
             return {
               start: startDate,
               end: endDate,

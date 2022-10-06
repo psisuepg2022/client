@@ -119,9 +119,11 @@ const ConfirmedEventModal = ({
       .split('T')[1]
       .substring(0, 5);
     const updateDate = new Date(updatedAtFromResource(eventInfo.resource));
-    updateDate.setHours(Number(updateTime.split(':')[0]));
-    updateDate.setMinutes(Number(updateTime.split(':')[1]));
-
+    updateDate.setHours(
+      Number(updateTime.split(':')[0]),
+      Number(updateTime.split(':')[1]),
+      0
+    );
     return dateFormat({
       date: updateDate,
       // eslint-disable-next-line quotes

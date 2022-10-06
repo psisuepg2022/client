@@ -14,7 +14,7 @@ import {
   StyledConfirmButton,
   StyledModal,
 } from './styles';
-import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
+import { MdOutlineClose } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
@@ -29,7 +29,6 @@ import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
 import { useAuth } from '@contexts/Auth';
-import { useNavigate } from 'react-router-dom';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -47,7 +46,6 @@ const ScheduledEventModal = ({
     user: { permissions },
   } = useAuth();
   const [loading, setLoading] = useState<string>('');
-  const navigate = useNavigate();
 
   if (!eventInfo) return <></>;
 
@@ -119,8 +117,11 @@ const ScheduledEventModal = ({
       .split('T')[1]
       .substring(0, 5);
     const updateDate = new Date(updatedAtFromResource(eventInfo.resource));
-    updateDate.setHours(Number(updateTime.split(':')[0]));
-    updateDate.setMinutes(Number(updateTime.split(':')[1]));
+    updateDate.setHours(
+      Number(updateTime.split(':')[0]),
+      Number(updateTime.split(':')[1]),
+      0
+    );
 
     return dateFormat({
       date: updateDate,

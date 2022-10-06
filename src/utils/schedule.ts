@@ -105,13 +105,17 @@ export const buildWeeklyScheduleLocks = (
   lock: WeeklyScheduleLock
 ): Event => {
   const startDate = new Date(date.getTime());
-  startDate.setHours(Number(lock.startTime.split(':')[0]));
-  startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-  startDate.setSeconds(0);
+  startDate.setHours(
+    Number(lock.startTime.split(':')[0]),
+    Number(lock.startTime.split(':')[1]),
+    0
+  );
   const endDate = new Date(date.getTime());
-  endDate.setHours(Number(lock.endTime.split(':')[0]));
-  endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-  endDate.setSeconds(0);
+  endDate.setHours(
+    Number(lock.endTime.split(':')[0]),
+    Number(lock.endTime.split(':')[1]),
+    0
+  );
 
   return {
     start: startDate,

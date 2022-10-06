@@ -199,14 +199,18 @@ const Schedule = (): JSX.Element => {
 
           if (today.startTime && today.endTime) {
             const initialStart = new Date();
-            initialStart.setHours(Number(today.startTime.split(':')[0]));
-            initialStart.setMinutes(Number(today.startTime.split(':')[1]));
-            initialStart.setSeconds(0);
+            initialStart.setHours(
+              Number(today.startTime.split(':')[0]),
+              Number(today.startTime.split(':')[1]),
+              0
+            );
 
             const initialEnd = new Date();
-            initialEnd.setHours(Number(today.endTime.split(':')[0]));
-            initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
-            initialEnd.setSeconds(0);
+            initialEnd.setHours(
+              Number(today.endTime.split(':')[0]),
+              Number(today.endTime.split(':')[1]),
+              0
+            );
 
             setCurrentStart(initialStart);
             setCurrentEnd(initialEnd);
@@ -231,17 +235,21 @@ const Schedule = (): JSX.Element => {
                 Number(lock.date.split('/')[1]) - 1,
                 Number(lock.date.split('/')[0])
               );
-              startDate.setHours(Number(lock.startTime.split(':')[0]));
-              startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-              startDate.setSeconds(0);
+              startDate.setHours(
+                Number(lock.startTime.split(':')[0]),
+                Number(lock.startTime.split(':')[1]),
+                0
+              );
               const endDate = new Date(
                 Number(lock.date.split('/')[2]),
                 Number(lock.date.split('/')[1]) - 1,
                 Number(lock.date.split('/')[0])
               );
-              endDate.setHours(Number(lock.endTime.split(':')[0]));
-              endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-              endDate.setSeconds(0);
+              endDate.setHours(
+                Number(lock.endTime.split(':')[0]),
+                Number(lock.endTime.split(':')[1]),
+                0
+              );
 
               if (
                 isAfter(endDate, currentDate) ||
@@ -261,14 +269,18 @@ const Schedule = (): JSX.Element => {
             firstSchedule?.content?.appointments.map((event) => {
               const startTime = event.startDate.split('T')[1].substring(0, 5);
               const startDate = new Date(event.startDate);
-              startDate.setHours(Number(startTime.split(':')[0]));
-              startDate.setMinutes(Number(startTime.split(':')[1]));
-              startDate.setSeconds(0);
+              startDate.setHours(
+                Number(startTime.split(':')[0]),
+                Number(startTime.split(':')[1]),
+                0
+              );
               const endTime = event.endDate.split('T')[1].substring(0, 5);
               const endDate = new Date(event.endDate);
-              endDate.setHours(Number(endTime.split(':')[0]));
-              endDate.setMinutes(Number(endTime.split(':')[1]));
-              endDate.setSeconds(0);
+              endDate.setHours(
+                Number(endTime.split(':')[0]),
+                Number(endTime.split(':')[1]),
+                0
+              );
 
               return {
                 start: startDate,
@@ -394,17 +406,21 @@ const Schedule = (): JSX.Element => {
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  startDate.setHours(Number(lock.startTime.split(':')[0]));
-                  startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(lock.startTime.split(':')[0]),
+                    Number(lock.startTime.split(':')[1]),
+                    0
+                  );
                   const endDate = new Date(
                     Number(lock.date.split('/')[2]),
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  endDate.setHours(Number(lock.endTime.split(':')[0]));
-                  endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
 
                   if (
                     isAfter(startDate, currentDate) ||
@@ -429,14 +445,18 @@ const Schedule = (): JSX.Element => {
                     .split('T')[1]
                     .substring(0, 5);
                   const startDate = new Date(event.startDate);
-                  startDate.setHours(Number(startTime.split(':')[0]));
-                  startDate.setMinutes(Number(startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(startTime.split(':')[0]),
+                    Number(startTime.split(':')[1]),
+                    0
+                  );
                   const endTime = event.endDate.split('T')[1].substring(0, 5);
                   const endDate = new Date(event.endDate);
-                  endDate.setHours(Number(endTime.split(':')[0]));
-                  endDate.setMinutes(Number(endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(endTime.split(':')[0]),
+                    Number(endTime.split(':')[1]),
+                    0
+                  );
 
                   return {
                     title: `${event.title}`,
@@ -512,21 +532,23 @@ const Schedule = (): JSX.Element => {
 
       if (today.startTime && today.endTime) {
         const newCurrentStart = new Date(range[0].getTime()) as Date;
-        newCurrentStart.setHours(Number(today.startTime.split(':')[0]));
-        newCurrentStart.setMinutes(Number(today.startTime.split(':')[1]));
-        newCurrentStart.setSeconds(0);
+        newCurrentStart.setHours(
+          Number(today.startTime.split(':')[0]),
+          Number(today.startTime.split(':')[1]),
+          0
+        );
         setCurrentStart(newCurrentStart);
 
         const newCurrentEnd = new Date(range[0].getTime()) as Date;
-        newCurrentEnd.setHours(Number(today.endTime.split(':')[0]));
-        newCurrentEnd.setMinutes(Number(today.endTime.split(':')[1]));
-        newCurrentEnd.setSeconds(0);
+        newCurrentEnd.setHours(
+          Number(today.endTime.split(':')[0]),
+          Number(today.endTime.split(':')[1]),
+          0
+        );
         setCurrentEnd(newCurrentEnd);
       } else {
         const empty = new Date();
-        empty.setHours(0);
-        empty.setMinutes(0);
-        empty.setSeconds(0);
+        empty.setHours(0, 0, 0);
         setCurrentEnd(empty);
         setCurrentStart(empty);
       }
@@ -569,17 +591,21 @@ const Schedule = (): JSX.Element => {
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  startDate.setHours(Number(lock.startTime.split(':')[0]));
-                  startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(lock.startTime.split(':')[0]),
+                    Number(lock.startTime.split(':')[1]),
+                    0
+                  );
                   const endDate = new Date(
                     Number(lock.date.split('/')[2]),
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  endDate.setHours(Number(lock.endTime.split(':')[0]));
-                  endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
 
                   if (
                     isAfter(startDate, currentDate) ||
@@ -604,14 +630,18 @@ const Schedule = (): JSX.Element => {
                     .split('T')[1]
                     .substring(0, 5);
                   const startDate = new Date(event.startDate);
-                  startDate.setHours(Number(startTime.split(':')[0]));
-                  startDate.setMinutes(Number(startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(startTime.split(':')[0]),
+                    Number(startTime.split(':')[1]),
+                    0
+                  );
                   const endTime = event.endDate.split('T')[1].substring(0, 5);
                   const endDate = new Date(event.endDate);
-                  endDate.setHours(Number(endTime.split(':')[0]));
-                  endDate.setMinutes(Number(endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(endTime.split(':')[0]),
+                    Number(endTime.split(':')[1]),
+                    0
+                  );
 
                   return {
                     title: `${event.title}`,

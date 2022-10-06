@@ -14,7 +14,7 @@ import { SideBarLinks, sideBarLinks } from './SideBarLinks';
 import { colors } from '@global/colors';
 import { AiOutlineRight, AiOutlineClose } from 'react-icons/ai';
 import { useAuth } from '@contexts/Auth';
-import { BsQuestionCircle } from 'react-icons/bs';
+import { MdOutlineSubtitles } from 'react-icons/md';
 import ScheduleLabelModal from '@components/ScheduleLabelModal';
 
 const SideBar = (): JSX.Element => {
@@ -95,7 +95,7 @@ const SideBar = (): JSX.Element => {
           {location.pathname === '/schedule' && (
             <Tooltip title="Legenda de consultas da agenda">
               <IconButton onClick={() => setLabelModal(true)}>
-                <BsQuestionCircle size={40} style={{ color: '#FFF' }} />
+                <MdOutlineSubtitles size={40} style={{ color: '#FFF' }} />
               </IconButton>
             </Tooltip>
           )}

@@ -15,6 +15,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -275,7 +277,7 @@ const Professionals = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : professionals.length !== 0 ? (
             <ProfessionalsTable
               professionals={professionals}
               columns={
@@ -289,6 +291,10 @@ const Professionals = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não existem profissionais cadastrados</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

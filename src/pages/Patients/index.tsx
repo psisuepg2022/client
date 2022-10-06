@@ -20,6 +20,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import PatientsTable from './table';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
@@ -301,7 +303,7 @@ const Patients = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : patients.length !== 0 ? (
             <PatientsTable
               patients={patients}
               columns={columns}
@@ -310,6 +312,10 @@ const Patients = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não existem pacientes cadastrados</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

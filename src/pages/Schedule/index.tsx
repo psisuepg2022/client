@@ -197,18 +197,20 @@ const Schedule = (): JSX.Element => {
             (item) => item.dayOfTheWeek === dayIndex
           ) as WeeklySchedule;
 
-          const initialStart = new Date();
-          initialStart.setHours(Number(today.startTime.split(':')[0]));
-          initialStart.setMinutes(Number(today.startTime.split(':')[1]));
-          initialStart.setSeconds(0);
+          if (today.startTime && today.endTime) {
+            const initialStart = new Date();
+            initialStart.setHours(Number(today.startTime.split(':')[0]));
+            initialStart.setMinutes(Number(today.startTime.split(':')[1]));
+            initialStart.setSeconds(0);
 
-          const initialEnd = new Date();
-          initialEnd.setHours(Number(today.endTime.split(':')[0]));
-          initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
-          initialEnd.setSeconds(0);
+            const initialEnd = new Date();
+            initialEnd.setHours(Number(today.endTime.split(':')[0]));
+            initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
+            initialEnd.setSeconds(0);
 
-          setCurrentStart(initialStart);
-          setCurrentEnd(initialEnd);
+            setCurrentStart(initialStart);
+            setCurrentEnd(initialEnd);
+          }
 
           // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
           //   currentDate,

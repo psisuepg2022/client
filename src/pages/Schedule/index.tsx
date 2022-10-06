@@ -762,81 +762,85 @@ const Schedule = (): JSX.Element => {
             eventInfo={currentEvent}
           />
         )}
-      <Calendar
-        localizer={localizer}
-        events={events}
-        style={{ height: '100vh', width: '100%', fontFamily: 'Poppins' }}
-        views={['day', 'week', 'month']}
-        culture="pt-BR"
-        step={currentProfessional?.baseDuration}
-        defaultView="day"
-        drilldownView="day"
-        formats={{
-          eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
-        }}
-        timeslots={1}
-        onRangeChange={(
-          range:
-            | Date[]
-            | {
-                start: Date;
-                end: Date;
-              },
-          view?: View | undefined
-        ) => onRangeChange(range, view)}
-        dayLayoutAlgorithm="no-overlap"
-        slotPropGetter={slotPropGetter}
-        eventPropGetter={eventStyleGetter}
-        view={view}
-        date={date}
-        onView={(view: View) => setView(view)}
-        onDrillDown={onDrillDown}
-        onNavigate={onNavigate}
-        messages={messages}
-        onSelectEvent={(event: Event) =>
-          statusFromResource(event.resource) && setCurrentEvent(event)
-        }
-        onSelectSlot={(slotInfo: SlotInfo) =>
-          (user.permissions.includes('CREATE_APPOINTMENT') ||
-            user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
-          isAfter(slotInfo.start, new Date()) &&
-          viewRef.current === 'day' &&
-          setCurrentSlotInfo(slotInfo)
-        }
-        selectable
-        min={viewRef.current === 'day' ? currentStart : undefined}
-        max={viewRef.current === 'day' ? currentEnd : undefined}
-        onSelecting={() => false}
-        popup={true}
-        tooltipAccessor={() => ''}
-        dayPropGetter={() => dayPropGetter(isEqual(currentStart, currentEnd))}
-        components={{
-          toolbar:
-            retrievedWeeklySchedule.length > 0
-              ? (toolbar: ToolbarProps) =>
-                  TopToolbar({
-                    ...toolbar,
-                    onRangeChange,
-                    date,
-                    setDate,
-                    view,
-                  })
-              : () => AlterTopToolbar(),
-          month: {
-            dateHeader: (props) =>
-              CustomDateHeader({
-                ...props,
-                events,
-              }),
-            header: CustomHeaderMonth,
-            event: CustomEventMonth,
-          },
-          week: {
-            header: CustomHeaderWeek,
-          },
-          eventWrapper: CustomEventWrapper,
-        }}
-      />
+      {scheduleLoading ? (
+        <AlterTopToolbar />
+      ) : (
+        <Calendar
+          localizer={localizer}
+          events={events}
+          style={{ height: '100vh', width: '100%', fontFamily: 'Poppins' }}
+          views={['day', 'week', 'month']}
+          culture="pt-BR"
+          step={currentProfessional?.baseDuration}
+          defaultView="day"
+          drilldownView="day"
+          formats={{
+            eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
+          }}
+          timeslots={1}
+          onRangeChange={(
+            range:
+              | Date[]
+              | {
+                  start: Date;
+                  end: Date;
+                },
+            view?: View | undefined
+          ) => onRangeChange(range, view)}
+          dayLayoutAlgorithm="no-overlap"
+          slotPropGetter={slotPropGetter}
+          eventPropGetter={eventStyleGetter}
+          view={view}
+          date={date}
+          onView={(view: View) => setView(view)}
+          onDrillDown={onDrillDown}
+          onNavigate={onNavigate}
+          messages={messages}
+          onSelectEvent={(event: Event) =>
+            statusFromResource(event.resource) && setCurrentEvent(event)
+          }
+          onSelectSlot={(slotInfo: SlotInfo) =>
+            (user.permissions.includes('CREATE_APPOINTMENT') ||
+              user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
+            isAfter(slotInfo.start, new Date()) &&
+            viewRef.current === 'day' &&
+            setCurrentSlotInfo(slotInfo)
+          }
+          selectable
+          min={viewRef.current === 'day' ? currentStart : undefined}
+          max={viewRef.current === 'day' ? currentEnd : undefined}
+          onSelecting={() => false}
+          popup={true}
+          tooltipAccessor={() => ''}
+          dayPropGetter={() => dayPropGetter(isEqual(currentStart, currentEnd))}
+          components={{
+            toolbar:
+              retrievedWeeklySchedule.length > 0
+                ? (toolbar: ToolbarProps) =>
+                    TopToolbar({
+                      ...toolbar,
+                      onRangeChange,
+                      date,
+                      setDate,
+                      view,
+                    })
+                : () => AlterTopToolbar(),
+            month: {
+              dateHeader: (props) =>
+                CustomDateHeader({
+                  ...props,
+                  events,
+                }),
+              header: CustomHeaderMonth,
+              event: CustomEventMonth,
+            },
+            week: {
+              header: CustomHeaderWeek,
+            },
+            eventWrapper: CustomEventWrapper,
+          }}
+        />
+      )}
     </>
   );
 };

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { decodeToken } from 'react-jwt';
+import decode from 'jwt-decode';
 import { Response } from '@interfaces/Response';
 import { User } from '@models/User';
 import { api } from '../../service';
@@ -60,9 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       ...credentials,
     });
 
-    const decodedToken: User = decodeToken(
-      data.content?.accessToken || ''
-    ) as User;
+    const decodedToken: User = decode(data.content?.accessToken || '') as User;
 
     localStorage.setItem('@psis:accessToken', data.content?.accessToken || '');
     localStorage.setItem(

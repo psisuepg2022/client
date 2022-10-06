@@ -11,7 +11,7 @@ import {
 } from '@models/Professional';
 import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
 import { User } from '@models/User';
-import { decodeToken } from 'react-jwt';
+import decode from 'jwt-decode';
 
 type ListProps = {
   page?: number;
@@ -184,9 +184,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
       }
     );
 
-    const decodedToken: User = decodeToken(
-      data.content?.accessToken || ''
-    ) as User;
+    const decodedToken: User = decode(data.content?.accessToken || '') as User;
 
     return {
       accessToken: data.content?.accessToken as string,

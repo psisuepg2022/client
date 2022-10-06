@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import AlterTopToolbar from '@components/AlterTopToolbar';
-import { IconButton, TablePagination, Tooltip } from '@mui/material';
+import {
+  IconButton,
+  TablePagination,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { BsFillArrowRightCircleFill } from 'react-icons/bs';
 import {
@@ -80,15 +85,6 @@ const CommentList = (): JSX.Element => {
   }, [page]);
 
   const onSubmit = async (data: SearchProps): Promise<void> => {
-    const start = dateFormat({
-      date: data.start || new Date(),
-      stringFormat: 'yyyy-MM-dd',
-    });
-    const end = dateFormat({
-      date: data.end || new Date(),
-      stringFormat: 'yyyy-MM-dd',
-    });
-
     setLoading(true);
     searchActive.current = true;
     setPage(0);
@@ -98,8 +94,18 @@ const CommentList = (): JSX.Element => {
           size: PageSize,
           page,
           filter: {
-            start,
-            end,
+            start: data?.start
+              ? dateFormat({
+                  date: data.start as Date,
+                  stringFormat: 'yyyy-MM-dd',
+                })
+              : null,
+            end: data?.end
+              ? dateFormat({
+                  date: data.end as Date,
+                  stringFormat: 'yyyy-MM-dd',
+                })
+              : null,
           },
         },
         state.id
@@ -152,26 +158,8 @@ const CommentList = (): JSX.Element => {
             </div>
             <FormProvider {...formMethods}>
               <InputsForm id="search" onSubmit={handleSubmit(onSubmit)}>
-                <ControlledDatePicker
-                  name="start"
-                  label="Data inicial"
-                  rules={{
-                    required: {
-                      value: true,
-                      message: 'A data inicial é obrigatória',
-                    },
-                  }}
-                />
-                <ControlledDatePicker
-                  name="end"
-                  label="Data final"
-                  rules={{
-                    required: {
-                      value: true,
-                      message: 'A data final é obrigatória',
-                    },
-                  }}
-                />
+                <ControlledDatePicker name="start" label="Data inicial" />
+                <ControlledDatePicker name="end" label="Data final" />
               </InputsForm>
             </FormProvider>
             <StyledButton disabled={loading} form="search" type="submit">
@@ -186,67 +174,82 @@ const CommentList = (): JSX.Element => {
               height: '100%',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'column',
-                gap: '1rem',
-              }}
-            >
-              {comments.map((comment) => (
-                <CommentBox key={comment.appointmentDate}>
-                  <ScheduleStatus>
-                    Agendada em: <span>{comment.scheduledAt}</span>
-                  </ScheduleStatus>
-                  <ScheduleStatus>
-                    Data:{' '}
-                    <span>
-                      {dateFormat({
-                        date: isoToDate(`${comment.appointmentDate}`),
-                        stringFormat: 'dd/MM/yyyy | HH:mm',
-                      })}
-                      {' - '}
-                      {dateFormat({
-                        date: isoToDate(
-                          `${comment.appointmentDate}`,
-                          true,
-                          baseDuration
-                        ),
-                        stringFormat: 'HH:mm',
-                      })}
-                    </span>
-                  </ScheduleStatus>
-                  <ScheduleStatus>
-                    Concluída em: <span>{comment.completedAt}</span>
-                  </ScheduleStatus>
-                  <Tooltip title="Abrir anotação">
-                    <IconButton
-                      style={{
-                        width: 45,
-                        height: 45,
-                        justifySelf: 'flex-end',
-                        marginRight: 20,
-                      }}
-                      onClick={() => {
-                        navigate('/comment', {
-                          state: {
-                            start: comment.appointmentDate,
-                            title: state.name,
-                            resource: `CONCLUDED/${comment.id}`,
-                          },
-                        });
-                      }}
-                    >
-                      <BsFillArrowRightCircleFill
-                        size={35}
-                        style={{ color: colors.PRIMARY }}
-                      />
-                    </IconButton>
-                  </Tooltip>
-                </CommentBox>
-              ))}
-            </div>
+            {comments.length === 0 ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                <Typography style={{ fontWeight: 600, fontSize: '1.2rem' }}>
+                  Não existem consultas concluídas com anotações
+                </Typography>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                }}
+              >
+                {comments.map((comment) => (
+                  <CommentBox key={comment.appointmentDate}>
+                    <ScheduleStatus>
+                      Agendada em: <span>{comment.scheduledAt}</span>
+                    </ScheduleStatus>
+                    <ScheduleStatus>
+                      Data:{' '}
+                      <span>
+                        {dateFormat({
+                          date: isoToDate(`${comment.appointmentDate}`),
+                          stringFormat: 'dd/MM/yyyy | HH:mm',
+                        })}
+                        {' - '}
+                        {dateFormat({
+                          date: isoToDate(
+                            `${comment.appointmentDate}`,
+                            true,
+                            baseDuration
+                          ),
+                          stringFormat: 'HH:mm',
+                        })}
+                      </span>
+                    </ScheduleStatus>
+                    <ScheduleStatus>
+                      Concluída em: <span>{comment.completedAt}</span>
+                    </ScheduleStatus>
+                    <Tooltip title="Abrir anotação">
+                      <IconButton
+                        style={{
+                          width: 45,
+                          height: 45,
+                          justifySelf: 'flex-end',
+                          marginRight: 20,
+                        }}
+                        onClick={() => {
+                          navigate('/comment', {
+                            state: {
+                              start: comment.appointmentDate,
+                              title: state.name,
+                              resource: `CONCLUDED/${comment.id}`,
+                            },
+                          });
+                        }}
+                      >
+                        <BsFillArrowRightCircleFill
+                          size={35}
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  </CommentBox>
+                ))}
+              </div>
+            )}
             <TablePagination
               sx={{ overflow: 'hidden', minHeight: 60 }}
               rowsPerPageOptions={[]}

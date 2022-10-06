@@ -121,13 +121,15 @@ export const slotPropGetter: SlotPropGetter = () => {
   };
 };
 
-export const dayPropGetter = (): {
+export const dayPropGetter = (
+  disabled: boolean
+): {
   style?: Record<string, unknown>;
   className?: string;
 } => {
   return {
     className: '',
-    style: {},
+    style: disabled ? { visibility: 'hidden' } : {},
   };
 };
 

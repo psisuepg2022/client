@@ -178,102 +178,127 @@ const TopToolbar = ({
         professional.id,
         true
       );
-      const dayIndex = getDay(currentDate) + 1;
-      const today = professionalSchedule?.content?.weeklySchedule.find(
-        (item) => item.dayOfTheWeek === dayIndex
-      ) as WeeklySchedule;
+      if (
+        professionalSchedule.content &&
+        professionalSchedule.content?.weeklySchedule.length > 0
+      ) {
+        const dayIndex = getDay(currentDate) + 1;
+        const today = professionalSchedule?.content?.weeklySchedule.find(
+          (item) => item.dayOfTheWeek === dayIndex
+        ) as WeeklySchedule;
 
-      const initialStart = new Date();
-      initialStart.setHours(Number(today.startTime.split(':')[0]));
-      initialStart.setMinutes(Number(today.startTime.split(':')[1]));
-      initialStart.setSeconds(0);
+        if (today.startTime && today.endTime) {
+          const initialStart = new Date();
+          initialStart.setHours(Number(today.startTime.split(':')[0]));
+          initialStart.setMinutes(Number(today.startTime.split(':')[1]));
+          initialStart.setSeconds(0);
 
-      const initialEnd = new Date();
-      initialEnd.setHours(Number(today.endTime.split(':')[0]));
-      initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
-      initialEnd.setSeconds(0);
+          const initialEnd = new Date();
+          initialEnd.setHours(Number(today.endTime.split(':')[0]));
+          initialEnd.setMinutes(Number(today.endTime.split(':')[1]));
+          initialEnd.setSeconds(0);
 
-      setCurrentStart(initialStart);
-      setCurrentEnd(initialEnd);
+          setCurrentStart(initialStart);
+          setCurrentEnd(initialEnd);
+        } else {
+          const initialStart = new Date();
+          initialStart.setHours(0);
+          initialStart.setMinutes(0);
+          initialStart.setSeconds(0);
 
-      // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-      //   currentDate,
-      //   today
-      // ) as ScheduleEvent[];
+          const initialEnd = new Date();
+          initialEnd.setHours(0);
+          initialEnd.setMinutes(0);
+          initialEnd.setSeconds(0);
 
-      const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
-        (lock: WeeklyScheduleLock) => {
-          return buildWeeklyScheduleLocks(currentDate, lock);
+          setCurrentStart(initialStart);
+          setCurrentEnd(initialEnd);
         }
-      ) as ScheduleEvent[];
 
-      const mappedScheduleLocks: Event[] =
-        professionalSchedule?.content?.scheduleLocks.map((lock) => {
-          const [day, month, year] = lock.date.split('/');
-          const startDate = new Date(
-            Number(year),
-            Number(month) - 1,
-            Number(day)
-          );
-          startDate.setHours(Number(lock.startTime.split(':')[0]));
-          startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-          startDate.setSeconds(0);
-          const endDate = new Date(
-            Number(year),
-            Number(month) - 1,
-            Number(day)
-          );
-          endDate.setHours(Number(lock.endTime.split(':')[0]));
-          endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-          endDate.setSeconds(0);
+        // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+        //   currentDate,
+        //   today
+        // ) as ScheduleEvent[];
 
-          if (isAfter(endDate, currentDate) || isEqual(endDate, currentDate)) {
+        const weeklyScheduleLocksEvents: ScheduleEvent[] =
+          !today.startTime && !today.endTime
+            ? []
+            : (today?.locks?.map((lock: WeeklyScheduleLock) => {
+                return buildWeeklyScheduleLocks(currentDate, lock);
+              }) as ScheduleEvent[]);
+
+        const mappedScheduleLocks: Event[] =
+          professionalSchedule?.content?.scheduleLocks.map((lock) => {
+            const [day, month, year] = lock.date.split('/');
+            const startDate = new Date(
+              Number(year),
+              Number(month) - 1,
+              Number(day)
+            );
+            startDate.setHours(Number(lock.startTime.split(':')[0]));
+            startDate.setMinutes(Number(lock.startTime.split(':')[1]));
+            startDate.setSeconds(0);
+            const endDate = new Date(
+              Number(year),
+              Number(month) - 1,
+              Number(day)
+            );
+            endDate.setHours(Number(lock.endTime.split(':')[0]));
+            endDate.setMinutes(Number(lock.endTime.split(':')[1]));
+            endDate.setSeconds(0);
+
+            if (
+              isAfter(endDate, currentDate) ||
+              isEqual(endDate, currentDate)
+            ) {
+              return {
+                start: startDate,
+                end: endDate,
+                resource: `${lock.resource}/${lock.id}`,
+                title: lock.id,
+              };
+            }
+          }) as Event[];
+
+        const validScheduleLocks: Event[] = mappedScheduleLocks.filter(
+          (lock) => lock
+        );
+
+        const mappedEvents: Event[] =
+          professionalSchedule?.content?.appointments.map((event) => {
+            const startTime = event.startDate.split('T')[1].substring(0, 5);
+            const startDate = new Date(event.startDate);
+            startDate.setHours(Number(startTime.split(':')[0]));
+            startDate.setMinutes(Number(startTime.split(':')[1]));
+            startDate.setSeconds(0);
+            const endTime = event.endDate.split('T')[1].substring(0, 5);
+            const endDate = new Date(event.endDate);
+            endDate.setHours(Number(endTime.split(':')[0]));
+            endDate.setMinutes(Number(endTime.split(':')[1]));
+            endDate.setSeconds(0);
             return {
               start: startDate,
               end: endDate,
-              resource: `${lock.resource}/${lock.id}`,
-              title: lock.id,
+              title: event.title,
+              resource: event?.updatedAt
+                ? `${event.resource}/${event.id}/${event.updatedAt}`
+                : `${event.resource}/${event.id}`,
             };
-          }
-        }) as Event[];
+          }) as Event[];
 
-      const validScheduleLocks: Event[] = mappedScheduleLocks.filter(
-        (lock) => lock
-      );
-
-      const mappedEvents: Event[] =
-        professionalSchedule?.content?.appointments.map((event) => {
-          const startTime = event.startDate.split('T')[1].substring(0, 5);
-          const startDate = new Date(event.startDate);
-          startDate.setHours(Number(startTime.split(':')[0]));
-          startDate.setMinutes(Number(startTime.split(':')[1]));
-          startDate.setSeconds(0);
-          const endTime = event.endDate.split('T')[1].substring(0, 5);
-          const endDate = new Date(event.endDate);
-          endDate.setHours(Number(endTime.split(':')[0]));
-          endDate.setMinutes(Number(endTime.split(':')[1]));
-          endDate.setSeconds(0);
-          return {
-            start: startDate,
-            end: endDate,
-            title: event.title,
-            resource: event?.updatedAt
-              ? `${event.resource}/${event.id}/${event.updatedAt}`
-              : `${event.resource}/${event.id}`,
-          };
-        }) as Event[];
-
-      setRetrievedWeeklySchedule(
-        professionalSchedule?.content?.weeklySchedule || []
-      );
-      setEvents([
-        //...weeklyScheduleEvents,
-        ...weeklyScheduleLocksEvents,
-        ...validScheduleLocks,
-        ...mappedEvents,
-      ]);
+        setRetrievedWeeklySchedule(
+          professionalSchedule?.content?.weeklySchedule || []
+        );
+        setEvents([
+          //...weeklyScheduleEvents,
+          ...weeklyScheduleLocksEvents,
+          ...validScheduleLocks,
+          ...mappedEvents,
+        ]);
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
+      console.log('EEE', e);
       showAlert({
         icon: 'error',
         text:

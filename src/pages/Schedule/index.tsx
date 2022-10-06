@@ -809,7 +809,7 @@ const Schedule = (): JSX.Element => {
         onSelecting={() => false}
         popup={true}
         tooltipAccessor={() => ''}
-        dayPropGetter={dayPropGetter}
+        dayPropGetter={() => dayPropGetter(isEqual(currentStart, currentEnd))}
         components={{
           toolbar:
             retrievedWeeklySchedule.length > 0

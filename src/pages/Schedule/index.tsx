@@ -668,7 +668,6 @@ const Schedule = (): JSX.Element => {
       </div>
     );
 
-  console.log('slot', currentSlotInfo);
   return (
     <>
       <Modal

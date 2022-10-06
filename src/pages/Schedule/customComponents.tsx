@@ -54,8 +54,8 @@ export const eventStyleGetter = (
     fontFamily: 'Poppins',
     border: '0px',
     padding: '10px',
-    fontSize: '16px',
-    fontWeight: 500,
+    fontSize: '1.2rem',
+    fontWeight: 600,
     maxHeight: '50px !important',
   };
 

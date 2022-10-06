@@ -87,6 +87,15 @@ api.interceptors.response.use(
         }
       }
 
+      if (
+        err.response.status === 400 &&
+        err.response.data.message ===
+          'As credencias de autenticação são inválidas. Por favor, tente realizar a autenticação antes de acessar a este conteúdo.'
+      ) {
+        window.localStorage.clear();
+        window.location.reload();
+      }
+
       if (err.response.status === 403 && err.response.data) {
         return Promise.reject(err.response.data);
       }

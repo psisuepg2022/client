@@ -72,7 +72,7 @@ const SideBar = (): JSX.Element => {
         </IconButton>
       </Header>
       <Content>
-        <div>
+        <div style={{ marginTop: 3 }}>
           {renderLinks().map((item) => (
             <NavItem
               key={item.title}

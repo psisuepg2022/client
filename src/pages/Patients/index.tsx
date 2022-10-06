@@ -272,6 +272,11 @@ const Patients = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_PATIENT')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={loading || !permissions.includes('CREATE_PATIENT')}
                 onClick={() => navigate('/patients/form')}
               >

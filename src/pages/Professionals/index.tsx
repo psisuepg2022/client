@@ -244,6 +244,11 @@ const Professionals = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_PROFESSIONAL')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={
                   loading || !permissions.includes('CREATE_PROFESSIONAL')
                 }

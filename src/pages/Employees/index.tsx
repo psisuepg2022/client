@@ -244,6 +244,11 @@ const Employees = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_EMPLOYEE')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={loading || !permissions.includes('CREATE_EMPLOYEE')}
                 onClick={() => navigate('/employees/form')}
               >

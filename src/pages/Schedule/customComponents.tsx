@@ -4,6 +4,7 @@ import {
   Event,
   HeaderProps,
   SlotPropGetter,
+  View,
 } from 'react-big-calendar';
 import { colors } from '@global/colors';
 import {
@@ -22,7 +23,8 @@ import {
 } from '@utils/schedule';
 
 export const eventStyleGetter = (
-  event: Event
+  event: Event,
+  view?: View
 ): { style?: Record<string, unknown>; className?: string } => {
   if (event.resource && lockFromResource(event.resource) === 'LOCK') {
     const style = {
@@ -54,9 +56,8 @@ export const eventStyleGetter = (
     fontFamily: 'Poppins',
     border: '0px',
     padding: '10px',
-    fontSize: '1.2rem',
+    fontSize: view === 'day' ? '1.2rem' : '1rem',
     fontWeight: 600,
-    maxHeight: '50px !important',
   };
 
   return {

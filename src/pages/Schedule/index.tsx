@@ -854,7 +854,7 @@ const Schedule = (): JSX.Element => {
           ) => onRangeChange(range, view)}
           dayLayoutAlgorithm="no-overlap"
           slotPropGetter={slotPropGetter}
-          eventPropGetter={eventStyleGetter}
+          eventPropGetter={(event: Event) => eventStyleGetter(event, view)}
           view={view}
           date={date}
           onView={(view: View) => setView(view)}

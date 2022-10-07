@@ -7,6 +7,7 @@ import {
   Messages,
   ToolbarProps,
   SlotInfo,
+  NavigateAction,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';
@@ -37,7 +38,12 @@ import ScheduledEventModal from '@components/ScheduledEventModal';
 import { ScheduleEvent } from '@interfaces/ScheduleEvent';
 import { useAuth } from '@contexts/Auth';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
-import { DisableDayContainer, LogoContainer } from '@pages/Schedule/styles';
+import {
+  DisableDayContainer,
+  DisableDayContent,
+  DisableDayText,
+  LogoContainer,
+} from '@pages/Schedule/styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { useSchedule } from '@contexts/Schedule';
@@ -60,6 +66,8 @@ import ConcludedEventModal from '@components/ConcludedEventModal';
 import LockEventModal from '@components/LockEventModal';
 import CancelledAbsenceEventModal from '@components/CancelledAbsenceEventModal';
 import AlterTopToolbar from '@components/AlterTopToolbar';
+import { MdLock } from 'react-icons/md';
+import { colors } from '@global/colors';
 
 const locales = {
   'pt-BR': ptBR,
@@ -677,6 +685,7 @@ const Schedule = (): JSX.Element => {
   };
 
   const onNavigate = (newDate: Date) => {
+    console.log('NEW ', newDate);
     setDate(newDate);
   };
 
@@ -795,6 +804,30 @@ const Schedule = (): JSX.Element => {
       {scheduleLoading ? (
         <DisableDayContainer>
           <AlterTopToolbar />
+        </DisableDayContainer>
+      ) : isEqual(currentStart, currentEnd) && view === 'day' ? (
+        <DisableDayContainer>
+          <TopToolbar
+            date={date}
+            setDate={setDate}
+            localizer={{ messages }}
+            label=""
+            onView={setView}
+            view={view}
+            views={['day', 'week', 'month']}
+            onRangeChange={onRangeChange}
+            onNavigate={(navigate: NavigateAction, date?: Date) => {
+              setDate(date as Date);
+              onRangeChange([date as Date], 'day');
+            }}
+          />
+          <DisableDayContent>
+            <MdLock
+              size={40}
+              style={{ color: colors.PRIMARY, marginRight: 10 }}
+            />
+            <DisableDayText>Este dia não possui expediente</DisableDayText>
+          </DisableDayContent>
         </DisableDayContainer>
       ) : (
         <Calendar

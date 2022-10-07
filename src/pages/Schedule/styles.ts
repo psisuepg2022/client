@@ -54,11 +54,18 @@ export const DisableDayContainer = styled('div')`
   align-items: stretch;
   width: 100%;
   justify-content: center;
-  height: 100%;
+  height: 100vh;
 `;
 
 export const DisableDayContent = styled('div')`
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
+  width: 100%;
+`;
+
+export const DisableDayText = styled(Typography)`
+  font-size: 1.6rem;
+  font-weight: 500;
 `;

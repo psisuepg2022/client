@@ -88,26 +88,26 @@ const TopToolbar = ({
   const goToBack = () => {
     switch (view) {
       case 'day': {
-        onNavigate('PREV');
         const newDate = subDays(date, 1);
+        onNavigate('PREV', newDate);
         setDate(newDate);
         break;
       }
       case 'week': {
-        onNavigate('PREV');
         const newDate = subWeeks(date, 1);
+        onNavigate('PREV');
         setDate(newDate);
         break;
       }
       case 'month': {
-        onNavigate('PREV');
         const newDate = subMonths(date, 1);
+        onNavigate('PREV');
         setDate(newDate);
         break;
       }
       default: {
-        onNavigate('PREV');
         const newDate = subDays(date, 1);
+        onNavigate('PREV', newDate);
         setDate(newDate);
         break;
       }
@@ -117,26 +117,26 @@ const TopToolbar = ({
   const goToNext = () => {
     switch (view) {
       case 'day': {
-        onNavigate('NEXT');
         const newDate = addDays(date, 1);
+        onNavigate('NEXT', newDate);
         setDate(newDate);
         break;
       }
       case 'week': {
-        onNavigate('NEXT');
         const newDate = addWeeks(date, 1);
+        onNavigate('NEXT');
         setDate(newDate);
         break;
       }
       case 'month': {
-        onNavigate('NEXT');
         const newDate = addMonths(date, 1);
+        onNavigate('NEXT');
         setDate(newDate);
         break;
       }
       default: {
-        onNavigate('NEXT');
         const newDate = addDays(date, 1);
+        onNavigate('NEXT', newDate);
         setDate(newDate);
         break;
       }
@@ -144,10 +144,11 @@ const TopToolbar = ({
   };
 
   const goToCurrent = () => {
-    onNavigate('TODAY');
+    const newDate = new Date();
+    onNavigate('TODAY', newDate);
     onView('day');
-    onRangeChange([new Date()], 'day');
-    setDate(new Date());
+    onRangeChange([newDate], 'day');
+    setDate(newDate);
   };
 
   const onChangeProfessional = async (

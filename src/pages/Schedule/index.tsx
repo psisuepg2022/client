@@ -322,14 +322,19 @@ const Schedule = (): JSX.Element => {
         setLoading(false);
       }
     })();
+
+    return () => {
+      setCurrentStart(new Date());
+      setCurrentEnd(new Date());
+    };
   }, []);
 
   const onRangeChange = useCallback(
-    (range: Date[] | Ranges, view?: View | undefined) => {
+    (range: Date[] | Ranges, fView?: View | undefined) => {
       console.log('RANGE', range, view);
 
       //setCurrentView((prev) => (view === undefined ? prev : (view as string)));
-      viewRef.current = view === undefined ? viewRef.current : view;
+      viewRef.current = fView === undefined ? viewRef.current : fView;
 
       const allEvents: Event[] = [];
       const dates: Date[] = range as Date[];
@@ -342,7 +347,7 @@ const Schedule = (): JSX.Element => {
         stringFormat: 'yyyy-MM-dd',
       });
 
-      if (view === 'month' || ('start' in range && 'end' in range)) {
+      if (fView === 'month' || ('start' in range && 'end' in range)) {
         setScheduleLoading(true);
 
         const monthDates = eachDayOfInterval({
@@ -359,7 +364,7 @@ const Schedule = (): JSX.Element => {
           );
 
           if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-            if (view === 'week' || viewRef.current === 'week') {
+            if (fView === 'week' || viewRef.current === 'week') {
               const weeklySchedule: Event[] = buildWeeklySchedule(
                 date,
                 today as WeeklySchedule
@@ -580,7 +585,8 @@ const Schedule = (): JSX.Element => {
           },
           user.permissions.includes('USER_TYPE_PROFESSIONAL')
             ? undefined
-            : currentProfessional?.id
+            : currentProfessional?.id,
+          true
         )
           .then(({ content }) => {
             setEvents((prev) => {
@@ -684,9 +690,10 @@ const Schedule = (): JSX.Element => {
     setDate(date);
   };
 
-  const onNavigate = (newDate: Date) => {
+  const onNavigate = (newDate: Date, view: View) => {
     console.log('NEW ', newDate);
     setDate(newDate);
+    setView(view);
   };
 
   if (loading)
@@ -812,7 +819,17 @@ const Schedule = (): JSX.Element => {
             setDate={setDate}
             localizer={{ messages }}
             label=""
-            onView={setView}
+            onView={(view: View) => {
+              setView(view);
+              if (view === 'week') {
+                const [weekStart, weekEnd] = weekRange(date);
+                const weekRangeBeetweenDates = weekRangeDates(
+                  weekStart,
+                  weekEnd
+                );
+                onRangeChange(weekRangeBeetweenDates, view);
+              }
+            }}
             view={view}
             disabled
             views={['day', 'week', 'month']}
@@ -873,8 +890,8 @@ const Schedule = (): JSX.Element => {
             setCurrentSlotInfo(slotInfo)
           }
           selectable
-          min={viewRef.current === 'day' ? currentStart : undefined}
-          max={viewRef.current === 'day' ? currentEnd : undefined}
+          min={view === 'day' ? currentStart : undefined}
+          max={view === 'day' ? currentEnd : undefined}
           onSelecting={() => false}
           popup={true}
           tooltipAccessor={() => ''}

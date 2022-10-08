@@ -814,6 +814,7 @@ const Schedule = (): JSX.Element => {
             label=""
             onView={setView}
             view={view}
+            disabled
             views={['day', 'week', 'month']}
             onRangeChange={onRangeChange}
             onNavigate={(navigate: NavigateAction, date?: Date) => {

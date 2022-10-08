@@ -48,6 +48,7 @@ import {
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
   setDate: (date: Date) => void;
+  disabled?: boolean;
 } & ToolbarProps;
 
 const TopToolbar = ({
@@ -57,6 +58,7 @@ const TopToolbar = ({
   view,
   date,
   setDate,
+  disabled,
 }: CustomToolbarProps): JSX.Element => {
   const navigate = useNavigate();
   const {
@@ -89,7 +91,8 @@ const TopToolbar = ({
     switch (view) {
       case 'day': {
         const newDate = subDays(date, 1);
-        onNavigate('PREV', newDate);
+        if (disabled) onNavigate('PREV', newDate);
+        else onNavigate('PREV');
         setDate(newDate);
         break;
       }
@@ -107,7 +110,8 @@ const TopToolbar = ({
       }
       default: {
         const newDate = subDays(date, 1);
-        onNavigate('PREV', newDate);
+        if (disabled) onNavigate('PREV', newDate);
+        else onNavigate('PREV');
         setDate(newDate);
         break;
       }
@@ -118,7 +122,9 @@ const TopToolbar = ({
     switch (view) {
       case 'day': {
         const newDate = addDays(date, 1);
-        onNavigate('NEXT', newDate);
+        console.log('NA TOOLBAR', date, newDate);
+        if (disabled) onNavigate('NEXT', newDate);
+        else onNavigate('NEXT');
         setDate(newDate);
         break;
       }
@@ -136,7 +142,8 @@ const TopToolbar = ({
       }
       default: {
         const newDate = addDays(date, 1);
-        onNavigate('NEXT', newDate);
+        if (disabled) onNavigate('NEXT', newDate);
+        else onNavigate('NEXT');
         setDate(newDate);
         break;
       }

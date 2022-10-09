@@ -7,14 +7,19 @@ import { CircularProgress } from '@mui/material';
 type TextEditorProps = {
   saveComment?: (text: string) => Promise<void>;
   comment?: string;
+  readOnly?: boolean;
 };
 
-const TextEditor = ({ saveComment, comment }: TextEditorProps): JSX.Element => {
+const TextEditor = ({
+  saveComment,
+  comment,
+  readOnly,
+}: TextEditorProps): JSX.Element => {
   const { quill, quillRef } = useQuill({
     modules: {
       toolbar: '#toolbar',
     },
-    readOnly: !!comment,
+    readOnly,
   });
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -27,6 +32,16 @@ const TextEditor = ({ saveComment, comment }: TextEditorProps): JSX.Element => {
       setLoading(false);
     }
   }, [quill]);
+
+  useEffect(() => {
+    if (quill) {
+      if (readOnly) {
+        quill.disable();
+      } else {
+        quill.enable();
+      }
+    }
+  }, [readOnly]);
 
   const onSubmit = async (): Promise<void> => {
     const data = quill?.root.innerHTML;
@@ -41,39 +56,35 @@ const TextEditor = ({ saveComment, comment }: TextEditorProps): JSX.Element => {
   return (
     <Container>
       <Content>
-        <div id="toolbar" style={{ ...(comment && { display: 'none' }) }}>
-          {!comment && (
-            <>
-              <select
-                className="ql-size"
-                defaultValue="medium"
-                style={{ marginLeft: 10 }}
-              >
-                <option value="small">Pequena</option>
-                <option value="medium">Média</option>
-                <option value="large">Grande</option>
-                <option value="huge">Enorme</option>
-              </select>
-              <span
-                className="ql-formats"
-                style={{ marginLeft: 10, marginRight: 10 }}
-              >
-                <button className="ql-bold" />
-                <button className="ql-italic" />
-                <button className="ql-underline" />
-                <button className="ql-strike" />
-              </span>
-              <span className="ql-formats">
-                <button className="ql-list" value="ordered" />
-                <button className="ql-list" value="bullet" />
-              </span>
-              <span className="ql-formats">
-                <select style={{ marginLeft: 10 }} className="ql-align" />
-                <select style={{ marginLeft: 10 }} className="ql-color" />
-                <select className="ql-background" />
-              </span>
-            </>
-          )}
+        <div id="toolbar" style={{ ...(readOnly && { display: 'none' }) }}>
+          <select
+            className="ql-size"
+            defaultValue="medium"
+            style={{ marginLeft: 10 }}
+          >
+            <option value="small">Pequena</option>
+            <option value="medium">Média</option>
+            <option value="large">Grande</option>
+            <option value="huge">Enorme</option>
+          </select>
+          <span
+            className="ql-formats"
+            style={{ marginLeft: 10, marginRight: 10 }}
+          >
+            <button className="ql-bold" />
+            <button className="ql-italic" />
+            <button className="ql-underline" />
+            <button className="ql-strike" />
+          </span>
+          <span className="ql-formats">
+            <button className="ql-list" value="ordered" />
+            <button className="ql-list" value="bullet" />
+          </span>
+          <span className="ql-formats">
+            <select style={{ marginLeft: 10 }} className="ql-align" />
+            <select style={{ marginLeft: 10 }} className="ql-color" />
+            <select className="ql-background" />
+          </span>
         </div>
         <div
           style={{
@@ -85,15 +96,15 @@ const TextEditor = ({ saveComment, comment }: TextEditorProps): JSX.Element => {
           }}
           ref={quillRef}
         />
-        {!comment && (
-          <StyledButton disabled={loading} onClick={onSubmit}>
-            {loading ? (
-              <CircularProgress style={{ color: '#FFF' }} size={20} />
-            ) : (
-              'CONCLUIR'
-            )}
-          </StyledButton>
-        )}
+        <StyledButton disabled={loading || readOnly} onClick={onSubmit}>
+          {loading ? (
+            <CircularProgress style={{ color: '#FFF' }} size={20} />
+          ) : comment ? (
+            'SALVAR'
+          ) : (
+            'CONCLUIR'
+          )}
+        </StyledButton>
       </Content>
     </Container>
   );

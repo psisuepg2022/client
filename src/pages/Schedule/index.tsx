@@ -229,12 +229,27 @@ const Schedule = (): JSX.Element => {
           //   today
           // ) as ScheduleEvent[];
 
-          const weeklyScheduleLocksEvents: ScheduleEvent[] =
+          const weeklyScheduleLocksEventsFalsy: ScheduleEvent[] =
             !today.startTime && !today.endTime
               ? []
               : (today?.locks?.map((lock: WeeklyScheduleLock) => {
-                  return buildWeeklyScheduleLocks(currentDate, lock);
+                  const endDate = new Date();
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
+
+                  if (
+                    isAfter(endDate, currentDate) ||
+                    isEqual(endDate, currentDate)
+                  ) {
+                    return buildWeeklyScheduleLocks(currentDate, lock);
+                  }
                 }) as ScheduleEvent[]);
+
+          const weeklyScheduleLocksEvents =
+            weeklyScheduleLocksEventsFalsy.filter((lock) => lock);
 
           const mappedScheduleLocks: Event[] =
             firstSchedule?.content?.scheduleLocks.map((lock) => {

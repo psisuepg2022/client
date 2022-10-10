@@ -697,8 +697,6 @@ const Schedule = (): JSX.Element => {
     [retrievedWeeklySchedule, viewRef]
   );
 
-  console.log('EVENTS,', events, retrievedWeeklySchedule);
-
   const onDrillDown = (date: Date, view?: View) => {
     onRangeChange([date], view);
     setView(view as View);

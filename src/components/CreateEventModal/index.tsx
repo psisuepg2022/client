@@ -283,11 +283,7 @@ const CreateEventModal = ({
                     <SimpleInput
                       name="CPF"
                       label="CPF"
-                      value={
-                        !currentPatient.CPF && currentPatient.liable
-                          ? currentPatient.liable.CPF
-                          : currentPatient.CPF
-                      }
+                      value={currentPatient.CPF}
                       contentEditable={false}
                     />
                     <SimpleInput

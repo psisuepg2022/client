@@ -690,7 +690,14 @@ const Schedule = (): JSX.Element => {
               ];
             });
           })
-          .catch((e) => console.log('ERRO REEWTRIEVE', e))
+          .catch((e) => {
+            showAlert({
+              icon: 'error',
+              text:
+                e?.response?.data?.message ||
+                'Ocorreu um erro ao recuperar os eventos da agenda.',
+            });
+          })
           .finally(() => setScheduleLoading(false));
       }
     },

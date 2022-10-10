@@ -250,7 +250,7 @@ const ProfessionalProfile = (): JSX.Element => {
                     rules={{
                       required: {
                         value: true,
-                        message: 'O CPF do responsável é obrigatório',
+                        message: 'O CPF do profissional é obrigatório',
                       },
                       minLength: {
                         value: 14,

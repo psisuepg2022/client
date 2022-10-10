@@ -183,10 +183,6 @@ const Professionals = (): JSX.Element => {
               value: 14,
               message: 'Insira um CPF válido',
             },
-            required: {
-              value: true,
-              message: 'O CPF do responsável é obrigatório',
-            },
           }}
           maxLength={14}
           mask={(s: string): string =>

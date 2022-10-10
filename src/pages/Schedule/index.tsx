@@ -697,7 +697,7 @@ const Schedule = (): JSX.Element => {
     [retrievedWeeklySchedule, viewRef]
   );
 
-  console.log('EVENTS,', events);
+  console.log('EVENTS,', events, retrievedWeeklySchedule);
 
   const onDrillDown = (date: Date, view?: View) => {
     onRangeChange([date], view);
@@ -827,7 +827,9 @@ const Schedule = (): JSX.Element => {
         <DisableDayContainer>
           <AlterTopToolbar />
         </DisableDayContainer>
-      ) : isEqual(currentStart, currentEnd) && view === 'day' ? (
+      ) : isEqual(currentStart, currentEnd) &&
+        view === 'day' &&
+        retrievedWeeklySchedule.length > 0 ? (
         <DisableDayContainer>
           <TopToolbar
             date={date}

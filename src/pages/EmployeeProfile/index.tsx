@@ -32,6 +32,7 @@ import AsyncInput from '@components/AsyncInput';
 import SimpleInput from '@components/SimpleInput';
 import { useEmployees } from '@contexts/Employees';
 import { useAuth } from '@contexts/Auth';
+import { AiOutlineRight } from 'react-icons/ai';
 
 type ProfileFormProps = {
   name: string;
@@ -44,7 +45,10 @@ type ProfileFormProps = {
 };
 
 const EmployeeProfile = (): JSX.Element => {
-  const { setUser } = useAuth();
+  const {
+    setUser,
+    user: { name },
+  } = useAuth();
   const formMethods = useForm<ProfileFormProps>();
   const { getProfile, updateProfile } = useEmployees();
   const { handleSubmit, setValue } = formMethods;
@@ -204,6 +208,16 @@ const EmployeeProfile = (): JSX.Element => {
                 />
               </IconButton>
               <Typography fontSize={'2.5rem'}>Perfil do Funcionário</Typography>
+              <AiOutlineRight
+                size={30}
+                style={{ color: '#707070', marginLeft: 10 }}
+              />
+              <Typography
+                fontSize={'2rem'}
+                style={{ marginLeft: 10, fontWeight: 400 }}
+              >
+                {name.split(' ')[0]}
+              </Typography>
             </Header>
 
             <FormProvider {...formMethods}>

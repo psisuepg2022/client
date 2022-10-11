@@ -31,7 +31,7 @@ import SimpleInput from '@components/SimpleInput';
 import { CepInfos } from '@interfaces/CepInfos';
 import AsyncInput from '@components/AsyncInput';
 import { searchForCep } from '@utils/zipCode';
-import { AiOutlineClockCircle } from 'react-icons/ai';
+import { AiOutlineClockCircle, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
 import { useAuth } from '@contexts/Auth';
 
@@ -50,7 +50,10 @@ type ProfileFormProps = {
 
 const ProfessionalProfile = (): JSX.Element => {
   const formMethods = useForm<ProfileFormProps>();
-  const { setUser } = useAuth();
+  const {
+    setUser,
+    user: { name },
+  } = useAuth();
   const { getProfile, updateProfile } = useProfessionals();
   const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
@@ -212,6 +215,16 @@ const ProfessionalProfile = (): JSX.Element => {
               </IconButton>
               <Typography fontSize={'2.5rem'}>
                 Perfil do Profissional
+              </Typography>
+              <AiOutlineRight
+                size={30}
+                style={{ color: '#707070', marginLeft: 10 }}
+              />
+              <Typography
+                fontSize={'2rem'}
+                style={{ marginLeft: 10, fontWeight: 400 }}
+              >
+                {name.split(' ')[0]}
               </Typography>
             </div>
             <IconButton

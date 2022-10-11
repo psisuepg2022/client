@@ -33,6 +33,7 @@ import { searchForCep } from '@utils/zipCode';
 import AsyncInput from '@components/AsyncInput';
 import SimpleInput from '@components/SimpleInput';
 import { User } from '@models/User';
+import { AiOutlineRight } from 'react-icons/ai';
 
 type ProfileFormProps = {
   clinic: {
@@ -50,7 +51,7 @@ type ProfileFormProps = {
 
 const OwnerProfile = (): JSX.Element => {
   const {
-    user: { clinic },
+    user: { clinic, name },
     setUser,
   } = useAuth();
   const formMethods = useForm<ProfileFormProps>({
@@ -234,6 +235,16 @@ const OwnerProfile = (): JSX.Element => {
                 />
               </IconButton>
               <Typography fontSize={'2.5rem'}>Perfil da Clínica</Typography>
+              <AiOutlineRight
+                size={30}
+                style={{ color: '#707070', marginLeft: 10 }}
+              />
+              <Typography
+                fontSize={'2rem'}
+                style={{ marginLeft: 10, fontWeight: 400 }}
+              >
+                {`${clinic?.name} | ${name?.split(' ')[0]}`}
+              </Typography>
             </Header>
 
             <FormProvider {...formMethods}>

@@ -21,7 +21,7 @@ import {
   WorkHoursContainer,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlinePlus, AiOutlineRight } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import { colors } from '@global/colors';
 import { showAlert } from '@utils/showAlert';
@@ -448,6 +448,16 @@ const ProfessionalSchedule = (): JSX.Element => {
               </IconButton>
               <Typography fontSize={'2.5rem'}>
                 Horários do Profissional
+              </Typography>
+              <AiOutlineRight
+                size={30}
+                style={{ color: '#707070', marginLeft: 10 }}
+              />
+              <Typography
+                fontSize={'2rem'}
+                style={{ marginLeft: 10, fontWeight: 400 }}
+              >
+                {user?.name?.split(' ')[0]}
               </Typography>
             </Header>
 

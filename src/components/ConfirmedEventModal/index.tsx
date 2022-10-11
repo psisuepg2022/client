@@ -27,7 +27,7 @@ import {
 } from '@utils/schedule';
 import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
-import { isAfter } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 
@@ -131,6 +131,31 @@ const ConfirmedEventModal = ({
     });
   };
 
+  const concludeCheck = (): void => {
+    const checkDate = isBefore(new Date(), eventInfo.end as Date);
+
+    if (checkDate) {
+      showAlert({
+        icon: 'warning',
+        title: 'Atenção!',
+        text: 'Você está prestes a concluir uma consulta futura. Deseja continuar?',
+        allowOutsideClick: false,
+        showCancelButton: true,
+        confirmButtonColor: colors.PRIMARY,
+        confirmButtonText: 'CONTINUAR',
+        cancelButtonColor: colors.BACKGREY,
+        cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
+        reverseButtons: true,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          navigate('/comment/creation', { state: eventInfo });
+        }
+      });
+    } else {
+      navigate('/comment/creation', { state: eventInfo });
+    }
+  };
+
   return (
     <StyledModal
       open={open}
@@ -176,9 +201,7 @@ const ConfirmedEventModal = ({
               permissions.includes('USER_TYPE_PROFESSIONAL')) && (
               <StyledConfirmButton
                 disabled={loading || !permissions.includes('CREATE_COMMENTS')}
-                onClick={() =>
-                  navigate('/comment/creation', { state: eventInfo })
-                }
+                onClick={concludeCheck}
               >
                 REALIZAR ANOTAÇÕES
               </StyledConfirmButton>

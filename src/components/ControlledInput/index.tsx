@@ -46,6 +46,7 @@ const ControlledInput = ({
   maxLength,
   rules,
   endFunction,
+  autoComplete,
   ...rest
 }: ControlledInputProps): JSX.Element => {
   const { control, formState, getFieldState } = useFormContext();
@@ -74,13 +75,19 @@ const ControlledInput = ({
       render={({ field: { value, onChange } }) => (
         <CustomTextField
           {...rest}
-          autoComplete="off"
+          autoComplete={autoComplete || 'off'}
           onChange={onChange}
           value={mask ? mask(value || '') : value || ''}
           required={required}
           disabled={disabled}
           label={label}
-          type={visibility ? 'text' : 'password'}
+          type={
+            type === 'password'
+              ? visibility
+                ? 'text'
+                : 'password'
+              : type || 'text'
+          }
           InputProps={{
             endAdornment:
               endFunction === 'password' ? (

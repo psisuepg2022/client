@@ -4,7 +4,6 @@ import {
   AuxDataFirst,
   AuxDataSecond,
   Box,
-  ButtonContainer,
   Container,
   Content,
   Form,
@@ -32,8 +31,9 @@ import SimpleInput from '@components/SimpleInput';
 import { CepInfos } from '@interfaces/CepInfos';
 import AsyncInput from '@components/AsyncInput';
 import { searchForCep } from '@utils/zipCode';
-import { AiOutlineClockCircle } from 'react-icons/ai';
+import { AiOutlineClockCircle, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
+import { useAuth } from '@contexts/Auth';
 
 type ProfileFormProps = {
   name: string;
@@ -50,6 +50,10 @@ type ProfileFormProps = {
 
 const ProfessionalProfile = (): JSX.Element => {
   const formMethods = useForm<ProfileFormProps>();
+  const {
+    setUser,
+    user: { name },
+  } = useAuth();
   const { getProfile, updateProfile } = useProfessionals();
   const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
@@ -133,6 +137,12 @@ const ProfessionalProfile = (): JSX.Element => {
       setLoading(true);
       const { message } = await updateProfile(professional);
 
+      setUser((prev) => {
+        const newUser = { ...prev, name: formData.name };
+        localStorage.setItem('@psis:userData', JSON.stringify(newUser));
+        return newUser;
+      });
+
       showAlert({
         title: 'Sucesso!',
         icon: 'success',
@@ -206,6 +216,16 @@ const ProfessionalProfile = (): JSX.Element => {
               <Typography fontSize={'2.5rem'}>
                 Perfil do Profissional
               </Typography>
+              <AiOutlineRight
+                size={30}
+                style={{ color: '#707070', marginLeft: 10 }}
+              />
+              <Typography
+                fontSize={'2rem'}
+                style={{ marginLeft: 10, fontWeight: 400 }}
+              >
+                {name.split(' ')[0]}
+              </Typography>
             </div>
             <IconButton
               disabled={loading || inputLoading}
@@ -250,7 +270,7 @@ const ProfessionalProfile = (): JSX.Element => {
                     rules={{
                       required: {
                         value: true,
-                        message: 'O CPF do responsável é obrigatório',
+                        message: 'O CPF do profissional é obrigatório',
                       },
                       minLength: {
                         value: 14,
@@ -390,12 +410,9 @@ const ProfessionalProfile = (): JSX.Element => {
               </ProfessionalData>
             </Form>
           </FormProvider>
-          <ButtonContainer>
-            <div />
-            <StyledButton type="submit" form="form">
-              SALVAR
-            </StyledButton>
-          </ButtonContainer>
+          <StyledButton type="submit" form="form">
+            SALVAR
+          </StyledButton>
         </Content>
       </Box>
     </Container>

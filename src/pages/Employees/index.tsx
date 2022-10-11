@@ -15,6 +15,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -181,10 +183,6 @@ const Employees = (): JSX.Element => {
               value: 14,
               message: 'Insira um CPF válido',
             },
-            required: {
-              value: true,
-              message: 'O CPF do responsável é obrigatório',
-            },
           }}
           maxLength={14}
           mask={(s: string): string =>
@@ -244,6 +242,11 @@ const Employees = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_EMPLOYEE')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={loading || !permissions.includes('CREATE_EMPLOYEE')}
                 onClick={() => navigate('/employees/form')}
               >
@@ -268,7 +271,7 @@ const Employees = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : employees.length !== 0 ? (
             <EmployeesTable
               employees={employees}
               columns={columns}
@@ -277,6 +280,10 @@ const Employees = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não existem funcionários cadastrados</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

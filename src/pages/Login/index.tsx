@@ -43,8 +43,13 @@ const Login = (): JSX.Element => {
 
     try {
       setLoading(true);
-      await signIn(formData);
-      navigate('/schedule', { replace: true });
+      const user = await signIn(formData);
+
+      if (user.permissions.includes('USER_TYPE_PROFESSIONAL_UNCONFIGURED')) {
+        navigate('/professional-config', { replace: true });
+      } else {
+        navigate('/schedule', { replace: true });
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -65,7 +70,12 @@ const Login = (): JSX.Element => {
         </TitleAndSubTitle>
 
         <FormProvider {...formMethods}>
-          <InputsContainer id="form" onSubmit={handleSubmit(onSubmit)}>
+          <InputsContainer
+            id="form"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            autoComplete="new-password"
+          >
             <CodeAndUser>
               <ControlledInput
                 name="accessCode"
@@ -76,6 +86,7 @@ const Login = (): JSX.Element => {
                     message: 'O código é obrigatório',
                   },
                 }}
+                autoComplete="off"
               />
               <ControlledInput
                 name="userName"

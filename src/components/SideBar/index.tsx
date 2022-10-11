@@ -9,19 +9,22 @@ import {
   CollapsedContainer,
   CollapsedNavItem,
   CollapsedHeader,
+  UserName,
+  UserNameContainer,
 } from './styles';
 import { SideBarLinks, sideBarLinks } from './SideBarLinks';
 import { colors } from '@global/colors';
 import { AiOutlineRight, AiOutlineClose } from 'react-icons/ai';
 import { useAuth } from '@contexts/Auth';
-import { BsQuestionCircle } from 'react-icons/bs';
+import { MdSubtitles } from 'react-icons/md';
 import ScheduleLabelModal from '@components/ScheduleLabelModal';
 
 const SideBar = (): JSX.Element => {
   const {
-    user: { permissions },
+    user: { permissions, name },
+    sideBarExpanded,
+    setSideBarExpanded,
   } = useAuth();
-  const [expanded, setExpanded] = useState<boolean>(true);
   const [labelModal, setLabelModal] = useState<boolean>(false);
 
   const renderLinks = (): SideBarLinks[] => {
@@ -40,11 +43,11 @@ const SideBar = (): JSX.Element => {
     return resultRoutes;
   };
 
-  if (!expanded) {
+  if (!sideBarExpanded) {
     return (
       <CollapsedContainer>
         <CollapsedHeader>
-          <IconButton size="small" onClick={() => setExpanded(true)}>
+          <IconButton size="small" onClick={() => setSideBarExpanded(true)}>
             <AiOutlineRight style={{ color: '#FFF', fontSize: 35 }} />
           </IconButton>
         </CollapsedHeader>
@@ -66,12 +69,17 @@ const SideBar = (): JSX.Element => {
   return (
     <Container>
       <Header>
-        <IconButton size="small" onClick={() => setExpanded(false)}>
+        <IconButton size="small" onClick={() => setSideBarExpanded(false)}>
           <AiOutlineClose style={{ color: '#FFF', fontSize: 35 }} />
         </IconButton>
       </Header>
+      <UserNameContainer>
+        <UserName>{`Bem-vindo(a)${
+          name ? `, ${name.split(' ')[0]}` : ''
+        }`}</UserName>
+      </UserNameContainer>
       <Content>
-        <div>
+        <div style={{ marginTop: 3 }}>
           {renderLinks().map((item) => (
             <NavItem
               key={item.title}
@@ -95,7 +103,7 @@ const SideBar = (): JSX.Element => {
           {location.pathname === '/schedule' && (
             <Tooltip title="Legenda de consultas da agenda">
               <IconButton onClick={() => setLabelModal(true)}>
-                <BsQuestionCircle size={40} style={{ color: '#FFF' }} />
+                <MdSubtitles size={40} style={{ color: '#FFF' }} />
               </IconButton>
             </Tooltip>
           )}

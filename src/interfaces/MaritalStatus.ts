@@ -1,6 +1,6 @@
 export enum MartitalStatus {
   'Casado(a)' = 1,
-  'Solteiro(a)',
   'Divorciado(a)',
+  'Solteiro(a)',
   'Viúvo(a)',
 }

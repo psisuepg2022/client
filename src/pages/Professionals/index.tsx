@@ -15,6 +15,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -181,10 +183,6 @@ const Professionals = (): JSX.Element => {
               value: 14,
               message: 'Insira um CPF válido',
             },
-            required: {
-              value: true,
-              message: 'O CPF do responsável é obrigatório',
-            },
           }}
           maxLength={14}
           mask={(s: string): string =>
@@ -244,6 +242,11 @@ const Professionals = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_PROFESSIONAL')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={
                   loading || !permissions.includes('CREATE_PROFESSIONAL')
                 }
@@ -270,7 +273,7 @@ const Professionals = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : professionals.length !== 0 ? (
             <ProfessionalsTable
               professionals={professionals}
               columns={
@@ -284,6 +287,10 @@ const Professionals = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não existem profissionais cadastrados</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

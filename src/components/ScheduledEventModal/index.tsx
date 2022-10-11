@@ -14,7 +14,7 @@ import {
   StyledConfirmButton,
   StyledModal,
 } from './styles';
-import { MdOutlineClose, MdOutlineStickyNote2 } from 'react-icons/md';
+import { MdOutlineClose } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
@@ -29,7 +29,6 @@ import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
 import { useAuth } from '@contexts/Auth';
-import { useNavigate } from 'react-router-dom';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -47,7 +46,6 @@ const ScheduledEventModal = ({
     user: { permissions },
   } = useAuth();
   const [loading, setLoading] = useState<string>('');
-  const navigate = useNavigate();
 
   if (!eventInfo) return <></>;
 
@@ -61,12 +59,12 @@ const ScheduledEventModal = ({
     try {
       setLoading(status);
       const appointmentId = idFromResource(eventInfo.resource);
-      const { content, message } = await updateAppointmentStatus(
+      const { content, success } = await updateAppointmentStatus(
         appointmentId,
         status
       );
 
-      if (!content) {
+      if (!success) {
         showAlert({
           icon: 'error',
           text: 'Ocorreu um problema ao atualizar a consulta',
@@ -95,12 +93,6 @@ const ScheduledEventModal = ({
 
       closeAll('');
 
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
-      });
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -119,8 +111,11 @@ const ScheduledEventModal = ({
       .split('T')[1]
       .substring(0, 5);
     const updateDate = new Date(updatedAtFromResource(eventInfo.resource));
-    updateDate.setHours(Number(updateTime.split(':')[0]));
-    updateDate.setMinutes(Number(updateTime.split(':')[1]));
+    updateDate.setHours(
+      Number(updateTime.split(':')[0]),
+      Number(updateTime.split(':')[1]),
+      0
+    );
 
     return dateFormat({
       date: updateDate,

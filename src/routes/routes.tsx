@@ -15,9 +15,14 @@ import CommentRoutes from './comment.routes';
 import { CommentsProvider } from '@contexts/Comments';
 import { OwnerProvider } from '@contexts/Owner';
 import { EmployeesProvider } from '@contexts/Employees';
+import ProfessionalConfigRoutes from './professional.config.routes';
+import ProfessionalInitialConfig from '@pages/ProfessionalInitialConfig';
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+  const {
+    isAuthenticated,
+    user: { permissions },
+  } = useAuth();
 
   useEffect(() => {
     window.addEventListener('offline', isOffline);
@@ -45,6 +50,21 @@ const AppRoutes = () => {
       </Routes>
     );
   }
+
+  if (permissions.includes('USER_TYPE_PROFESSIONAL_UNCONFIGURED'))
+    return (
+      <ProfessionalsProvider>
+        <Routes>
+          <Route
+            path="/professional-config"
+            element={<ProfessionalInitialConfig />}
+          />
+          {/* REDIRECT */}
+          <Route path="/" element={<Navigate to="/professional-config" />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ProfessionalsProvider>
+    );
 
   return (
     <PatientsProvider>
@@ -74,6 +94,12 @@ const AppRoutes = () => {
 
                   {/* PROFILE PAGES */}
                   <Route path="/profile/*" element={<ProfileRoutes />} />
+
+                  {/* PROFESSIONAL INITIAL CONFIG PAGES */}
+                  <Route
+                    path="/professional-config/*"
+                    element={<ProfessionalConfigRoutes />}
+                  />
 
                   {/* REDIRECT */}
                   <Route path="/" element={<Navigate to="/schedule" />} />

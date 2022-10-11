@@ -27,7 +27,7 @@ import {
 } from '@utils/schedule';
 import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
-import { isAfter } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 
@@ -61,12 +61,12 @@ const ConfirmedEventModal = ({
     try {
       setLoading(true);
       const appointmentId = idFromResource(eventInfo.resource);
-      const { content, message } = await updateAppointmentStatus(
+      const { content, success } = await updateAppointmentStatus(
         appointmentId,
         status
       );
 
-      if (!content) {
+      if (!success) {
         showAlert({
           icon: 'error',
           text: 'Ocorreu um problema ao atualizar a consulta',
@@ -95,12 +95,6 @@ const ConfirmedEventModal = ({
 
       closeAll('');
 
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
-      });
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -119,14 +113,41 @@ const ConfirmedEventModal = ({
       .split('T')[1]
       .substring(0, 5);
     const updateDate = new Date(updatedAtFromResource(eventInfo.resource));
-    updateDate.setHours(Number(updateTime.split(':')[0]));
-    updateDate.setMinutes(Number(updateTime.split(':')[1]));
-
+    updateDate.setHours(
+      Number(updateTime.split(':')[0]),
+      Number(updateTime.split(':')[1]),
+      0
+    );
     return dateFormat({
       date: updateDate,
       // eslint-disable-next-line quotes
       stringFormat: "d 'de' MMMM 'de' yyyy 'às' HH:mm",
     });
+  };
+
+  const concludeCheck = (): void => {
+    const checkDate = isBefore(new Date(), eventInfo.end as Date);
+
+    if (checkDate) {
+      showAlert({
+        icon: 'warning',
+        title: 'Atenção!',
+        text: 'Você está prestes a concluir uma consulta futura. Deseja continuar?',
+        allowOutsideClick: false,
+        showCancelButton: true,
+        confirmButtonColor: colors.PRIMARY,
+        confirmButtonText: 'CONTINUAR',
+        cancelButtonColor: colors.BACKGREY,
+        cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
+        reverseButtons: true,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          navigate('/comment/creation', { state: eventInfo });
+        }
+      });
+    } else {
+      navigate('/comment/creation', { state: eventInfo });
+    }
   };
 
   return (
@@ -174,11 +195,9 @@ const ConfirmedEventModal = ({
               permissions.includes('USER_TYPE_PROFESSIONAL')) && (
               <StyledConfirmButton
                 disabled={loading || !permissions.includes('CREATE_COMMENTS')}
-                onClick={() =>
-                  navigate('/comment/creation', { state: eventInfo })
-                }
+                onClick={concludeCheck}
               >
-                CONCLUIR
+                REALIZAR ANOTAÇÕES
               </StyledConfirmButton>
             )}
             {(permissions.includes('UPDATE_APPOINTMENTS') ||

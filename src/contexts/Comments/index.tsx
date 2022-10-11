@@ -8,7 +8,7 @@ import { ReadComments } from '@interfaces/ReadComments';
 type ListProps = {
   page?: number;
   size?: number;
-  filter?: { start: string; end: string };
+  filter?: { start: string | null; end: string | null };
 };
 
 type CommentsContextData = {

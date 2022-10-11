@@ -61,9 +61,7 @@ const CreateEventModal = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [lockMode, setLockMode] = useState<boolean>(false);
 
-  if (!slotInfo) return <></>;
-
-  if (slotInfo && slotInfo.slots && slotInfo.slots.length === 1) return <></>;
+  if (!slotInfo || !slotInfo.start || !slotInfo.end) return <></>;
 
   const handleSearch = async (
     inputValue: string
@@ -285,11 +283,7 @@ const CreateEventModal = ({
                     <SimpleInput
                       name="CPF"
                       label="CPF"
-                      value={
-                        !currentPatient.CPF && currentPatient.liable
-                          ? currentPatient.liable.CPF
-                          : currentPatient.CPF
-                      }
+                      value={currentPatient.CPF}
                       contentEditable={false}
                     />
                     <SimpleInput
@@ -345,4 +339,4 @@ const CreateEventModal = ({
   );
 };
 
-export default CreateEventModal;
+export default React.memo(CreateEventModal);

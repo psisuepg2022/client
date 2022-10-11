@@ -4,7 +4,7 @@ import SideBar from '@components/SideBar';
 import CommentCreation from '@pages/CommentCreation';
 import ProtectedRoute from './ProtectedRoute';
 import Comment from '@pages/Comment';
-import CommentList from '@pages/CommentList';
+import ConcludedAppointments from '@pages/ConcludedAppointments';
 
 const CommentRoutes = (): JSX.Element => {
   return (
@@ -55,7 +55,7 @@ const CommentRoutes = (): JSX.Element => {
           element={
             <div style={{ display: 'flex', overflow: 'hidden' }}>
               <SideBar />
-              <CommentList />
+              <ConcludedAppointments />
             </div>
           }
         />

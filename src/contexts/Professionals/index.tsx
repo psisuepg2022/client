@@ -4,16 +4,30 @@ import { api } from '@service/index';
 import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
 import {
+  ConfigureProfessional,
   FormProfessional,
   Professional,
   UpdateProfessional,
 } from '@models/Professional';
 import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
+import { User } from '@models/User';
+import decode from 'jwt-decode';
 
 type ListProps = {
   page?: number;
   size?: number;
   filter?: SearchFilter;
+};
+
+type ConfigureResponse = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+type ConfigureReturn = {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
 };
 
 type ProfessionalsContextData = {
@@ -28,6 +42,7 @@ type ProfessionalsContextData = {
   updateWeeklySchedule: (
     weeklySchedule: UpdateWeeklySchedule
   ) => Promise<Response<WeeklySchedule | boolean>>;
+  configure: (configs: ConfigureProfessional) => Promise<ConfigureReturn>;
   deleteLock: (weeklyId: string, lockId: string) => Promise<Response<boolean>>;
   topBar: () => Promise<
     Response<ItemList<{ id: string; name: string; baseDuration: number }>>
@@ -159,6 +174,25 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
+  const configure = async (
+    configs: ConfigureProfessional
+  ): Promise<ConfigureReturn> => {
+    const { data }: { data: Response<ConfigureResponse> } = await api.post(
+      'professional/configure',
+      {
+        ...configs,
+      }
+    );
+
+    const decodedToken: User = decode(data.content?.accessToken || '') as User;
+
+    return {
+      accessToken: data.content?.accessToken as string,
+      refreshToken: data.content?.refreshToken as string,
+      user: decodedToken,
+    };
+  };
+
   return (
     <ProfessionalsContext.Provider
       value={{
@@ -171,6 +205,7 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
         updateWeeklySchedule,
         deleteLock,
         topBar,
+        configure,
         professionals,
         count,
       }}

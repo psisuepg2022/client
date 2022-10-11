@@ -20,6 +20,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import PatientsTable from './table';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
@@ -115,6 +117,18 @@ const Patients = (): JSX.Element => {
     searchActive.current = true;
     setPage(0);
     try {
+      if (permissions.includes('USER_TYPE_PROFESSIONAL')) {
+        await professionalPatients({
+          size: PageSize,
+          page,
+          filter: {
+            name: searchData?.name || '',
+            CPF: searchData?.CPF || '',
+            email: searchData?.email || '',
+          },
+        });
+        return;
+      }
       await list({
         size: PageSize,
         filter: {
@@ -197,10 +211,6 @@ const Patients = (): JSX.Element => {
               value: 14,
               message: 'Insira um CPF válido',
             },
-            required: {
-              value: true,
-              message: 'O CPF do responsável é obrigatório',
-            },
           }}
           maxLength={14}
           mask={(s: string): string =>
@@ -260,6 +270,11 @@ const Patients = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_PATIENT')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={loading || !permissions.includes('CREATE_PATIENT')}
                 onClick={() => navigate('/patients/form')}
               >
@@ -284,7 +299,7 @@ const Patients = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : patients.length !== 0 ? (
             <PatientsTable
               patients={patients}
               columns={columns}
@@ -293,6 +308,10 @@ const Patients = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não existem pacientes cadastrados</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

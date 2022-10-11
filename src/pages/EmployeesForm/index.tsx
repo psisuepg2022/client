@@ -122,6 +122,10 @@ const EmployeesForm = (): JSX.Element => {
       if (!employeeToEdit) {
         reset();
         setCepInfos(undefined);
+      } else {
+        reset();
+        setCepInfos(undefined);
+        navigate('/employees');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -163,7 +167,9 @@ const EmployeesForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Funcionário</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Funcionário' : 'Criar Funcionário'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm

@@ -176,6 +176,11 @@ const PatientsForm = (): JSX.Element => {
         reset();
         setCepInfos(undefined);
         setNeedLiable(false);
+      } else {
+        reset();
+        setCepInfos(undefined);
+        setNeedLiable(false);
+        navigate('/patients');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -248,7 +253,9 @@ const PatientsForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Paciente</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Paciente' : 'Criar Paciente'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm
@@ -322,25 +329,39 @@ const PatientsForm = (): JSX.Element => {
                     defaultValue={new Date()}
                   />
                   <ControlledSelect
-                    defaultValue={1}
+                    defaultValue={''}
                     name="maritalStatus"
                     label="Estado civil"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'O estado civil é obrigatório',
+                      },
+                    }}
+                    required
                   >
                     <StyledMenuItem value={1}>Casado(a)</StyledMenuItem>
-                    <StyledMenuItem value={2}>Solteiro(a)</StyledMenuItem>
-                    <StyledMenuItem value={3}>Divorciado(a)</StyledMenuItem>
+                    <StyledMenuItem value={2}>Divorciado(a)</StyledMenuItem>
+                    <StyledMenuItem value={3}>Solteiro(a)</StyledMenuItem>
                     <StyledMenuItem value={4}>Viúvo(a)</StyledMenuItem>
                   </ControlledSelect>
                   <ControlledSelect
-                    defaultValue={1}
+                    defaultValue={''}
                     name="gender"
                     label="Gênero"
+                    required
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'O gênero é obrigatório',
+                      },
+                    }}
                   >
-                    <StyledMenuItem value={1}>Masculino</StyledMenuItem>
-                    <StyledMenuItem value={2}>Feminino</StyledMenuItem>
-                    <StyledMenuItem value={3}>Transgênero</StyledMenuItem>
-                    <StyledMenuItem value={4}>Não binário</StyledMenuItem>
-                    <StyledMenuItem value={5}>Prefiro não dizer</StyledMenuItem>
+                    <StyledMenuItem value={1}>Feminino</StyledMenuItem>
+                    <StyledMenuItem value={2}>Masculino</StyledMenuItem>
+                    <StyledMenuItem value={3}>Não binário</StyledMenuItem>
+                    <StyledMenuItem value={4}>Prefiro não dizer</StyledMenuItem>
+                    <StyledMenuItem value={5}>Transgênero</StyledMenuItem>
                   </ControlledSelect>
                 </PersonalDataSecond>
 

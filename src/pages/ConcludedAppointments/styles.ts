@@ -44,18 +44,34 @@ export const BoxHeader = styled('div')`
   grid-template-columns: 1.6fr 1.4fr 1fr;
   gap: 1rem;
   align-items: center;
+
+  @media (max-width: 1700px) {
+    grid-template-columns: 1.8fr 1.2fr 1fr;
+  }
+  @media (max-width: 1515px) {
+    grid-template-columns: 2fr 1.2fr 0.8fr;
+  }
 `;
 
 export const CommentsTitle = styled(Typography)`
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   color: ${colors.TEXT};
   font-weight: 600;
+  transition: 300ms;
+
+  @media (max-width: 1385px) {
+    font-size: 1.3rem;
+  }
 `;
 
 export const PatientName = styled(Typography)`
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: ${colors.TEXT};
   font-weight: 400;
+  transition: 300ms;
+  @media (max-width: 1385px) {
+    font-size: 1.2rem;
+  }
 `;
 
 export const AppointmentDate = styled(Typography)`

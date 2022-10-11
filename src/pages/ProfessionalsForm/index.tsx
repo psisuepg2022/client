@@ -132,6 +132,10 @@ const ProfessionalsForm = (): JSX.Element => {
       if (!professionalToEdit) {
         reset();
         setCepInfos(undefined);
+      } else {
+        reset();
+        setCepInfos(undefined);
+        navigate('/professionals');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -173,13 +177,16 @@ const ProfessionalsForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Profissional</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Profissional' : 'Criar Profissional'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm
                 id="form"
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
+                autoComplete="off"
               >
                 <SectionDivider>Dados Pessoais</SectionDivider>
                 <PersonalDataFirst>
@@ -256,6 +263,7 @@ const ProfessionalsForm = (): JSX.Element => {
                     }}
                     name="userName"
                     label="Nome de usuário"
+                    autoComplete="new-password"
                     required
                   />
                   {!professionalToEdit && (
@@ -270,6 +278,7 @@ const ProfessionalsForm = (): JSX.Element => {
                       endFunction="password"
                       name="password"
                       label="Senha"
+                      autoComplete="new-password"
                       required
                     />
                   )}

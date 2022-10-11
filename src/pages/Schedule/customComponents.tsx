@@ -4,6 +4,7 @@ import {
   Event,
   HeaderProps,
   SlotPropGetter,
+  View,
 } from 'react-big-calendar';
 import { colors } from '@global/colors';
 import {
@@ -20,9 +21,11 @@ import {
   lockFromResource,
   statusFromResource,
 } from '@utils/schedule';
+import { isAfter } from 'date-fns';
 
 export const eventStyleGetter = (
-  event: Event
+  event: Event,
+  view?: View
 ): { style?: Record<string, unknown>; className?: string } => {
   if (event.resource && lockFromResource(event.resource) === 'LOCK') {
     const style = {
@@ -54,8 +57,8 @@ export const eventStyleGetter = (
     fontFamily: 'Poppins',
     border: '0px',
     padding: '10px',
-    fontSize: '16px',
-    fontWeight: 500,
+    fontSize: view === 'day' ? '1.2rem' : '1rem',
+    fontWeight: 600,
   };
 
   return {
@@ -109,23 +112,30 @@ export const CustomEventMonth = () => {
   return <></>;
 };
 
-export const slotPropGetter: SlotPropGetter = () => {
+export const slotPropGetter: SlotPropGetter = (date: Date) => {
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0);
+  const isPast = isAfter(currentDate, date);
+
   return {
     style: {
-      backgroundColor: '#FFF',
+      backgroundColor: isPast ? colors.PAST : '#FFF',
       color: colors.TEXT,
+      maxHeight: '20px !important',
       cursor: 'pointer !important',
     },
   };
 };
 
-export const dayPropGetter = (): {
+export const dayPropGetter = (
+  disabled: boolean
+): {
   style?: Record<string, unknown>;
   className?: string;
 } => {
   return {
     className: '',
-    style: {},
+    style: disabled ? { visibility: 'hidden' } : {},
   };
 };
 

@@ -12,8 +12,12 @@ import {
 } from './styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@contexts/Auth';
 
 const NotFound = (): JSX.Element => {
+  const {
+    user: { permissions },
+  } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -30,7 +34,13 @@ const NotFound = (): JSX.Element => {
         <SecondaryText>Volte para a página inicial, e lembre:</SecondaryText>
         <SecondaryText>Você não viu nada!</SecondaryText>
 
-        <StyledButton onClick={() => navigate('/schedule')}>
+        <StyledButton
+          onClick={() =>
+            permissions.includes('USER_TYPE_PROFESSIONAL_UNCONFIGURED')
+              ? navigate('/professional-config')
+              : navigate('/schedule')
+          }
+        >
           VOLTAR PARA O INÍCIO
         </StyledButton>
       </SecondarySection>

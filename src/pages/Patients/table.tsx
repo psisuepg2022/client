@@ -114,14 +114,14 @@ const PatientsTable = ({
                       {!row.CPF && row.liable ? row.liable.CPF : row.CPF}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      {row.birthDate}
+                      {`${row.birthDate} (${row.age || 0} anos)`}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {permissions.includes('USER_TYPE_PROFESSIONAL') && (
-                        <Tooltip title="Anotações">
+                        <Tooltip title="Consultas concluídas">
                           <IconButton
                             onClick={() =>
                               navigate('/comment/list', {

@@ -93,3 +93,15 @@ export const NavItemTitle = styled(Typography)`
   font-weight: 400;
   padding-left: 2rem;
 `;
+
+export const UserNameContainer = styled('div')`
+  display: flex;
+  text-align: center;
+`;
+
+export const UserName = styled(Typography)`
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 1rem 0;
+`;

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { decodeToken } from 'react-jwt';
+import decode from 'jwt-decode';
 import { Response } from '@interfaces/Response';
 import { User } from '@models/User';
 import { api } from '../../service';
@@ -16,7 +16,7 @@ type LoginResponse = {
 };
 
 type AuthContextData = {
-  signIn: (credentials: AuthCredentials) => Promise<void>;
+  signIn: (credentials: AuthCredentials) => Promise<User>;
   signOut: () => void;
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
@@ -26,6 +26,8 @@ type AuthContextData = {
     confirmNewPassword: string
   ) => Promise<Response<boolean>>;
   isAuthenticated: boolean;
+  sideBarExpanded: boolean;
+  setSideBarExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type AuthProviderProps = {
@@ -51,15 +53,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     }
     return {} as User;
   });
+  const [sideBarExpanded, setSideBarExpanded] = useState<boolean>(true);
 
-  const signIn = async (credentials: AuthCredentials): Promise<void> => {
+  const signIn = async (credentials: AuthCredentials): Promise<User> => {
     const { data }: { data: Response<LoginResponse> } = await api.post('auth', {
       ...credentials,
     });
 
-    const decodedToken: User = decodeToken(
-      data.content?.accessToken || ''
-    ) as User;
+    const decodedToken: User = decode(data.content?.accessToken || '') as User;
 
     localStorage.setItem('@psis:accessToken', data.content?.accessToken || '');
     localStorage.setItem(
@@ -72,6 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     ] = `Bearer ${data.content?.accessToken}`;
 
     setUser(decodedToken);
+    return decodedToken;
   };
 
   const signOut = (): void => {
@@ -105,6 +107,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
         setUser,
         changePassword,
         isAuthenticated: Object.keys(user).length !== 0,
+        sideBarExpanded,
+        setSideBarExpanded,
       }}
     >
       {children}

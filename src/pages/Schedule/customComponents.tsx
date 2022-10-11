@@ -21,6 +21,7 @@ import {
   lockFromResource,
   statusFromResource,
 } from '@utils/schedule';
+import { isAfter } from 'date-fns';
 
 export const eventStyleGetter = (
   event: Event,
@@ -111,10 +112,14 @@ export const CustomEventMonth = () => {
   return <></>;
 };
 
-export const slotPropGetter: SlotPropGetter = () => {
+export const slotPropGetter: SlotPropGetter = (date: Date) => {
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0);
+  const isPast = isAfter(currentDate, date);
+
   return {
     style: {
-      backgroundColor: '#FFF',
+      backgroundColor: isPast ? colors.PAST : '#FFF',
       color: colors.TEXT,
       maxHeight: '20px !important',
       cursor: 'pointer !important',

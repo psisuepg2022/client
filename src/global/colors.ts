@@ -14,4 +14,5 @@ export const colors = {
   TEXT: '#303030',
   ABSENCE: '#C2C2C2',
   CANCELLED: '#B6A2A1',
+  PAST: '#d5dbe2',
 };

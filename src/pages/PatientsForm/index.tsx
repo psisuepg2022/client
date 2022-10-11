@@ -329,9 +329,16 @@ const PatientsForm = (): JSX.Element => {
                     defaultValue={new Date()}
                   />
                   <ControlledSelect
-                    defaultValue={1}
+                    defaultValue={''}
                     name="maritalStatus"
                     label="Estado civil"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'O estado civil é obrigatório',
+                      },
+                    }}
+                    required
                   >
                     <StyledMenuItem value={1}>Casado(a)</StyledMenuItem>
                     <StyledMenuItem value={2}>Divorciado(a)</StyledMenuItem>
@@ -339,9 +346,16 @@ const PatientsForm = (): JSX.Element => {
                     <StyledMenuItem value={4}>Viúvo(a)</StyledMenuItem>
                   </ControlledSelect>
                   <ControlledSelect
-                    defaultValue={1}
+                    defaultValue={''}
                     name="gender"
                     label="Gênero"
+                    required
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'O gênero é obrigatório',
+                      },
+                    }}
                   >
                     <StyledMenuItem value={1}>Feminino</StyledMenuItem>
                     <StyledMenuItem value={2}>Masculino</StyledMenuItem>

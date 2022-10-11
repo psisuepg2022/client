@@ -33,6 +33,7 @@ import AsyncInput from '@components/AsyncInput';
 import { searchForCep } from '@utils/zipCode';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
+import { useAuth } from '@contexts/Auth';
 
 type ProfileFormProps = {
   name: string;
@@ -49,6 +50,7 @@ type ProfileFormProps = {
 
 const ProfessionalProfile = (): JSX.Element => {
   const formMethods = useForm<ProfileFormProps>();
+  const { setUser } = useAuth();
   const { getProfile, updateProfile } = useProfessionals();
   const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
@@ -131,6 +133,12 @@ const ProfessionalProfile = (): JSX.Element => {
     try {
       setLoading(true);
       const { message } = await updateProfile(professional);
+
+      setUser((prev) => {
+        const newUser = { ...prev, name: formData.name };
+        localStorage.setItem('@psis:userData', JSON.stringify(newUser));
+        return newUser;
+      });
 
       showAlert({
         title: 'Sucesso!',

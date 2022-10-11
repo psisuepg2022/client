@@ -31,6 +31,7 @@ import { searchForCep } from '@utils/zipCode';
 import AsyncInput from '@components/AsyncInput';
 import SimpleInput from '@components/SimpleInput';
 import { useEmployees } from '@contexts/Employees';
+import { useAuth } from '@contexts/Auth';
 
 type ProfileFormProps = {
   name: string;
@@ -43,6 +44,7 @@ type ProfileFormProps = {
 };
 
 const EmployeeProfile = (): JSX.Element => {
+  const { setUser } = useAuth();
   const formMethods = useForm<ProfileFormProps>();
   const { getProfile, updateProfile } = useEmployees();
   const { handleSubmit, setValue } = formMethods;
@@ -124,6 +126,12 @@ const EmployeeProfile = (): JSX.Element => {
     try {
       setLoading(true);
       const { message } = await updateProfile(employee);
+
+      setUser((prev) => {
+        const newUser = { ...prev, name: formData.name };
+        localStorage.setItem('@psis:userData', JSON.stringify(newUser));
+        return newUser;
+      });
 
       showAlert({
         title: 'Sucesso!',

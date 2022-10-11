@@ -150,6 +150,7 @@ const OwnerProfile = (): JSX.Element => {
         setUser((prev) => {
           const newUser: User = {
             ...prev,
+            name: formData.name,
             clinic: {
               ...prev.clinic,
               name: content.clinic?.name || clinic?.name,

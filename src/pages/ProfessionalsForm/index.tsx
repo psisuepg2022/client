@@ -132,6 +132,10 @@ const ProfessionalsForm = (): JSX.Element => {
       if (!professionalToEdit) {
         reset();
         setCepInfos(undefined);
+      } else {
+        reset();
+        setCepInfos(undefined);
+        navigate('/professionals');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

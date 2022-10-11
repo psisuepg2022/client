@@ -122,6 +122,10 @@ const EmployeesForm = (): JSX.Element => {
       if (!employeeToEdit) {
         reset();
         setCepInfos(undefined);
+      } else {
+        reset();
+        setCepInfos(undefined);
+        navigate('/employees');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

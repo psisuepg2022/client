@@ -176,6 +176,11 @@ const PatientsForm = (): JSX.Element => {
         reset();
         setCepInfos(undefined);
         setNeedLiable(false);
+      } else {
+        reset();
+        setCepInfos(undefined);
+        setNeedLiable(false);
+        navigate('/patients');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

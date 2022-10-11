@@ -33,7 +33,7 @@ import ControlledTimePicker from '@components/ControlledTimePicker';
 import CardSelector from '@components/CardSelector';
 import { CreateWeeklySchedule } from '@models/WeeklySchedule';
 import { timeToDate } from '@utils/timeToDate';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlinePlus, AiOutlineRight } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import {
   ConfigFormProps,
@@ -53,7 +53,11 @@ import { api } from '@service/index';
 const initialWeeklySchedule = createInitialWeeklySchedule();
 
 const ProfessionalInitialConfig = (): JSX.Element => {
-  const { signOut, setUser } = useAuth();
+  const {
+    signOut,
+    setUser,
+    user: { name },
+  } = useAuth();
   const { configure } = useProfessionals();
   const formMethods = useForm({
     defaultValues: {
@@ -354,6 +358,16 @@ const ProfessionalInitialConfig = (): JSX.Element => {
             </IconButton>
             <Typography fontSize={'2.5rem'}>
               Configuração Inicial do Profissional
+            </Typography>
+            <AiOutlineRight
+              size={30}
+              style={{ color: '#707070', marginLeft: 10 }}
+            />
+            <Typography
+              fontSize={'2rem'}
+              style={{ marginLeft: 10, fontWeight: 400 }}
+            >
+              {name?.split(' ')[0]}
             </Typography>
           </Header>
           <Body>

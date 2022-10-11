@@ -60,7 +60,7 @@ const ControlledSelect = ({
       control={control}
       render={({ field: { value, onChange, onBlur } }) => (
         <FormControl error={getError().value}>
-          <StyledInputLabel>{label}</StyledInputLabel>
+          <StyledInputLabel required={required}>{label}</StyledInputLabel>
           <StyledSelect
             {...rest}
             sx={{

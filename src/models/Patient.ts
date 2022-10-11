@@ -7,6 +7,7 @@ export type Patient = {
   gender: string;
   liable?: Liable;
   address?: Address;
+  age?: number;
 } & Person;
 
 export type FormPatient = {

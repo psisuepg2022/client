@@ -248,7 +248,9 @@ const PatientsForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Paciente</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Paciente' : 'Criar Paciente'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm

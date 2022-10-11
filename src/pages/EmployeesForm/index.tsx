@@ -163,7 +163,9 @@ const EmployeesForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Funcionário</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Funcionário' : 'Criar Funcionário'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm

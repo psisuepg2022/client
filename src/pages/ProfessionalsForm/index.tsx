@@ -173,7 +173,9 @@ const ProfessionalsForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Profissional</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Profissional' : 'Criar Profissional'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm

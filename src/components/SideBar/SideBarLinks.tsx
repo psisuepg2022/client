@@ -20,17 +20,6 @@ export const sideBarLinks: SideBarLinks[] = [
     requiredPermissions: ['USER_TYPE_PROFESSIONAL', 'READ_APPOINTMENTS'],
   },
   {
-    title: 'Profissionais',
-    path: '/professionals',
-    icon: <FaHandHoldingMedical color="#FFF" fontSize={30} />,
-    requiredPermissions: [
-      'READ_PROFESSIONAL',
-      // 'CREATE_PROFESSIONAL',
-      // 'UPDATE_PROFESSIONAL', UPDATE AND DELETE WILL BE HANDLED AT THE ACCESS ICON ON TABLE
-      // 'DELETE_PROFESSIONAL',
-    ],
-  },
-  {
     title: 'Funcionários',
     path: '/employees',
     icon: <BsFillPersonLinesFill color="#FFF" fontSize={30} />,
@@ -51,6 +40,17 @@ export const sideBarLinks: SideBarLinks[] = [
       // 'UPDATE_PATIENT',
       // 'DELETE_PATIENT',
       'READ_LIABLE',
+    ],
+  },
+  {
+    title: 'Profissionais',
+    path: '/professionals',
+    icon: <FaHandHoldingMedical color="#FFF" fontSize={30} />,
+    requiredPermissions: [
+      'READ_PROFESSIONAL',
+      // 'CREATE_PROFESSIONAL',
+      // 'UPDATE_PROFESSIONAL', UPDATE AND DELETE WILL BE HANDLED AT THE ACCESS ICON ON TABLE
+      // 'DELETE_PROFESSIONAL',
     ],
   },
 ];

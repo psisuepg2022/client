@@ -240,12 +240,12 @@ const Schedule = (): JSX.Element => {
                     0
                   );
 
-                  if (
-                    isAfter(endDate, currentDate) ||
-                    isEqual(endDate, currentDate)
-                  ) {
-                    return buildWeeklyScheduleLocks(currentDate, lock);
-                  }
+                  // if (
+                  //   isAfter(endDate, currentDate) ||
+                  //   isEqual(endDate, currentDate)
+                  // ) {
+                  return buildWeeklyScheduleLocks(currentDate, lock);
+                  // }
                 }) as ScheduleEvent[]);
 
           const weeklyScheduleLocksEvents =

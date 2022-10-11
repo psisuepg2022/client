@@ -180,7 +180,7 @@ const ConfirmedEventModal = ({
                   navigate('/comment/creation', { state: eventInfo })
                 }
               >
-                CONCLUIR
+                REALIZAR ANOTAÇÕES
               </StyledConfirmButton>
             )}
             {(permissions.includes('UPDATE_APPOINTMENTS') ||

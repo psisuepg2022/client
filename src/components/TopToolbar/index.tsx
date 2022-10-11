@@ -8,6 +8,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import {
+  CardContainer,
   ClinicTitle,
   Container,
   DayTitle,
@@ -440,7 +441,7 @@ const TopToolbar = ({
         </LatterContent>
       </Container>
       {!permissions.includes('USER_TYPE_PROFESSIONAL') && (
-        <div style={{ display: 'flex' }}>
+        <CardContainer>
           {professionals.map((professional) => (
             <CardSelector
               key={professional.id}
@@ -449,7 +450,7 @@ const TopToolbar = ({
               onSelect={() => onChangeProfessional(professional)}
             />
           ))}
-        </div>
+        </CardContainer>
       )}
     </div>
   );

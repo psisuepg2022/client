@@ -109,3 +109,23 @@ export const StyledInputLabel = styled(InputLabel)`
     color: #fff !important;
   }
 `;
+
+export const CardContainer = styled('div')`
+  display: flex;
+  overflow-x: scroll;
+
+  ::-webkit-scrollbar {
+    height: 10px !important;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    border-radius: 0px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
+    border-radius: 2px;
+  }
+`;

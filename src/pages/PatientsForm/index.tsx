@@ -166,12 +166,8 @@ const PatientsForm = (): JSX.Element => {
 
     setLoading(true);
     try {
-      const response = await create(patient);
-      showAlert({
-        title: 'Sucesso!',
-        text: response.message,
-        icon: 'success',
-      });
+      await create(patient);
+
       if (!patientToEdit) {
         reset();
         setCepInfos(undefined);

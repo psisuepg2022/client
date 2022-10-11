@@ -124,12 +124,12 @@ const ProfessionalsForm = (): JSX.Element => {
     setLoading(true);
     try {
       const { content, message } = await create(professional);
-      showAlert({
-        title: 'Sucesso!',
-        text: `${message} Código de acesso: ${content?.accessCode}`,
-        icon: 'success',
-      });
       if (!professionalToEdit) {
+        showAlert({
+          title: 'Sucesso!',
+          text: `${message} Código de acesso: ${content?.accessCode}`,
+          icon: 'success',
+        });
         reset();
         setCepInfos(undefined);
       } else {

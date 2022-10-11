@@ -114,12 +114,12 @@ const EmployeesForm = (): JSX.Element => {
     setLoading(true);
     try {
       const { content, message } = await create(employee);
-      showAlert({
-        title: 'Sucesso!',
-        text: `${message} Código de acesso: ${content?.accessCode}`,
-        icon: 'success',
-      });
       if (!employeeToEdit) {
+        showAlert({
+          title: 'Sucesso!',
+          text: `${message} Código de acesso: ${content?.accessCode}`,
+          icon: 'success',
+        });
         reset();
         setCepInfos(undefined);
       } else {

@@ -121,7 +121,7 @@ const PatientsTable = ({
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {permissions.includes('USER_TYPE_PROFESSIONAL') && (
-                        <Tooltip title="Anotações">
+                        <Tooltip title="Consultas concluídas">
                           <IconButton
                             onClick={() =>
                               navigate('/comment/list', {

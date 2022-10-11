@@ -40,7 +40,7 @@ type SearchProps = {
   end: Date | null;
 };
 
-const CommentList = (): JSX.Element => {
+const ConcludedAppointments = (): JSX.Element => {
   const { state }: { state: Patient } = useLocation() as { state: Patient };
   const navigate = useNavigate();
   const {
@@ -150,9 +150,9 @@ const CommentList = (): JSX.Element => {
           <BoxHeader>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <IconButton onClick={() => navigate(-1)}>
-                <AiOutlineLeft size={40} />
+                <AiOutlineLeft size={35} />
               </IconButton>
-              <CommentsTitle>Anotações</CommentsTitle>
+              <CommentsTitle>Consultas Concluídas</CommentsTitle>
               <AiOutlineRight size={25} style={{ color: '#707070' }} />
               <PatientName>{state.name}</PatientName>
             </div>
@@ -199,9 +199,6 @@ const CommentList = (): JSX.Element => {
                 {comments.map((comment) => (
                   <CommentBox key={comment.appointmentDate}>
                     <ScheduleStatus>
-                      Agendada em: <span>{comment.scheduledAt}</span>
-                    </ScheduleStatus>
-                    <ScheduleStatus>
                       Data:{' '}
                       <span>
                         {dateFormat({
@@ -218,6 +215,9 @@ const CommentList = (): JSX.Element => {
                           stringFormat: 'HH:mm',
                         })}
                       </span>
+                    </ScheduleStatus>
+                    <ScheduleStatus>
+                      Agendada em: <span>{comment.scheduledAt}</span>
                     </ScheduleStatus>
                     <ScheduleStatus>
                       Concluída em: <span>{comment.completedAt}</span>
@@ -266,4 +266,4 @@ const CommentList = (): JSX.Element => {
   );
 };
 
-export default CommentList;
+export default ConcludedAppointments;

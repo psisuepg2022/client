@@ -3,13 +3,14 @@ import React from 'react';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import { ClinicTitle, Container, EarlyContent, LatterContent } from './styles';
 import { AiOutlineUser } from 'react-icons/ai';
+import { FaUserCog, FaUserMd, FaUserTie } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 
 const AlterTopToolbar = (): JSX.Element => {
   const {
     signOut,
-    user: { clinic },
+    user: { clinic, permissions },
   } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -40,7 +41,15 @@ const AlterTopToolbar = (): JSX.Element => {
               open ? handleClose() : handleClick(e)
             }
           >
-            <AiOutlineUser style={{ fontSize: 40, color: '#FFF' }} />
+            {permissions.includes('USER_TYPE_PROFESSIONAL') ? (
+              <FaUserMd style={{ fontSize: 35, color: '#FFF' }} />
+            ) : permissions.includes('USER_TYPE_EMPLOYEE') ? (
+              <FaUserTie style={{ fontSize: 35, color: '#FFF' }} />
+            ) : permissions.includes('USER_TYPE_OWNER') ? (
+              <FaUserCog style={{ fontSize: 40, color: '#FFF' }} />
+            ) : (
+              <AiOutlineUser style={{ fontSize: 40, color: '#FFF' }} />
+            )}
           </IconButton>
           <Menu
             id="basic-menu"

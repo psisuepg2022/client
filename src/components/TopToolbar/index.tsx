@@ -20,6 +20,7 @@ import {
   TodayButton,
 } from './styles';
 import { AiOutlineUser, AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { FaUserCog, FaUserMd, FaUserTie } from 'react-icons/fa';
 import { ToolbarProps, View, Event } from 'react-big-calendar';
 import CardSelector from '../CardSelector';
 import { useNavigate } from 'react-router-dom';
@@ -356,6 +357,8 @@ const TopToolbar = ({
   )
     return <></>;
 
+  console.log('USER_TYPE', permissions);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Container>
@@ -407,7 +410,15 @@ const TopToolbar = ({
               open ? handleClose() : handleClick(e)
             }
           >
-            <AiOutlineUser style={{ fontSize: 40, color: '#FFF' }} />
+            {permissions.includes('USER_TYPE_PROFESSIONAL') ? (
+              <FaUserMd style={{ fontSize: 35, color: '#FFF' }} />
+            ) : permissions.includes('USER_TYPE_EMPLOYEE') ? (
+              <FaUserTie style={{ fontSize: 35, color: '#FFF' }} />
+            ) : permissions.includes('USER_TYPE_OWNER') ? (
+              <FaUserCog style={{ fontSize: 40, color: '#FFF' }} />
+            ) : (
+              <AiOutlineUser style={{ fontSize: 40, color: '#FFF' }} />
+            )}
           </IconButton>
           <Menu
             id="basic-menu"

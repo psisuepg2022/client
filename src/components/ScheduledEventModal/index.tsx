@@ -59,12 +59,12 @@ const ScheduledEventModal = ({
     try {
       setLoading(status);
       const appointmentId = idFromResource(eventInfo.resource);
-      const { content, message } = await updateAppointmentStatus(
+      const { content, success } = await updateAppointmentStatus(
         appointmentId,
         status
       );
 
-      if (!content) {
+      if (!success) {
         showAlert({
           icon: 'error',
           text: 'Ocorreu um problema ao atualizar a consulta',
@@ -92,12 +92,6 @@ const ScheduledEventModal = ({
       });
 
       closeAll('');
-
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
-      });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

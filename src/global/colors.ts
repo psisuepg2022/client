@@ -4,7 +4,7 @@ export const colors = {
   DARKER: '#017D6F',
   SCHEDULED: '#D5E2D1',
   CONFIRMED: '#8BB282',
-  CONCLUDED: '#55b48ee6',
+  CONCLUDED: '#61b895e6',
   LOCK: '#9BB0A5',
   LOCK_DARKER: '#688877',
   BACKGREY: '#EEEEEE',

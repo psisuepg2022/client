@@ -906,7 +906,8 @@ const Schedule = (): JSX.Element => {
           }
           onSelectSlot={(slotInfo: SlotInfo) =>
             (user.permissions.includes('CREATE_APPOINTMENT') ||
-              user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
+              user.permissions.includes('CREATE_SCHEDULE_LOCK') ||
+              user.permissions.includes('USER_TYPE_PROFESSIONAL')) &&
             isAfter(slotInfo.start, new Date()) &&
             viewRef.current === 'day' &&
             setCurrentSlotInfo(slotInfo)

@@ -11,6 +11,7 @@ import { LockSave } from '@interfaces/LockSave';
 import { SavedLock } from '@interfaces/SavedLock';
 import { UpdatedEvent } from '@interfaces/UpdatedEvent';
 import { AppointmentComments } from '@interfaces/AppointmentComments';
+import { AppointmentSaveByProfessional } from '@interfaces/AppointmentSaveByProfessional';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -23,6 +24,9 @@ type ScheduleContextData = {
   ) => Promise<Response<AllScheduleEvents>>;
   saveAppointment: (
     appointmentData: AppointmentSave
+  ) => Promise<Response<SavedEvent>>;
+  saveAppointmentByProfessional: (
+    appointmentData: AppointmentSaveByProfessional
   ) => Promise<Response<SavedEvent>>;
   updateAppointmentStatus: (
     appointmentId: string,
@@ -156,6 +160,19 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     return data;
   };
 
+  const saveAppointmentByProfessional = async (
+    appointmentData: AppointmentSaveByProfessional
+  ): Promise<Response<SavedEvent>> => {
+    const { data }: { data: Response<SavedEvent> } = await api.post(
+      'appointment/by_the_professional',
+      {
+        ...appointmentData,
+      }
+    );
+
+    return data;
+  };
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -179,6 +196,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
         setCurrentStart,
         currentEnd,
         setCurrentEnd,
+        saveAppointmentByProfessional,
       }}
     >
       {children}

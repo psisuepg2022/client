@@ -4,7 +4,6 @@ import {
   AuxDataFirst,
   AuxDataSecond,
   Box,
-  ButtonContainer,
   Container,
   Content,
   Form,
@@ -390,12 +389,9 @@ const ProfessionalProfile = (): JSX.Element => {
               </ProfessionalData>
             </Form>
           </FormProvider>
-          <ButtonContainer>
-            <div />
-            <StyledButton type="submit" form="form">
-              SALVAR
-            </StyledButton>
-          </ButtonContainer>
+          <StyledButton type="submit" form="form">
+            SALVAR
+          </StyledButton>
         </Content>
       </Box>
     </Container>

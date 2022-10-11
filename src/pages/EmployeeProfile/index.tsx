@@ -188,163 +188,165 @@ const EmployeeProfile = (): JSX.Element => {
     <Container>
       <Box>
         <Content>
-          <Header>
-            <IconButton onClick={() => navigate(-1)}>
-              <FiChevronLeft
-                style={{ color: colors.TEXT, fontSize: '2.5rem' }}
-              />
-            </IconButton>
-            <Typography fontSize={'2.5rem'}>Perfil do Funcionário</Typography>
-          </Header>
-
-          <FormProvider {...formMethods}>
-            <Form id="form" onSubmit={handleSubmit(onSubmit)}>
-              <SectionDivider>Dados Pessoais</SectionDivider>
-
-              <PersonalInfo>
-                <ControlledInput
-                  name="name"
-                  label="Nome"
-                  rules={{
-                    required: {
-                      value: true,
-                      message: 'O nome do funcionário é obrigatório',
-                    },
-                  }}
+          <div>
+            <Header>
+              <IconButton onClick={() => navigate(-1)}>
+                <FiChevronLeft
+                  style={{ color: colors.TEXT, fontSize: '2.5rem' }}
                 />
-                <ControlledInput name="email" label="Email" />
+              </IconButton>
+              <Typography fontSize={'2.5rem'}>Perfil do Funcionário</Typography>
+            </Header>
 
-                <PersonalInfoHalf>
+            <FormProvider {...formMethods}>
+              <Form id="form" onSubmit={handleSubmit(onSubmit)}>
+                <SectionDivider>Dados Pessoais</SectionDivider>
+
+                <PersonalInfo>
                   <ControlledInput
-                    name="CPF"
-                    label="CPF"
+                    name="name"
+                    label="Nome"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'O nome do funcionário é obrigatório',
+                      },
+                    }}
+                  />
+                  <ControlledInput name="email" label="Email" />
+
+                  <PersonalInfoHalf>
+                    <ControlledInput
+                      name="CPF"
+                      label="CPF"
+                      mask={(s: string): string =>
+                        `${s
+                          .replace(/\D/g, '')
+                          .replace(/(\d{3})(\d)/, '$1.$2')
+                          .replace(/(\d{3})(\d)/, '$1.$2')
+                          .replace(/(\d{3})(\d)/, '$1-$2')
+                          .replace(/(-\d{2})\d+?$/, '$1')}`
+                      }
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'O CPF do funcionário é obrigatório',
+                        },
+                        minLength: {
+                          value: 14,
+                          message: 'Insira um CPF válido',
+                        },
+                        maxLength: {
+                          value: 14,
+                          message: 'Insira um CPF válido',
+                        },
+                      }}
+                    />
+                    <ControlledDatePicker
+                      name="birthDate"
+                      label="Data de nascimento"
+                      rules={{
+                        required: {
+                          value: true,
+                          message:
+                            'A data de nascimento do funcionário é obrigatória',
+                        },
+                        validate: (date) =>
+                          !isAfter(date, new Date()) ||
+                          'A Data escolhida não pode ser superior à data atual',
+                      }}
+                    />
+                  </PersonalInfoHalf>
+                  <PersonalInfoHalf>
+                    <ControlledInput
+                      name="userName"
+                      label="Nome de usuário"
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'O nome de usuário é obrigatório',
+                        },
+                      }}
+                    />
+                  </PersonalInfoHalf>
+                </PersonalInfo>
+
+                <SectionDivider>Dados Auxiliares</SectionDivider>
+                <AuxDataFirst>
+                  <AsyncInput
+                    name="address.zipCode"
+                    label="CEP"
+                    defaultValue=""
+                    onCompleteCep={handleCepComplete}
+                    inputLoading={inputLoading}
+                    maxLength={9}
                     mask={(s: string): string =>
                       `${s
                         .replace(/\D/g, '')
-                        .replace(/(\d{3})(\d)/, '$1.$2')
-                        .replace(/(\d{3})(\d)/, '$1.$2')
-                        .replace(/(\d{3})(\d)/, '$1-$2')
-                        .replace(/(-\d{2})\d+?$/, '$1')}`
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{3})\d+?$/, '$1')}`
                     }
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'O CPF do funcionário é obrigatório',
-                      },
-                      minLength: {
-                        value: 14,
-                        message: 'Insira um CPF válido',
-                      },
-                      maxLength: {
-                        value: 14,
-                        message: 'Insira um CPF válido',
-                      },
-                    }}
                   />
-                  <ControlledDatePicker
-                    name="birthDate"
-                    label="Data de nascimento"
-                    rules={{
-                      required: {
-                        value: true,
-                        message:
-                          'A data de nascimento do funcionário é obrigatória',
-                      },
-                      validate: (date) =>
-                        !isAfter(date, new Date()) ||
-                        'A Data escolhida não pode ser superior à data atual',
-                    }}
-                  />
-                </PersonalInfoHalf>
-                <PersonalInfoHalf>
-                  <ControlledInput
-                    name="userName"
-                    label="Nome de usuário"
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'O nome de usuário é obrigatório',
-                      },
-                    }}
-                  />
-                </PersonalInfoHalf>
-              </PersonalInfo>
-
-              <SectionDivider>Dados Auxiliares</SectionDivider>
-              <AuxDataFirst>
-                <AsyncInput
-                  name="address.zipCode"
-                  label="CEP"
-                  defaultValue=""
-                  onCompleteCep={handleCepComplete}
-                  inputLoading={inputLoading}
-                  maxLength={9}
-                  mask={(s: string): string =>
-                    `${s
-                      .replace(/\D/g, '')
-                      .replace(/(\d{5})(\d)/, '$1-$2')
-                      .replace(/(-\d{3})\d+?$/, '$1')}`
-                  }
-                />
-                <SimpleInput
-                  name="address.city"
-                  label="Cidade"
-                  contentEditable={false}
-                  value={cepInfos?.localidade || ''}
-                />
-                {cepInfos?.cep && !cepInfos?.logradouro ? (
-                  <ControlledInput
-                    name="address.publicArea"
-                    label="Logradouro"
-                    rules={{
-                      validate: (value) =>
-                        (cepInfos?.cep && value !== undefined) ||
-                        'O logradouro é obrigatório',
-                    }}
-                  />
-                ) : (
                   <SimpleInput
-                    name="address.publicArea"
-                    label="Logradouro"
+                    name="address.city"
+                    label="Cidade"
                     contentEditable={false}
-                    value={cepInfos?.logradouro || ''}
+                    value={cepInfos?.localidade || ''}
                   />
-                )}
-              </AuxDataFirst>
-              <AuxDataSecond>
-                <SimpleInput
-                  name="address.state"
-                  label="Estado"
-                  contentEditable={false}
-                  value={cepInfos?.uf || ''}
-                />
-                {cepInfos?.cep && !cepInfos.bairro ? (
-                  <ControlledInput name="address.district" label="Bairro" />
-                ) : (
+                  {cepInfos?.cep && !cepInfos?.logradouro ? (
+                    <ControlledInput
+                      name="address.publicArea"
+                      label="Logradouro"
+                      rules={{
+                        validate: (value) =>
+                          (cepInfos?.cep && value !== undefined) ||
+                          'O logradouro é obrigatório',
+                      }}
+                    />
+                  ) : (
+                    <SimpleInput
+                      name="address.publicArea"
+                      label="Logradouro"
+                      contentEditable={false}
+                      value={cepInfos?.logradouro || ''}
+                    />
+                  )}
+                </AuxDataFirst>
+                <AuxDataSecond>
                   <SimpleInput
-                    name="address.district"
-                    label="Bairro"
+                    name="address.state"
+                    label="Estado"
                     contentEditable={false}
-                    value={cepInfos?.bairro || ''}
+                    value={cepInfos?.uf || ''}
                   />
-                )}
-                <ControlledInput
-                  name="contactNumber"
-                  label="Telefone"
-                  defaultValue=""
-                  style={{ width: '50%' }}
-                  maxLength={15}
-                  mask={(s: string): string =>
-                    `${s
-                      .replace(/\D/g, '')
-                      .replace(/(\d{2})(\d)/, '($1) $2')
-                      .replace(/(\d{5})(\d)/, '$1-$2')
-                      .replace(/(-\d{4})\d+?$/, '$1')}`
-                  }
-                />
-              </AuxDataSecond>
-            </Form>
-          </FormProvider>
+                  {cepInfos?.cep && !cepInfos.bairro ? (
+                    <ControlledInput name="address.district" label="Bairro" />
+                  ) : (
+                    <SimpleInput
+                      name="address.district"
+                      label="Bairro"
+                      contentEditable={false}
+                      value={cepInfos?.bairro || ''}
+                    />
+                  )}
+                  <ControlledInput
+                    name="contactNumber"
+                    label="Telefone"
+                    defaultValue=""
+                    style={{ width: '50%' }}
+                    maxLength={15}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{2})(\d)/, '($1) $2')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{4})\d+?$/, '$1')}`
+                    }
+                  />
+                </AuxDataSecond>
+              </Form>
+            </FormProvider>
+          </div>
           <StyledButton type="submit" form="form">
             SALVAR
           </StyledButton>

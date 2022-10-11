@@ -3,7 +3,7 @@ export const colors = {
   SECONDARY: '#009686',
   DARKER: '#017D6F',
   SCHEDULED: '#D5E2D1',
-  CONFIRMED: '#8BB282',
+  CONFIRMED: '#92b78a',
   CONCLUDED: '#61b895e6',
   LOCK: '#9BB0A5',
   LOCK_DARKER: '#688877',

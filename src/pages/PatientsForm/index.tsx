@@ -334,8 +334,8 @@ const PatientsForm = (): JSX.Element => {
                     label="Estado civil"
                   >
                     <StyledMenuItem value={1}>Casado(a)</StyledMenuItem>
-                    <StyledMenuItem value={2}>Solteiro(a)</StyledMenuItem>
-                    <StyledMenuItem value={3}>Divorciado(a)</StyledMenuItem>
+                    <StyledMenuItem value={2}>Divorciado(a)</StyledMenuItem>
+                    <StyledMenuItem value={3}>Solteiro(a)</StyledMenuItem>
                     <StyledMenuItem value={4}>Viúvo(a)</StyledMenuItem>
                   </ControlledSelect>
                   <ControlledSelect
@@ -343,11 +343,11 @@ const PatientsForm = (): JSX.Element => {
                     name="gender"
                     label="Gênero"
                   >
-                    <StyledMenuItem value={1}>Masculino</StyledMenuItem>
-                    <StyledMenuItem value={2}>Feminino</StyledMenuItem>
-                    <StyledMenuItem value={3}>Transgênero</StyledMenuItem>
-                    <StyledMenuItem value={4}>Não binário</StyledMenuItem>
-                    <StyledMenuItem value={5}>Prefiro não dizer</StyledMenuItem>
+                    <StyledMenuItem value={1}>Feminino</StyledMenuItem>
+                    <StyledMenuItem value={2}>Masculino</StyledMenuItem>
+                    <StyledMenuItem value={3}>Não binário</StyledMenuItem>
+                    <StyledMenuItem value={4}>Prefiro não dizer</StyledMenuItem>
+                    <StyledMenuItem value={5}>Transgênero</StyledMenuItem>
                   </ControlledSelect>
                 </PersonalDataSecond>
 

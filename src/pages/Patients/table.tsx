@@ -114,7 +114,7 @@ const PatientsTable = ({
                       {!row.CPF && row.liable ? row.liable.CPF : row.CPF}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      {row.birthDate}
+                      {`${row.birthDate} (${row.age || 0} anos)`}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {row.contactNumber}

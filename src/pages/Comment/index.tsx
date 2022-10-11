@@ -72,7 +72,7 @@ const Comment = (): JSX.Element => {
     try {
       const appointmentId = idFromResource(state.resource);
 
-      const { content, message } = await create(appointmentId, text);
+      const { content } = await create(appointmentId, text);
 
       if (!content) {
         showAlert({
@@ -82,12 +82,6 @@ const Comment = (): JSX.Element => {
       }
 
       setEditMode(false);
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
-        allowOutsideClick: false,
-      });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

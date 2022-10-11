@@ -46,22 +46,7 @@ const Comment = (): JSX.Element => {
         const appointmentId = idFromResource(state.resource);
         const { content } = await getById(appointmentId);
 
-        if (!content?.comments) {
-          showAlert({
-            title: '',
-            icon: 'info',
-            text: 'A consulta não possui anotações. Clique em OK para retornar à agenda',
-            allowOutsideClick: false,
-          }).then(async (result) => {
-            if (result.isConfirmed) {
-              navigate('/schedule');
-            }
-          });
-
-          return;
-        }
-
-        const purifiedComment = DOMPurify.sanitize(content.comments);
+        const purifiedComment = DOMPurify.sanitize(content?.comments || '');
 
         setComment(`${parse(purifiedComment)}`);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

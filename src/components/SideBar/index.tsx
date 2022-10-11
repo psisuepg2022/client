@@ -9,6 +9,8 @@ import {
   CollapsedContainer,
   CollapsedNavItem,
   CollapsedHeader,
+  UserName,
+  UserNameContainer,
 } from './styles';
 import { SideBarLinks, sideBarLinks } from './SideBarLinks';
 import { colors } from '@global/colors';
@@ -19,7 +21,7 @@ import ScheduleLabelModal from '@components/ScheduleLabelModal';
 
 const SideBar = (): JSX.Element => {
   const {
-    user: { permissions },
+    user: { permissions, name },
     sideBarExpanded,
     setSideBarExpanded,
   } = useAuth();
@@ -71,6 +73,11 @@ const SideBar = (): JSX.Element => {
           <AiOutlineClose style={{ color: '#FFF', fontSize: 35 }} />
         </IconButton>
       </Header>
+      <UserNameContainer>
+        <UserName>{`Bem-vindo(a)${
+          name ? `, ${name.split(' ')[0]}` : ''
+        }`}</UserName>
+      </UserNameContainer>
       <Content>
         <div style={{ marginTop: 3 }}>
           {renderLinks().map((item) => (

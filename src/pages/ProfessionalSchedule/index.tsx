@@ -318,7 +318,6 @@ const ProfessionalSchedule = (): JSX.Element => {
               const newIntervals = [...prev];
               newIntervals.splice(interval.index as number, 1);
 
-              console.log('NEW', newIntervals);
               setCurrentDay((prev) => {
                 return {
                   ...prev,

@@ -138,7 +138,6 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       baseDuration: `${formData.baseDuration}`,
       weeklySchedule: [...weeklyMapped],
     };
-    console.log('data', configs);
 
     try {
       setLoading(true);

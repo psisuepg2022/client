@@ -138,8 +138,6 @@ const Professionals = (): JSX.Element => {
     });
   };
 
-  console.log('PROF', professionals);
-
   const handleDelete = async (professional: Professional): Promise<void> => {
     try {
       const { content } = await remove(professional.id);

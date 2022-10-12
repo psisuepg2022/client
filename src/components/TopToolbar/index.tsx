@@ -124,7 +124,6 @@ const TopToolbar = ({
     switch (view) {
       case 'day': {
         const newDate = addDays(date, 1);
-        console.log('NA TOOLBAR', date, newDate);
         if (disabled) onNavigate('NEXT', newDate);
         else onNavigate('NEXT');
         setDate(newDate);
@@ -315,7 +314,6 @@ const TopToolbar = ({
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      console.log('EEE', e);
       showAlert({
         icon: 'error',
         text:

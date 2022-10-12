@@ -187,7 +187,6 @@ const Schedule = (): JSX.Element => {
                 baseDuration: 60,
               };
 
-        console.log('SCHE', initialProfessional, firstSchedule);
         setCurrentProfessional(initialProfessional as Professional);
 
         firstSchedule.content &&
@@ -332,7 +331,6 @@ const Schedule = (): JSX.Element => {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
-        console.log('ERROR', e);
         showAlert({
           text: e?.response?.data?.message || 'Ocorreu um problema inesperado',
           icon: 'error',
@@ -353,8 +351,6 @@ const Schedule = (): JSX.Element => {
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, fView?: View | undefined) => {
-      console.log('RANGE', range, view);
-
       //setCurrentView((prev) => (view === undefined ? prev : (view as string)));
       viewRef.current = fView === undefined ? viewRef.current : fView;
 
@@ -589,8 +585,6 @@ const Schedule = (): JSX.Element => {
       }
 
       if (!previousRange.current?.includes(startDate)) {
-        console.log('RANGES', startDate, endDate);
-
         const [startOfWeek, endOfWeek] = weekRange(dates[0]);
         const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
         const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
@@ -718,7 +712,6 @@ const Schedule = (): JSX.Element => {
   };
 
   const onNavigate = (newDate: Date, view: View) => {
-    console.log('NEW ', newDate);
     setDate(newDate);
     setView(view);
   };

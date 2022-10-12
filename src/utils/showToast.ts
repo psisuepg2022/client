@@ -24,6 +24,9 @@ export const showToast = ({
       toast.addEventListener('mouseleave', Swal.resumeTimer);
     },
     showCloseButton: true,
+    customClass: {
+      timerProgressBar: 'my-progress-bar',
+    },
   });
 
   return Toast.fire({

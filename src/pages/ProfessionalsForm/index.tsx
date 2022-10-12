@@ -30,6 +30,7 @@ import {
 import { showAlert } from '@utils/showAlert';
 import { CepInfos } from '@interfaces/CepInfos';
 import { useProfessionals } from '@contexts/Professionals';
+import { showToast } from '@utils/showToast';
 
 type FormProps = {
   name: string;
@@ -125,14 +126,15 @@ const ProfessionalsForm = (): JSX.Element => {
     try {
       const { content, message } = await create(professional);
       if (!professionalToEdit) {
-        showAlert({
-          title: 'Sucesso!',
+        showToast({
           text: `${message} Código de acesso: ${content?.accessCode}`,
-          icon: 'success',
         });
         reset();
         setCepInfos(undefined);
       } else {
+        showToast({
+          text: message,
+        });
         reset();
         setCepInfos(undefined);
         navigate('/professionals');

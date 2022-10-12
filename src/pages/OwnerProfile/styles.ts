@@ -47,25 +47,25 @@ export const Form = styled('form')`
 export const ClinicInfo = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const SubClinicInfo = styled('div')`
   display: grid;
   grid-template-columns: 1fr 4fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const PersonalInfo = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const PersonalInfoHalf = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const ButtonContainer = styled('div')`

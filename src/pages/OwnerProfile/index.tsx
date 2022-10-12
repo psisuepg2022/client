@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, Typography } from '@mui/material';
+import { CircularProgress, IconButton, Typography } from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -70,6 +70,7 @@ const OwnerProfile = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -146,7 +147,7 @@ const OwnerProfile = (): JSX.Element => {
     };
 
     try {
-      setLoading(true);
+      setSaveLoading(true);
       const { message, content } = await updateProfile(owner);
 
       if (content && content.clinic) {
@@ -181,7 +182,7 @@ const OwnerProfile = (): JSX.Element => {
           'Ocorreu um problema ao atualizar o perfil',
       });
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
@@ -231,7 +232,7 @@ const OwnerProfile = (): JSX.Element => {
         <Content>
           <div>
             <Header>
-              <IconButton onClick={() => navigate(-1)}>
+              <IconButton onClick={() => navigate(-1)} disabled={saveLoading}>
                 <FiChevronLeft
                   style={{ color: colors.TEXT, fontSize: '2.5rem' }}
                 />
@@ -433,8 +434,12 @@ const OwnerProfile = (): JSX.Element => {
               </Form>
             </FormProvider>
           </div>
-          <StyledButton type="submit" form="form">
-            SALVAR
+          <StyledButton type="submit" form="form" disabled={saveLoading}>
+            {saveLoading ? (
+              <CircularProgress size={20} style={{ color: '#FFF' }} />
+            ) : (
+              'SALVAR'
+            )}
           </StyledButton>
         </Content>
       </Box>

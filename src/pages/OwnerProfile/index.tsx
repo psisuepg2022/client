@@ -4,6 +4,7 @@ import {
   AuxDataFirst,
   AuxDataSecond,
   Box,
+  ClinicInfo,
   Container,
   Content,
   Form,
@@ -12,6 +13,7 @@ import {
   PersonalInfo,
   PersonalInfoHalf,
   StyledButton,
+  SubClinicInfo,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
 import { colors } from '@global/colors';
@@ -234,7 +236,9 @@ const OwnerProfile = (): JSX.Element => {
                   style={{ color: colors.TEXT, fontSize: '2.5rem' }}
                 />
               </IconButton>
-              <Typography fontSize={'2.5rem'}>Perfil da Clínica</Typography>
+              <Typography fontSize={'2.5rem'}>
+                Perfil do Administrador
+              </Typography>
               <AiOutlineRight
                 size={30}
                 style={{ color: '#707070', marginLeft: 10 }}
@@ -251,17 +255,25 @@ const OwnerProfile = (): JSX.Element => {
               <Form id="form" onSubmit={handleSubmit(onSubmit)}>
                 <SectionDivider>Dados da Clínica</SectionDivider>
 
-                <PersonalInfo>
-                  <ControlledInput
-                    name="clinic.name"
-                    label="Nome"
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'O nome da clínica é obrigatório',
-                      },
-                    }}
-                  />
+                <ClinicInfo>
+                  <SubClinicInfo>
+                    <SimpleInput
+                      name="code"
+                      label="Código"
+                      contentEditable={false}
+                      value={clinic?.code || '1000'}
+                    />
+                    <ControlledInput
+                      name="clinic.name"
+                      label="Nome"
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'O nome da clínica é obrigatório',
+                        },
+                      }}
+                    />
+                  </SubClinicInfo>
                   <ControlledInput
                     name="clinic.email"
                     label="Email"
@@ -272,7 +284,7 @@ const OwnerProfile = (): JSX.Element => {
                       },
                     }}
                   />
-                </PersonalInfo>
+                </ClinicInfo>
 
                 <SectionDivider>Dados do Responsável</SectionDivider>
 

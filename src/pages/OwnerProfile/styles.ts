@@ -44,6 +44,18 @@ export const Form = styled('form')`
   margin-top: 15px;
 `;
 
+export const ClinicInfo = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+`;
+
+export const SubClinicInfo = styled('div')`
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  gap: 2rem;
+`;
+
 export const PersonalInfo = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;

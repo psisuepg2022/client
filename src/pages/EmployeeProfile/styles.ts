@@ -47,13 +47,13 @@ export const Form = styled('form')`
 export const PersonalInfo = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const PersonalInfoHalf = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const StyledButton = styled(Button)`

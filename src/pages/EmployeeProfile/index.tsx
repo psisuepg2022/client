@@ -372,7 +372,11 @@ const EmployeeProfile = (): JSX.Element => {
               </Form>
             </FormProvider>
           </div>
-          <StyledButton disabled={saveLoading} type="submit" form="form">
+          <StyledButton
+            disabled={saveLoading || inputLoading}
+            type="submit"
+            form="form"
+          >
             {saveLoading ? (
               <CircularProgress size={20} style={{ color: '#FFF' }} />
             ) : (

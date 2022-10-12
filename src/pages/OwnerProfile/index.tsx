@@ -434,7 +434,11 @@ const OwnerProfile = (): JSX.Element => {
               </Form>
             </FormProvider>
           </div>
-          <StyledButton type="submit" form="form" disabled={saveLoading}>
+          <StyledButton
+            type="submit"
+            form="form"
+            disabled={saveLoading || inputLoading}
+          >
             {saveLoading ? (
               <CircularProgress size={20} style={{ color: '#FFF' }} />
             ) : (

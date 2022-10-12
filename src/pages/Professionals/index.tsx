@@ -285,7 +285,7 @@ const Professionals = (): JSX.Element => {
             />
           ) : (
             <NoRowsContainer>
-              <NoRowsText>Não existem profissionais cadastrados</NoRowsText>
+              <NoRowsText>Não foram encontrados profissionais</NoRowsText>
             </NoRowsContainer>
           )}
         </CustomBox>

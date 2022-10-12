@@ -310,7 +310,7 @@ const Patients = (): JSX.Element => {
             />
           ) : (
             <NoRowsContainer>
-              <NoRowsText>Não existem pacientes cadastrados</NoRowsText>
+              <NoRowsText>Não foram encontrados pacientes</NoRowsText>
             </NoRowsContainer>
           )}
         </CustomBox>

@@ -278,7 +278,7 @@ const Employees = (): JSX.Element => {
             />
           ) : (
             <NoRowsContainer>
-              <NoRowsText>Não existem funcionários cadastrados</NoRowsText>
+              <NoRowsText>Não foram encontrados funcionários</NoRowsText>
             </NoRowsContainer>
           )}
         </CustomBox>

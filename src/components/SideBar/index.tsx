@@ -74,9 +74,13 @@ const SideBar = (): JSX.Element => {
         </IconButton>
       </Header>
       <UserNameContainer>
-        <UserName>{`Bem-vindo(a)${
-          name ? `, ${name.split(' ')[0]}` : ''
-        }`}</UserName>
+        {name ? (
+          <UserName>
+            Bem-vindo(a), <span>{name.split(' ')[0]}</span>
+          </UserName>
+        ) : (
+          <UserName>{'Bem-vindo(a)'}</UserName>
+        )}
       </UserNameContainer>
       <Content>
         <div style={{ marginTop: 3 }}>

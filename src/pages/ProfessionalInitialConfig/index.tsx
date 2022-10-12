@@ -13,6 +13,7 @@ import { showAlert } from '@utils/showAlert';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { FiChevronLeft } from 'react-icons/fi';
 import {
+  BaseDurationDisclaimer,
   BaseDurationSection,
   Body,
   Box,
@@ -137,7 +138,6 @@ const ProfessionalInitialConfig = (): JSX.Element => {
       baseDuration: `${formData.baseDuration}`,
       weeklySchedule: [...weeklyMapped],
     };
-    console.log('data', configs);
 
     try {
       setLoading(true);
@@ -442,6 +442,10 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                         },
                       }}
                     />
+                    <BaseDurationDisclaimer>
+                      Atenção! A duração base escolhida não poderá ser alterada
+                      posteriormente pelo usuário
+                    </BaseDurationDisclaimer>
                   </BaseDurationSection>
 
                   {baseDuration && (

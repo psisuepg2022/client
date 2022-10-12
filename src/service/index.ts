@@ -96,8 +96,10 @@ api.interceptors.response.use(
 
       if (
         err.response.status === 401 &&
-        err.response.data.message ===
-          'As credenciais de autenticação são inválidas. Por favor, tente realizar a autenticação antes de acessar a este conteúdo.'
+        (err.response.data.message ===
+          'As credenciais de autenticação são inválidas. Por favor, tente realizar a autenticação antes de acessar a este conteúdo.' ||
+          err.response.data.message ===
+            'O usuário não possui autorização para acessar este recurso.')
       ) {
         window.localStorage.clear();
         window.location.reload();

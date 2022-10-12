@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, Typography } from '@mui/material';
+import { CircularProgress, IconButton, Typography } from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
   Box,
+  ClinicInfo,
   Container,
   Content,
   Form,
@@ -12,6 +13,7 @@ import {
   PersonalInfo,
   PersonalInfoHalf,
   StyledButton,
+  SubClinicInfo,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
 import { colors } from '@global/colors';
@@ -68,6 +70,7 @@ const OwnerProfile = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -144,7 +147,7 @@ const OwnerProfile = (): JSX.Element => {
     };
 
     try {
-      setLoading(true);
+      setSaveLoading(true);
       const { message, content } = await updateProfile(owner);
 
       if (content && content.clinic) {
@@ -179,7 +182,7 @@ const OwnerProfile = (): JSX.Element => {
           'Ocorreu um problema ao atualizar o perfil',
       });
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
@@ -229,12 +232,14 @@ const OwnerProfile = (): JSX.Element => {
         <Content>
           <div>
             <Header>
-              <IconButton onClick={() => navigate(-1)}>
+              <IconButton onClick={() => navigate(-1)} disabled={saveLoading}>
                 <FiChevronLeft
                   style={{ color: colors.TEXT, fontSize: '2.5rem' }}
                 />
               </IconButton>
-              <Typography fontSize={'2.5rem'}>Perfil da Clínica</Typography>
+              <Typography fontSize={'2.5rem'}>
+                Perfil do Administrador
+              </Typography>
               <AiOutlineRight
                 size={30}
                 style={{ color: '#707070', marginLeft: 10 }}
@@ -251,17 +256,25 @@ const OwnerProfile = (): JSX.Element => {
               <Form id="form" onSubmit={handleSubmit(onSubmit)}>
                 <SectionDivider>Dados da Clínica</SectionDivider>
 
-                <PersonalInfo>
-                  <ControlledInput
-                    name="clinic.name"
-                    label="Nome"
-                    rules={{
-                      required: {
-                        value: true,
-                        message: 'O nome da clínica é obrigatório',
-                      },
-                    }}
-                  />
+                <ClinicInfo>
+                  <SubClinicInfo>
+                    <SimpleInput
+                      name="code"
+                      label="Código"
+                      contentEditable={false}
+                      value={clinic?.code || '1000'}
+                    />
+                    <ControlledInput
+                      name="clinic.name"
+                      label="Nome"
+                      rules={{
+                        required: {
+                          value: true,
+                          message: 'O nome da clínica é obrigatório',
+                        },
+                      }}
+                    />
+                  </SubClinicInfo>
                   <ControlledInput
                     name="clinic.email"
                     label="Email"
@@ -272,7 +285,7 @@ const OwnerProfile = (): JSX.Element => {
                       },
                     }}
                   />
-                </PersonalInfo>
+                </ClinicInfo>
 
                 <SectionDivider>Dados do Responsável</SectionDivider>
 
@@ -421,8 +434,16 @@ const OwnerProfile = (): JSX.Element => {
               </Form>
             </FormProvider>
           </div>
-          <StyledButton type="submit" form="form">
-            SALVAR
+          <StyledButton
+            type="submit"
+            form="form"
+            disabled={saveLoading || inputLoading}
+          >
+            {saveLoading ? (
+              <CircularProgress size={20} style={{ color: '#FFF' }} />
+            ) : (
+              'SALVAR'
+            )}
           </StyledButton>
         </Content>
       </Box>

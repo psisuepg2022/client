@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, Typography } from '@mui/material';
+import { CircularProgress, IconButton, Typography } from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -56,6 +56,7 @@ const EmployeeProfile = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -106,6 +107,7 @@ const EmployeeProfile = (): JSX.Element => {
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: ProfileFormProps = data as ProfileFormProps;
+    const { address, ...formRest } = formData;
 
     const birthDateAltered = dateFormat({
       date: formData.birthDate,
@@ -113,22 +115,23 @@ const EmployeeProfile = (): JSX.Element => {
     });
 
     const employee = {
-      ...formData,
+      ...formRest,
       birthDate: birthDateAltered,
-      ...(formData.address?.zipCode && {
-        address: {
-          id: formData.address.id,
-          zipCode: formData.address.zipCode,
-          city: cepInfos?.localidade || '',
-          state: cepInfos?.uf || '',
-          publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
-          district: formData.address.district || cepInfos?.bairro || '',
-        },
-      }),
+      ...(address?.zipCode &&
+        address?.zipCode !== '' && {
+          address: {
+            id: address.id,
+            zipCode: address.zipCode,
+            city: cepInfos?.localidade || '',
+            state: cepInfos?.uf || '',
+            publicArea: address.publicArea || cepInfos?.logradouro || '',
+            district: address.district || cepInfos?.bairro || '',
+          },
+        }),
     };
 
     try {
-      setLoading(true);
+      setSaveLoading(true);
       const { message } = await updateProfile(employee);
 
       setUser((prev) => {
@@ -152,7 +155,7 @@ const EmployeeProfile = (): JSX.Element => {
           'Ocorreu um problema ao atualizar o perfil',
       });
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
@@ -202,7 +205,7 @@ const EmployeeProfile = (): JSX.Element => {
         <Content>
           <div>
             <Header>
-              <IconButton onClick={() => navigate(-1)}>
+              <IconButton onClick={() => navigate(-1)} disabled={saveLoading}>
                 <FiChevronLeft
                   style={{ color: colors.TEXT, fontSize: '2.5rem' }}
                 />
@@ -369,8 +372,16 @@ const EmployeeProfile = (): JSX.Element => {
               </Form>
             </FormProvider>
           </div>
-          <StyledButton type="submit" form="form">
-            SALVAR
+          <StyledButton
+            disabled={saveLoading || inputLoading}
+            type="submit"
+            form="form"
+          >
+            {saveLoading ? (
+              <CircularProgress size={20} style={{ color: '#FFF' }} />
+            ) : (
+              'SALVAR'
+            )}
           </StyledButton>
         </Content>
       </Box>

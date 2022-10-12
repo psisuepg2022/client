@@ -30,6 +30,7 @@ import { showAlert } from '@utils/showAlert';
 import { CepInfos } from '@interfaces/CepInfos';
 import { useEmployees } from '@contexts/Employees';
 import { Employee, FormEmployee } from '@models/Employee';
+import { showToast } from '@utils/showToast';
 
 type FormProps = {
   name: string;
@@ -114,15 +115,17 @@ const EmployeesForm = (): JSX.Element => {
     setLoading(true);
     try {
       const { content, message } = await create(employee);
-      showAlert({
-        title: 'Sucesso!',
-        text: `${message} Código de acesso: ${content?.accessCode}`,
-        icon: 'success',
-      });
+
       if (!employeeToEdit) {
+        showToast({
+          text: `${message} Código de acesso: ${content?.accessCode}`,
+        });
         reset();
         setCepInfos(undefined);
       } else {
+        showToast({
+          text: message,
+        });
         reset();
         setCepInfos(undefined);
         navigate('/employees');

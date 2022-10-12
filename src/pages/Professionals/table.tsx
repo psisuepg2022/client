@@ -110,9 +110,6 @@ const ProfessionalsTable = ({
                       </Tooltip>
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
-                      {row.accessCode}
-                    </StyledTableCell>
-                    <StyledTableCell component="th" scope="row">
                       {row.name}
                     </StyledTableCell>
                     <StyledTableCell align="left">{row.CPF}</StyledTableCell>

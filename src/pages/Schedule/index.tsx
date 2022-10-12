@@ -68,6 +68,7 @@ import CancelledAbsenceEventModal from '@components/CancelledAbsenceEventModal';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import { MdLock } from 'react-icons/md';
 import { colors } from '@global/colors';
+import { showToast } from '@utils/showToast';
 
 const locales = {
   'pt-BR': ptBR,
@@ -190,8 +191,10 @@ const Schedule = (): JSX.Element => {
 
         firstSchedule.content &&
           firstSchedule.content.weeklySchedule.length === 0 &&
-          showAlert({
-            title: 'Sem profissionais',
+          showToast({
+            width: 1000,
+            timer: 5000,
+            icon: 'info',
             text: 'Não existem profissionais cadastrados ou configurados. Cadastre um novo profissional no menu ao lado e peça ao profissional que acesse a conta e cadastre seus horários.',
           });
 
@@ -328,7 +331,6 @@ const Schedule = (): JSX.Element => {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
-        console.log('ERROR', e);
         showAlert({
           text: e?.response?.data?.message || 'Ocorreu um problema inesperado',
           icon: 'error',
@@ -341,13 +343,14 @@ const Schedule = (): JSX.Element => {
     return () => {
       setCurrentStart(new Date());
       setCurrentEnd(new Date());
+      setCurrentProfessional({} as Professional);
+      setEvents([]);
+      setRetrievedWeeklySchedule([] as WeeklySchedule[]);
     };
   }, []);
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, fView?: View | undefined) => {
-      console.log('RANGE', range, view);
-
       //setCurrentView((prev) => (view === undefined ? prev : (view as string)));
       viewRef.current = fView === undefined ? viewRef.current : fView;
 
@@ -582,8 +585,6 @@ const Schedule = (): JSX.Element => {
       }
 
       if (!previousRange.current?.includes(startDate)) {
-        console.log('RANGES', startDate, endDate);
-
         const [startOfWeek, endOfWeek] = weekRange(dates[0]);
         const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
         const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
@@ -711,7 +712,6 @@ const Schedule = (): JSX.Element => {
   };
 
   const onNavigate = (newDate: Date, view: View) => {
-    console.log('NEW ', newDate);
     setDate(newDate);
     setView(view);
   };
@@ -906,7 +906,8 @@ const Schedule = (): JSX.Element => {
           }
           onSelectSlot={(slotInfo: SlotInfo) =>
             (user.permissions.includes('CREATE_APPOINTMENT') ||
-              user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
+              user.permissions.includes('CREATE_SCHEDULE_LOCK') ||
+              user.permissions.includes('USER_TYPE_PROFESSIONAL')) &&
             isAfter(slotInfo.start, new Date()) &&
             viewRef.current === 'day' &&
             setCurrentSlotInfo(slotInfo)

@@ -125,7 +125,16 @@ export const PasswordSection = styled('div')`
 
 export const BaseDurationSection = styled('div')`
   display: grid;
-  width: 30%;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  width: 90%;
+`;
+
+export const BaseDurationDisclaimer = styled(Typography)`
+  font-size: 1rem;
+  color: ${colors.TEXT};
+  font-weight: 600;
+  padding-left: 2rem;
 `;
 
 export const WeeklyScheduleSection = styled('div')``;

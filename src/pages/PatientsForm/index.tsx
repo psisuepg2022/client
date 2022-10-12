@@ -39,6 +39,7 @@ import { usePatients } from '@contexts/Patients';
 import { MartitalStatus } from '@interfaces/MaritalStatus';
 import { Gender } from '@interfaces/Gender';
 import { CepInfos } from '@interfaces/CepInfos';
+import { showToast } from '@utils/showToast';
 
 type FormProps = {
   name: string;
@@ -61,7 +62,6 @@ type FormProps = {
 const PatientsForm = (): JSX.Element => {
   const { state }: { state: Patient } = useLocation() as { state: Patient };
   const [patientToEdit] = useState<Patient>(state);
-
   const formMethods = useForm({
     defaultValues: patientToEdit && {
       id: patientToEdit.id,
@@ -166,12 +166,12 @@ const PatientsForm = (): JSX.Element => {
 
     setLoading(true);
     try {
-      const response = await create(patient);
-      showAlert({
-        title: 'Sucesso!',
-        text: response.message,
-        icon: 'success',
+      const { message } = await create(patient);
+
+      showToast({
+        text: message,
       });
+
       if (!patientToEdit) {
         reset();
         setCepInfos(undefined);

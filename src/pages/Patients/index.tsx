@@ -38,6 +38,7 @@ import { PageSize } from '@global/constants';
 import { colors } from '@global/colors';
 import { Patient } from '@models/Patient';
 import { useAuth } from '@contexts/Auth';
+import { showToast } from '@utils/showToast';
 
 const columns: Column[] = [
   {
@@ -169,12 +170,10 @@ const Patients = (): JSX.Element => {
 
   const handleDelete = async (patient: Patient): Promise<void> => {
     try {
-      await remove(patient.id);
+      const { message } = await remove(patient.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O paciente foi deletado com sucesso!',
-        icon: 'success',
+      showToast({
+        text: message,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -310,7 +309,7 @@ const Patients = (): JSX.Element => {
             />
           ) : (
             <NoRowsContainer>
-              <NoRowsText>Não existem pacientes cadastrados</NoRowsText>
+              <NoRowsText>Não foram encontrados pacientes</NoRowsText>
             </NoRowsContainer>
           )}
         </CustomBox>

@@ -32,30 +32,27 @@ import { useEmployees } from '@contexts/Employees';
 import { useAuth } from '@contexts/Auth';
 import { Employee } from '@models/Employee';
 import EmployeesTable from './table';
+import { showToast } from '@utils/showToast';
 
 const columns: Column[] = [
   {
     id: 0,
-    label: 'Código de acesso',
-  },
-  {
-    id: 1,
     label: 'Nome',
   },
   {
-    id: 2,
+    id: 1,
     label: 'CPF',
   },
   {
-    id: 3,
+    id: 2,
     label: 'Data de nascimento',
   },
   {
-    id: 4,
+    id: 3,
     label: 'Telefone',
   },
   {
-    id: 5,
+    id: 4,
     label: 'Ações',
   },
 ];
@@ -143,10 +140,8 @@ const Employees = (): JSX.Element => {
     try {
       await remove(employee.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O funcionário foi deletado com sucesso!',
-        icon: 'success',
+      showToast({
+        text: 'Operação realizada com sucesso!',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -282,7 +277,7 @@ const Employees = (): JSX.Element => {
             />
           ) : (
             <NoRowsContainer>
-              <NoRowsText>Não existem funcionários cadastrados</NoRowsText>
+              <NoRowsText>Não foram encontrados funcionários</NoRowsText>
             </NoRowsContainer>
           )}
         </CustomBox>

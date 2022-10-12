@@ -32,30 +32,28 @@ import ProfessionalsTable from './table';
 import { useProfessionals } from '@contexts/Professionals';
 import { Professional } from '@models/Professional';
 import { useAuth } from '@contexts/Auth';
+import { showToast } from '@utils/showToast';
+import { useSchedule } from '@contexts/Schedule';
 
 const columns: Column[] = [
   {
     id: 0,
-    label: 'Código de acesso',
-  },
-  {
-    id: 1,
     label: 'Nome',
   },
   {
-    id: 2,
+    id: 1,
     label: 'CPF',
   },
   {
-    id: 3,
+    id: 2,
     label: 'Data de nascimento',
   },
   {
-    id: 4,
+    id: 3,
     label: 'Telefone',
   },
   {
-    id: 5,
+    id: 4,
     label: 'Ações',
   },
 ];
@@ -63,6 +61,7 @@ const columns: Column[] = [
 const Professionals = (): JSX.Element => {
   const { professionals, list, count, remove } = useProfessionals();
   const formMethods = useForm();
+  const { setCurrentProfessional } = useSchedule();
   const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
   const searchActive = useRef(false);
@@ -141,13 +140,30 @@ const Professionals = (): JSX.Element => {
 
   const handleDelete = async (professional: Professional): Promise<void> => {
     try {
-      await remove(professional.id);
+      const { content } = await remove(professional.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O profissional foi deletado com sucesso!',
-        icon: 'success',
-      });
+
+      setCurrentProfessional({} as Professional);
+      if (content && content.patientsToCall.length > 0) {
+        showAlert({
+          title: 'Atenção!',
+          text: '',
+          html: `<div><p>${
+            content.header
+          } Entre em contato com os seguintes pacientes:</p><ul>${content.patientsToCall.reduce(
+            (prev, cur) =>
+              `<li>${cur.name}${
+                cur.contactNumber ? ` - ${cur.contactNumber}` : ''
+              }${cur.email ? ` - ${cur.email}` : ''}</li>${prev}`,
+            ''
+          )}</ul></div>`,
+          icon: 'warning',
+        });
+      } else {
+        showToast({
+          text: 'Operação realizada com sucesso!',
+        });
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -289,7 +305,7 @@ const Professionals = (): JSX.Element => {
             />
           ) : (
             <NoRowsContainer>
-              <NoRowsText>Não existem profissionais cadastrados</NoRowsText>
+              <NoRowsText>Não foram encontrados profissionais</NoRowsText>
             </NoRowsContainer>
           )}
         </CustomBox>

@@ -36,26 +36,22 @@ import { useAuth } from '@contexts/Auth';
 const columns: Column[] = [
   {
     id: 0,
-    label: 'Código de acesso',
-  },
-  {
-    id: 1,
     label: 'Nome',
   },
   {
-    id: 2,
+    id: 1,
     label: 'CPF',
   },
   {
-    id: 3,
+    id: 2,
     label: 'Data de nascimento',
   },
   {
-    id: 4,
+    id: 3,
     label: 'Telefone',
   },
   {
-    id: 5,
+    id: 4,
     label: 'Ações',
   },
 ];

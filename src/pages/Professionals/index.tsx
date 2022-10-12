@@ -143,15 +143,17 @@ const Professionals = (): JSX.Element => {
 
       if (content && content.patientsToCall.length > 0) {
         showAlert({
-          title: content.header,
+          title: 'Atenção!',
           text: '',
-          html: `<ul>${content.patientsToCall.reduce(
+          html: `<div><p>${
+            content.header
+          }</p><ul>${content.patientsToCall.reduce(
             (prev, cur) =>
               `<li>${cur.name}${
                 cur.contactNumber ? ` - ${cur.contactNumber}` : ''
               }${cur.email ? ` - ${cur.email}` : ''}</li>${prev}`,
             ''
-          )}</ul>`,
+          )}</ul></div>`,
           icon: 'warning',
         });
       } else {

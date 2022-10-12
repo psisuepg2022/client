@@ -345,6 +345,9 @@ const Schedule = (): JSX.Element => {
     return () => {
       setCurrentStart(new Date());
       setCurrentEnd(new Date());
+      setCurrentProfessional({} as Professional);
+      setEvents([]);
+      setRetrievedWeeklySchedule([] as WeeklySchedule[]);
     };
   }, []);
 

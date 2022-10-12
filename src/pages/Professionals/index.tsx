@@ -33,6 +33,7 @@ import { useProfessionals } from '@contexts/Professionals';
 import { Professional } from '@models/Professional';
 import { useAuth } from '@contexts/Auth';
 import { showToast } from '@utils/showToast';
+import { useSchedule } from '@contexts/Schedule';
 
 const columns: Column[] = [
   {
@@ -60,6 +61,7 @@ const columns: Column[] = [
 const Professionals = (): JSX.Element => {
   const { professionals, list, count, remove } = useProfessionals();
   const formMethods = useForm();
+  const { setCurrentProfessional } = useSchedule();
   const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
   const searchActive = useRef(false);
@@ -136,18 +138,21 @@ const Professionals = (): JSX.Element => {
     });
   };
 
+  console.log('PROF', professionals);
+
   const handleDelete = async (professional: Professional): Promise<void> => {
     try {
       const { content } = await remove(professional.id);
       await list({ size: PageSize, page });
 
+      setCurrentProfessional({} as Professional);
       if (content && content.patientsToCall.length > 0) {
         showAlert({
           title: 'Atenção!',
           text: '',
           html: `<div><p>${
             content.header
-          }</p><ul>${content.patientsToCall.reduce(
+          } Entre em contato com os seguintes pacientes:</p><ul>${content.patientsToCall.reduce(
             (prev, cur) =>
               `<li>${cur.name}${
                 cur.contactNumber ? ` - ${cur.contactNumber}` : ''

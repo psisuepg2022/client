@@ -187,6 +187,7 @@ const Schedule = (): JSX.Element => {
                 baseDuration: 60,
               };
 
+        console.log('SCHE', initialProfessional, firstSchedule);
         setCurrentProfessional(initialProfessional as Professional);
 
         firstSchedule.content &&

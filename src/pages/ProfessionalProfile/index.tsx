@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, Typography } from '@mui/material';
+import { CircularProgress, IconButton, Typography } from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -60,6 +60,7 @@ const ProfessionalProfile = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -113,28 +114,29 @@ const ProfessionalProfile = (): JSX.Element => {
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: ProfileFormProps = data as ProfileFormProps;
+    const { address, ...formRest } = formData;
     const birthDateAltered = dateFormat({
       date: formData.birthDate,
       stringFormat: 'yyyy-MM-dd',
     });
 
     const professional = {
-      ...formData,
+      ...formRest,
       birthDate: birthDateAltered,
-      ...(formData.address?.zipCode && {
+      ...(address?.zipCode && {
         address: {
-          id: formData.address.id,
-          zipCode: formData.address.zipCode,
+          id: address.id,
+          zipCode: address.zipCode,
           city: cepInfos?.localidade || '',
           state: cepInfos?.uf || '',
-          publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
-          district: formData.address.district || cepInfos?.bairro || '',
+          publicArea: address.publicArea || cepInfos?.logradouro || '',
+          district: address.district || cepInfos?.bairro || '',
         },
       }),
     };
 
     try {
-      setLoading(true);
+      setSaveLoading(true);
       const { message } = await updateProfile(professional);
 
       setUser((prev) => {
@@ -158,7 +160,7 @@ const ProfessionalProfile = (): JSX.Element => {
           'Ocorreu um problema ao atualizar o perfil',
       });
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
@@ -208,7 +210,7 @@ const ProfessionalProfile = (): JSX.Element => {
         <Content>
           <Header>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton onClick={() => navigate(-1)}>
+              <IconButton onClick={() => navigate(-1)} disabled={saveLoading}>
                 <FiChevronLeft
                   style={{ color: colors.TEXT, fontSize: '2.5rem' }}
                 />
@@ -228,7 +230,7 @@ const ProfessionalProfile = (): JSX.Element => {
               </Typography>
             </div>
             <IconButton
-              disabled={loading || inputLoading}
+              disabled={loading || inputLoading || saveLoading}
               onClick={() => navigate('/profile/professional_schedule')}
             >
               <AiOutlineClockCircle
@@ -410,8 +412,16 @@ const ProfessionalProfile = (): JSX.Element => {
               </ProfessionalData>
             </Form>
           </FormProvider>
-          <StyledButton type="submit" form="form">
-            SALVAR
+          <StyledButton
+            disabled={saveLoading || inputLoading}
+            type="submit"
+            form="form"
+          >
+            {saveLoading ? (
+              <CircularProgress size={20} style={{ color: '#FFF' }} />
+            ) : (
+              'SALVAR'
+            )}
           </StyledButton>
         </Content>
       </Box>

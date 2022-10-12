@@ -40,6 +40,7 @@ import { useAuth } from '@contexts/Auth';
 import { dateFormat } from '@utils/dateFormat';
 import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
+import { showToast } from '@utils/showToast';
 
 type FormLock = {
   id?: string;
@@ -222,9 +223,7 @@ const ProfessionalSchedule = (): JSX.Element => {
         setCounter(-1);
       }
 
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
+      showToast({
         text: message,
       });
       setChanges(false);

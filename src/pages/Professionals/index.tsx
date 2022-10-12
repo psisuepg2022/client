@@ -32,6 +32,7 @@ import ProfessionalsTable from './table';
 import { useProfessionals } from '@contexts/Professionals';
 import { Professional } from '@models/Professional';
 import { useAuth } from '@contexts/Auth';
+import { showToast } from '@utils/showToast';
 
 const columns: Column[] = [
   {
@@ -137,13 +138,27 @@ const Professionals = (): JSX.Element => {
 
   const handleDelete = async (professional: Professional): Promise<void> => {
     try {
-      await remove(professional.id);
+      const { content } = await remove(professional.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O profissional foi deletado com sucesso!',
-        icon: 'success',
-      });
+
+      if (content && content.patientsToCall.length > 0) {
+        showAlert({
+          title: content.header,
+          text: '',
+          html: `<ul>${content.patientsToCall.reduce(
+            (prev, cur) =>
+              `<li>${cur.name}${
+                cur.contactNumber ? ` - ${cur.contactNumber}` : ''
+              }${cur.email ? ` - ${cur.email}` : ''}</li>${prev}`,
+            ''
+          )}</ul>`,
+          icon: 'warning',
+        });
+      } else {
+        showToast({
+          text: 'Operação realizada com sucesso!',
+        });
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({

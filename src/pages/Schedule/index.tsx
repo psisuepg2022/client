@@ -68,6 +68,7 @@ import CancelledAbsenceEventModal from '@components/CancelledAbsenceEventModal';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import { MdLock } from 'react-icons/md';
 import { colors } from '@global/colors';
+import { showToast } from '@utils/showToast';
 
 const locales = {
   'pt-BR': ptBR,
@@ -190,8 +191,10 @@ const Schedule = (): JSX.Element => {
 
         firstSchedule.content &&
           firstSchedule.content.weeklySchedule.length === 0 &&
-          showAlert({
-            title: 'Sem profissionais',
+          showToast({
+            width: 1000,
+            timer: 5000,
+            icon: 'info',
             text: 'Não existem profissionais cadastrados ou configurados. Cadastre um novo profissional no menu ao lado e peça ao profissional que acesse a conta e cadastre seus horários.',
           });
 

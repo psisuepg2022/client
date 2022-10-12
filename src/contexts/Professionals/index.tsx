@@ -12,6 +12,7 @@ import {
 import { UpdateWeeklySchedule, WeeklySchedule } from '@models/WeeklySchedule';
 import { User } from '@models/User';
 import decode from 'jwt-decode';
+import { DeleteProfessionalWithAppointments } from '@interfaces/DeleteProfessionalWithAppointments';
 
 type ListProps = {
   page?: number;
@@ -33,7 +34,9 @@ type ConfigureReturn = {
 type ProfessionalsContextData = {
   list: (listProps: ListProps) => Promise<Response<ItemList<Professional>>>;
   create: (professional: FormProfessional) => Promise<Response<Professional>>;
-  remove: (professionalId: string) => Promise<Response<boolean>>;
+  remove: (
+    professionalId: string
+  ) => Promise<Response<DeleteProfessionalWithAppointments>>;
   getProfile: () => Promise<Response<Professional>>;
   updateProfile: (
     professional: UpdateProfessional
@@ -98,10 +101,11 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
     return data;
   };
 
-  const remove = async (professionalId: string): Promise<Response<boolean>> => {
-    const { data }: { data: Response<boolean> } = await api.delete(
-      `professional/${professionalId}`
-    );
+  const remove = async (
+    professionalId: string
+  ): Promise<Response<DeleteProfessionalWithAppointments>> => {
+    const { data }: { data: Response<DeleteProfessionalWithAppointments> } =
+      await api.delete(`professional/${professionalId}`);
 
     return data;
   };

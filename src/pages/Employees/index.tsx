@@ -32,6 +32,7 @@ import { useEmployees } from '@contexts/Employees';
 import { useAuth } from '@contexts/Auth';
 import { Employee } from '@models/Employee';
 import EmployeesTable from './table';
+import { showToast } from '@utils/showToast';
 
 const columns: Column[] = [
   {
@@ -139,10 +140,8 @@ const Employees = (): JSX.Element => {
     try {
       await remove(employee.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O funcionário foi deletado com sucesso!',
-        icon: 'success',
+      showToast({
+        text: 'Operação realizada com sucesso!',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

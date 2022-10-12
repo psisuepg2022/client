@@ -358,8 +358,6 @@ const TopToolbar = ({
   )
     return <></>;
 
-  console.log('USER_TYPE', permissions);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Container>

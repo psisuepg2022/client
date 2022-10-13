@@ -236,19 +236,19 @@ const Schedule = (): JSX.Element => {
             !today.startTime && !today.endTime
               ? []
               : (today?.locks?.map((lock: WeeklyScheduleLock) => {
-                  const endDate = new Date();
-                  endDate.setHours(
-                    Number(lock.endTime.split(':')[0]),
-                    Number(lock.endTime.split(':')[1]),
+                  const startDate = new Date();
+                  startDate.setHours(
+                    Number(lock.startTime.split(':')[0]),
+                    Number(lock.startTime.split(':')[1]),
                     0
                   );
 
-                  // if (
-                  //   isAfter(endDate, currentDate) ||
-                  //   isEqual(endDate, currentDate)
-                  // ) {
-                  return buildWeeklyScheduleLocks(currentDate, lock);
-                  // }
+                  if (
+                    isAfter(startDate, currentDate) ||
+                    isEqual(startDate, currentDate)
+                  ) {
+                    return buildWeeklyScheduleLocks(currentDate, lock);
+                  }
                 }) as ScheduleEvent[]);
 
           const weeklyScheduleLocksEvents =
@@ -278,8 +278,8 @@ const Schedule = (): JSX.Element => {
               );
 
               if (
-                isAfter(endDate, currentDate) ||
-                isEqual(endDate, currentDate)
+                isAfter(startDate, currentDate) ||
+                isEqual(startDate, currentDate)
               ) {
                 return {
                   start: startDate,
@@ -521,7 +521,7 @@ const Schedule = (): JSX.Element => {
 
       dates.forEach((date: Date) => {
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
+        //currentDate.setHours(0, 0, 0, 0);
         const dateIndex = getDay(date) + 1;
         const today = retrievedWeeklySchedule?.find(
           (item) => item.dayOfTheWeek === dateIndex

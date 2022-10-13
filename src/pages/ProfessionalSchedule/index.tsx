@@ -552,7 +552,9 @@ const ProfessionalSchedule = (): JSX.Element => {
                       {counter !== -1 && (
                         <>
                           <TimesLabel>
-                            Intervalos - {counter} restantes
+                            {counter % 1 !== 0 || counter < 0
+                              ? 'Sem intervalos - Os horários não batem com a duração base'
+                              : `Intervalos - ${counter} restantes`}
                           </TimesLabel>
 
                           <IconButton
@@ -566,7 +568,9 @@ const ProfessionalSchedule = (): JSX.Element => {
                               loading ||
                               lockDelete !== -1 ||
                               savingWeekly ||
-                              disableDay
+                              disableDay ||
+                              counter < 0 ||
+                              counter % 1 !== 0
                             }
                           >
                             <AiOutlinePlus

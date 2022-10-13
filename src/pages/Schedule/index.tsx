@@ -20,6 +20,7 @@ import {
   isAfter,
   isEqual,
   eachDayOfInterval,
+  subDays,
 } from 'date-fns';
 import TopToolbar from '@components/TopToolbar';
 import {
@@ -716,6 +717,14 @@ const Schedule = (): JSX.Element => {
     setView(view);
   };
 
+  const pastDayDate = (): Date => {
+    const currentDate = new Date();
+    const pastDate = subDays(currentDate, 1);
+    pastDate.setHours(23, 59, 59);
+
+    return pastDate;
+  };
+
   if (loading)
     return (
       <div
@@ -913,8 +922,16 @@ const Schedule = (): JSX.Element => {
             setCurrentSlotInfo(slotInfo)
           }
           selectable
-          min={view === 'day' ? currentStart : undefined}
-          max={view === 'day' ? currentEnd : undefined}
+          min={
+            view === 'day' && isAfter(date, pastDayDate())
+              ? currentStart
+              : undefined
+          }
+          max={
+            view === 'day' && isAfter(date, pastDayDate())
+              ? currentEnd
+              : undefined
+          }
           onSelecting={() => false}
           popup={true}
           tooltipAccessor={() => ''}

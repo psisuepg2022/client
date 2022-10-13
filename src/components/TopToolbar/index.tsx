@@ -153,6 +153,7 @@ const TopToolbar = ({
 
   const goToCurrent = () => {
     const newDate = new Date();
+    newDate.setHours(0, 0, 0);
     setDate(newDate);
     // if (disabled) onNavigate('TODAY', newDate);
     // else onNavigate('TODAY');

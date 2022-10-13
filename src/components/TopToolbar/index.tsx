@@ -153,10 +153,11 @@ const TopToolbar = ({
 
   const goToCurrent = () => {
     const newDate = new Date();
-    onNavigate('TODAY', newDate);
+    setDate(newDate);
+    // if (disabled) onNavigate('TODAY', newDate);
+    // else onNavigate('TODAY');
     onView('day');
     onRangeChange([newDate], 'day');
-    setDate(newDate);
   };
 
   const onChangeProfessional = async (

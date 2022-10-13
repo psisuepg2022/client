@@ -352,7 +352,6 @@ const Schedule = (): JSX.Element => {
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, fView?: View | undefined) => {
-      //setCurrentView((prev) => (view === undefined ? prev : (view as string)));
       viewRef.current = fView === undefined ? viewRef.current : fView;
 
       const allEvents: Event[] = [];

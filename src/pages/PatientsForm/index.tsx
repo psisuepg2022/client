@@ -481,7 +481,6 @@ const PatientsForm = (): JSX.Element => {
                           },
                         }}
                       />
-                      {/* )} */}
                     </PersonalDataSecond>
                   </>
                 )}

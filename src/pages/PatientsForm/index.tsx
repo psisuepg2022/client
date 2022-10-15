@@ -549,6 +549,21 @@ const PatientsForm = (): JSX.Element => {
                     name="contactNumber"
                     label="Telefone"
                     style={{ width: '50%' }}
+                    rules={{
+                      maxLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      minLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      required: {
+                        value: true,
+                        message: 'Um número de telefone é obrigatório',
+                      },
+                    }}
+                    required
                     maxLength={15}
                     mask={(s: string): string =>
                       `${s

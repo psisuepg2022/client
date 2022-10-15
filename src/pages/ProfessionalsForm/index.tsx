@@ -354,6 +354,21 @@ const ProfessionalsForm = (): JSX.Element => {
                     label="Telefone"
                     style={{ width: '50%' }}
                     maxLength={15}
+                    rules={{
+                      maxLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      minLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      required: {
+                        value: true,
+                        message: 'Um número de telefone é obrigatório',
+                      },
+                    }}
+                    required
                     mask={(s: string): string =>
                       `${s
                         .replace(/\D/g, '')

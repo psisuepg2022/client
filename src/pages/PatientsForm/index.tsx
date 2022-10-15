@@ -119,6 +119,8 @@ const PatientsForm = (): JSX.Element => {
           uf: patientToEdit.address.state,
         });
       }
+    } else {
+      reset({ liable: { name: '' } });
     }
   }, []);
 

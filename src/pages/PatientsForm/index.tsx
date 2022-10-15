@@ -321,13 +321,13 @@ const PatientsForm = (): JSX.Element => {
                         if (!isValid(date))
                           return 'A data escolhida é inválida';
 
-                        date.setHours(0, 0, 0);
+                        date.setHours(0, 0, 0, 0);
                         const currenDate = new Date();
-                        currenDate.setHours(0, 0, 0);
+                        currenDate.setHours(0, 0, 0, 0);
 
                         return (
-                          !isAfter(date, currenDate) ||
-                          isEqual(date, currenDate) ||
+                          (!isAfter(date, currenDate) &&
+                            !isEqual(date, currenDate)) ||
                           'A Data escolhida não pode ser superior ou igual à data atual'
                         );
                       },

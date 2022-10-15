@@ -20,7 +20,7 @@ import ControlledDatePicker from '@components/ControlledDatePicker';
 import ControlledInput from '@components/ControlledInput';
 import SectionDivider from '@components/SectionDivider';
 import { useNavigate } from 'react-router-dom';
-import { isAfter } from 'date-fns';
+import { isAfter, isEqual, isValid } from 'date-fns';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
@@ -276,9 +276,20 @@ const EmployeeProfile = (): JSX.Element => {
                           message:
                             'A data de nascimento do funcionário é obrigatória',
                         },
-                        validate: (date) =>
-                          !isAfter(date, new Date()) ||
-                          'A Data escolhida não pode ser superior à data atual',
+                        validate: (date) => {
+                          if (!isValid(date))
+                            return 'A data escolhida é inválida';
+
+                          date.setHours(0, 0, 0, 0);
+                          const currenDate = new Date();
+                          currenDate.setHours(0, 0, 0, 0);
+
+                          return (
+                            (!isAfter(date, currenDate) &&
+                              !isEqual(date, currenDate)) ||
+                            'A Data escolhida não pode ser superior ou igual à data atual'
+                          );
+                        },
                       }}
                     />
                   </PersonalInfoHalf>

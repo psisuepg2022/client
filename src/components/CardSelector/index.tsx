@@ -29,7 +29,7 @@ const CardSelector = ({
       disabled={disabled}
       onClick={onSelect}
     >
-      <Tooltip title={name}>
+      <Tooltip enterDelay={1000} enterNextDelay={1000} title={name}>
         <CardName style={{ ...textStyle }}>{name}</CardName>
       </Tooltip>
     </Container>

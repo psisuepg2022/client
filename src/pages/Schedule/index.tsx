@@ -20,6 +20,7 @@ import {
   isAfter,
   isEqual,
   eachDayOfInterval,
+  subDays,
 } from 'date-fns';
 import TopToolbar from '@components/TopToolbar';
 import {
@@ -236,19 +237,19 @@ const Schedule = (): JSX.Element => {
             !today.startTime && !today.endTime
               ? []
               : (today?.locks?.map((lock: WeeklyScheduleLock) => {
-                  const endDate = new Date();
-                  endDate.setHours(
-                    Number(lock.endTime.split(':')[0]),
-                    Number(lock.endTime.split(':')[1]),
+                  const startDate = new Date();
+                  startDate.setHours(
+                    Number(lock.startTime.split(':')[0]),
+                    Number(lock.startTime.split(':')[1]),
                     0
                   );
 
-                  // if (
-                  //   isAfter(endDate, currentDate) ||
-                  //   isEqual(endDate, currentDate)
-                  // ) {
-                  return buildWeeklyScheduleLocks(currentDate, lock);
-                  // }
+                  if (
+                    isAfter(startDate, currentDate) ||
+                    isEqual(startDate, currentDate)
+                  ) {
+                    return buildWeeklyScheduleLocks(currentDate, lock);
+                  }
                 }) as ScheduleEvent[]);
 
           const weeklyScheduleLocksEvents =
@@ -278,8 +279,8 @@ const Schedule = (): JSX.Element => {
               );
 
               if (
-                isAfter(endDate, currentDate) ||
-                isEqual(endDate, currentDate)
+                isAfter(startDate, currentDate) ||
+                isEqual(startDate, currentDate)
               ) {
                 return {
                   start: startDate,
@@ -351,7 +352,6 @@ const Schedule = (): JSX.Element => {
 
   const onRangeChange = useCallback(
     (range: Date[] | Ranges, fView?: View | undefined) => {
-      //setCurrentView((prev) => (view === undefined ? prev : (view as string)));
       viewRef.current = fView === undefined ? viewRef.current : fView;
 
       const allEvents: Event[] = [];
@@ -521,7 +521,7 @@ const Schedule = (): JSX.Element => {
 
       dates.forEach((date: Date) => {
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
+        //currentDate.setHours(0, 0, 0, 0);
         const dateIndex = getDay(date) + 1;
         const today = retrievedWeeklySchedule?.find(
           (item) => item.dayOfTheWeek === dateIndex
@@ -714,6 +714,14 @@ const Schedule = (): JSX.Element => {
   const onNavigate = (newDate: Date, view: View) => {
     setDate(newDate);
     setView(view);
+  };
+
+  const pastDayDate = (): Date => {
+    const currentDate = new Date();
+    const pastDate = subDays(currentDate, 1);
+    pastDate.setHours(23, 59, 59);
+
+    return pastDate;
   };
 
   if (loading)
@@ -913,8 +921,16 @@ const Schedule = (): JSX.Element => {
             setCurrentSlotInfo(slotInfo)
           }
           selectable
-          min={view === 'day' ? currentStart : undefined}
-          max={view === 'day' ? currentEnd : undefined}
+          min={
+            view === 'day' && isAfter(date, pastDayDate())
+              ? currentStart
+              : undefined
+          }
+          max={
+            view === 'day' && isAfter(date, pastDayDate())
+              ? currentEnd
+              : undefined
+          }
           onSelecting={() => false}
           popup={true}
           tooltipAccessor={() => ''}

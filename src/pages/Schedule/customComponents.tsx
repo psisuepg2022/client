@@ -54,8 +54,8 @@ export const eventStyleGetter = (
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    border: '1px solid #a3a3a3',
     fontFamily: 'Poppins',
-    border: '0px',
     padding: '10px',
     fontSize: view === 'day' ? '1.2rem' : '1rem',
     fontWeight: 600,
@@ -114,7 +114,6 @@ export const CustomEventMonth = () => {
 
 export const slotPropGetter: SlotPropGetter = (date: Date) => {
   const currentDate = new Date();
-  currentDate.setHours(0, 0, 0);
   const isPast = isAfter(currentDate, date);
 
   return {

@@ -21,7 +21,7 @@ import ControlledDatePicker from '@components/ControlledDatePicker';
 import ControlledInput from '@components/ControlledInput';
 import SectionDivider from '@components/SectionDivider';
 import { useNavigate } from 'react-router-dom';
-import { isAfter } from 'date-fns';
+import { isAfter, isEqual, isValid } from 'date-fns';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
@@ -240,13 +240,14 @@ const ProfessionalProfile = (): JSX.Element => {
           </Header>
 
           <FormProvider {...formMethods}>
-            <Form id="form" onSubmit={handleSubmit(onSubmit)}>
+            <Form id="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               <SectionDivider>Dados Pessoais</SectionDivider>
 
               <PersonalInfo>
                 <ControlledInput
                   name="name"
                   label="Nome"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -260,6 +261,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledInput
                     name="CPF"
                     label="CPF"
+                    required
                     defaultValue=""
                     mask={(s: string): string =>
                       `${s
@@ -287,14 +289,26 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledDatePicker
                     name="birthDate"
                     label="Data de nascimento"
+                    required
                     rules={{
                       required: {
                         value: true,
                         message: 'A data de nascimento é obrigatória',
                       },
-                      validate: (date) =>
-                        !isAfter(date, new Date()) ||
-                        'A Data escolhida não pode ser superior à data atual',
+                      validate: (date) => {
+                        if (!isValid(date))
+                          return 'A data escolhida é inválida';
+
+                        date.setHours(0, 0, 0, 0);
+                        const currenDate = new Date();
+                        currenDate.setHours(0, 0, 0, 0);
+
+                        return (
+                          (!isAfter(date, currenDate) &&
+                            !isEqual(date, currenDate)) ||
+                          'A Data escolhida não pode ser superior ou igual à data atual'
+                        );
+                      },
                     }}
                   />
                 </PersonalInfoHalf>
@@ -302,6 +316,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledInput
                     name="userName"
                     label="Nome de usuário"
+                    required
                     rules={{
                       required: {
                         value: true,
@@ -375,6 +390,21 @@ const ProfessionalProfile = (): JSX.Element => {
                   label="Telefone"
                   defaultValue=""
                   style={{ width: '50%' }}
+                  rules={{
+                    maxLength: {
+                      value: 15,
+                      message: 'Insira um telefone válido',
+                    },
+                    minLength: {
+                      value: 15,
+                      message: 'Insira um telefone válido',
+                    },
+                    required: {
+                      value: true,
+                      message: 'Um número de telefone é obrigatório',
+                    },
+                  }}
+                  required
                   maxLength={15}
                   mask={(s: string): string =>
                     `${s
@@ -391,6 +421,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="profession"
                   label="Profissão"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -401,6 +432,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="registry"
                   label="Registro"
+                  required
                   rules={{
                     required: {
                       value: true,

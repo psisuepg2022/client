@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import { isAfter, isValid } from 'date-fns';
+import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlterTopToolbar from '@components/AlterTopToolbar';
@@ -237,9 +237,14 @@ const EmployeesForm = (): JSX.Element => {
                         if (!isValid(date))
                           return 'A data escolhida é inválida';
 
+                        date.setHours(0, 0, 0, 0);
+                        const currenDate = new Date();
+                        currenDate.setHours(0, 0, 0, 0);
+
                         return (
-                          !isAfter(date, new Date()) ||
-                          'A Data escolhida não pode ser superior à data atual'
+                          (!isAfter(date, currenDate) &&
+                            !isEqual(date, currenDate)) ||
+                          'A Data escolhida não pode ser superior ou igual à data atual'
                         );
                       },
                     }}
@@ -336,6 +341,21 @@ const EmployeesForm = (): JSX.Element => {
                     name="contactNumber"
                     label="Telefone"
                     style={{ width: '50%' }}
+                    rules={{
+                      maxLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      minLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      required: {
+                        value: true,
+                        message: 'Um número de telefone é obrigatório',
+                      },
+                    }}
+                    required
                     maxLength={15}
                     mask={(s: string): string =>
                       `${s

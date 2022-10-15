@@ -157,6 +157,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       endTime: Date;
     };
     const oldIntervals = intervals.filter((item) => item.id);
+    console.log('OLD', oldIntervals);
     const newIntervals = intervals.filter((item) => !item.id);
     const newWeeklySchedule: UpdateWeeklySchedule = {
       startTime: dateFormat({
@@ -175,7 +176,6 @@ const ProfessionalSchedule = (): JSX.Element => {
       ) as number,
     };
 
-    setChanges(false);
     setSavingWeekly(true);
     try {
       const { content, message } = await updateWeeklySchedule(
@@ -183,10 +183,18 @@ const ProfessionalSchedule = (): JSX.Element => {
       );
 
       if (content && typeof content !== 'boolean') {
-        setCurrentDay(content);
+        const returnDay: WeeklySchedule = {
+          ...content,
+          locks:
+            [
+              ...(oldIntervals as WeeklyScheduleLock[]),
+              ...(content.locks as WeeklyScheduleLock[]),
+            ] || [],
+        };
+        setCurrentDay(returnDay);
         setWeeklySchedule((prev) => {
           const newWeekly = prev.map((item) =>
-            item.dayOfTheWeek === currentDay?.dayOfTheWeek ? content : item
+            item.dayOfTheWeek === currentDay?.dayOfTheWeek ? returnDay : item
           );
 
           return newWeekly;
@@ -194,14 +202,7 @@ const ProfessionalSchedule = (): JSX.Element => {
         setIntervals(
           [...oldIntervals, ...(content.locks as WeeklyScheduleLock[])] || []
         );
-        countLockSlots({
-          ...content,
-          locks:
-            [
-              ...(oldIntervals as WeeklyScheduleLock[]),
-              ...(content.locks as WeeklyScheduleLock[]),
-            ] || [],
-        });
+        countLockSlots(returnDay);
       }
       if (content && typeof content === 'boolean') {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -226,7 +227,6 @@ const ProfessionalSchedule = (): JSX.Element => {
       showToast({
         text: message,
       });
-      setChanges(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -236,6 +236,7 @@ const ProfessionalSchedule = (): JSX.Element => {
           'Ocorreu um problema ao salvar os horários ',
       });
     } finally {
+      setChanges(false);
       setSavingWeekly(false);
     }
   };
@@ -490,7 +491,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                   <form id="form" onSubmit={handleSubmit(onSubmit)}>
                     <TimesLabel>Início e fim do expediente</TimesLabel>
                     <WorkHoursContainer>
-                      <div onBlur={() => setChanges(true)}>
+                      <div onFocus={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Início"
                           name="startTime"
@@ -508,7 +509,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                           }}
                         />
                       </div>
-                      <div onBlur={() => setChanges(true)}>
+                      <div onFocus={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Fim"
                           name="endTime"
@@ -552,7 +553,9 @@ const ProfessionalSchedule = (): JSX.Element => {
                       {counter !== -1 && (
                         <>
                           <TimesLabel>
-                            Intervalos - {counter} restantes
+                            {counter % 1 !== 0 || counter < 0
+                              ? 'Sem intervalos - Os horários não batem com a duração base'
+                              : `Intervalos - ${counter} restantes`}
                           </TimesLabel>
 
                           <IconButton
@@ -566,7 +569,9 @@ const ProfessionalSchedule = (): JSX.Element => {
                               loading ||
                               lockDelete !== -1 ||
                               savingWeekly ||
-                              disableDay
+                              disableDay ||
+                              counter < 0 ||
+                              counter % 1 !== 0
                             }
                           >
                             <AiOutlinePlus

@@ -41,7 +41,7 @@ export const EmployeesProvider: React.FC<EmployeesProviderProps> = ({
     filter,
   }: ListProps): Promise<Response<ItemList<Employee>>> => {
     const { data }: { data: Response<ItemList<Employee>> } = await api.post(
-      page && size
+      (page as number) >= 0 && size
         ? `employee/search?page=${page}&size=${size}`
         : 'employee/search',
       {

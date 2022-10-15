@@ -100,6 +100,7 @@ const Employees = (): JSX.Element => {
     try {
       await list({
         size: PageSize,
+        page: 0,
         filter: {
           name: searchData?.name || '',
           CPF: searchData?.CPF || '',

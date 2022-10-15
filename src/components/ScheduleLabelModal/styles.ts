@@ -49,12 +49,13 @@ export const Body = styled('div')`
 export const StatusText = styled(Typography)`
   color: ${colors.TEXT};
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
+`;
 
-  & span {
-    color: ${colors.PRIMARY};
-    font-weight: 600;
-  }
+export const StatusSectionText = styled(Typography)`
+  color: ${colors.TEXT};
+  font-size: 1.1rem;
+  font-weight: 600;
 `;
 
 export const ColorRow = styled('div')`

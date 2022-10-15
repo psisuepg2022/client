@@ -240,7 +240,7 @@ const ProfessionalProfile = (): JSX.Element => {
           </Header>
 
           <FormProvider {...formMethods}>
-            <Form id="form" onSubmit={handleSubmit(onSubmit)}>
+            <Form id="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               <SectionDivider>Dados Pessoais</SectionDivider>
 
               <PersonalInfo>

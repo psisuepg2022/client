@@ -253,7 +253,7 @@ const OwnerProfile = (): JSX.Element => {
             </Header>
 
             <FormProvider {...formMethods}>
-              <Form id="form" onSubmit={handleSubmit(onSubmit)}>
+              <Form id="form" onSubmit={handleSubmit(onSubmit)} noValidate>
                 <SectionDivider>Dados da Clínica</SectionDivider>
 
                 <ClinicInfo>
@@ -262,7 +262,7 @@ const OwnerProfile = (): JSX.Element => {
                       name="code"
                       label="Código"
                       contentEditable={false}
-                      value={clinic?.code || '1000'}
+                      value={clinic?.code}
                     />
                     <ControlledInput
                       name="clinic.name"

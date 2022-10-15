@@ -121,7 +121,7 @@ const Patients = (): JSX.Element => {
       if (permissions.includes('USER_TYPE_PROFESSIONAL')) {
         await professionalPatients({
           size: PageSize,
-          page,
+          page: 0,
           filter: {
             name: searchData?.name || '',
             CPF: searchData?.CPF || '',
@@ -137,6 +137,7 @@ const Patients = (): JSX.Element => {
           CPF: searchData?.CPF || '',
           email: searchData?.email || '',
         },
+        page: 0,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

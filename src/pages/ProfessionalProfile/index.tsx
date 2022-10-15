@@ -247,6 +247,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="name"
                   label="Nome"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -260,6 +261,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledInput
                     name="CPF"
                     label="CPF"
+                    required
                     defaultValue=""
                     mask={(s: string): string =>
                       `${s
@@ -287,6 +289,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledDatePicker
                     name="birthDate"
                     label="Data de nascimento"
+                    required
                     rules={{
                       required: {
                         value: true,
@@ -313,6 +316,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledInput
                     name="userName"
                     label="Nome de usuário"
+                    required
                     rules={{
                       required: {
                         value: true,
@@ -417,6 +421,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="profession"
                   label="Profissão"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -427,6 +432,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="registry"
                   label="Registro"
+                  required
                   rules={{
                     required: {
                       value: true,

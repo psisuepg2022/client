@@ -231,6 +231,7 @@ const EmployeeProfile = (): JSX.Element => {
                   <ControlledInput
                     name="name"
                     label="Nome"
+                    required
                     rules={{
                       required: {
                         value: true,
@@ -244,6 +245,7 @@ const EmployeeProfile = (): JSX.Element => {
                     <ControlledInput
                       name="CPF"
                       label="CPF"
+                      required
                       mask={(s: string): string =>
                         `${s
                           .replace(/\D/g, '')
@@ -270,6 +272,7 @@ const EmployeeProfile = (): JSX.Element => {
                     <ControlledDatePicker
                       name="birthDate"
                       label="Data de nascimento"
+                      required
                       rules={{
                         required: {
                           value: true,
@@ -297,6 +300,7 @@ const EmployeeProfile = (): JSX.Element => {
                     <ControlledInput
                       name="userName"
                       label="Nome de usuário"
+                      required
                       rules={{
                         required: {
                           value: true,

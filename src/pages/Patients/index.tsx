@@ -119,6 +119,7 @@ const Patients = (): JSX.Element => {
 
     setFilter(searchData);
 
+    console.log('SEARCH', searchData.CPF, searchData.CPF?.trim());
     setLoading(true);
     searchActive.current = true;
     setPage(0);
@@ -129,7 +130,7 @@ const Patients = (): JSX.Element => {
           page: 0,
           filter: {
             name: searchData?.name || '',
-            CPF: searchData?.CPF || '',
+            CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
             email: searchData?.email || '',
           },
         });
@@ -139,7 +140,7 @@ const Patients = (): JSX.Element => {
         size: PageSize,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
         page: 0,

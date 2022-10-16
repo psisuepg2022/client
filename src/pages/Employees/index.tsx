@@ -107,7 +107,7 @@ const Employees = (): JSX.Element => {
         page: 0,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
       });

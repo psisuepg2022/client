@@ -108,7 +108,7 @@ const Professionals = (): JSX.Element => {
         size: PageSize,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
         page: 0,

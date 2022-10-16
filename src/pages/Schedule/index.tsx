@@ -354,6 +354,8 @@ const Schedule = (): JSX.Element => {
     (range: Date[] | Ranges, fView?: View | undefined) => {
       viewRef.current = fView === undefined ? viewRef.current : fView;
 
+      console.log('RANGE', view, range);
+
       const allEvents: Event[] = [];
       const dates: Date[] = range as Date[];
       const startDate = dateFormat({
@@ -521,11 +523,35 @@ const Schedule = (): JSX.Element => {
 
       dates.forEach((date: Date) => {
         const currentDate = new Date();
-        //currentDate.setHours(0, 0, 0, 0);
+        const currentDayCheck = new Date();
+        currentDayCheck.setHours(0, 0, 0, 0);
         const dateIndex = getDay(date) + 1;
         const today = retrievedWeeklySchedule?.find(
           (item) => item.dayOfTheWeek === dateIndex
         );
+
+        if (
+          !today?.endTime &&
+          !today?.startTime &&
+          isEqual(currentDayCheck, date)
+        ) {
+          const superiorWeekly = new Date(date);
+          superiorWeekly.setHours(23, 59, 59);
+          const inferiorWeekly = new Date(date);
+          inferiorWeekly.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            new Date().getSeconds()
+          );
+
+          const restEvent: Event = {
+            resource: 'LOCK',
+            start: inferiorWeekly,
+            end: superiorWeekly,
+          };
+
+          allEvents.push(restEvent);
+        }
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
           if (view === 'week' || viewRef.current === 'week') {

@@ -49,7 +49,6 @@ const ProfessionalsTable = ({
     user: { permissions },
   } = useAuth();
   const [open, setOpen] = useState<string>('');
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const navigate = useNavigate();
   const [currentProfessional, setCurrentProfessional] = useState<
     Professional | undefined
@@ -123,17 +122,20 @@ const ProfessionalsTable = ({
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      <UpdateProfissionalPasswordModal
-                        open={currentProfessional !== undefined}
-                        handleClose={(
-                          reason: 'backdropClick' | 'escapeKeyDown' | ''
-                        ) =>
-                          reason !== 'backdropClick' &&
-                          reason !== 'escapeKeyDown' &&
-                          setCurrentProfessional(undefined)
-                        }
-                        professional={currentProfessional as Professional}
-                      />
+                      {currentProfessional !== undefined &&
+                        currentProfessional.id === row.id && (
+                          <UpdateProfissionalPasswordModal
+                            open={currentProfessional !== undefined}
+                            handleClose={(
+                              reason: 'backdropClick' | 'escapeKeyDown' | ''
+                            ) =>
+                              reason !== 'backdropClick' &&
+                              reason !== 'escapeKeyDown' &&
+                              setCurrentProfessional(undefined)
+                            }
+                            professional={currentProfessional as Professional}
+                          />
+                        )}
                       {permissions.includes('USER_TYPE_OWNER') && (
                         <Tooltip title="Atualizar senha">
                           <IconButton

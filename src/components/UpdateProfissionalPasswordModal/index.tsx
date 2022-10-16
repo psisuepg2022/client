@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Body,
   ButtonsContainer,
@@ -39,7 +39,8 @@ const UpdateProfessionalPasswordModal = ({
   const { resetPassword } = useOwner();
   const { handleSubmit, reset } = formMethods;
   const [loading, setLoading] = useState<boolean>(false);
-  const randomKey = useId();
+  const randomKey = Math.random();
+  console.log('monthe');
 
   if (!professional) return <></>;
 

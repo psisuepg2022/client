@@ -533,7 +533,8 @@ const Schedule = (): JSX.Element => {
         if (
           !today?.endTime &&
           !today?.startTime &&
-          isEqual(currentDayCheck, date)
+          isEqual(currentDayCheck, date) &&
+          (view === 'week' || viewRef.current === 'week')
         ) {
           const superiorWeekly = new Date(date);
           superiorWeekly.setHours(23, 59, 59);

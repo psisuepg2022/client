@@ -7,6 +7,7 @@ export const Container = styled('div')`
   width: 250px;
   min-height: 100vh;
   max-width: 250px;
+  min-width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;

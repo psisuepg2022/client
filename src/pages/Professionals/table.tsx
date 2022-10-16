@@ -51,6 +51,9 @@ const ProfessionalsTable = ({
   const [open, setOpen] = useState<string>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [currentProfessional, setCurrentProfessional] = useState<
+    Professional | undefined
+  >(undefined);
 
   return (
     <Paper
@@ -121,19 +124,21 @@ const ProfessionalsTable = ({
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       <UpdateProfissionalPasswordModal
-                        open={openModal}
+                        open={currentProfessional !== undefined}
                         handleClose={(
                           reason: 'backdropClick' | 'escapeKeyDown' | ''
                         ) =>
                           reason !== 'backdropClick' &&
                           reason !== 'escapeKeyDown' &&
-                          setOpenModal(false)
+                          setCurrentProfessional(undefined)
                         }
-                        professional={row}
+                        professional={currentProfessional as Professional}
                       />
                       {permissions.includes('USER_TYPE_OWNER') && (
                         <Tooltip title="Atualizar senha">
-                          <IconButton onClick={() => setOpenModal(true)}>
+                          <IconButton
+                            onClick={() => setCurrentProfessional(row)}
+                          >
                             <MdLock />
                           </IconButton>
                         </Tooltip>

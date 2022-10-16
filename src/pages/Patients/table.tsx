@@ -195,12 +195,13 @@ const PatientsTable = ({
                               {row.gender}
                             </TextExpand>
                           </PersonalDataExpand>
-                          {row.address && (
-                            <>
-                              <SectionDivider fontSize={14}>
-                                Dados auxiliares
-                              </SectionDivider>
-                              <AuxDataExpand>
+
+                          <SectionDivider fontSize={14}>
+                            Dados auxiliares
+                          </SectionDivider>
+                          <AuxDataExpand>
+                            {row.address && (
+                              <>
                                 <TextExpand>
                                   <span>Cidade: </span>
                                   {row.address.city}
@@ -221,26 +222,13 @@ const PatientsTable = ({
                                   <span>CEP: </span>
                                   {row.address.zipCode}
                                 </TextExpand>
-                                <TextExpand>
-                                  <span>Telefone: </span>
-                                  {row.contactNumber}
-                                </TextExpand>
-                              </AuxDataExpand>
-                            </>
-                          )}
-                          {!row.address && row.contactNumber && (
-                            <>
-                              <SectionDivider fontSize={14}>
-                                Dados auxiliares
-                              </SectionDivider>
-                              <AuxDataExpand>
-                                <TextExpand>
-                                  <span>Telefone: </span>
-                                  {row.contactNumber}
-                                </TextExpand>
-                              </AuxDataExpand>
-                            </>
-                          )}
+                              </>
+                            )}
+                            <TextExpand>
+                              <span>Telefone: </span>
+                              {row.contactNumber}
+                            </TextExpand>
+                          </AuxDataExpand>
 
                           {row.liable && (
                             <>

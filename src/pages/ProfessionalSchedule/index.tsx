@@ -157,7 +157,6 @@ const ProfessionalSchedule = (): JSX.Element => {
       endTime: Date;
     };
     const oldIntervals = intervals.filter((item) => item.id);
-    console.log('OLD', oldIntervals);
     const newIntervals = intervals.filter((item) => !item.id);
     const newWeeklySchedule: UpdateWeeklySchedule = {
       startTime: dateFormat({

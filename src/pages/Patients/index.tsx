@@ -119,7 +119,6 @@ const Patients = (): JSX.Element => {
 
     setFilter(searchData);
 
-    console.log('SEARCH', searchData.CPF, searchData.CPF?.trim());
     setLoading(true);
     searchActive.current = true;
     setPage(0);

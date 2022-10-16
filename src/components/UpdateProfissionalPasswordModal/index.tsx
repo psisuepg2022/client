@@ -40,7 +40,6 @@ const UpdateProfessionalPasswordModal = ({
   const { handleSubmit, reset } = formMethods;
   const [loading, setLoading] = useState<boolean>(false);
   const randomKey = Math.random();
-  console.log('monthe');
 
   if (!professional) return <></>;
 

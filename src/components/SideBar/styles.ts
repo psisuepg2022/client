@@ -105,6 +105,7 @@ export const UserName = styled(Typography)`
   font-weight: 400;
   padding: 1rem 0;
   border-bottom: 1px solid #fff;
+  margin: 0 1rem;
   margin-bottom: 1rem;
 
   span {

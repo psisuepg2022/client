@@ -217,10 +217,10 @@ const ConcludedAppointments = (): JSX.Element => {
                       </span>
                     </ScheduleStatus>
                     <ScheduleStatus>
-                      Agendada em: <span>{comment.scheduledAt}</span>
+                      Agendado em: <span>{comment.scheduledAt}</span>
                     </ScheduleStatus>
                     <ScheduleStatus>
-                      Concluída em: <span>{comment.completedAt}</span>
+                      Concluído em: <span>{comment.completedAt}</span>
                     </ScheduleStatus>
                     <Tooltip title="Abrir anotação">
                       <IconButton

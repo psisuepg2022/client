@@ -159,7 +159,7 @@ const ScheduledEventModal = ({
             <AiFillSchedule style={{ fontSize: 70, color: colors.PRIMARY }} />
 
             <ScheduledAtContainer>
-              <ScheduleAtText>Agendada em:</ScheduleAtText>
+              <ScheduleAtText>Agendado em:</ScheduleAtText>
               <ScheduleAtDate>{updatedAtDisplay()}</ScheduleAtDate>
             </ScheduledAtContainer>
           </AdditionalInfos>

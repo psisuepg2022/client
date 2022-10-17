@@ -3,6 +3,7 @@ import React from 'react';
 import {
   FormControl,
   IconButton,
+  ImageList,
   Menu,
   MenuItem,
   SelectChangeEvent,
@@ -230,12 +231,32 @@ const TopToolbar = ({
         //   today
         // ) as ScheduleEvent[];
 
-        const weeklyScheduleLocksEvents: ScheduleEvent[] =
-          !today.startTime && !today.endTime
-            ? []
-            : (today?.locks?.map((lock: WeeklyScheduleLock) => {
-                return buildWeeklyScheduleLocks(currentDate, lock);
-              }) as ScheduleEvent[]);
+        const weeklyScheduleLocksEvents: Event[] = [];
+        today?.locks?.forEach((lock) => {
+          const lockStart = new Date(date);
+          lockStart.setHours(
+            Number(lock.startTime.split(':')[0]),
+            Number(lock.startTime.split(':')[1]),
+            0
+          );
+
+          const lockEnd = new Date(date);
+          lockEnd.setHours(
+            Number(lock.endTime.split(':')[0]),
+            Number(lock.endTime.split(':')[1]),
+            0
+          );
+
+          if (isAfter(lockStart, currentDate)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: lockStart,
+              end: lockEnd,
+            };
+
+            weeklyScheduleLocksEvents.push(lockEvent);
+          }
+        });
 
         const mappedScheduleLocks: Event[] =
           professionalSchedule?.content?.scheduleLocks.map((lock) => {
@@ -359,7 +380,13 @@ const TopToolbar = ({
     return <></>;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
+      }}
+    >
       <Container>
         <EarlyContent>
           <ClinicTitle>{clinic?.name}</ClinicTitle>
@@ -439,7 +466,14 @@ const TopToolbar = ({
         </LatterContent>
       </Container>
       {!permissions.includes('USER_TYPE_PROFESSIONAL') && (
-        <CardContainer>
+        <ImageList
+          sx={{
+            gridAutoFlow: 'column',
+            gridTemplateColumns:
+              'repeat(auto-fit, minmax(200px,1fr)) !important',
+            gridAutoColumns: 'minmax(200px, 1fr)',
+          }}
+        >
           {professionals.map((professional) => (
             <CardSelector
               key={professional.id}
@@ -448,7 +482,7 @@ const TopToolbar = ({
               onSelect={() => onChangeProfessional(professional)}
             />
           ))}
-        </CardContainer>
+        </ImageList>
       )}
     </div>
   );

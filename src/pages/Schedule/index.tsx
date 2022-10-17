@@ -532,10 +532,32 @@ const Schedule = (): JSX.Element => {
           isEqual(currentDayCheck, date) &&
           (view === 'week' || viewRef.current === 'week')
         ) {
-          const superiorWeekly = new Date(date);
-          superiorWeekly.setHours(23, 59, 59);
-          const inferiorWeekly = new Date(date);
-          inferiorWeekly.setHours(
+          const startInferior = new Date(date);
+          const startSuperior = new Date(date);
+          startSuperior.setHours(
+            today?.startTime
+              ? Number(today.startTime.split(':')[0])
+              : new Date().getHours(),
+            today?.startTime
+              ? Number(today.startTime.split(':')[1])
+              : new Date().getMinutes(),
+            0
+          );
+
+          if (isAfter(startSuperior, currentDate)) {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: startInferior,
+              end: startSuperior,
+            };
+
+            allEvents.push(restEvent);
+          }
+
+          const endSuperior = new Date(date);
+          endSuperior.setHours(23, 59, 59);
+          const endInferior = new Date(date);
+          endInferior.setHours(
             new Date().getHours(),
             new Date().getMinutes(),
             0
@@ -556,19 +578,27 @@ const Schedule = (): JSX.Element => {
             const restEvent: Event = {
               resource: 'LOCK',
               start: todayEnd,
-              end: superiorWeekly,
+              end: endSuperior,
             };
 
             allEvents.push(restEvent);
           } else {
             const restEvent: Event = {
               resource: 'LOCK',
-              start: inferiorWeekly,
-              end: superiorWeekly,
+              start: endInferior,
+              end: endSuperior,
             };
 
             allEvents.push(restEvent);
           }
+
+          const weeklyScheduleLocks: Event[] =
+            (today?.locks?.map((lock: WeeklyScheduleLock) => {
+              const newLock = buildWeeklyScheduleLocks(date, lock);
+              return newLock;
+            }) as ScheduleEvent[]) || [];
+
+          allEvents.push(...weeklyScheduleLocks);
         }
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {

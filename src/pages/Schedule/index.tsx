@@ -536,6 +536,13 @@ const Schedule = (): JSX.Element => {
           superiorWeekly.setHours(23, 59, 59);
           const inferiorWeekly = new Date(date);
           inferiorWeekly.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
+
+          const todayEnd = new Date(date);
+          todayEnd.setHours(
             today?.endTime
               ? Number(today.endTime.split(':')[0])
               : new Date().getHours(),
@@ -545,13 +552,25 @@ const Schedule = (): JSX.Element => {
             0
           );
 
-          const restEvent: Event = {
-            resource: 'LOCK',
-            start: inferiorWeekly,
-            end: superiorWeekly,
-          };
+          console.log('TODAY', todayEnd, inferiorWeekly);
 
-          allEvents.push(restEvent);
+          if (isAfter(todayEnd, currentDate)) {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: todayEnd,
+              end: superiorWeekly,
+            };
+
+            allEvents.push(restEvent);
+          } else {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: inferiorWeekly,
+              end: superiorWeekly,
+            };
+
+            allEvents.push(restEvent);
+          }
         }
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {

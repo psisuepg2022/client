@@ -170,7 +170,7 @@ const Schedule = (): JSX.Element => {
                 { startDate: startOfWeekDate, endDate: endOfWeekDate },
                 user.permissions.includes('USER_TYPE_PROFESSIONAL')
                   ? undefined
-                  : professionals.content?.items[0].id,
+                  : professionals.content.items[0].id,
                 true
               )
             : {
@@ -243,12 +243,25 @@ const Schedule = (): JSX.Element => {
                     Number(lock.startTime.split(':')[1]),
                     0
                   );
+                  const endDate = new Date();
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
 
                   if (
                     isAfter(startDate, currentDate) ||
                     isEqual(startDate, currentDate)
                   ) {
                     return buildWeeklyScheduleLocks(currentDate, lock);
+                  }
+                  if (isAfter(endDate, currentDate)) {
+                    return {
+                      resource: 'LOCK',
+                      start: new Date(),
+                      end: endDate,
+                    };
                   }
                 }) as ScheduleEvent[]);
 
@@ -597,14 +610,6 @@ const Schedule = (): JSX.Element => {
 
             allEvents.push(restEvent);
           }
-
-          // const weeklyScheduleLocks: Event[] =
-          //   (today?.locks?.map((lock: WeeklyScheduleLock) => {
-          //     const newLock = buildWeeklyScheduleLocks(date, lock);
-          //     return newLock;
-          //   }) as ScheduleEvent[]) || [];
-
-          // allEvents.push(...weeklyScheduleLocks);
         }
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
@@ -618,6 +623,12 @@ const Schedule = (): JSX.Element => {
         }
 
         today?.locks?.forEach((lock) => {
+          const currDateTime = new Date();
+          currDateTime.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
           const lockStart = new Date(date);
           lockStart.setHours(
             Number(lock.startTime.split(':')[0]),
@@ -632,7 +643,7 @@ const Schedule = (): JSX.Element => {
             0
           );
 
-          if (isAfter(lockStart, currentDate)) {
+          if (isAfter(lockStart, currDateTime)) {
             const lockEvent: Event = {
               resource: 'LOCK',
               start: lockStart,
@@ -641,15 +652,16 @@ const Schedule = (): JSX.Element => {
 
             allEvents.push(lockEvent);
           }
+          if (isAfter(lockEnd, currDateTime)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: new Date(),
+              end: lockEnd,
+            };
+
+            allEvents.push(lockEvent);
+          }
         });
-
-        // const weeklyScheduleLocks: Event[] =
-        //   (today?.locks?.map((lock: WeeklyScheduleLock) => {
-        //     const newLock = buildWeeklyScheduleLocks(date, lock);
-        //     return newLock;
-        //   }) as ScheduleEvent[]) || [];
-
-        // allEvents.push(...weeklyScheduleLocks);
       });
 
       setEvents((prev) => {
@@ -667,9 +679,6 @@ const Schedule = (): JSX.Element => {
       const today = retrievedWeeklySchedule.find(
         (item) => item.dayOfTheWeek === dayIndex
       ) as WeeklySchedule;
-
-      if (today.locks && today.locks.length > 0) {
-      }
 
       if (today.startTime && today.endTime) {
         const newCurrentStart = new Date(range[0].getTime()) as Date;
@@ -723,7 +732,6 @@ const Schedule = (): JSX.Element => {
               );
 
               const currentDate = new Date();
-
               const mappedScheduleLocks: Event[] = content?.scheduleLocks.map(
                 (lock) => {
                   const startDate = new Date(
@@ -755,6 +763,14 @@ const Schedule = (): JSX.Element => {
                       start: startDate,
                       end: endDate,
                       resource: `${lock.resource}/${lock.id}`,
+                    };
+                  }
+                  console.log('end', endDate, currentDate);
+                  if (isAfter(endDate, currentDate)) {
+                    return {
+                      resource: 'LOCK',
+                      start: new Date(),
+                      end: endDate,
                     };
                   }
                 }

@@ -253,6 +253,15 @@ const TopToolbar = ({
 
             weeklyScheduleLocksEvents.push(lockEvent);
           }
+          if (isAfter(lockEnd, currentDate)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: new Date(),
+              end: lockEnd,
+            };
+
+            weeklyScheduleLocksEvents.push(lockEvent);
+          }
         });
 
         const mappedScheduleLocks: Event[] =

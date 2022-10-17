@@ -71,6 +71,7 @@ const Professionals = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
+  const [filter, setFilter] = useState<SearchFilter>();
 
   useEffect(() => {
     if (searchActive.current) return;
@@ -80,6 +81,7 @@ const Professionals = (): JSX.Element => {
         await list({
           size: PageSize,
           page,
+          filter,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -96,6 +98,8 @@ const Professionals = (): JSX.Element => {
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const searchData: SearchFilter = data as SearchFilter;
 
+    setFilter(searchData);
+
     setLoading(true);
     searchActive.current = true;
     setPage(0);
@@ -104,7 +108,7 @@ const Professionals = (): JSX.Element => {
         size: PageSize,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
         page: 0,

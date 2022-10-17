@@ -110,7 +110,7 @@ type Ranges = {
 };
 
 const Schedule = (): JSX.Element => {
-  const { user } = useAuth();
+  const { user, sideBarExpanded } = useAuth();
   const { topBar } = useProfessionals();
   const {
     getScheduleEvents,
@@ -170,7 +170,7 @@ const Schedule = (): JSX.Element => {
                 { startDate: startOfWeekDate, endDate: endOfWeekDate },
                 user.permissions.includes('USER_TYPE_PROFESSIONAL')
                   ? undefined
-                  : professionals.content?.items[0].id,
+                  : professionals.content.items[0].id,
                 true
               )
             : {
@@ -243,12 +243,25 @@ const Schedule = (): JSX.Element => {
                     Number(lock.startTime.split(':')[1]),
                     0
                   );
+                  const endDate = new Date();
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
 
                   if (
                     isAfter(startDate, currentDate) ||
                     isEqual(startDate, currentDate)
                   ) {
                     return buildWeeklyScheduleLocks(currentDate, lock);
+                  }
+                  if (isAfter(endDate, currentDate)) {
+                    return {
+                      resource: 'LOCK',
+                      start: new Date(),
+                      end: endDate,
+                    };
                   }
                 }) as ScheduleEvent[]);
 
@@ -521,11 +534,83 @@ const Schedule = (): JSX.Element => {
 
       dates.forEach((date: Date) => {
         const currentDate = new Date();
-        //currentDate.setHours(0, 0, 0, 0);
+        const currentDayCheck = new Date();
+        currentDayCheck.setHours(0, 0, 0, 0);
         const dateIndex = getDay(date) + 1;
         const today = retrievedWeeklySchedule?.find(
           (item) => item.dayOfTheWeek === dateIndex
         );
+
+        if (
+          isEqual(currentDayCheck, date) &&
+          (view === 'week' || viewRef.current === 'week')
+        ) {
+          const startInferior = new Date(date);
+          startInferior.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
+
+          const startSuperior = new Date(date);
+          startSuperior.setHours(
+            today?.startTime
+              ? Number(today.startTime.split(':')[0])
+              : new Date().getHours(),
+            today?.startTime
+              ? Number(today.startTime.split(':')[1])
+              : new Date().getMinutes(),
+            0
+          );
+
+          if (isAfter(startSuperior, currentDate)) {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: startInferior,
+              end: startSuperior,
+            };
+
+            allEvents.push(restEvent);
+          }
+
+          const endSuperior = new Date(date);
+          endSuperior.setHours(23, 59, 59);
+          const endInferior = new Date(date);
+          endInferior.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
+
+          const todayEnd = new Date(date);
+          todayEnd.setHours(
+            today?.endTime
+              ? Number(today.endTime.split(':')[0])
+              : new Date().getHours(),
+            today?.endTime
+              ? Number(today.endTime.split(':')[1])
+              : new Date().getMinutes(),
+            0
+          );
+
+          if (isAfter(todayEnd, currentDate)) {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: todayEnd,
+              end: endSuperior,
+            };
+
+            allEvents.push(restEvent);
+          } else {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: endInferior,
+              end: endSuperior,
+            };
+
+            allEvents.push(restEvent);
+          }
+        }
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
           if (view === 'week' || viewRef.current === 'week') {
@@ -535,14 +620,50 @@ const Schedule = (): JSX.Element => {
             );
             allEvents.push(...weeklySchedule);
           }
-          const weeklyScheduleLocks: Event[] =
-            (today?.locks?.map((lock: WeeklyScheduleLock) => {
-              const newLock = buildWeeklyScheduleLocks(date, lock);
-              return newLock;
-            }) as ScheduleEvent[]) || [];
-
-          allEvents.push(...weeklyScheduleLocks);
         }
+
+        today?.locks?.forEach((lock) => {
+          const currDateTime = new Date();
+          currDateTime.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
+          const lockStart = new Date(date);
+          lockStart.setHours(
+            Number(lock.startTime.split(':')[0]),
+            Number(lock.startTime.split(':')[1]),
+            0
+          );
+
+          const lockEnd = new Date(date);
+          lockEnd.setHours(
+            Number(lock.endTime.split(':')[0]),
+            Number(lock.endTime.split(':')[1]),
+            0
+          );
+
+          if (isAfter(lockStart, currDateTime)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: lockStart,
+              end: lockEnd,
+            };
+
+            allEvents.push(lockEvent);
+            return;
+          }
+          if (isAfter(lockEnd, currDateTime)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: new Date(),
+              end: lockEnd,
+            };
+
+            allEvents.push(lockEvent);
+            return;
+          }
+        });
       });
 
       setEvents((prev) => {
@@ -613,7 +734,6 @@ const Schedule = (): JSX.Element => {
               );
 
               const currentDate = new Date();
-
               const mappedScheduleLocks: Event[] = content?.scheduleLocks.map(
                 (lock) => {
                   const startDate = new Date(
@@ -645,6 +765,13 @@ const Schedule = (): JSX.Element => {
                       start: startDate,
                       end: endDate,
                       resource: `${lock.resource}/${lock.id}`,
+                    };
+                  }
+                  if (isAfter(endDate, currentDate)) {
+                    return {
+                      resource: 'LOCK',
+                      start: new Date(),
+                      end: endDate,
                     };
                   }
                 }
@@ -727,13 +854,23 @@ const Schedule = (): JSX.Element => {
   if (loading)
     return (
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          height: '100vh',
-        }}
+        style={
+          sideBarExpanded
+            ? {
+                minWidth: 'calc(100vw - 250px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+              }
+            : {
+                minWidth: 'calc(100vw - 70px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+              }
+        }
       >
         <CircularProgressWithContent
           content={<LogoContainer src={logoPSIS} />}
@@ -746,10 +883,12 @@ const Schedule = (): JSX.Element => {
     <>
       <Modal
         open={scheduleLoading}
-        style={{
+        sx={{
           display: 'flex',
           height: '100%',
-          width: '100%',
+          minWidth: sideBarExpanded
+            ? 'calc(100vw - 250px)'
+            : 'calc(100vw- 70px)',
           justifyContent: 'center',
           alignItems: 'center ',
         }}
@@ -837,7 +976,13 @@ const Schedule = (): JSX.Element => {
           />
         )}
       {scheduleLoading ? (
-        <DisableDayContainer>
+        <DisableDayContainer
+          sx={
+            sideBarExpanded
+              ? { minWidth: 'calc(100vw - 250px)' }
+              : { minWidth: 'calc(100vw - 70px)' }
+          }
+        >
           <AlterTopToolbar />
         </DisableDayContainer>
       ) : isEqual(currentStart, currentEnd) &&

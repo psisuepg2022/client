@@ -82,6 +82,7 @@ const Patients = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('name');
   const [page, setPage] = useState<number>(0);
+  const [filter, setFilter] = useState<SearchFilter>();
 
   useEffect(() => {
     if (searchActive.current) return;
@@ -92,11 +93,13 @@ const Patients = (): JSX.Element => {
           await professionalPatients({
             size: PageSize,
             page,
+            filter,
           });
         } else {
           await list({
             size: PageSize,
             page,
+            filter,
           });
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,6 +117,8 @@ const Patients = (): JSX.Element => {
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const searchData: SearchFilter = data as SearchFilter;
 
+    setFilter(searchData);
+
     setLoading(true);
     searchActive.current = true;
     setPage(0);
@@ -124,7 +129,7 @@ const Patients = (): JSX.Element => {
           page: 0,
           filter: {
             name: searchData?.name || '',
-            CPF: searchData?.CPF || '',
+            CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
             email: searchData?.email || '',
           },
         });
@@ -134,7 +139,7 @@ const Patients = (): JSX.Element => {
         size: PageSize,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
         page: 0,

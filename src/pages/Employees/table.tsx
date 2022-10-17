@@ -49,8 +49,10 @@ const EmployeesTable = ({
     user: { permissions },
   } = useAuth();
   const [open, setOpen] = useState<string>('');
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [currentEmployee, setCurrentEmployee] = useState<Employee | undefined>(
+    undefined
+  );
 
   return (
     <Paper
@@ -120,20 +122,23 @@ const EmployeesTable = ({
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      <UpdateEmployeePasswordModal
-                        open={openModal}
-                        handleClose={(
-                          reason: 'backdropClick' | 'escapeKeyDown' | ''
-                        ) =>
-                          reason !== 'backdropClick' &&
-                          reason !== 'escapeKeyDown' &&
-                          setOpenModal(false)
-                        }
-                        employee={row}
-                      />
+                      {currentEmployee !== undefined &&
+                        currentEmployee.id === row.id && (
+                          <UpdateEmployeePasswordModal
+                            open={currentEmployee !== undefined}
+                            handleClose={(
+                              reason: 'backdropClick' | 'escapeKeyDown' | ''
+                            ) =>
+                              reason !== 'backdropClick' &&
+                              reason !== 'escapeKeyDown' &&
+                              setCurrentEmployee(undefined)
+                            }
+                            employee={currentEmployee as Employee}
+                          />
+                        )}
                       {permissions.includes('USER_TYPE_OWNER') && (
                         <Tooltip title="Atualizar senha">
-                          <IconButton onClick={() => setOpenModal(true)}>
+                          <IconButton onClick={() => setCurrentEmployee(row)}>
                             <MdLock />
                           </IconButton>
                         </Tooltip>
@@ -192,12 +197,13 @@ const EmployeesTable = ({
                               {row.birthDate}
                             </TextExpand>
                           </PersonalDataExpand>
-                          {row.address && (
-                            <>
-                              <SectionDivider fontSize={14}>
-                                Dados auxiliares
-                              </SectionDivider>
-                              <AuxDataExpand>
+
+                          <SectionDivider fontSize={14}>
+                            Dados auxiliares
+                          </SectionDivider>
+                          <AuxDataExpand>
+                            {row.address && (
+                              <>
                                 <TextExpand>
                                   <span>Cidade: </span>
                                   {row.address.city}
@@ -218,27 +224,19 @@ const EmployeesTable = ({
                                   <span>CEP: </span>
                                   {row.address.zipCode}
                                 </TextExpand>
-                                <TextExpand>
-                                  <span>Telefone: </span>
-                                  {row.contactNumber}
-                                </TextExpand>
-                              </AuxDataExpand>
-                            </>
-                          )}
-
-                          {!row.address && row.contactNumber && (
-                            <>
-                              <SectionDivider fontSize={14}>
-                                Dados auxiliares
-                              </SectionDivider>
-                              <AuxDataExpand>
-                                <TextExpand>
-                                  <span>Telefone: </span>
-                                  {row.contactNumber}
-                                </TextExpand>
-                              </AuxDataExpand>
-                            </>
-                          )}
+                              </>
+                            )}
+                            <TextExpand>
+                              <span>Telefone: </span>
+                              {row.contactNumber}
+                            </TextExpand>
+                            {permissions.includes('USER_TYPE_OWNER') && (
+                              <TextExpand>
+                                <span>Nome de usuário: </span>
+                                {row.userName}
+                              </TextExpand>
+                            )}
+                          </AuxDataExpand>
                         </Box>
                       </Collapse>
                     </StyledTableCell>

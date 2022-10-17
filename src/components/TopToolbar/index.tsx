@@ -31,9 +31,7 @@ import { useSchedule } from '@contexts/Schedule';
 import { Professional } from '@models/Professional';
 import { showAlert } from '@utils/showAlert';
 import { WeeklySchedule } from '@models/WeeklySchedule';
-import { ScheduleEvent } from '@interfaces/ScheduleEvent';
-import { buildWeeklyScheduleLocks, weekRange } from '@utils/schedule';
-import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
+import { weekRange } from '@utils/schedule';
 import { dateFormat } from '@utils/dateFormat';
 import {
   addDays,
@@ -230,12 +228,43 @@ const TopToolbar = ({
         //   today
         // ) as ScheduleEvent[];
 
-        const weeklyScheduleLocksEvents: ScheduleEvent[] =
-          !today.startTime && !today.endTime
-            ? []
-            : (today?.locks?.map((lock: WeeklyScheduleLock) => {
-                return buildWeeklyScheduleLocks(currentDate, lock);
-              }) as ScheduleEvent[]);
+        const weeklyScheduleLocksEvents: Event[] = [];
+        today?.locks?.forEach((lock) => {
+          const lockStart = new Date(date);
+          lockStart.setHours(
+            Number(lock.startTime.split(':')[0]),
+            Number(lock.startTime.split(':')[1]),
+            0
+          );
+
+          const lockEnd = new Date(date);
+          lockEnd.setHours(
+            Number(lock.endTime.split(':')[0]),
+            Number(lock.endTime.split(':')[1]),
+            0
+          );
+
+          if (isAfter(lockStart, currentDate)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: lockStart,
+              end: lockEnd,
+            };
+
+            weeklyScheduleLocksEvents.push(lockEvent);
+            return;
+          }
+          if (isAfter(lockEnd, currentDate)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: new Date(),
+              end: lockEnd,
+            };
+
+            weeklyScheduleLocksEvents.push(lockEvent);
+            return;
+          }
+        });
 
         const mappedScheduleLocks: Event[] =
           professionalSchedule?.content?.scheduleLocks.map((lock) => {
@@ -359,7 +388,13 @@ const TopToolbar = ({
     return <></>;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        maxWidth: '100%',
+      }}
+    >
       <Container>
         <EarlyContent>
           <ClinicTitle>{clinic?.name}</ClinicTitle>
@@ -439,7 +474,14 @@ const TopToolbar = ({
         </LatterContent>
       </Container>
       {!permissions.includes('USER_TYPE_PROFESSIONAL') && (
-        <CardContainer>
+        <CardContainer
+          sx={{
+            gridAutoFlow: 'column',
+            gridTemplateColumns:
+              'repeat(auto-fit, minmax(200px,1fr)) !important',
+            gridAutoColumns: 'minmax(200px, 1fr)',
+          }}
+        >
           {professionals.map((professional) => (
             <CardSelector
               key={professional.id}

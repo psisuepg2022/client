@@ -552,8 +552,6 @@ const Schedule = (): JSX.Element => {
             0
           );
 
-          console.log('TODAY', todayEnd, inferiorWeekly);
-
           if (isAfter(todayEnd, currentDate)) {
             const restEvent: Event = {
               resource: 'LOCK',

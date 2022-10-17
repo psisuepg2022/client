@@ -252,6 +252,7 @@ const TopToolbar = ({
             };
 
             weeklyScheduleLocksEvents.push(lockEvent);
+            return;
           }
           if (isAfter(lockEnd, currentDate)) {
             const lockEvent: Event = {
@@ -261,6 +262,7 @@ const TopToolbar = ({
             };
 
             weeklyScheduleLocksEvents.push(lockEvent);
+            return;
           }
         });
 

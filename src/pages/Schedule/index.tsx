@@ -651,6 +651,7 @@ const Schedule = (): JSX.Element => {
             };
 
             allEvents.push(lockEvent);
+            return;
           }
           if (isAfter(lockEnd, currDateTime)) {
             const lockEvent: Event = {
@@ -660,6 +661,7 @@ const Schedule = (): JSX.Element => {
             };
 
             allEvents.push(lockEvent);
+            return;
           }
         });
       });

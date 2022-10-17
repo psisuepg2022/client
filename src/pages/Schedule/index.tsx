@@ -533,6 +533,12 @@ const Schedule = (): JSX.Element => {
           (view === 'week' || viewRef.current === 'week')
         ) {
           const startInferior = new Date(date);
+          startInferior.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
+
           const startSuperior = new Date(date);
           startSuperior.setHours(
             today?.startTime
@@ -592,13 +598,13 @@ const Schedule = (): JSX.Element => {
             allEvents.push(restEvent);
           }
 
-          const weeklyScheduleLocks: Event[] =
-            (today?.locks?.map((lock: WeeklyScheduleLock) => {
-              const newLock = buildWeeklyScheduleLocks(date, lock);
-              return newLock;
-            }) as ScheduleEvent[]) || [];
+          // const weeklyScheduleLocks: Event[] =
+          //   (today?.locks?.map((lock: WeeklyScheduleLock) => {
+          //     const newLock = buildWeeklyScheduleLocks(date, lock);
+          //     return newLock;
+          //   }) as ScheduleEvent[]) || [];
 
-          allEvents.push(...weeklyScheduleLocks);
+          // allEvents.push(...weeklyScheduleLocks);
         }
 
         if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
@@ -609,14 +615,41 @@ const Schedule = (): JSX.Element => {
             );
             allEvents.push(...weeklySchedule);
           }
-          const weeklyScheduleLocks: Event[] =
-            (today?.locks?.map((lock: WeeklyScheduleLock) => {
-              const newLock = buildWeeklyScheduleLocks(date, lock);
-              return newLock;
-            }) as ScheduleEvent[]) || [];
-
-          allEvents.push(...weeklyScheduleLocks);
         }
+
+        today?.locks?.forEach((lock) => {
+          const lockStart = new Date(date);
+          lockStart.setHours(
+            Number(lock.startTime.split(':')[0]),
+            Number(lock.startTime.split(':')[1]),
+            0
+          );
+
+          const lockEnd = new Date(date);
+          lockEnd.setHours(
+            Number(lock.endTime.split(':')[0]),
+            Number(lock.endTime.split(':')[1]),
+            0
+          );
+
+          if (isAfter(lockStart, currentDate)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: lockStart,
+              end: lockEnd,
+            };
+
+            allEvents.push(lockEvent);
+          }
+        });
+
+        // const weeklyScheduleLocks: Event[] =
+        //   (today?.locks?.map((lock: WeeklyScheduleLock) => {
+        //     const newLock = buildWeeklyScheduleLocks(date, lock);
+        //     return newLock;
+        //   }) as ScheduleEvent[]) || [];
+
+        // allEvents.push(...weeklyScheduleLocks);
       });
 
       setEvents((prev) => {
@@ -634,6 +667,9 @@ const Schedule = (): JSX.Element => {
       const today = retrievedWeeklySchedule.find(
         (item) => item.dayOfTheWeek === dayIndex
       ) as WeeklySchedule;
+
+      if (today.locks && today.locks.length > 0) {
+      }
 
       if (today.startTime && today.endTime) {
         const newCurrentStart = new Date(range[0].getTime()) as Date;

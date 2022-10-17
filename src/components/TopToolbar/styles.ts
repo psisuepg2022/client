@@ -1,4 +1,10 @@
-import { MenuItem, Button, Typography, menuItemClasses } from '@mui/material';
+import {
+  MenuItem,
+  Button,
+  Typography,
+  menuItemClasses,
+  ImageList,
+} from '@mui/material';
 import { styled } from '@mui/system';
 import {
   InputLabel,
@@ -110,12 +116,9 @@ export const StyledInputLabel = styled(InputLabel)`
   }
 `;
 
-export const CardContainer = styled('div')`
-  display: flex;
-  overflow-x: scroll;
-
+export const CardContainer = styled(ImageList)`
   ::-webkit-scrollbar {
-    height: 10px !important;
+    height: 6px !important;
   }
 
   /* Track */

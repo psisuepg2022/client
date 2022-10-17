@@ -110,7 +110,7 @@ type Ranges = {
 };
 
 const Schedule = (): JSX.Element => {
-  const { user } = useAuth();
+  const { user, sideBarExpanded } = useAuth();
   const { topBar } = useProfessionals();
   const {
     getScheduleEvents,
@@ -837,13 +837,23 @@ const Schedule = (): JSX.Element => {
   if (loading)
     return (
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          height: '100vh',
-        }}
+        style={
+          sideBarExpanded
+            ? {
+                minWidth: 'calc(100vw - 250px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+              }
+            : {
+                minWidth: 'calc(100vw - 70px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+              }
+        }
       >
         <CircularProgressWithContent
           content={<LogoContainer src={logoPSIS} />}
@@ -856,10 +866,12 @@ const Schedule = (): JSX.Element => {
     <>
       <Modal
         open={scheduleLoading}
-        style={{
+        sx={{
           display: 'flex',
           height: '100%',
-          width: '100%',
+          minWidth: sideBarExpanded
+            ? 'calc(100vw - 250px)'
+            : 'calc(100vw- 70px)',
           justifyContent: 'center',
           alignItems: 'center ',
         }}
@@ -947,7 +959,13 @@ const Schedule = (): JSX.Element => {
           />
         )}
       {scheduleLoading ? (
-        <DisableDayContainer>
+        <DisableDayContainer
+          sx={
+            sideBarExpanded
+              ? { minWidth: 'calc(100vw - 250px)' }
+              : { minWidth: 'calc(100vw - 70px)' }
+          }
+        >
           <AlterTopToolbar />
         </DisableDayContainer>
       ) : isEqual(currentStart, currentEnd) &&

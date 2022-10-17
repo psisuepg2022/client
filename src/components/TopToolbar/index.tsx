@@ -3,7 +3,6 @@ import React from 'react';
 import {
   FormControl,
   IconButton,
-  ImageList,
   Menu,
   MenuItem,
   SelectChangeEvent,
@@ -32,9 +31,7 @@ import { useSchedule } from '@contexts/Schedule';
 import { Professional } from '@models/Professional';
 import { showAlert } from '@utils/showAlert';
 import { WeeklySchedule } from '@models/WeeklySchedule';
-import { ScheduleEvent } from '@interfaces/ScheduleEvent';
-import { buildWeeklyScheduleLocks, weekRange } from '@utils/schedule';
-import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
+import { weekRange } from '@utils/schedule';
 import { dateFormat } from '@utils/dateFormat';
 import {
   addDays,
@@ -384,7 +381,7 @@ const TopToolbar = ({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        boxSizing: 'border-box',
+        maxWidth: '100%',
       }}
     >
       <Container>
@@ -466,7 +463,7 @@ const TopToolbar = ({
         </LatterContent>
       </Container>
       {!permissions.includes('USER_TYPE_PROFESSIONAL') && (
-        <ImageList
+        <CardContainer
           sx={{
             gridAutoFlow: 'column',
             gridTemplateColumns:
@@ -482,7 +479,7 @@ const TopToolbar = ({
               onSelect={() => onChangeProfessional(professional)}
             />
           ))}
-        </ImageList>
+        </CardContainer>
       )}
     </div>
   );

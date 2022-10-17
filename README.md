@@ -28,6 +28,11 @@ Projeto realizado para disciplina Projeto de Software
 * Instalação de dependências
 
 ```
+  * Caso ocorra um erro de "node engine" em algum comando "yarn", utilizar a flag:
+  "--ignore-engines" com o comando.
+```
+
+```
   No terminal, na pasta raiz do projeto, rodar o comando "yarn" para a Instalação
   das bibliotecas necessárias.
 ```

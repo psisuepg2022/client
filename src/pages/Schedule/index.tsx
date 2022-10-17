@@ -767,7 +767,6 @@ const Schedule = (): JSX.Element => {
                       resource: `${lock.resource}/${lock.id}`,
                     };
                   }
-                  console.log('end', endDate, currentDate);
                   if (isAfter(endDate, currentDate)) {
                     return {
                       resource: 'LOCK',

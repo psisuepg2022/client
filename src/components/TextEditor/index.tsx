@@ -18,8 +18,6 @@ const TextEditor = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [value, setValue] = useState<string>(comment ? comment : '');
 
-  console.log('CONSOLE', comment);
-
   const onSubmit = async (): Promise<void> => {
     if (saveComment) {
       setLoading(true);
@@ -74,7 +72,7 @@ const TextEditor = ({
           <ReactQuill
             style={{
               height: '80%',
-              maxHeight: '70%',
+              minHeight: '50vh',
               width: '100%',
               fontFamily: 'Poppins',
               fontSize: '1.2rem',
@@ -84,6 +82,7 @@ const TextEditor = ({
                 container: '#toolbar',
               },
             }}
+            formats={['Poppins']}
             value={value}
             onChange={setValue}
             readOnly={readOnly}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useQuill } from 'react-quilljs';
+import { useQuill } from 'node_modules/react-quilljs/lib/index';
 import 'quill/dist/quill.snow.css';
 import { Container, Content, StyledButton } from './style';
 import { CircularProgress } from '@mui/material';

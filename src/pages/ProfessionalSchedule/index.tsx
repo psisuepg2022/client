@@ -71,10 +71,6 @@ const ProfessionalSchedule = (): JSX.Element => {
     control,
   });
 
-  const { startTime, endTime } = useWatch({
-    control,
-  });
-
   useEffect(() => {
     (async () => {
       try {

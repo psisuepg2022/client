@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
-import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
 import {
   ConfigureProfessional,
@@ -17,7 +16,7 @@ import { DeleteProfessionalWithAppointments } from '@interfaces/DeleteProfession
 type ListProps = {
   page?: number;
   size?: number;
-  filter?: SearchFilter;
+  composed?: string;
 };
 
 type ConfigureResponse = {
@@ -71,14 +70,14 @@ export const ProfessionalsProvider: React.FC<ProfessionalsProviderProps> = ({
   const list = async ({
     size,
     page,
-    filter,
+    composed,
   }: ListProps): Promise<Response<ItemList<Professional>>> => {
     const { data }: { data: Response<ItemList<Professional>> } = await api.post(
       (page as number) >= 0 && size
         ? `professional/search?page=${page}&size=${size}`
         : 'professional/search',
       {
-        ...filter,
+        composed,
       }
     );
 

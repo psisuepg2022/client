@@ -17,6 +17,7 @@ import SectionDivider from '@components/SectionDivider';
 import { useNavigate } from 'react-router-dom';
 import { showAlert } from '@utils/showAlert';
 import { useAuth } from '@contexts/Auth';
+import { showToast } from '@utils/showToast';
 
 type ProfileFormProps = {
   oldPassword: string;
@@ -43,10 +44,9 @@ const ChangePassword = (): JSX.Element => {
         newPassword,
         confirmNewPassword
       );
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
+
+      showToast({
+        text: `${message}`,
       });
 
       reset({

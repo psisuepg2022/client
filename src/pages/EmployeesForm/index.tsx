@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import { isAfter, isValid } from 'date-fns';
+import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlterTopToolbar from '@components/AlterTopToolbar';
@@ -30,6 +30,7 @@ import { showAlert } from '@utils/showAlert';
 import { CepInfos } from '@interfaces/CepInfos';
 import { useEmployees } from '@contexts/Employees';
 import { Employee, FormEmployee } from '@models/Employee';
+import { showToast } from '@utils/showToast';
 
 type FormProps = {
   name: string;
@@ -114,14 +115,20 @@ const EmployeesForm = (): JSX.Element => {
     setLoading(true);
     try {
       const { content, message } = await create(employee);
-      showAlert({
-        title: 'Sucesso!',
-        text: `${message} Código de acesso: ${content?.accessCode}`,
-        icon: 'success',
-      });
+
       if (!employeeToEdit) {
+        showToast({
+          text: `${message} Código de acesso: ${content?.accessCode}`,
+        });
         reset();
         setCepInfos(undefined);
+      } else {
+        showToast({
+          text: message,
+        });
+        reset();
+        setCepInfos(undefined);
+        navigate('/employees');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -163,7 +170,9 @@ const EmployeesForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Funcionário</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Funcionário' : 'Criar Funcionário'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm
@@ -228,9 +237,14 @@ const EmployeesForm = (): JSX.Element => {
                         if (!isValid(date))
                           return 'A data escolhida é inválida';
 
+                        date.setHours(0, 0, 0, 0);
+                        const currenDate = new Date();
+                        currenDate.setHours(0, 0, 0, 0);
+
                         return (
-                          !isAfter(date, new Date()) ||
-                          'A Data escolhida não pode ser superior à data atual'
+                          (!isAfter(date, currenDate) &&
+                            !isEqual(date, currenDate)) ||
+                          'A Data escolhida não pode ser superior ou igual à data atual'
                         );
                       },
                     }}
@@ -327,6 +341,21 @@ const EmployeesForm = (): JSX.Element => {
                     name="contactNumber"
                     label="Telefone"
                     style={{ width: '50%' }}
+                    rules={{
+                      maxLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      minLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      required: {
+                        value: true,
+                        message: 'Um número de telefone é obrigatório',
+                      },
+                    }}
+                    required
                     maxLength={15}
                     mask={(s: string): string =>
                       `${s

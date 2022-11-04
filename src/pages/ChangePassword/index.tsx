@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CircularProgress, IconButton, Typography } from '@mui/material';
 import {
   Box,
@@ -27,28 +27,9 @@ type ProfileFormProps = {
 const ChangePassword = (): JSX.Element => {
   const { changePassword } = useAuth();
   const formMethods = useForm<ProfileFormProps>();
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (e: any) {
-        showAlert({
-          icon: 'error',
-          text:
-            e?.response?.data?.message ||
-            'Ocorreu um problema ao carregar seu perfil de usuário',
-        });
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: ProfileFormProps = data as ProfileFormProps;
@@ -66,6 +47,12 @@ const ChangePassword = (): JSX.Element => {
         title: 'Sucesso!',
         icon: 'success',
         text: message,
+      });
+
+      reset({
+        confirmNewPassword: '',
+        newPassword: '',
+        oldPassword: '',
       });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

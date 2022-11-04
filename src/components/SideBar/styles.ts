@@ -7,6 +7,7 @@ export const Container = styled('div')`
   width: 250px;
   min-height: 100vh;
   max-width: 250px;
+  min-width: 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -92,4 +93,23 @@ export const NavItemTitle = styled(Typography)`
   font-size: 1.1rem;
   font-weight: 400;
   padding-left: 2rem;
+`;
+
+export const UserNameContainer = styled('div')`
+  display: flex;
+  text-align: center;
+`;
+
+export const UserName = styled(Typography)`
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 1rem 0;
+  border-bottom: 1px solid #fff;
+  margin: 0 1rem;
+  margin-bottom: 1rem;
+
+  span {
+    font-weight: 600;
+  }
 `;

@@ -17,6 +17,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import ControlledInput from '@components/ControlledInput';
 import { useOwner } from '@contexts/Owner';
 import { showAlert } from '@utils/showAlert';
+import { showToast } from '@utils/showToast';
 
 type UpdateProfessionalPasswordModalProps = {
   open: boolean;
@@ -58,10 +59,8 @@ const UpdateProfessionalPasswordModal = ({
         data.confirmNewPassword
       );
 
-      showAlert({
-        title: 'Sucesso!',
-        text: `${message}`,
-        icon: 'success',
+      showToast({
+        text: message,
       });
       closeAll('');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -17,6 +17,7 @@ import { OwnerProvider } from '@contexts/Owner';
 import { EmployeesProvider } from '@contexts/Employees';
 import ProfessionalConfigRoutes from './professional.config.routes';
 import ProfessionalInitialConfig from '@pages/ProfessionalInitialConfig';
+import { showToast } from '@utils/showToast';
 
 const AppRoutes = () => {
   const {
@@ -34,12 +35,19 @@ const AppRoutes = () => {
     };
   }, []);
 
-  const isOffline = (e: Event) => {
-    console.log('offline', e);
+  const isOffline = () => {
+    showToast({
+      text: 'Você está sem conexão! Reconecte-se para poder utilizar o sistema.',
+      icon: 'error',
+      width: 450,
+    });
   };
 
-  const isOnline = (e: Event) => {
-    console.log('online', e);
+  const isOnline = () => {
+    showToast({
+      text: 'Conectado! Você se recuperou de uma queda na conexão.',
+      width: 450,
+    });
   };
 
   if (!isAuthenticated) {

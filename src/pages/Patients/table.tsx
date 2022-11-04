@@ -114,14 +114,14 @@ const PatientsTable = ({
                       {!row.CPF && row.liable ? row.liable.CPF : row.CPF}
                     </StyledTableCell>
                     <StyledTableCell align="left">
-                      {row.birthDate}
+                      {`${row.birthDate} (${row.age || 0} anos)`}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {row.contactNumber}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {permissions.includes('USER_TYPE_PROFESSIONAL') && (
-                        <Tooltip title="Anotações">
+                        <Tooltip title="Consultas concluídas">
                           <IconButton
                             onClick={() =>
                               navigate('/comment/list', {
@@ -195,12 +195,13 @@ const PatientsTable = ({
                               {row.gender}
                             </TextExpand>
                           </PersonalDataExpand>
-                          {row.address && (
-                            <>
-                              <SectionDivider fontSize={14}>
-                                Dados auxiliares
-                              </SectionDivider>
-                              <AuxDataExpand>
+
+                          <SectionDivider fontSize={14}>
+                            Dados auxiliares
+                          </SectionDivider>
+                          <AuxDataExpand>
+                            {row.address && (
+                              <>
                                 <TextExpand>
                                   <span>Cidade: </span>
                                   {row.address.city}
@@ -221,26 +222,13 @@ const PatientsTable = ({
                                   <span>CEP: </span>
                                   {row.address.zipCode}
                                 </TextExpand>
-                                <TextExpand>
-                                  <span>Telefone: </span>
-                                  {row.contactNumber}
-                                </TextExpand>
-                              </AuxDataExpand>
-                            </>
-                          )}
-                          {!row.address && row.contactNumber && (
-                            <>
-                              <SectionDivider fontSize={14}>
-                                Dados auxiliares
-                              </SectionDivider>
-                              <AuxDataExpand>
-                                <TextExpand>
-                                  <span>Telefone: </span>
-                                  {row.contactNumber}
-                                </TextExpand>
-                              </AuxDataExpand>
-                            </>
-                          )}
+                              </>
+                            )}
+                            <TextExpand>
+                              <span>Telefone: </span>
+                              {row.contactNumber}
+                            </TextExpand>
+                          </AuxDataExpand>
 
                           {row.liable && (
                             <>

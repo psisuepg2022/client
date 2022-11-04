@@ -7,6 +7,7 @@ import {
   Messages,
   ToolbarProps,
   SlotInfo,
+  NavigateAction,
 } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './index.css';
@@ -19,6 +20,7 @@ import {
   isAfter,
   isEqual,
   eachDayOfInterval,
+  subDays,
 } from 'date-fns';
 import TopToolbar from '@components/TopToolbar';
 import {
@@ -37,7 +39,12 @@ import ScheduledEventModal from '@components/ScheduledEventModal';
 import { ScheduleEvent } from '@interfaces/ScheduleEvent';
 import { useAuth } from '@contexts/Auth';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
-import { LogoContainer } from '@pages/Schedule/styles';
+import {
+  DisableDayContainer,
+  DisableDayContent,
+  DisableDayText,
+  LogoContainer,
+} from '@pages/Schedule/styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { useSchedule } from '@contexts/Schedule';
@@ -59,6 +66,10 @@ import { dateFormat } from '@utils/dateFormat';
 import ConcludedEventModal from '@components/ConcludedEventModal';
 import LockEventModal from '@components/LockEventModal';
 import CancelledAbsenceEventModal from '@components/CancelledAbsenceEventModal';
+import AlterTopToolbar from '@components/AlterTopToolbar';
+import { MdLock } from 'react-icons/md';
+import { colors } from '@global/colors';
+import { showToast } from '@utils/showToast';
 
 const locales = {
   'pt-BR': ptBR,
@@ -99,7 +110,7 @@ type Ranges = {
 };
 
 const Schedule = (): JSX.Element => {
-  const { user } = useAuth();
+  const { user, sideBarExpanded } = useAuth();
   const { topBar } = useProfessionals();
   const {
     getScheduleEvents,
@@ -111,6 +122,10 @@ const Schedule = (): JSX.Element => {
     setEvents,
     retrievedWeeklySchedule,
     setRetrievedWeeklySchedule,
+    currentEnd,
+    currentStart,
+    setCurrentEnd,
+    setCurrentStart,
   } = useSchedule();
   const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(
     undefined
@@ -119,7 +134,11 @@ const Schedule = (): JSX.Element => {
     undefined
   );
   const [loading, setLoading] = useState<boolean>(true);
+
   const previousRange = useRef<string[]>();
+  const viewRef = useRef('day');
+  const [view, setView] = useState<View>('day');
+  const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
     (async () => {
@@ -145,100 +164,184 @@ const Schedule = (): JSX.Element => {
 
         previousRange.current = weekRangeDatesOnly;
 
-        const firstSchedule = await getScheduleEvents(
-          { startDate: startOfWeekDate, endDate: endOfWeekDate },
-          user.permissions.includes('USER_TYPE_PROFESSIONAL')
-            ? undefined
-            : professionals.content?.items[0].id,
-          true
-        );
+        const firstSchedule =
+          professionals.content && professionals.content.items.length !== 0
+            ? await getScheduleEvents(
+                { startDate: startOfWeekDate, endDate: endOfWeekDate },
+                user.permissions.includes('USER_TYPE_PROFESSIONAL')
+                  ? undefined
+                  : professionals.content.items[0].id,
+                true
+              )
+            : {
+                content: {
+                  weeklySchedule: [],
+                  appointments: [],
+                  scheduleLocks: [],
+                },
+              };
 
-        setCurrentProfessional(professionals.content?.items[0] as Professional);
+        const initialProfessional =
+          professionals.content && professionals.content.items.length > 0
+            ? professionals.content.items[0]
+            : {
+                baseDuration: 60,
+              };
 
-        const currentDate = new Date();
-        const dayIndex = getDay(currentDate) + 1;
-        const today = firstSchedule?.content?.weeklySchedule.find(
-          (item) => item.dayOfTheWeek === dayIndex
-        ) as WeeklySchedule;
+        setCurrentProfessional(initialProfessional as Professional);
 
-        const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-          currentDate,
-          today
-        ) as ScheduleEvent[];
+        firstSchedule.content &&
+          firstSchedule.content.weeklySchedule.length === 0 &&
+          showToast({
+            width: 1000,
+            timer: 5000,
+            icon: 'info',
+            text: 'Não existem profissionais cadastrados ou configurados. Cadastre um novo profissional no menu ao lado e peça ao profissional que acesse a conta e cadastre seus horários.',
+          });
 
-        const weeklyScheduleLocksEvents: ScheduleEvent[] =
-          !today.startTime && !today.endTime
-            ? []
-            : (today?.locks?.map((lock: WeeklyScheduleLock) => {
-                return buildWeeklyScheduleLocks(currentDate, lock);
-              }) as ScheduleEvent[]);
+        if (
+          firstSchedule.content &&
+          firstSchedule.content?.weeklySchedule.length > 0
+        ) {
+          const currentDate = new Date();
+          const dayIndex = getDay(currentDate) + 1;
+          const today = firstSchedule?.content?.weeklySchedule.find(
+            (item) => item.dayOfTheWeek === dayIndex
+          ) as WeeklySchedule;
 
-        const mappedScheduleLocks: Event[] =
-          firstSchedule?.content?.scheduleLocks.map((lock) => {
-            const startDate = new Date(
-              Number(lock.date.split('/')[2]),
-              Number(lock.date.split('/')[1]) - 1,
-              Number(lock.date.split('/')[0])
+          if (today.startTime && today.endTime) {
+            const initialStart = new Date();
+            initialStart.setHours(
+              Number(today.startTime.split(':')[0]),
+              Number(today.startTime.split(':')[1]),
+              0
             );
-            startDate.setHours(Number(lock.startTime.split(':')[0]));
-            startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-            startDate.setSeconds(0);
-            const endDate = new Date(
-              Number(lock.date.split('/')[2]),
-              Number(lock.date.split('/')[1]) - 1,
-              Number(lock.date.split('/')[0])
-            );
-            endDate.setHours(Number(lock.endTime.split(':')[0]));
-            endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-            endDate.setSeconds(0);
 
-            if (
-              isAfter(endDate, currentDate) ||
-              isEqual(endDate, currentDate)
-            ) {
+            const initialEnd = new Date();
+            initialEnd.setHours(
+              Number(today.endTime.split(':')[0]),
+              Number(today.endTime.split(':')[1]),
+              0
+            );
+
+            setCurrentStart(initialStart);
+            setCurrentEnd(initialEnd);
+          }
+
+          // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+          //   currentDate,
+          //   today
+          // ) as ScheduleEvent[];
+
+          const weeklyScheduleLocksEventsFalsy: ScheduleEvent[] =
+            !today.startTime && !today.endTime
+              ? []
+              : (today?.locks?.map((lock: WeeklyScheduleLock) => {
+                  const startDate = new Date();
+                  startDate.setHours(
+                    Number(lock.startTime.split(':')[0]),
+                    Number(lock.startTime.split(':')[1]),
+                    0
+                  );
+                  const endDate = new Date();
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
+
+                  if (
+                    isAfter(startDate, currentDate) ||
+                    isEqual(startDate, currentDate)
+                  ) {
+                    return buildWeeklyScheduleLocks(currentDate, lock);
+                  }
+                  if (isAfter(endDate, currentDate)) {
+                    return {
+                      resource: 'LOCK',
+                      start: new Date(),
+                      end: endDate,
+                    };
+                  }
+                }) as ScheduleEvent[]);
+
+          const weeklyScheduleLocksEvents =
+            weeklyScheduleLocksEventsFalsy.filter((lock) => lock);
+
+          const mappedScheduleLocks: Event[] =
+            firstSchedule?.content?.scheduleLocks.map((lock) => {
+              const startDate = new Date(
+                Number(lock.date.split('/')[2]),
+                Number(lock.date.split('/')[1]) - 1,
+                Number(lock.date.split('/')[0])
+              );
+              startDate.setHours(
+                Number(lock.startTime.split(':')[0]),
+                Number(lock.startTime.split(':')[1]),
+                0
+              );
+              const endDate = new Date(
+                Number(lock.date.split('/')[2]),
+                Number(lock.date.split('/')[1]) - 1,
+                Number(lock.date.split('/')[0])
+              );
+              endDate.setHours(
+                Number(lock.endTime.split(':')[0]),
+                Number(lock.endTime.split(':')[1]),
+                0
+              );
+
+              if (
+                isAfter(startDate, currentDate) ||
+                isEqual(startDate, currentDate)
+              ) {
+                return {
+                  start: startDate,
+                  end: endDate,
+                  resource: `${lock.resource}/${lock.id}`,
+                };
+              }
+            }) as Event[];
+
+          const validScheduleLocks = mappedScheduleLocks.filter((lock) => lock);
+
+          const mappedEvents: Event[] =
+            firstSchedule?.content?.appointments.map((event) => {
+              const startTime = event.startDate.split('T')[1].substring(0, 5);
+              const startDate = new Date(event.startDate);
+              startDate.setHours(
+                Number(startTime.split(':')[0]),
+                Number(startTime.split(':')[1]),
+                0
+              );
+              const endTime = event.endDate.split('T')[1].substring(0, 5);
+              const endDate = new Date(event.endDate);
+              endDate.setHours(
+                Number(endTime.split(':')[0]),
+                Number(endTime.split(':')[1]),
+                0
+              );
+
               return {
                 start: startDate,
                 end: endDate,
-                resource: `${lock.resource}/${lock.id}`,
+                title: event.title,
+                resource: event?.updatedAt
+                  ? `${event.resource}/${event.id}/${event.updatedAt}`
+                  : `${event.resource}/${event.id}`,
               };
-            }
-          }) as Event[];
+            }) as Event[];
 
-        const validScheduleLocks = mappedScheduleLocks.filter((lock) => lock);
-
-        const mappedEvents: Event[] = firstSchedule?.content?.appointments.map(
-          (event) => {
-            const startTime = event.startDate.split('T')[1].substring(0, 5);
-            const startDate = new Date(event.startDate);
-            startDate.setHours(Number(startTime.split(':')[0]));
-            startDate.setMinutes(Number(startTime.split(':')[1]));
-            startDate.setSeconds(0);
-            const endTime = event.endDate.split('T')[1].substring(0, 5);
-            const endDate = new Date(event.endDate);
-            endDate.setHours(Number(endTime.split(':')[0]));
-            endDate.setMinutes(Number(endTime.split(':')[1]));
-            endDate.setSeconds(0);
-
-            return {
-              start: startDate,
-              end: endDate,
-              title: event.title,
-              resource: event?.updatedAt
-                ? `${event.resource}/${event.id}/${event.updatedAt}`
-                : `${event.resource}/${event.id}`,
-            };
-          }
-        ) as Event[];
-
-        setRetrievedWeeklySchedule(
-          firstSchedule?.content?.weeklySchedule || []
-        );
-        setEvents([
-          ...weeklyScheduleEvents,
-          ...weeklyScheduleLocksEvents,
-          ...validScheduleLocks,
-          ...mappedEvents,
-        ]);
+          setRetrievedWeeklySchedule(
+            firstSchedule?.content?.weeklySchedule || []
+          );
+          setEvents([
+            //...weeklyScheduleEvents,
+            ...weeklyScheduleLocksEvents,
+            ...validScheduleLocks,
+            ...mappedEvents,
+          ]);
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -250,11 +353,19 @@ const Schedule = (): JSX.Element => {
         setLoading(false);
       }
     })();
+
+    return () => {
+      setCurrentStart(new Date());
+      setCurrentEnd(new Date());
+      setCurrentProfessional({} as Professional);
+      setEvents([]);
+      setRetrievedWeeklySchedule([] as WeeklySchedule[]);
+    };
   }, []);
 
   const onRangeChange = useCallback(
-    (range: Date[] | Ranges, view?: View | undefined) => {
-      console.log('RANGE', range);
+    (range: Date[] | Ranges, fView?: View | undefined) => {
+      viewRef.current = fView === undefined ? viewRef.current : fView;
 
       const allEvents: Event[] = [];
       const dates: Date[] = range as Date[];
@@ -267,7 +378,7 @@ const Schedule = (): JSX.Element => {
         stringFormat: 'yyyy-MM-dd',
       });
 
-      if (view === 'month' || ('start' in range && 'end' in range)) {
+      if (fView === 'month' || ('start' in range && 'end' in range)) {
         setScheduleLoading(true);
 
         const monthDates = eachDayOfInterval({
@@ -284,10 +395,13 @@ const Schedule = (): JSX.Element => {
           );
 
           if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-            const weeklySchedule: Event[] = buildWeeklySchedule(
-              date,
-              today as WeeklySchedule
-            );
+            if (fView === 'week' || viewRef.current === 'week') {
+              const weeklySchedule: Event[] = buildWeeklySchedule(
+                date,
+                today as WeeklySchedule
+              );
+              allEvents.push(...weeklySchedule);
+            }
 
             const weeklyScheduleLocks: Event[] =
               (today?.locks?.map((lock: WeeklyScheduleLock) => {
@@ -295,7 +409,6 @@ const Schedule = (): JSX.Element => {
                 return newLock;
               }) as ScheduleEvent[]) || [];
 
-            allEvents.push(...weeklySchedule);
             allEvents.push(...weeklyScheduleLocks);
           }
         });
@@ -337,17 +450,21 @@ const Schedule = (): JSX.Element => {
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  startDate.setHours(Number(lock.startTime.split(':')[0]));
-                  startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(lock.startTime.split(':')[0]),
+                    Number(lock.startTime.split(':')[1]),
+                    0
+                  );
                   const endDate = new Date(
                     Number(lock.date.split('/')[2]),
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  endDate.setHours(Number(lock.endTime.split(':')[0]));
-                  endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
 
                   if (
                     isAfter(startDate, currentDate) ||
@@ -372,14 +489,18 @@ const Schedule = (): JSX.Element => {
                     .split('T')[1]
                     .substring(0, 5);
                   const startDate = new Date(event.startDate);
-                  startDate.setHours(Number(startTime.split(':')[0]));
-                  startDate.setMinutes(Number(startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(startTime.split(':')[0]),
+                    Number(startTime.split(':')[1]),
+                    0
+                  );
                   const endTime = event.endDate.split('T')[1].substring(0, 5);
                   const endDate = new Date(event.endDate);
-                  endDate.setHours(Number(endTime.split(':')[0]));
-                  endDate.setMinutes(Number(endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(endTime.split(':')[0]),
+                    Number(endTime.split(':')[1]),
+                    0
+                  );
 
                   return {
                     title: `${event.title}`,
@@ -413,27 +534,136 @@ const Schedule = (): JSX.Element => {
 
       dates.forEach((date: Date) => {
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
+        const currentDayCheck = new Date();
+        currentDayCheck.setHours(0, 0, 0, 0);
         const dateIndex = getDay(date) + 1;
         const today = retrievedWeeklySchedule?.find(
           (item) => item.dayOfTheWeek === dateIndex
         );
 
-        if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
-          const weeklySchedule: Event[] = buildWeeklySchedule(
-            date,
-            today as WeeklySchedule
+        if (
+          isEqual(currentDayCheck, date) &&
+          (view === 'week' || viewRef.current === 'week')
+        ) {
+          const startInferior = new Date(date);
+          startInferior.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
           );
 
-          const weeklyScheduleLocks: Event[] =
-            (today?.locks?.map((lock: WeeklyScheduleLock) => {
-              const newLock = buildWeeklyScheduleLocks(date, lock);
-              return newLock;
-            }) as ScheduleEvent[]) || [];
+          const startSuperior = new Date(date);
+          startSuperior.setHours(
+            today?.startTime
+              ? Number(today.startTime.split(':')[0])
+              : new Date().getHours(),
+            today?.startTime
+              ? Number(today.startTime.split(':')[1])
+              : new Date().getMinutes(),
+            0
+          );
 
-          allEvents.push(...weeklySchedule);
-          allEvents.push(...weeklyScheduleLocks);
+          if (isAfter(startSuperior, currentDate)) {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: startInferior,
+              end: startSuperior,
+            };
+
+            allEvents.push(restEvent);
+          }
+
+          const endSuperior = new Date(date);
+          endSuperior.setHours(23, 59, 59);
+          const endInferior = new Date(date);
+          endInferior.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
+
+          const todayEnd = new Date(date);
+          todayEnd.setHours(
+            today?.endTime
+              ? Number(today.endTime.split(':')[0])
+              : new Date().getHours(),
+            today?.endTime
+              ? Number(today.endTime.split(':')[1])
+              : new Date().getMinutes(),
+            0
+          );
+
+          if (isAfter(todayEnd, currentDate)) {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: todayEnd,
+              end: endSuperior,
+            };
+
+            allEvents.push(restEvent);
+          } else {
+            const restEvent: Event = {
+              resource: 'LOCK',
+              start: endInferior,
+              end: endSuperior,
+            };
+
+            allEvents.push(restEvent);
+          }
         }
+
+        if (isAfter(date, currentDate) || isEqual(date, currentDate)) {
+          if (view === 'week' || viewRef.current === 'week') {
+            const weeklySchedule: Event[] = buildWeeklySchedule(
+              date,
+              today as WeeklySchedule
+            );
+            allEvents.push(...weeklySchedule);
+          }
+        }
+
+        today?.locks?.forEach((lock) => {
+          const currDateTime = new Date();
+          currDateTime.setHours(
+            new Date().getHours(),
+            new Date().getMinutes(),
+            0
+          );
+          const lockStart = new Date(date);
+          lockStart.setHours(
+            Number(lock.startTime.split(':')[0]),
+            Number(lock.startTime.split(':')[1]),
+            0
+          );
+
+          const lockEnd = new Date(date);
+          lockEnd.setHours(
+            Number(lock.endTime.split(':')[0]),
+            Number(lock.endTime.split(':')[1]),
+            0
+          );
+
+          if (isAfter(lockStart, currDateTime)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: lockStart,
+              end: lockEnd,
+            };
+
+            allEvents.push(lockEvent);
+            return;
+          }
+          if (isAfter(lockEnd, currDateTime)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: new Date(),
+              end: lockEnd,
+            };
+
+            allEvents.push(lockEvent);
+            return;
+          }
+        });
       });
 
       setEvents((prev) => {
@@ -447,9 +677,35 @@ const Schedule = (): JSX.Element => {
         return [...removeOldLocks, ...allEvents];
       });
 
-      if (!previousRange.current?.includes(startDate)) {
-        console.log('RANGES', startDate, endDate);
+      const dayIndex = getDay('start' in range ? new Date() : range[0]) + 1;
+      const today = retrievedWeeklySchedule.find(
+        (item) => item.dayOfTheWeek === dayIndex
+      ) as WeeklySchedule;
 
+      if (today.startTime && today.endTime) {
+        const newCurrentStart = new Date(range[0].getTime()) as Date;
+        newCurrentStart.setHours(
+          Number(today.startTime.split(':')[0]),
+          Number(today.startTime.split(':')[1]),
+          0
+        );
+        setCurrentStart(newCurrentStart);
+
+        const newCurrentEnd = new Date(range[0].getTime()) as Date;
+        newCurrentEnd.setHours(
+          Number(today.endTime.split(':')[0]),
+          Number(today.endTime.split(':')[1]),
+          0
+        );
+        setCurrentEnd(newCurrentEnd);
+      } else {
+        const empty = new Date();
+        empty.setHours(0, 0, 0);
+        setCurrentEnd(empty);
+        setCurrentStart(empty);
+      }
+
+      if (!previousRange.current?.includes(startDate)) {
         const [startOfWeek, endOfWeek] = weekRange(dates[0]);
         const weekRangeBetweenDates = weekRangeDates(startOfWeek, endOfWeek);
         const weekRangeDatesOnly = weekRangeBetweenDates.map((date) =>
@@ -466,7 +722,8 @@ const Schedule = (): JSX.Element => {
           },
           user.permissions.includes('USER_TYPE_PROFESSIONAL')
             ? undefined
-            : currentProfessional?.id
+            : currentProfessional?.id,
+          true
         )
           .then(({ content }) => {
             setEvents((prev) => {
@@ -477,7 +734,6 @@ const Schedule = (): JSX.Element => {
               );
 
               const currentDate = new Date();
-
               const mappedScheduleLocks: Event[] = content?.scheduleLocks.map(
                 (lock) => {
                   const startDate = new Date(
@@ -485,17 +741,21 @@ const Schedule = (): JSX.Element => {
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  startDate.setHours(Number(lock.startTime.split(':')[0]));
-                  startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(lock.startTime.split(':')[0]),
+                    Number(lock.startTime.split(':')[1]),
+                    0
+                  );
                   const endDate = new Date(
                     Number(lock.date.split('/')[2]),
                     Number(lock.date.split('/')[1]) - 1,
                     Number(lock.date.split('/')[0])
                   );
-                  endDate.setHours(Number(lock.endTime.split(':')[0]));
-                  endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(lock.endTime.split(':')[0]),
+                    Number(lock.endTime.split(':')[1]),
+                    0
+                  );
 
                   if (
                     isAfter(startDate, currentDate) ||
@@ -505,6 +765,13 @@ const Schedule = (): JSX.Element => {
                       start: startDate,
                       end: endDate,
                       resource: `${lock.resource}/${lock.id}`,
+                    };
+                  }
+                  if (isAfter(endDate, currentDate)) {
+                    return {
+                      resource: 'LOCK',
+                      start: new Date(),
+                      end: endDate,
                     };
                   }
                 }
@@ -520,14 +787,18 @@ const Schedule = (): JSX.Element => {
                     .split('T')[1]
                     .substring(0, 5);
                   const startDate = new Date(event.startDate);
-                  startDate.setHours(Number(startTime.split(':')[0]));
-                  startDate.setMinutes(Number(startTime.split(':')[1]));
-                  startDate.setSeconds(0);
+                  startDate.setHours(
+                    Number(startTime.split(':')[0]),
+                    Number(startTime.split(':')[1]),
+                    0
+                  );
                   const endTime = event.endDate.split('T')[1].substring(0, 5);
                   const endDate = new Date(event.endDate);
-                  endDate.setHours(Number(endTime.split(':')[0]));
-                  endDate.setMinutes(Number(endTime.split(':')[1]));
-                  endDate.setSeconds(0);
+                  endDate.setHours(
+                    Number(endTime.split(':')[0]),
+                    Number(endTime.split(':')[1]),
+                    0
+                  );
 
                   return {
                     title: `${event.title}`,
@@ -547,25 +818,59 @@ const Schedule = (): JSX.Element => {
               ];
             });
           })
-          .catch((e) => console.log('ERRO REEWTRIEVE', e))
+          .catch((e) => {
+            showAlert({
+              icon: 'error',
+              text:
+                e?.response?.data?.message ||
+                'Ocorreu um erro ao recuperar os eventos da agenda.',
+            });
+          })
           .finally(() => setScheduleLoading(false));
       }
     },
-    [retrievedWeeklySchedule]
+    [retrievedWeeklySchedule, viewRef]
   );
 
-  console.log('EVENTS,', events);
+  const onDrillDown = (date: Date, view?: View) => {
+    onRangeChange([date], view);
+    setView(view as View);
+    setDate(date);
+  };
+
+  const onNavigate = (newDate: Date, view: View) => {
+    setDate(newDate);
+    setView(view);
+  };
+
+  const pastDayDate = (): Date => {
+    const currentDate = new Date();
+    const pastDate = subDays(currentDate, 1);
+    pastDate.setHours(23, 59, 59);
+
+    return pastDate;
+  };
 
   if (loading)
     return (
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          height: '100vh',
-        }}
+        style={
+          sideBarExpanded
+            ? {
+                minWidth: 'calc(100vw - 250px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+              }
+            : {
+                minWidth: 'calc(100vw - 70px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+              }
+        }
       >
         <CircularProgressWithContent
           content={<LogoContainer src={logoPSIS} />}
@@ -578,10 +883,12 @@ const Schedule = (): JSX.Element => {
     <>
       <Modal
         open={scheduleLoading}
-        style={{
+        sx={{
           display: 'flex',
           height: '100%',
-          width: '100%',
+          minWidth: sideBarExpanded
+            ? 'calc(100vw - 250px)'
+            : 'calc(100vw- 70px)',
           justifyContent: 'center',
           alignItems: 'center ',
         }}
@@ -668,62 +975,141 @@ const Schedule = (): JSX.Element => {
             eventInfo={currentEvent}
           />
         )}
-      <Calendar
-        localizer={localizer}
-        events={events}
-        style={{ height: '100vh', width: '100%', fontFamily: 'Poppins' }}
-        views={['day', 'week', 'month']}
-        culture="pt-BR"
-        step={currentProfessional?.baseDuration}
-        defaultView="day"
-        formats={{
-          eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
-        }}
-        timeslots={1}
-        onRangeChange={(
-          range:
-            | Date[]
-            | {
-                start: Date;
-                end: Date;
-              },
-          view?: View | undefined
-        ) => onRangeChange(range, view)}
-        dayLayoutAlgorithm="no-overlap"
-        slotPropGetter={slotPropGetter}
-        eventPropGetter={eventStyleGetter}
-        messages={messages}
-        onSelectEvent={(event: Event) =>
-          statusFromResource(event.resource) && setCurrentEvent(event)
-        }
-        onSelectSlot={(slotInfo: SlotInfo) =>
-          (user.permissions.includes('CREATE_APPOINTMENT') ||
-            user.permissions.includes('CREATE_SCHEDULE_LOCK')) &&
-          isAfter(slotInfo.start, new Date()) &&
-          setCurrentSlotInfo(slotInfo)
-        }
-        selectable
-        onSelecting={() => false}
-        popup={true}
-        tooltipAccessor={() => ''}
-        dayPropGetter={dayPropGetter}
-        components={{
-          toolbar: (toolbar: ToolbarProps) =>
-            TopToolbar({
-              ...toolbar,
-              onRangeChange,
-            }),
-          month: {
-            dateHeader: (props) => CustomDateHeader({ ...props, events }),
-            header: CustomHeaderMonth,
-            event: CustomEventMonth,
-          },
-          week: {
-            header: CustomHeaderWeek,
-          },
-          eventWrapper: CustomEventWrapper,
-        }}
-      />
+      {scheduleLoading ? (
+        <DisableDayContainer
+          sx={
+            sideBarExpanded
+              ? { minWidth: 'calc(100vw - 250px)' }
+              : { minWidth: 'calc(100vw - 70px)' }
+          }
+        >
+          <AlterTopToolbar />
+        </DisableDayContainer>
+      ) : isEqual(currentStart, currentEnd) &&
+        view === 'day' &&
+        retrievedWeeklySchedule.length > 0 ? (
+        <DisableDayContainer>
+          <TopToolbar
+            date={date}
+            setDate={setDate}
+            localizer={{ messages }}
+            label=""
+            onView={(view: View) => {
+              setView(view);
+              if (view === 'week') {
+                const [weekStart, weekEnd] = weekRange(date);
+                const weekRangeBeetweenDates = weekRangeDates(
+                  weekStart,
+                  weekEnd
+                );
+                onRangeChange(weekRangeBeetweenDates, view);
+              }
+            }}
+            view={view}
+            disabled
+            views={['day', 'week', 'month']}
+            onRangeChange={onRangeChange}
+            onNavigate={(navigate: NavigateAction, date?: Date) => {
+              setDate(date as Date);
+              onRangeChange([date as Date], 'day');
+            }}
+          />
+          <DisableDayContent>
+            <MdLock
+              size={40}
+              style={{ color: colors.PRIMARY, marginRight: 10 }}
+            />
+            <DisableDayText>Este dia não possui expediente</DisableDayText>
+          </DisableDayContent>
+        </DisableDayContainer>
+      ) : (
+        <Calendar
+          localizer={localizer}
+          events={events}
+          style={{ height: '100vh', width: '100%', fontFamily: 'Poppins' }}
+          views={['day', 'week', 'month']}
+          culture="pt-BR"
+          step={currentProfessional?.baseDuration}
+          defaultView="day"
+          drilldownView="day"
+          formats={{
+            eventTimeRangeFormat: () => '', // HIDES TIME IN EVENTS
+          }}
+          timeslots={1}
+          onRangeChange={(
+            range:
+              | Date[]
+              | {
+                  start: Date;
+                  end: Date;
+                },
+            view?: View | undefined
+          ) => onRangeChange(range, view)}
+          dayLayoutAlgorithm="no-overlap"
+          slotPropGetter={slotPropGetter}
+          eventPropGetter={(event: Event) => eventStyleGetter(event, view)}
+          view={view}
+          date={date}
+          onView={(view: View) => setView(view)}
+          onDrillDown={onDrillDown}
+          onNavigate={onNavigate}
+          messages={messages}
+          onSelectEvent={(event: Event) =>
+            statusFromResource(event.resource) && setCurrentEvent(event)
+          }
+          onSelectSlot={(slotInfo: SlotInfo) =>
+            (user.permissions.includes('CREATE_APPOINTMENT') ||
+              user.permissions.includes('CREATE_SCHEDULE_LOCK') ||
+              user.permissions.includes('USER_TYPE_PROFESSIONAL')) &&
+            isAfter(slotInfo.start, new Date()) &&
+            viewRef.current === 'day' &&
+            setCurrentSlotInfo(slotInfo)
+          }
+          selectable
+          min={
+            view === 'day' && isAfter(date, pastDayDate())
+              ? currentStart
+              : undefined
+          }
+          max={
+            view === 'day' && isAfter(date, pastDayDate())
+              ? currentEnd
+              : undefined
+          }
+          onSelecting={() => false}
+          popup={true}
+          tooltipAccessor={() => ''}
+          dayPropGetter={() =>
+            dayPropGetter(isEqual(currentStart, currentEnd) && view === 'day')
+          }
+          components={{
+            toolbar:
+              retrievedWeeklySchedule.length > 0
+                ? (toolbar: ToolbarProps) =>
+                    TopToolbar({
+                      ...toolbar,
+                      onRangeChange,
+                      date,
+                      setDate,
+                      view,
+                    })
+                : () => AlterTopToolbar(),
+            month: {
+              dateHeader: (props) =>
+                CustomDateHeader({
+                  ...props,
+                  events,
+                }),
+              header: CustomHeaderMonth,
+              event: CustomEventMonth,
+            },
+            week: {
+              header: CustomHeaderWeek,
+            },
+            eventWrapper: CustomEventWrapper,
+          }}
+        />
+      )}
     </>
   );
 };

@@ -8,6 +8,7 @@ import {
   ColorRow,
   ColorText,
   Header,
+  StatusSectionText,
   StatusText,
   StyledBox,
   StyledModal,
@@ -39,33 +40,49 @@ const ScheduleLabelModal = ({
       <StyledBox>
         <Header>
           <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
-          <StatusText>
-            Legenda para os estados das consultas <span></span>
-          </StatusText>
+          <StatusText>Legenda para o calendário</StatusText>
           <IconButton onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
         <Body>
+          <StatusSectionText>Consultas</StatusSectionText>
           <ColorRow>
             <ColorBox color={colors.SCHEDULED} />
-            <ColorText>Consulta agendada</ColorText>
+            <ColorText>Agendada</ColorText>
           </ColorRow>
           <ColorRow>
             <ColorBox color={colors.CONFIRMED} />
-            <ColorText>Consulta confirmada</ColorText>
+            <ColorText>Confirmada</ColorText>
           </ColorRow>
           <ColorRow>
             <ColorBox color={colors.CONCLUDED} />
-            <ColorText>Consulta concluída</ColorText>
+            <ColorText>Concluída</ColorText>
           </ColorRow>
           <ColorRow>
             <ColorBox color={colors.CANCELLED} />
-            <ColorText>Consulta cancelada (antes da confirmação)</ColorText>
+            <ColorText>Cancelada (antes da confirmação)</ColorText>
           </ColorRow>
           <ColorRow>
             <ColorBox color={colors.ABSENCE} />
-            <ColorText>Consulta com ausência do paciente</ColorText>
+            <ColorText>Com ausência do paciente</ColorText>
+          </ColorRow>
+          <StatusSectionText>Agenda</StatusSectionText>
+          <ColorRow>
+            <ColorBox color="#FFF" />
+            <ColorText>Horário disponível</ColorText>
+          </ColorRow>
+          <ColorRow>
+            <ColorBox color={colors.PAST} />
+            <ColorText>Horário passado (Não utilizável)</ColorText>
+          </ColorRow>
+          <ColorRow>
+            <ColorBox color={colors.LOCK} />
+            <ColorText>Intervalo do dia da semana</ColorText>
+          </ColorRow>
+          <ColorRow>
+            <ColorBox color={colors.LOCK_DARKER} />
+            <ColorText>Bloqueio de horário em uma data específica</ColorText>
           </ColorRow>
         </Body>
       </StyledBox>

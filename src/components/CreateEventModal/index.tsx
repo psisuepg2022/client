@@ -45,8 +45,12 @@ const CreateEventModal = ({
   slotInfo,
   addNewEvent,
 }: CreateEventModalProps): JSX.Element => {
-  const { currentProfessional, saveAppointment, saveScheduleLock } =
-    useSchedule();
+  const {
+    currentProfessional,
+    saveAppointment,
+    saveScheduleLock,
+    saveAppointmentByProfessional,
+  } = useSchedule();
   const {
     user: { permissions },
   } = useAuth();
@@ -61,18 +65,21 @@ const CreateEventModal = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [lockMode, setLockMode] = useState<boolean>(false);
 
-  if (!slotInfo) return <></>;
-
-  if (slotInfo && slotInfo.slots && slotInfo.slots.length === 1) return <></>;
+  if (!slotInfo || !slotInfo.start || !slotInfo.end) return <></>;
 
   const handleSearch = async (
     inputValue: string
   ): Promise<AutocompletePatient[]> => {
     try {
       const res: { data: Response<ItemList<AutocompletePatient>> } =
-        await api.post('appointment/autocomplete_patient', {
-          name: inputValue,
-        });
+        await api.post(
+          permissions.includes('USER_TYPE_PROFESSIONAL')
+            ? 'appointment/autocomplete_patient_by_the_professional'
+            : 'appointment/autocomplete_patient',
+          {
+            name: inputValue,
+          }
+        );
 
       return res?.data?.content?.items || [];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,13 +114,20 @@ const CreateEventModal = ({
       });
       const endTime = dateFormat({ date: slotInfo.end, stringFormat: 'HH:mm' });
 
-      const savedEvent = await saveAppointment({
-        date,
-        startTime,
-        endTime,
-        professionalId: currentProfessional?.id || '',
-        patientId: currentPatient?.id || '',
-      });
+      const savedEvent = permissions.includes('USER_TYPE_PROFESSIONAL')
+        ? await saveAppointmentByProfessional({
+            date,
+            startTime,
+            endTime,
+            patientId: currentPatient?.id || '',
+          })
+        : await saveAppointment({
+            date,
+            startTime,
+            endTime,
+            professionalId: currentProfessional?.id || '',
+            patientId: currentPatient?.id || '',
+          });
 
       const newAppointment: Event = {
         title: `${currentPatient?.name}`,
@@ -245,7 +259,9 @@ const CreateEventModal = ({
         ) : (
           <StyledBox>
             <Header>
-              {permissions.includes('CREATE_APPOINTMENT') || currentPatient ? (
+              {permissions.includes('CREATE_APPOINTMENT') ||
+              !permissions.includes('USER_TYPE_PROFESSIONAL') ||
+              currentPatient ? (
                 <IconButton size="small" disabled>
                   <MdOutlineClose size={40} color="#FFF" />
                 </IconButton>
@@ -270,7 +286,8 @@ const CreateEventModal = ({
                 <MdOutlineClose size={40} />
               </IconButton>
             </Header>
-            {permissions.includes('CREATE_APPOINTMENT') && (
+            {(permissions.includes('CREATE_APPOINTMENT') ||
+              permissions.includes('USER_TYPE_PROFESSIONAL')) && (
               <Body>
                 <SectionDivider>Paciente</SectionDivider>
                 <AutocompleteInput
@@ -285,11 +302,7 @@ const CreateEventModal = ({
                     <SimpleInput
                       name="CPF"
                       label="CPF"
-                      value={
-                        !currentPatient.CPF && currentPatient.liable
-                          ? currentPatient.liable.CPF
-                          : currentPatient.CPF
-                      }
+                      value={currentPatient.CPF}
                       contentEditable={false}
                     />
                     <SimpleInput
@@ -345,4 +358,4 @@ const CreateEventModal = ({
   );
 };
 
-export default CreateEventModal;
+export default React.memo(CreateEventModal);

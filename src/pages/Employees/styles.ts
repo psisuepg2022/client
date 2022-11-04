@@ -154,3 +154,15 @@ export const StyledMenuItem = styled(MenuItem)`
 export const StyledTableCell = styled(TableCell)`
   padding: 6px;
 `;
+
+export const NoRowsContainer = styled('div')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
+
+export const NoRowsText = styled(Typography)`
+  font-size: 1.2rem;
+  font-weight: 600;
+`;

@@ -35,6 +35,7 @@ export const CustomBox = styled('div')`
 export const BoxHeader = styled('div')`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 15px;
   /* display: grid;
   grid-template-columns: 3fr 1fr;

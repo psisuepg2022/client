@@ -38,7 +38,7 @@ export const PatientsProvider: React.FC<PatientsProviderProps> = ({
 
   const list = async ({ size, page, filter }: ListProps): Promise<void> => {
     const { data }: { data: Response<ItemList<Patient>> } = await api.post(
-      page && size
+      (page as number) >= 0 && size
         ? `patient/search?page=${page}&size=${size}`
         : 'patient/search',
       {

@@ -1,4 +1,10 @@
-import { MenuItem, Button, Typography, menuItemClasses } from '@mui/material';
+import {
+  MenuItem,
+  Button,
+  Typography,
+  menuItemClasses,
+  ImageList,
+} from '@mui/material';
 import { styled } from '@mui/system';
 import {
   InputLabel,
@@ -107,5 +113,22 @@ export const StyledInputLabel = styled(InputLabel)`
   &.${inputLabelClasses.focused} {
     // MUITO IMPORTANTE NÃO DEIXAR ESPAÇO ENTRE O '&' E O '.'
     color: #fff !important;
+  }
+`;
+
+export const CardContainer = styled(ImageList)`
+  ::-webkit-scrollbar {
+    height: 6px !important;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    border-radius: 0px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
+    border-radius: 2px;
   }
 `;

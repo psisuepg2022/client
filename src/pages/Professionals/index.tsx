@@ -15,6 +15,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -30,30 +32,28 @@ import ProfessionalsTable from './table';
 import { useProfessionals } from '@contexts/Professionals';
 import { Professional } from '@models/Professional';
 import { useAuth } from '@contexts/Auth';
+import { showToast } from '@utils/showToast';
+import { useSchedule } from '@contexts/Schedule';
 
 const columns: Column[] = [
   {
     id: 0,
-    label: 'Código de acesso',
-  },
-  {
-    id: 1,
     label: 'Nome',
   },
   {
-    id: 2,
+    id: 1,
     label: 'CPF',
   },
   {
-    id: 3,
+    id: 2,
     label: 'Data de nascimento',
   },
   {
-    id: 4,
+    id: 3,
     label: 'Telefone',
   },
   {
-    id: 5,
+    id: 4,
     label: 'Ações',
   },
 ];
@@ -61,6 +61,7 @@ const columns: Column[] = [
 const Professionals = (): JSX.Element => {
   const { professionals, list, count, remove } = useProfessionals();
   const formMethods = useForm();
+  const { setCurrentProfessional } = useSchedule();
   const { handleSubmit, reset } = formMethods;
   const navigate = useNavigate();
   const searchActive = useRef(false);
@@ -70,6 +71,7 @@ const Professionals = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
+  const [filter, setFilter] = useState<SearchFilter>();
 
   useEffect(() => {
     if (searchActive.current) return;
@@ -79,6 +81,7 @@ const Professionals = (): JSX.Element => {
         await list({
           size: PageSize,
           page,
+          filter,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -95,6 +98,8 @@ const Professionals = (): JSX.Element => {
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const searchData: SearchFilter = data as SearchFilter;
 
+    setFilter(searchData);
+
     setLoading(true);
     searchActive.current = true;
     setPage(0);
@@ -103,9 +108,10 @@ const Professionals = (): JSX.Element => {
         size: PageSize,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
+        page: 0,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -139,13 +145,30 @@ const Professionals = (): JSX.Element => {
 
   const handleDelete = async (professional: Professional): Promise<void> => {
     try {
-      await remove(professional.id);
+      const { content } = await remove(professional.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O profissional foi deletado com sucesso!',
-        icon: 'success',
-      });
+
+      setCurrentProfessional({} as Professional);
+      if (content && content.patientsToCall.length > 0) {
+        showAlert({
+          title: 'Atenção!',
+          text: '',
+          html: `<div><p>${
+            content.header
+          } Entre em contato com os seguintes pacientes:</p><ul>${content.patientsToCall.reduce(
+            (prev, cur) =>
+              `<li>${cur.name}${
+                cur.contactNumber ? ` - ${cur.contactNumber}` : ''
+              }${cur.email ? ` - ${cur.email}` : ''}</li>${prev}`,
+            ''
+          )}</ul></div>`,
+          icon: 'warning',
+        });
+      } else {
+        showToast({
+          text: 'Operação realizada com sucesso!',
+        });
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -180,10 +203,6 @@ const Professionals = (): JSX.Element => {
             minLength: {
               value: 14,
               message: 'Insira um CPF válido',
-            },
-            required: {
-              value: true,
-              message: 'O CPF do responsável é obrigatório',
             },
           }}
           maxLength={14}
@@ -244,6 +263,11 @@ const Professionals = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_PROFESSIONAL')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={
                   loading || !permissions.includes('CREATE_PROFESSIONAL')
                 }
@@ -270,7 +294,7 @@ const Professionals = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : professionals.length !== 0 ? (
             <ProfessionalsTable
               professionals={professionals}
               columns={
@@ -284,6 +308,10 @@ const Professionals = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não foram encontrados profissionais</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

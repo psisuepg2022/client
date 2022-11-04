@@ -11,6 +11,7 @@ import { LockSave } from '@interfaces/LockSave';
 import { SavedLock } from '@interfaces/SavedLock';
 import { UpdatedEvent } from '@interfaces/UpdatedEvent';
 import { AppointmentComments } from '@interfaces/AppointmentComments';
+import { AppointmentSaveByProfessional } from '@interfaces/AppointmentSaveByProfessional';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -23,6 +24,9 @@ type ScheduleContextData = {
   ) => Promise<Response<AllScheduleEvents>>;
   saveAppointment: (
     appointmentData: AppointmentSave
+  ) => Promise<Response<SavedEvent>>;
+  saveAppointmentByProfessional: (
+    appointmentData: AppointmentSaveByProfessional
   ) => Promise<Response<SavedEvent>>;
   updateAppointmentStatus: (
     appointmentId: string,
@@ -41,6 +45,10 @@ type ScheduleContextData = {
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>;
   retrievedWeeklySchedule: WeeklySchedule[];
   setRetrievedWeeklySchedule: (weeklySchedule: WeeklySchedule[]) => void;
+  currentStart: Date;
+  setCurrentStart: React.Dispatch<React.SetStateAction<Date>>;
+  currentEnd: Date;
+  setCurrentEnd: React.Dispatch<React.SetStateAction<Date>>;
 };
 
 type ScheduleProviderProps = {
@@ -65,6 +73,8 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   const [retrievedWeeklySchedule, setRetrievedWeeklySchedule] = useState<
     WeeklySchedule[]
   >([]);
+  const [currentStart, setCurrentStart] = useState<Date>(new Date());
+  const [currentEnd, setCurrentEnd] = useState<Date>(new Date());
 
   const getScheduleEvents = async (
     filter: {
@@ -150,6 +160,19 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     return data;
   };
 
+  const saveAppointmentByProfessional = async (
+    appointmentData: AppointmentSaveByProfessional
+  ): Promise<Response<SavedEvent>> => {
+    const { data }: { data: Response<SavedEvent> } = await api.post(
+      'appointment/by_the_professional',
+      {
+        ...appointmentData,
+      }
+    );
+
+    return data;
+  };
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -169,6 +192,11 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
         retrievedWeeklySchedule,
         setRetrievedWeeklySchedule,
         getById,
+        currentStart,
+        setCurrentStart,
+        currentEnd,
+        setCurrentEnd,
+        saveAppointmentByProfessional,
       }}
     >
       {children}

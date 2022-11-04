@@ -59,6 +59,7 @@ const CommentCreation = (): JSX.Element => {
         icon: 'success',
         text: message,
         allowOutsideClick: false,
+        confirmButtonText: 'RETORNAR À AGENDA',
       }).then(async (result) => {
         if (result.isConfirmed) {
           navigate('/schedule');

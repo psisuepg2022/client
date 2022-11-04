@@ -15,6 +15,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -30,30 +32,27 @@ import { useEmployees } from '@contexts/Employees';
 import { useAuth } from '@contexts/Auth';
 import { Employee } from '@models/Employee';
 import EmployeesTable from './table';
+import { showToast } from '@utils/showToast';
 
 const columns: Column[] = [
   {
     id: 0,
-    label: 'Código de acesso',
-  },
-  {
-    id: 1,
     label: 'Nome',
   },
   {
-    id: 2,
+    id: 1,
     label: 'CPF',
   },
   {
-    id: 3,
+    id: 2,
     label: 'Data de nascimento',
   },
   {
-    id: 4,
+    id: 3,
     label: 'Telefone',
   },
   {
-    id: 5,
+    id: 4,
     label: 'Ações',
   },
 ];
@@ -70,6 +69,7 @@ const Employees = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
+  const [filter, setFilter] = useState<SearchFilter>();
 
   useEffect(() => {
     if (searchActive.current) return;
@@ -79,6 +79,7 @@ const Employees = (): JSX.Element => {
         await list({
           size: PageSize,
           page,
+          filter,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -95,15 +96,18 @@ const Employees = (): JSX.Element => {
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const searchData: SearchFilter = data as SearchFilter;
 
+    setFilter(searchData);
+
     setLoading(true);
     searchActive.current = true;
     setPage(0);
     try {
       await list({
         size: PageSize,
+        page: 0,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
       });
@@ -141,10 +145,8 @@ const Employees = (): JSX.Element => {
     try {
       await remove(employee.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O funcionário foi deletado com sucesso!',
-        icon: 'success',
+      showToast({
+        text: 'Operação realizada com sucesso!',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -180,10 +182,6 @@ const Employees = (): JSX.Element => {
             minLength: {
               value: 14,
               message: 'Insira um CPF válido',
-            },
-            required: {
-              value: true,
-              message: 'O CPF do responsável é obrigatório',
             },
           }}
           maxLength={14}
@@ -244,6 +242,11 @@ const Employees = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_EMPLOYEE')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={loading || !permissions.includes('CREATE_EMPLOYEE')}
                 onClick={() => navigate('/employees/form')}
               >
@@ -268,7 +271,7 @@ const Employees = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : employees.length !== 0 ? (
             <EmployeesTable
               employees={employees}
               columns={columns}
@@ -277,6 +280,10 @@ const Employees = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não foram encontrados funcionários</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

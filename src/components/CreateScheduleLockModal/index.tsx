@@ -42,11 +42,16 @@ const CreateScheduleLockModal = ({
   baseDuration,
 }: CreateScheduleLockModalProps): JSX.Element => {
   const formMethods = useForm<{ start: Date; end: Date }>();
-  const { handleSubmit, setError } = formMethods;
+  const { handleSubmit, setError, reset } = formMethods;
   const [durationError, setDurationError] = useState<string>('');
+  const randomKey = Math.random();
 
   const closeAll = (reason: 'backdropClick' | 'escapeKeyDown' | ''): void => {
+    const resetStart = new Date();
+    resetStart.setHours(0, 0, 0);
+    const resetEnd = new Date(resetStart);
     setDurationError('');
+    reset({ start: resetStart, end: resetEnd });
     handleClose(reason);
   };
 
@@ -113,7 +118,7 @@ const CreateScheduleLockModal = ({
 
           <FormProvider {...formMethods}>
             <TimePickerContainer
-              id="locks"
+              id={`${randomKey}-locks`}
               onSubmit={handleSubmit(createIntervals)}
             >
               <ControlledTimePicker
@@ -136,7 +141,7 @@ const CreateScheduleLockModal = ({
           )}
 
           <ButtonArea>
-            <StyledButton form="locks" type="submit">
+            <StyledButton form={`${randomKey}-locks`} type="submit">
               CRIAR INTERVALO
             </StyledButton>
           </ButtonArea>

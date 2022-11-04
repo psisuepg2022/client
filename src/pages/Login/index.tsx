@@ -80,6 +80,7 @@ const Login = (): JSX.Element => {
               <ControlledInput
                 name="accessCode"
                 label="Código"
+                mask={(value: string) => value.replace(/\D/g, '')}
                 rules={{
                   required: {
                     value: true,

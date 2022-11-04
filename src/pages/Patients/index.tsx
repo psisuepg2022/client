@@ -20,6 +20,8 @@ import {
   StyledSelect,
   StyledMenuItem,
   StyledInputLabel,
+  NoRowsContainer,
+  NoRowsText,
 } from './styles';
 import PatientsTable from './table';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
@@ -36,6 +38,7 @@ import { PageSize } from '@global/constants';
 import { colors } from '@global/colors';
 import { Patient } from '@models/Patient';
 import { useAuth } from '@contexts/Auth';
+import { showToast } from '@utils/showToast';
 
 const columns: Column[] = [
   {
@@ -79,6 +82,7 @@ const Patients = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [category, setCategory] = useState<string>('name');
   const [page, setPage] = useState<number>(0);
+  const [filter, setFilter] = useState<SearchFilter>();
 
   useEffect(() => {
     if (searchActive.current) return;
@@ -89,11 +93,13 @@ const Patients = (): JSX.Element => {
           await professionalPatients({
             size: PageSize,
             page,
+            filter,
           });
         } else {
           await list({
             size: PageSize,
             page,
+            filter,
           });
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,6 +117,8 @@ const Patients = (): JSX.Element => {
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const searchData: SearchFilter = data as SearchFilter;
 
+    setFilter(searchData);
+
     setLoading(true);
     searchActive.current = true;
     setPage(0);
@@ -118,10 +126,10 @@ const Patients = (): JSX.Element => {
       if (permissions.includes('USER_TYPE_PROFESSIONAL')) {
         await professionalPatients({
           size: PageSize,
-          page,
+          page: 0,
           filter: {
             name: searchData?.name || '',
-            CPF: searchData?.CPF || '',
+            CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
             email: searchData?.email || '',
           },
         });
@@ -131,9 +139,10 @@ const Patients = (): JSX.Element => {
         size: PageSize,
         filter: {
           name: searchData?.name || '',
-          CPF: searchData?.CPF || '',
+          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
           email: searchData?.email || '',
         },
+        page: 0,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -167,12 +176,10 @@ const Patients = (): JSX.Element => {
 
   const handleDelete = async (patient: Patient): Promise<void> => {
     try {
-      await remove(patient.id);
+      const { message } = await remove(patient.id);
       await list({ size: PageSize, page });
-      showAlert({
-        title: 'Sucesso!',
-        text: 'O paciente foi deletado com sucesso!',
-        icon: 'success',
+      showToast({
+        text: message,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -208,10 +215,6 @@ const Patients = (): JSX.Element => {
             minLength: {
               value: 14,
               message: 'Insira um CPF válido',
-            },
-            required: {
-              value: true,
-              message: 'O CPF do responsável é obrigatório',
             },
           }}
           maxLength={14}
@@ -272,6 +275,11 @@ const Patients = (): JSX.Element => {
             </TitleAndInputs>
             <ButtonsContainer>
               <StyledButton
+                style={
+                  !permissions.includes('CREATE_PATIENT')
+                    ? { visibility: 'hidden' }
+                    : {}
+                }
                 disabled={loading || !permissions.includes('CREATE_PATIENT')}
                 onClick={() => navigate('/patients/form')}
               >
@@ -296,7 +304,7 @@ const Patients = (): JSX.Element => {
                 size={200}
               />
             </div>
-          ) : (
+          ) : patients.length !== 0 ? (
             <PatientsTable
               patients={patients}
               columns={columns}
@@ -305,6 +313,10 @@ const Patients = (): JSX.Element => {
               setPage={(page: number) => setPage(page)}
               deleteItem={deletePopup}
             />
+          ) : (
+            <NoRowsContainer>
+              <NoRowsText>Não foram encontrados pacientes</NoRowsText>
+            </NoRowsContainer>
           )}
         </CustomBox>
       </Content>

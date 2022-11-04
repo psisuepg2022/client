@@ -11,7 +11,7 @@ export const CustomDateHeaderContainer = styled('div')`
 `;
 
 export const CustomDateHeaderContent = styled('div')`
-  background-color: ${colors.PRIMARY};
+  // background-color: ${colors.PRIMARY};
   border-radius: 20px;
   width: 40px;
   height: 40px;
@@ -22,9 +22,9 @@ export const CustomDateHeaderContent = styled('div')`
 `;
 
 export const CustomDateHeaderText = styled(Typography)`
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 600;
-  color: #fff;
+  color: ${colors.PRIMARY};
 `;
 
 export const CustomDateHeaderLink = styled('a')`
@@ -46,4 +46,26 @@ export const CustomHeaderMonthText = styled(Typography)`
 export const LogoContainer = styled('img')`
   width: 100px;
   height: auto;
+`;
+
+export const DisableDayContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  justify-content: center;
+  height: 100vh;
+`;
+
+export const DisableDayContent = styled('div')`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+`;
+
+export const DisableDayText = styled(Typography)`
+  font-size: 1.6rem;
+  font-weight: 500;
 `;

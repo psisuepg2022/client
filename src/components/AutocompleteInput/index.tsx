@@ -11,6 +11,7 @@ import { Patient } from '@models/Patient';
 import { Person } from '@models/Person';
 
 type AutocompleteProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback: (inputValue: string) => Promise<any>;
   label: string;
   noOptionsText: string;

@@ -25,6 +25,8 @@ import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
 import TextEditor from '@components/TextEditor';
+import { MdModeEdit } from 'react-icons/md';
+import { useComments } from '@contexts/Comments';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
@@ -33,8 +35,10 @@ const Comment = (): JSX.Element => {
     user: { baseDuration },
   } = useAuth();
   const { getById } = useSchedule();
+  const { create } = useComments();
   const [loading, setLoading] = useState<boolean>(true);
   const [comment, setComment] = useState<string>('');
+  const [editMode, setEditMode] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -42,22 +46,7 @@ const Comment = (): JSX.Element => {
         const appointmentId = idFromResource(state.resource);
         const { content } = await getById(appointmentId);
 
-        if (!content?.comments) {
-          showAlert({
-            title: '',
-            icon: 'info',
-            text: 'A consulta não possui anotações. Clique em OK para retornar à agenda',
-            allowOutsideClick: false,
-          }).then(async (result) => {
-            if (result.isConfirmed) {
-              navigate('/schedule');
-            }
-          });
-
-          return;
-        }
-
-        const purifiedComment = DOMPurify.sanitize(content.comments);
+        const purifiedComment = DOMPurify.sanitize(content?.comments || '');
 
         setComment(`${parse(purifiedComment)}`);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -78,6 +67,32 @@ const Comment = (): JSX.Element => {
       }
     })();
   }, [state.resource]);
+
+  const saveComment = async (text: string) => {
+    try {
+      const appointmentId = idFromResource(state.resource);
+
+      const { content } = await create(appointmentId, text);
+
+      if (!content) {
+        showAlert({
+          icon: 'error',
+          text: 'Ocorreu um problema ao atualizar a consulta',
+        });
+      }
+
+      setEditMode(false);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao editar a anotação',
+      });
+    }
+  };
 
   if (loading)
     return (
@@ -103,37 +118,49 @@ const Comment = (): JSX.Element => {
       <Content>
         <CustomBox>
           <BoxHeader>
-            <IconButton onClick={() => navigate(-1)}>
-              <AiOutlineLeft size={40} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <IconButton onClick={() => navigate(-1)}>
+                <AiOutlineLeft size={40} />
+              </IconButton>
+              <CommentsTitle>Anotações</CommentsTitle>
+              <AiOutlineRight size={25} style={{ color: '#707070' }} />
+              <PatientName>{state.title} | </PatientName>
+              <AppointmentDate>
+                {dateFormat({
+                  date: !state.end
+                    ? isoToDate(`${state.start}`)
+                    : (state.start as Date),
+                  // eslint-disable-next-line quotes
+                  stringFormat: "d 'de' MMMM 'de' yyyy",
+                })}{' '}
+                <AiOutlineRight size={20} style={{ color: '#707070' }} />{' '}
+                {dateFormat({
+                  date: !state.end
+                    ? isoToDate(`${state.start}`)
+                    : (state.start as Date),
+                  stringFormat: 'HH:mm',
+                })}
+                {' - '}
+                {dateFormat({
+                  date: !state.end
+                    ? isoToDate(`${state.start}`, true, Number(baseDuration))
+                    : (state.end as Date),
+                  stringFormat: 'HH:mm',
+                })}
+              </AppointmentDate>
+            </div>
+            <IconButton
+              onClick={() => setEditMode((prev) => !prev)}
+              style={{ justifySelf: 'flex-end' }}
+            >
+              <MdModeEdit size={40} />
             </IconButton>
-            <CommentsTitle>Anotações</CommentsTitle>
-            <AiOutlineRight size={25} style={{ color: '#707070' }} />
-            <PatientName>{state.title} | </PatientName>
-            <AppointmentDate>
-              {dateFormat({
-                date: !state.end
-                  ? isoToDate(`${state.start}`)
-                  : (state.start as Date),
-                // eslint-disable-next-line quotes
-                stringFormat: "d 'de' MMMM 'de' yyyy",
-              })}{' '}
-              <AiOutlineRight size={20} style={{ color: '#707070' }} />{' '}
-              {dateFormat({
-                date: !state.end
-                  ? isoToDate(`${state.start}`)
-                  : (state.start as Date),
-                stringFormat: 'HH:mm',
-              })}
-              {' - '}
-              {dateFormat({
-                date: !state.end
-                  ? isoToDate(`${state.start}`, true, Number(baseDuration))
-                  : (state.end as Date),
-                stringFormat: 'HH:mm',
-              })}
-            </AppointmentDate>
           </BoxHeader>
-          <TextEditor comment={comment} />
+          <TextEditor
+            comment={comment}
+            readOnly={!editMode}
+            saveComment={saveComment}
+          />
         </CustomBox>
       </Content>
     </Container>

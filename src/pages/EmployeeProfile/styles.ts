@@ -25,6 +25,10 @@ export const Content = styled('div')`
   width: 90%;
   height: 90%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  justify-content: space-between;
 `;
 
 export const Header = styled('div')`
@@ -37,36 +41,32 @@ export const Form = styled('form')`
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
+  margin-top: 15px;
 `;
 
 export const PersonalInfo = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 export const PersonalInfoHalf = styled('div')`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-`;
-
-export const ButtonContainer = styled('div')`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  gap: 1rem;
 `;
 
 export const StyledButton = styled(Button)`
   background-color: ${colors.PRIMARY};
   color: #fff;
   transition: 300ms;
-  width: 20rem;
+  width: 350px;
   font-weight: 400;
   font-size: 1rem;
   height: 50px;
+  margin-top: 20px;
+  align-self: flex-end;
+  padding-bottom: 5px;
 
   :hover {
     background-color: ${colors.SECONDARY};

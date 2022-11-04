@@ -8,6 +8,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import {
+  CardContainer,
   ClinicTitle,
   Container,
   DayTitle,
@@ -20,6 +21,7 @@ import {
   TodayButton,
 } from './styles';
 import { AiOutlineUser, AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { FaUserCog, FaUserMd, FaUserTie } from 'react-icons/fa';
 import { ToolbarProps, View, Event } from 'react-big-calendar';
 import CardSelector from '../CardSelector';
 import { useNavigate } from 'react-router-dom';
@@ -29,18 +31,24 @@ import { useSchedule } from '@contexts/Schedule';
 import { Professional } from '@models/Professional';
 import { showAlert } from '@utils/showAlert';
 import { WeeklySchedule } from '@models/WeeklySchedule';
-import { ScheduleEvent } from '@interfaces/ScheduleEvent';
-import {
-  buildWeeklySchedule,
-  buildWeeklyScheduleLocks,
-  weekRange,
-} from '@utils/schedule';
-import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
+import { weekRange } from '@utils/schedule';
 import { dateFormat } from '@utils/dateFormat';
-import { getDay, isAfter, isEqual } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  getDay,
+  isAfter,
+  isEqual,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
+  setDate: (date: Date) => void;
+  disabled?: boolean;
 } & ToolbarProps;
 
 const TopToolbar = ({
@@ -49,6 +57,8 @@ const TopToolbar = ({
   onView,
   view,
   date,
+  setDate,
+  disabled,
 }: CustomToolbarProps): JSX.Element => {
   const navigate = useNavigate();
   const {
@@ -63,6 +73,8 @@ const TopToolbar = ({
     getScheduleEvents,
     setRetrievedWeeklySchedule,
     setEvents,
+    setCurrentEnd,
+    setCurrentStart,
   } = useSchedule();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -76,17 +88,75 @@ const TopToolbar = ({
   };
 
   const goToBack = () => {
-    onNavigate('PREV');
+    switch (view) {
+      case 'day': {
+        const newDate = subDays(date, 1);
+        if (disabled) onNavigate('PREV', newDate);
+        else onNavigate('PREV');
+        setDate(newDate);
+        break;
+      }
+      case 'week': {
+        const newDate = subWeeks(date, 1);
+        onNavigate('PREV');
+        setDate(newDate);
+        break;
+      }
+      case 'month': {
+        const newDate = subMonths(date, 1);
+        onNavigate('PREV');
+        setDate(newDate);
+        break;
+      }
+      default: {
+        const newDate = subDays(date, 1);
+        if (disabled) onNavigate('PREV', newDate);
+        else onNavigate('PREV');
+        setDate(newDate);
+        break;
+      }
+    }
   };
 
   const goToNext = () => {
-    onNavigate('NEXT');
+    switch (view) {
+      case 'day': {
+        const newDate = addDays(date, 1);
+        if (disabled) onNavigate('NEXT', newDate);
+        else onNavigate('NEXT');
+        setDate(newDate);
+        break;
+      }
+      case 'week': {
+        const newDate = addWeeks(date, 1);
+        onNavigate('NEXT');
+        setDate(newDate);
+        break;
+      }
+      case 'month': {
+        const newDate = addMonths(date, 1);
+        onNavigate('NEXT');
+        setDate(newDate);
+        break;
+      }
+      default: {
+        const newDate = addDays(date, 1);
+        if (disabled) onNavigate('NEXT', newDate);
+        else onNavigate('NEXT');
+        setDate(newDate);
+        break;
+      }
+    }
   };
 
   const goToCurrent = () => {
-    onNavigate('TODAY');
+    const newDate = new Date();
+    newDate.setHours(0, 0, 0);
+    setDate(newDate);
+    // if (disabled) onNavigate('TODAY', newDate);
+    // else onNavigate('TODAY');
     onView('day');
-    onRangeChange([new Date()], 'day');
+    onRangeChange([newDate], 'day');
   };
 
   const onChangeProfessional = async (
@@ -117,87 +187,162 @@ const TopToolbar = ({
         professional.id,
         true
       );
-      const dayIndex = getDay(currentDate) + 1;
-      const today = professionalSchedule?.content?.weeklySchedule.find(
-        (item) => item.dayOfTheWeek === dayIndex
-      ) as WeeklySchedule;
+      if (
+        professionalSchedule.content &&
+        professionalSchedule.content?.weeklySchedule.length > 0
+      ) {
+        const dayIndex = getDay(currentDate) + 1;
+        const today = professionalSchedule?.content?.weeklySchedule.find(
+          (item) => item.dayOfTheWeek === dayIndex
+        ) as WeeklySchedule;
 
-      const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-        currentDate,
-        today
-      ) as ScheduleEvent[];
+        if (today.startTime && today.endTime) {
+          const initialStart = new Date();
+          initialStart.setHours(
+            Number(today.startTime.split(':')[0]),
+            Number(today.startTime.split(':')[1]),
+            0
+          );
+          const initialEnd = new Date();
+          initialEnd.setHours(
+            Number(today.endTime.split(':')[0]),
+            Number(today.endTime.split(':')[1]),
+            0
+          );
 
-      const weeklyScheduleLocksEvents: ScheduleEvent[] = today?.locks?.map(
-        (lock: WeeklyScheduleLock) => {
-          return buildWeeklyScheduleLocks(currentDate, lock);
+          setCurrentStart(initialStart);
+          setCurrentEnd(initialEnd);
+        } else {
+          const initialStart = new Date();
+          initialStart.setHours(0, 0, 0);
+
+          const initialEnd = new Date();
+          initialEnd.setHours(0, 0, 0);
+
+          setCurrentStart(initialStart);
+          setCurrentEnd(initialEnd);
         }
-      ) as ScheduleEvent[];
 
-      const mappedScheduleLocks: Event[] =
-        professionalSchedule?.content?.scheduleLocks.map((lock) => {
-          const [day, month, year] = lock.date.split('/');
-          const startDate = new Date(
-            Number(year),
-            Number(month) - 1,
-            Number(day)
-          );
-          startDate.setHours(Number(lock.startTime.split(':')[0]));
-          startDate.setMinutes(Number(lock.startTime.split(':')[1]));
-          startDate.setSeconds(0);
-          const endDate = new Date(
-            Number(year),
-            Number(month) - 1,
-            Number(day)
-          );
-          endDate.setHours(Number(lock.endTime.split(':')[0]));
-          endDate.setMinutes(Number(lock.endTime.split(':')[1]));
-          endDate.setSeconds(0);
+        // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
+        //   currentDate,
+        //   today
+        // ) as ScheduleEvent[];
 
-          if (isAfter(endDate, currentDate) || isEqual(endDate, currentDate)) {
+        const weeklyScheduleLocksEvents: Event[] = [];
+        today?.locks?.forEach((lock) => {
+          const lockStart = new Date(date);
+          lockStart.setHours(
+            Number(lock.startTime.split(':')[0]),
+            Number(lock.startTime.split(':')[1]),
+            0
+          );
+
+          const lockEnd = new Date(date);
+          lockEnd.setHours(
+            Number(lock.endTime.split(':')[0]),
+            Number(lock.endTime.split(':')[1]),
+            0
+          );
+
+          if (isAfter(lockStart, currentDate)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: lockStart,
+              end: lockEnd,
+            };
+
+            weeklyScheduleLocksEvents.push(lockEvent);
+            return;
+          }
+          if (isAfter(lockEnd, currentDate)) {
+            const lockEvent: Event = {
+              resource: 'LOCK',
+              start: new Date(),
+              end: lockEnd,
+            };
+
+            weeklyScheduleLocksEvents.push(lockEvent);
+            return;
+          }
+        });
+
+        const mappedScheduleLocks: Event[] =
+          professionalSchedule?.content?.scheduleLocks.map((lock) => {
+            const [day, month, year] = lock.date.split('/');
+            const startDate = new Date(
+              Number(year),
+              Number(month) - 1,
+              Number(day)
+            );
+            startDate.setHours(
+              Number(lock.startTime.split(':')[0]),
+              Number(lock.startTime.split(':')[1]),
+              0
+            );
+            const endDate = new Date(
+              Number(year),
+              Number(month) - 1,
+              Number(day)
+            );
+            endDate.setHours(
+              Number(lock.endTime.split(':')[0]),
+              Number(lock.endTime.split(':')[1]),
+              0
+            );
+
+            if (
+              isAfter(endDate, currentDate) ||
+              isEqual(endDate, currentDate)
+            ) {
+              return {
+                start: startDate,
+                end: endDate,
+                resource: `${lock.resource}/${lock.id}`,
+                title: lock.id,
+              };
+            }
+          }) as Event[];
+
+        const validScheduleLocks: Event[] = mappedScheduleLocks.filter(
+          (lock) => lock
+        );
+
+        const mappedEvents: Event[] =
+          professionalSchedule?.content?.appointments.map((event) => {
+            const startTime = event.startDate.split('T')[1].substring(0, 5);
+            const startDate = new Date(event.startDate);
+            startDate.setHours(
+              Number(startTime.split(':')[0]),
+              Number(startTime.split(':')[1]),
+              0
+            );
+            const endTime = event.endDate.split('T')[1].substring(0, 5);
+            const endDate = new Date(event.endDate);
+            endDate.setHours(
+              Number(endTime.split(':')[0]),
+              Number(endTime.split(':')[1]),
+              0
+            );
             return {
               start: startDate,
               end: endDate,
-              resource: `${lock.resource}/${lock.id}`,
-              title: lock.id,
+              title: event.title,
+              resource: event?.updatedAt
+                ? `${event.resource}/${event.id}/${event.updatedAt}`
+                : `${event.resource}/${event.id}`,
             };
-          }
-        }) as Event[];
+          }) as Event[];
 
-      const validScheduleLocks: Event[] = mappedScheduleLocks.filter(
-        (lock) => lock
-      );
-
-      const mappedEvents: Event[] =
-        professionalSchedule?.content?.appointments.map((event) => {
-          const startTime = event.startDate.split('T')[1].substring(0, 5);
-          const startDate = new Date(event.startDate);
-          startDate.setHours(Number(startTime.split(':')[0]));
-          startDate.setMinutes(Number(startTime.split(':')[1]));
-          startDate.setSeconds(0);
-          const endTime = event.endDate.split('T')[1].substring(0, 5);
-          const endDate = new Date(event.endDate);
-          endDate.setHours(Number(endTime.split(':')[0]));
-          endDate.setMinutes(Number(endTime.split(':')[1]));
-          endDate.setSeconds(0);
-          return {
-            start: startDate,
-            end: endDate,
-            title: event.title,
-            resource: event?.updatedAt
-              ? `${event.resource}/${event.id}/${event.updatedAt}`
-              : `${event.resource}/${event.id}`,
-          };
-        }) as Event[];
-
-      setRetrievedWeeklySchedule(
-        professionalSchedule?.content?.weeklySchedule || []
-      );
-      setEvents([
-        ...weeklyScheduleEvents,
-        ...weeklyScheduleLocksEvents,
-        ...validScheduleLocks,
-        ...mappedEvents,
-      ]);
+        setRetrievedWeeklySchedule(
+          professionalSchedule?.content?.weeklySchedule || []
+        );
+        setEvents([
+          //...weeklyScheduleEvents,
+          ...weeklyScheduleLocksEvents,
+          ...validScheduleLocks,
+          ...mappedEvents,
+        ]);
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -225,7 +370,7 @@ const TopToolbar = ({
     }
   };
 
-  const label = () => {
+  const dayLabel = () => {
     const toFormatDate = date;
     return (
       <DayTitle>
@@ -243,7 +388,13 @@ const TopToolbar = ({
     return <></>;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        maxWidth: '100%',
+      }}
+    >
       <Container>
         <EarlyContent>
           <ClinicTitle>{clinic?.name}</ClinicTitle>
@@ -253,7 +404,7 @@ const TopToolbar = ({
           <IconButton onClick={goToBack}>
             <AiOutlineLeft style={{ color: '#FFF', fontSize: 30 }} />
           </IconButton>
-          {label()}
+          {dayLabel()}
           <IconButton onClick={goToNext}>
             <AiOutlineRight style={{ color: '#FFF', fontSize: 30 }} />
           </IconButton>
@@ -293,7 +444,15 @@ const TopToolbar = ({
               open ? handleClose() : handleClick(e)
             }
           >
-            <AiOutlineUser style={{ fontSize: 40, color: '#FFF' }} />
+            {permissions.includes('USER_TYPE_PROFESSIONAL') ? (
+              <FaUserMd style={{ fontSize: 35, color: '#FFF' }} />
+            ) : permissions.includes('USER_TYPE_EMPLOYEE') ? (
+              <FaUserTie style={{ fontSize: 35, color: '#FFF' }} />
+            ) : permissions.includes('USER_TYPE_OWNER') ? (
+              <FaUserCog style={{ fontSize: 40, color: '#FFF' }} />
+            ) : (
+              <AiOutlineUser style={{ fontSize: 40, color: '#FFF' }} />
+            )}
           </IconButton>
           <Menu
             id="basic-menu"
@@ -315,7 +474,14 @@ const TopToolbar = ({
         </LatterContent>
       </Container>
       {!permissions.includes('USER_TYPE_PROFESSIONAL') && (
-        <div style={{ display: 'flex' }}>
+        <CardContainer
+          sx={{
+            gridAutoFlow: 'column',
+            gridTemplateColumns:
+              'repeat(auto-fit, minmax(200px,1fr)) !important',
+            gridAutoColumns: 'minmax(200px, 1fr)',
+          }}
+        >
           {professionals.map((professional) => (
             <CardSelector
               key={professional.id}
@@ -324,7 +490,7 @@ const TopToolbar = ({
               onSelect={() => onChangeProfessional(professional)}
             />
           ))}
-        </div>
+        </CardContainer>
       )}
     </div>
   );

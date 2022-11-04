@@ -80,11 +80,29 @@ api.interceptors.response.use(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (_error: any) {
           if (_error.response && _error.response.data) {
+            if (
+              _error?.response?.data?.message ===
+              'A chave de atualização não pertence a um usuário válido.'
+            ) {
+              window.localStorage.clear();
+              window.location.reload();
+            }
             return Promise.reject(_error.response.data);
           }
 
           return Promise.reject(_error);
         }
+      }
+
+      if (
+        err.response.status === 401 &&
+        (err.response.data.message ===
+          'As credenciais de autenticação são inválidas. Por favor, tente realizar a autenticação antes de acessar a este conteúdo.' ||
+          err.response.data.message ===
+            'O usuário não possui autorização para acessar este recurso.')
+      ) {
+        window.localStorage.clear();
+        window.location.reload();
       }
 
       if (err.response.status === 403 && err.response.data) {

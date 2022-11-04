@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material';
 import React from 'react';
 import { CardName, Container } from './styles';
 
@@ -28,7 +29,9 @@ const CardSelector = ({
       disabled={disabled}
       onClick={onSelect}
     >
-      <CardName style={{ ...textStyle }}>{name}</CardName>
+      <Tooltip enterDelay={1000} enterNextDelay={1000} title={name}>
+        <CardName style={{ ...textStyle }}>{name}</CardName>
+      </Tooltip>
     </Container>
   );
 };

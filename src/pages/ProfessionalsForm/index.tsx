@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
-import { isAfter, isValid } from 'date-fns';
+import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlterTopToolbar from '@components/AlterTopToolbar';
@@ -30,6 +30,7 @@ import {
 import { showAlert } from '@utils/showAlert';
 import { CepInfos } from '@interfaces/CepInfos';
 import { useProfessionals } from '@contexts/Professionals';
+import { showToast } from '@utils/showToast';
 
 type FormProps = {
   name: string;
@@ -124,14 +125,19 @@ const ProfessionalsForm = (): JSX.Element => {
     setLoading(true);
     try {
       const { content, message } = await create(professional);
-      showAlert({
-        title: 'Sucesso!',
-        text: `${message} Código de acesso: ${content?.accessCode}`,
-        icon: 'success',
-      });
       if (!professionalToEdit) {
+        showToast({
+          text: `${message} Código de acesso: ${content?.accessCode}`,
+        });
         reset();
         setCepInfos(undefined);
+      } else {
+        showToast({
+          text: message,
+        });
+        reset();
+        setCepInfos(undefined);
+        navigate('/professionals');
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -173,7 +179,9 @@ const ProfessionalsForm = (): JSX.Element => {
         <CustomBox>
           <div>
             <BoxHeader>
-              <PageTitle>Criar Profissional</PageTitle>
+              <PageTitle>
+                {state ? 'Editar Profissional' : 'Criar Profissional'}
+              </PageTitle>
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm
@@ -239,9 +247,14 @@ const ProfessionalsForm = (): JSX.Element => {
                         if (!isValid(date))
                           return 'A data escolhida é inválida';
 
+                        date.setHours(0, 0, 0, 0);
+                        const currenDate = new Date();
+                        currenDate.setHours(0, 0, 0, 0);
+
                         return (
-                          !isAfter(date, new Date()) ||
-                          'A Data escolhida não pode ser superior à data atual'
+                          (!isAfter(date, currenDate) &&
+                            !isEqual(date, currenDate)) ||
+                          'A Data escolhida não pode ser superior ou igual à data atual'
                         );
                       },
                     }}
@@ -341,6 +354,21 @@ const ProfessionalsForm = (): JSX.Element => {
                     label="Telefone"
                     style={{ width: '50%' }}
                     maxLength={15}
+                    rules={{
+                      maxLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      minLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      required: {
+                        value: true,
+                        message: 'Um número de telefone é obrigatório',
+                      },
+                    }}
+                    required
                     mask={(s: string): string =>
                       `${s
                         .replace(/\D/g, '')

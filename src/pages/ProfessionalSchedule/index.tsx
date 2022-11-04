@@ -21,7 +21,7 @@ import {
   WorkHoursContainer,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlinePlus, AiOutlineRight } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import { colors } from '@global/colors';
 import { showAlert } from '@utils/showAlert';
@@ -39,6 +39,8 @@ import CreateScheduleLockModal from '@components/CreateScheduleLockModal';
 import { useAuth } from '@contexts/Auth';
 import { dateFormat } from '@utils/dateFormat';
 import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
+import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
+import { showToast } from '@utils/showToast';
 
 type FormLock = {
   id?: string;
@@ -65,6 +67,9 @@ const ProfessionalSchedule = (): JSX.Element => {
   const [savingWeekly, setSavingWeekly] = useState<boolean>(false);
   const [changes, setChanges] = useState<boolean>(false);
   const [disableDay, setDisableDay] = useState<boolean>(false);
+  const { startTime, endTime } = useWatch({
+    control,
+  });
 
   const { startTime, endTime } = useWatch({
     control,
@@ -155,6 +160,7 @@ const ProfessionalSchedule = (): JSX.Element => {
       startTime: Date;
       endTime: Date;
     };
+    const oldIntervals = intervals.filter((item) => item.id);
     const newIntervals = intervals.filter((item) => !item.id);
     const newWeeklySchedule: UpdateWeeklySchedule = {
       startTime: dateFormat({
@@ -173,7 +179,6 @@ const ProfessionalSchedule = (): JSX.Element => {
       ) as number,
     };
 
-    setChanges(false);
     setSavingWeekly(true);
     try {
       const { content, message } = await updateWeeklySchedule(
@@ -181,16 +186,26 @@ const ProfessionalSchedule = (): JSX.Element => {
       );
 
       if (content && typeof content !== 'boolean') {
-        setCurrentDay(content);
+        const returnDay: WeeklySchedule = {
+          ...content,
+          locks:
+            [
+              ...(oldIntervals as WeeklyScheduleLock[]),
+              ...(content.locks as WeeklyScheduleLock[]),
+            ] || [],
+        };
+        setCurrentDay(returnDay);
         setWeeklySchedule((prev) => {
           const newWeekly = prev.map((item) =>
-            item.dayOfTheWeek === currentDay?.dayOfTheWeek ? content : item
+            item.dayOfTheWeek === currentDay?.dayOfTheWeek ? returnDay : item
           );
 
           return newWeekly;
         });
-        setIntervals(content.locks || []);
-        countLockSlots(content);
+        setIntervals(
+          [...oldIntervals, ...(content.locks as WeeklyScheduleLock[])] || []
+        );
+        countLockSlots(returnDay);
       }
       if (content && typeof content === 'boolean') {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -212,12 +227,9 @@ const ProfessionalSchedule = (): JSX.Element => {
         setCounter(-1);
       }
 
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
+      showToast({
         text: message,
       });
-      setChanges(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       showAlert({
@@ -227,6 +239,7 @@ const ProfessionalSchedule = (): JSX.Element => {
           'Ocorreu um problema ao salvar os horários ',
       });
     } finally {
+      setChanges(false);
       setSavingWeekly(false);
     }
   };
@@ -309,7 +322,6 @@ const ProfessionalSchedule = (): JSX.Element => {
               const newIntervals = [...prev];
               newIntervals.splice(interval.index as number, 1);
 
-              console.log('NEW', newIntervals);
               setCurrentDay((prev) => {
                 return {
                   ...prev,
@@ -373,9 +385,7 @@ const ProfessionalSchedule = (): JSX.Element => {
   const disabledDayDate = (): Date => {
     const date = new Date();
 
-    date.setHours(0);
-    date.setMinutes(0);
-    date.setSeconds(0);
+    date.setHours(0, 0, 0);
 
     return date;
   };
@@ -441,6 +451,16 @@ const ProfessionalSchedule = (): JSX.Element => {
               <Typography fontSize={'2.5rem'}>
                 Horários do Profissional
               </Typography>
+              <AiOutlineRight
+                size={30}
+                style={{ color: '#707070', marginLeft: 10 }}
+              />
+              <Typography
+                fontSize={'2rem'}
+                style={{ marginLeft: 10, fontWeight: 400 }}
+              >
+                {user?.name?.split(' ')[0]}
+              </Typography>
             </Header>
 
             <SectionDivider>Dias da semana</SectionDivider>
@@ -474,7 +494,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                   <form id="form" onSubmit={handleSubmit(onSubmit)}>
                     <TimesLabel>Início e fim do expediente</TimesLabel>
                     <WorkHoursContainer>
-                      <div onBlur={() => setChanges(true)}>
+                      <div onFocus={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Início"
                           name="startTime"
@@ -492,7 +512,7 @@ const ProfessionalSchedule = (): JSX.Element => {
                           }}
                         />
                       </div>
-                      <div onBlur={() => setChanges(true)}>
+                      <div onFocus={() => setChanges(true)}>
                         <ControlledTimePicker
                           label="Fim"
                           name="endTime"
@@ -536,7 +556,9 @@ const ProfessionalSchedule = (): JSX.Element => {
                       {counter !== -1 && (
                         <>
                           <TimesLabel>
-                            Intervalos - {counter} restantes
+                            {counter % 1 !== 0 || counter < 0
+                              ? 'Sem intervalos - Os horários não batem com a duração base'
+                              : `Intervalos - ${counter} restantes`}
                           </TimesLabel>
 
                           <IconButton
@@ -550,7 +572,9 @@ const ProfessionalSchedule = (): JSX.Element => {
                               loading ||
                               lockDelete !== -1 ||
                               savingWeekly ||
-                              disableDay
+                              disableDay ||
+                              counter < 0 ||
+                              counter % 1 !== 0
                             }
                           >
                             <AiOutlinePlus

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, Typography } from '@mui/material';
+import { CircularProgress, IconButton, Typography } from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
   Box,
-  ButtonContainer,
   Container,
   Content,
   Form,
@@ -22,7 +21,7 @@ import ControlledDatePicker from '@components/ControlledDatePicker';
 import ControlledInput from '@components/ControlledInput';
 import SectionDivider from '@components/SectionDivider';
 import { useNavigate } from 'react-router-dom';
-import { isAfter } from 'date-fns';
+import { isAfter, isEqual, isValid } from 'date-fns';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
@@ -32,8 +31,9 @@ import SimpleInput from '@components/SimpleInput';
 import { CepInfos } from '@interfaces/CepInfos';
 import AsyncInput from '@components/AsyncInput';
 import { searchForCep } from '@utils/zipCode';
-import { AiOutlineClockCircle } from 'react-icons/ai';
+import { AiOutlineClockCircle, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
+import { useAuth } from '@contexts/Auth';
 
 type ProfileFormProps = {
   name: string;
@@ -50,12 +50,17 @@ type ProfileFormProps = {
 
 const ProfessionalProfile = (): JSX.Element => {
   const formMethods = useForm<ProfileFormProps>();
+  const {
+    setUser,
+    user: { name },
+  } = useAuth();
   const { getProfile, updateProfile } = useProfessionals();
   const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -109,29 +114,36 @@ const ProfessionalProfile = (): JSX.Element => {
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
     const formData: ProfileFormProps = data as ProfileFormProps;
+    const { address, ...formRest } = formData;
     const birthDateAltered = dateFormat({
       date: formData.birthDate,
       stringFormat: 'yyyy-MM-dd',
     });
 
     const professional = {
-      ...formData,
+      ...formRest,
       birthDate: birthDateAltered,
-      ...(formData.address?.zipCode && {
+      ...(address?.zipCode && {
         address: {
-          id: formData.address.id,
-          zipCode: formData.address.zipCode,
+          id: address.id,
+          zipCode: address.zipCode,
           city: cepInfos?.localidade || '',
           state: cepInfos?.uf || '',
-          publicArea: formData.address.publicArea || cepInfos?.logradouro || '',
-          district: formData.address.district || cepInfos?.bairro || '',
+          publicArea: address.publicArea || cepInfos?.logradouro || '',
+          district: address.district || cepInfos?.bairro || '',
         },
       }),
     };
 
     try {
-      setLoading(true);
+      setSaveLoading(true);
       const { message } = await updateProfile(professional);
+
+      setUser((prev) => {
+        const newUser = { ...prev, name: formData.name };
+        localStorage.setItem('@psis:userData', JSON.stringify(newUser));
+        return newUser;
+      });
 
       showAlert({
         title: 'Sucesso!',
@@ -148,7 +160,7 @@ const ProfessionalProfile = (): JSX.Element => {
           'Ocorreu um problema ao atualizar o perfil',
       });
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
@@ -198,7 +210,7 @@ const ProfessionalProfile = (): JSX.Element => {
         <Content>
           <Header>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton onClick={() => navigate(-1)}>
+              <IconButton onClick={() => navigate(-1)} disabled={saveLoading}>
                 <FiChevronLeft
                   style={{ color: colors.TEXT, fontSize: '2.5rem' }}
                 />
@@ -206,9 +218,19 @@ const ProfessionalProfile = (): JSX.Element => {
               <Typography fontSize={'2.5rem'}>
                 Perfil do Profissional
               </Typography>
+              <AiOutlineRight
+                size={30}
+                style={{ color: '#707070', marginLeft: 10 }}
+              />
+              <Typography
+                fontSize={'2rem'}
+                style={{ marginLeft: 10, fontWeight: 400 }}
+              >
+                {name.split(' ')[0]}
+              </Typography>
             </div>
             <IconButton
-              disabled={loading || inputLoading}
+              disabled={loading || inputLoading || saveLoading}
               onClick={() => navigate('/profile/professional_schedule')}
             >
               <AiOutlineClockCircle
@@ -218,13 +240,14 @@ const ProfessionalProfile = (): JSX.Element => {
           </Header>
 
           <FormProvider {...formMethods}>
-            <Form id="form" onSubmit={handleSubmit(onSubmit)}>
+            <Form id="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               <SectionDivider>Dados Pessoais</SectionDivider>
 
               <PersonalInfo>
                 <ControlledInput
                   name="name"
                   label="Nome"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -238,6 +261,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledInput
                     name="CPF"
                     label="CPF"
+                    required
                     defaultValue=""
                     mask={(s: string): string =>
                       `${s
@@ -250,7 +274,7 @@ const ProfessionalProfile = (): JSX.Element => {
                     rules={{
                       required: {
                         value: true,
-                        message: 'O CPF do responsável é obrigatório',
+                        message: 'O CPF do profissional é obrigatório',
                       },
                       minLength: {
                         value: 14,
@@ -265,14 +289,26 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledDatePicker
                     name="birthDate"
                     label="Data de nascimento"
+                    required
                     rules={{
                       required: {
                         value: true,
                         message: 'A data de nascimento é obrigatória',
                       },
-                      validate: (date) =>
-                        !isAfter(date, new Date()) ||
-                        'A Data escolhida não pode ser superior à data atual',
+                      validate: (date) => {
+                        if (!isValid(date))
+                          return 'A data escolhida é inválida';
+
+                        date.setHours(0, 0, 0, 0);
+                        const currenDate = new Date();
+                        currenDate.setHours(0, 0, 0, 0);
+
+                        return (
+                          (!isAfter(date, currenDate) &&
+                            !isEqual(date, currenDate)) ||
+                          'A Data escolhida não pode ser superior ou igual à data atual'
+                        );
+                      },
                     }}
                   />
                 </PersonalInfoHalf>
@@ -280,6 +316,7 @@ const ProfessionalProfile = (): JSX.Element => {
                   <ControlledInput
                     name="userName"
                     label="Nome de usuário"
+                    required
                     rules={{
                       required: {
                         value: true,
@@ -353,6 +390,21 @@ const ProfessionalProfile = (): JSX.Element => {
                   label="Telefone"
                   defaultValue=""
                   style={{ width: '50%' }}
+                  rules={{
+                    maxLength: {
+                      value: 15,
+                      message: 'Insira um telefone válido',
+                    },
+                    minLength: {
+                      value: 15,
+                      message: 'Insira um telefone válido',
+                    },
+                    required: {
+                      value: true,
+                      message: 'Um número de telefone é obrigatório',
+                    },
+                  }}
+                  required
                   maxLength={15}
                   mask={(s: string): string =>
                     `${s
@@ -369,6 +421,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="profession"
                   label="Profissão"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -379,6 +432,7 @@ const ProfessionalProfile = (): JSX.Element => {
                 <ControlledInput
                   name="registry"
                   label="Registro"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -390,12 +444,17 @@ const ProfessionalProfile = (): JSX.Element => {
               </ProfessionalData>
             </Form>
           </FormProvider>
-          <ButtonContainer>
-            <div />
-            <StyledButton type="submit" form="form">
-              SALVAR
-            </StyledButton>
-          </ButtonContainer>
+          <StyledButton
+            disabled={saveLoading || inputLoading}
+            type="submit"
+            form="form"
+          >
+            {saveLoading ? (
+              <CircularProgress size={20} style={{ color: '#FFF' }} />
+            ) : (
+              'SALVAR'
+            )}
+          </StyledButton>
         </Content>
       </Box>
     </Container>

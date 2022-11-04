@@ -63,7 +63,7 @@ export const TitleAndInputs = styled('div')`
 
 export const InputsForm = styled('form')`
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 20fr 1fr;
   gap: 1rem;
 `;
 
@@ -110,28 +110,6 @@ export const TextExpand = styled(Typography)`
 export const LogoContainer = styled('img')`
   width: 100px;
   height: auto;
-`;
-
-export const StyledSelect = styled(Select)`
-  width: 90%;
-  color: ${colors.PRIMARY};
-  border-color: ${colors.PRIMARY};
-
-  & .${selectClasses.icon} {
-    color: ${colors.PRIMARY};
-  }
-
-  & .${outlinedInputClasses.notchedOutline} {
-    border-color: ${colors.PRIMARY};
-  }
-  &:hover .${outlinedInputClasses.notchedOutline} {
-    border-color: ${colors.PRIMARY};
-  }
-
-  &.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline} {
-    // MUITO IMPORTANTE NÃO DEIXAR ESPAÇO ENTRE O '&' E O '.'
-    border-color: ${colors.PRIMARY} !important;
-  }
 `;
 
 export const StyledInputLabel = styled(InputLabel)`

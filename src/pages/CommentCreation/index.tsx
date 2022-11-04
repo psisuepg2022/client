@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TextEditor from '@components/TextEditor';
 import { Event } from 'react-big-calendar';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -11,22 +11,28 @@ import {
   PatientName,
   AppointmentDate,
   CommentsTitle,
+  LogoContainer,
 } from './styles';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
-import { IconButton } from '@mui/material';
+import { IconButton, Modal } from '@mui/material';
 import { idFromResource } from '@utils/schedule';
 import { useSchedule } from '@contexts/Schedule';
 import { showAlert } from '@utils/showAlert';
 import { useComments } from '@contexts/Comments';
+import { colors } from '@global/colors';
+import { AppointmentSaveByProfessional } from '@interfaces/AppointmentSaveByProfessional';
+import CircularProgressWithContent from '@components/CircularProgressWithContent';
+import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
 
 const CommentCreation = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
   const navigate = useNavigate();
-  const { setEvents } = useSchedule();
+  const { setEvents, saveAppointmentByProfessional } = useSchedule();
   const { create } = useComments();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const concludeAndSaveComment = async (text: string) => {
     try {
@@ -54,6 +60,66 @@ const CommentCreation = (): JSX.Element => {
         return newEvents;
       });
 
+      if (content?.hasSameTimeToNextWeek) {
+        const nextWeekDate = `${content.hasSameTimeToNextWeek.date} | ${content.hasSameTimeToNextWeek.startTime} às ${content.hasSameTimeToNextWeek.endTime}`;
+
+        showAlert({
+          title: 'Sucesso!',
+          icon: 'success',
+          text: `${message} O mesmo dia e horário estão disponíveis para semana que vem: ${nextWeekDate}. Deseja fazer o agendamento?`,
+          allowOutsideClick: false,
+          showCancelButton: true,
+          cancelButtonColor: colors.BACKGREY,
+          cancelButtonText:
+            '<span style="color: #000;"> NÃO, RETORNAR À AGENDA</span>',
+          confirmButtonText: 'REALIZAR REAGENDAMENTO',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const formDate = content?.hasSameTimeToNextWeek?.date
+              .split('/')
+              .reverse()
+              .join('-');
+
+            try {
+              setLoading(true);
+              await saveAppointmentByProfessional({
+                ...(content.hasSameTimeToNextWeek as AppointmentSaveByProfessional),
+                date: formDate as string,
+              });
+
+              showAlert({
+                title: 'Sucesso!',
+                icon: 'success',
+                text: message,
+                allowOutsideClick: false,
+                confirmButtonText: 'RETORNAR À AGENDA',
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  navigate('/schedule');
+                }
+              });
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (e: any) {
+              showAlert({
+                icon: 'error',
+                text:
+                  e?.response?.data?.message ||
+                  'Ocorreu um problema no reagendamento',
+              });
+            } finally {
+              setLoading(false);
+            }
+
+            return;
+          }
+          if (result.isDismissed) {
+            navigate('/schedule');
+            return;
+          }
+        });
+        return;
+      }
+
       showAlert({
         title: 'Sucesso!',
         icon: 'success',
@@ -79,6 +145,23 @@ const CommentCreation = (): JSX.Element => {
 
   return (
     <Container>
+      <Modal
+        open={loading}
+        sx={{
+          display: 'flex',
+          height: '100%',
+          minWidth: '100vw',
+          justifyContent: 'center',
+          alignItems: 'center ',
+        }}
+      >
+        <>
+          <CircularProgressWithContent
+            content={<LogoContainer src={logoPSIS} />}
+            size={200}
+          />
+        </>
+      </Modal>
       <AlterTopToolbar />
       <Content>
         <CustomBox>

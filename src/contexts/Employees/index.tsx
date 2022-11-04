@@ -1,14 +1,13 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Response } from '@interfaces/Response';
 import { api } from '@service/index';
-import { SearchFilter } from '@interfaces/SearchFilter';
 import { ItemList } from '@interfaces/ItemList';
 import { FormEmployee, Employee, UpdateEmployee } from '@models/Employee';
 
 type ListProps = {
   page?: number;
   size?: number;
-  filter?: SearchFilter;
+  composed?: string;
 };
 
 type EmployeesContextData = {
@@ -38,14 +37,14 @@ export const EmployeesProvider: React.FC<EmployeesProviderProps> = ({
   const list = async ({
     size,
     page,
-    filter,
+    composed,
   }: ListProps): Promise<Response<ItemList<Employee>>> => {
     const { data }: { data: Response<ItemList<Employee>> } = await api.post(
       (page as number) >= 0 && size
         ? `employee/search?page=${page}&size=${size}`
         : 'employee/search',
       {
-        ...filter,
+        composed,
       }
     );
 

@@ -33,6 +33,7 @@ import SimpleInput from '@components/SimpleInput';
 import { useEmployees } from '@contexts/Employees';
 import { useAuth } from '@contexts/Auth';
 import { AiOutlineRight } from 'react-icons/ai';
+import { showToast } from '@utils/showToast';
 
 type ProfileFormProps = {
   name: string;
@@ -140,10 +141,8 @@ const EmployeeProfile = (): JSX.Element => {
         return newUser;
       });
 
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
+      showToast({
+        text: `${message}`,
       });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

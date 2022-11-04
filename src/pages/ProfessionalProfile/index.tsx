@@ -34,6 +34,7 @@ import { searchForCep } from '@utils/zipCode';
 import { AiOutlineClockCircle, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
 import { useAuth } from '@contexts/Auth';
+import { showToast } from '@utils/showToast';
 
 type ProfileFormProps = {
   name: string;
@@ -145,10 +146,8 @@ const ProfessionalProfile = (): JSX.Element => {
         return newUser;
       });
 
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
+      showToast({
+        text: `${message}`,
       });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

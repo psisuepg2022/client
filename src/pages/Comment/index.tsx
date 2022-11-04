@@ -27,6 +27,7 @@ import { idFromResource } from '@utils/schedule';
 import TextEditor from '@components/TextEditor';
 import { MdModeEdit } from 'react-icons/md';
 import { useComments } from '@contexts/Comments';
+import { showToast } from '@utils/showToast';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
@@ -78,6 +79,10 @@ const Comment = (): JSX.Element => {
         showAlert({
           icon: 'error',
           text: 'Ocorreu um problema ao atualizar a consulta',
+        });
+      } else {
+        showToast({
+          text: 'Operação realizada com sucesso!',
         });
       }
 

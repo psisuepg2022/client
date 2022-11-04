@@ -26,6 +26,7 @@ import { colors } from '@global/colors';
 import { AppointmentSaveByProfessional } from '@interfaces/AppointmentSaveByProfessional';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
 import logoPSIS from '@assets/PSIS-Logo-Invertido-Transparente.png';
+import { showToast } from '@utils/showToast';
 
 const CommentCreation = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
@@ -44,6 +45,10 @@ const CommentCreation = (): JSX.Element => {
         showAlert({
           icon: 'error',
           text: 'Ocorreu um problema ao atualizar a consulta',
+        });
+      } else {
+        showToast({
+          text: 'Operação realizada com sucesso!',
         });
       }
 

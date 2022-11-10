@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, FormControlLabel } from '@mui/material';
+import { CircularProgress, FormControlLabel, IconButton } from '@mui/material';
 import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -40,6 +40,8 @@ import { MartitalStatus } from '@interfaces/MaritalStatus';
 import { Gender } from '@interfaces/Gender';
 import { CepInfos } from '@interfaces/CepInfos';
 import { showToast } from '@utils/showToast';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
+import { colors } from '@global/colors';
 
 type FormProps = {
   name: string;
@@ -104,6 +106,8 @@ const PatientsForm = (): JSX.Element => {
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const [auxDataHelpModal, setAuxDataHelpModal] = useState<boolean>(false);
+  const [liableHelpModal, setLiableHelpModal] = useState<boolean>(false);
   const { liable } = useWatch({ control });
 
   useEffect(() => {
@@ -372,7 +376,17 @@ const PatientsForm = (): JSX.Element => {
                   </ControlledSelect>
                 </PersonalDataSecond>
 
-                <SectionDivider>Dados Auxiliares</SectionDivider>
+                <SectionDivider
+                  help={
+                    <IconButton style={{ marginLeft: 5 }}>
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
+                  }
+                >
+                  Dados Auxiliares
+                </SectionDivider>
                 <AuxDataFirst>
                   <AsyncInput
                     name="address.zipCode"
@@ -460,17 +474,24 @@ const PatientsForm = (): JSX.Element => {
                   />
                 </AuxDataSecond>
 
-                <FormControlLabel
-                  style={{ maxWidth: 310 }}
-                  control={
-                    <StyledCheckbox
-                      checked={needLiable}
-                      onChange={() => setNeedLiable((prev) => !prev)}
-                      inputProps={{ 'aria-label': 'controlled' }}
+                <div>
+                  <FormControlLabel
+                    style={{ maxWidth: 310 }}
+                    control={
+                      <StyledCheckbox
+                        checked={needLiable}
+                        onChange={() => setNeedLiable((prev) => !prev)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    }
+                    label="Paciente precisa de responsável"
+                  />
+                  <IconButton>
+                    <AiOutlineQuestionCircle
+                      style={{ color: colors.PRIMARY }}
                     />
-                  }
-                  label="Paciente precisa de responsável"
-                />
+                  </IconButton>
+                </div>
 
                 {needLiable && (
                   <>

@@ -42,6 +42,7 @@ import { CepInfos } from '@interfaces/CepInfos';
 import { showToast } from '@utils/showToast';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { colors } from '@global/colors';
+import AuxDataHelpModal from '@components/AuxDataHelpModal';
 
 type FormProps = {
   name: string;
@@ -376,9 +377,18 @@ const PatientsForm = (): JSX.Element => {
                   </ControlledSelect>
                 </PersonalDataSecond>
 
+                {auxDataHelpModal && (
+                  <AuxDataHelpModal
+                    open={auxDataHelpModal}
+                    handleClose={() => setAuxDataHelpModal(false)}
+                  />
+                )}
                 <SectionDivider
                   help={
-                    <IconButton style={{ marginLeft: 5 }}>
+                    <IconButton
+                      style={{ marginLeft: 5 }}
+                      onClick={() => setAuxDataHelpModal(true)}
+                    >
                       <AiOutlineQuestionCircle
                         style={{ color: colors.PRIMARY }}
                       />

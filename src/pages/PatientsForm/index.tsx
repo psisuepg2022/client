@@ -44,6 +44,7 @@ import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import AuxDataHelpModal from '@components/AuxDataHelpModal';
 import LiableHelpModal from '@components/LiableHelpModal';
+import PersonalDataHelpModal from '@components/PersonalDataHelpModal';
 
 type FormProps = {
   name: string;
@@ -108,6 +109,8 @@ const PatientsForm = (): JSX.Element => {
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const [personalDataHelpModal, setPersonalDataHelpModal] =
+    useState<boolean>(false);
   const [auxDataHelpModal, setAuxDataHelpModal] = useState<boolean>(false);
   const [liableHelpModal, setLiableHelpModal] = useState<boolean>(false);
   const { liable } = useWatch({ control });
@@ -271,7 +274,26 @@ const PatientsForm = (): JSX.Element => {
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
               >
-                <SectionDivider>Dados Pessoais</SectionDivider>
+                {personalDataHelpModal && (
+                  <PersonalDataHelpModal
+                    open={personalDataHelpModal}
+                    handleClose={() => setPersonalDataHelpModal(false)}
+                  />
+                )}
+                <SectionDivider
+                  help={
+                    <IconButton
+                      style={{ marginLeft: 5 }}
+                      onClick={() => setPersonalDataHelpModal(true)}
+                    >
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
+                  }
+                >
+                  Dados Pessoais
+                </SectionDivider>
                 <PersonalDataFirst>
                   <ControlledInput
                     rules={{

@@ -353,7 +353,7 @@ const OwnerProfile = (): JSX.Element => {
                           return (
                             (!isAfter(date, currenDate) &&
                               !isEqual(date, currenDate)) ||
-                            'A Data escolhida não pode ser superior ou igual à data atual'
+                            'A data escolhida não pode ser superior ou igual à data atual'
                           );
                         },
                       }}

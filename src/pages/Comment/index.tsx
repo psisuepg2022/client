@@ -154,6 +154,7 @@ const Comment = (): JSX.Element => {
         });
       }
 
+      changesRef.current = false;
       setEditMode(false);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

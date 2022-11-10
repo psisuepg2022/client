@@ -39,8 +39,6 @@ export const Header = styled('div')`
 
 export const Body = styled('div')`
   display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
   flex-direction: column;
   gap: 1rem;

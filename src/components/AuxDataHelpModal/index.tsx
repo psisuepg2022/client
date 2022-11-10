@@ -1,20 +1,17 @@
 import React from 'react';
 import {
-  AdditionalInfos,
   Body,
   EventPrimaryText,
   Header,
-  ScheduleAtDate,
   ScheduleAtText,
-  ScheduledAtContainer,
   StatusText,
   StyledBox,
   StyledModal,
 } from './styles';
 import { MdOutlineClose } from 'react-icons/md';
-import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { IconButton } from '@mui/material';
+import SectionDivider from '@components/SectionDivider';
 
 type AuxDataHelpModalProps = {
   open: boolean;
@@ -42,22 +39,40 @@ const AuxDataHelpModal = ({
       <StyledBox>
         <Header>
           <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
-          <StatusText>Informação sobre os dados auxiliares</StatusText>
+          <EventPrimaryText>Dados auxiliares</EventPrimaryText>
           <IconButton onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
         <Body>
-          <EventPrimaryText>Primary</EventPrimaryText>
+          <div style={{ textIndent: '2rem' }}>
+            <StatusText>
+              Dados auxiliares englobam informações sobre o endereço do paciente
+              e um número de telefone para contato.
+            </StatusText>
+          </div>
 
-          <AdditionalInfos>
-            <AiFillSchedule style={{ fontSize: 70, color: colors.PRIMARY }} />
+          <SectionDivider>Endereço</SectionDivider>
 
-            <ScheduledAtContainer>
-              <ScheduleAtText>text</ScheduleAtText>
-              <ScheduleAtDate>date</ScheduleAtDate>
-            </ScheduledAtContainer>
-          </AdditionalInfos>
+          <div style={{ textIndent: '2rem' }}>
+            <ScheduleAtText>
+              É possível incluir o endereço do paciente, para isso é necessário
+              inserir primeiramente o CEP, pois ele irá preencher
+              automaticamente os outros campos. Caso o CEP em questão não possua
+              logradouro ou bairro, é possível preencher esses campos
+              manualmente.
+            </ScheduleAtText>
+          </div>
+
+          <SectionDivider>Contato</SectionDivider>
+
+          <div style={{ textIndent: '2rem' }}>
+            <ScheduleAtText>
+              É necessário inserir um número de telefone válido (sem pontuação)
+              para contato com o paciente em caso de agendamento, confirmação ou
+              cancelamento de consultas.{' '}
+            </ScheduleAtText>
+          </div>
         </Body>
       </StyledBox>
     </StyledModal>

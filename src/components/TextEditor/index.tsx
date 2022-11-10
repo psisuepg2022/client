@@ -9,12 +9,14 @@ type TextEditorProps = {
   saveComment?: (text: string) => Promise<void>;
   comment?: string;
   readOnly?: boolean;
+  commentAltered?: () => void;
 };
 
 const TextEditor = ({
   saveComment,
   comment,
   readOnly,
+  commentAltered,
 }: TextEditorProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [value, setValue] = useState<string>(comment ? comment : '');
@@ -96,8 +98,14 @@ const TextEditor = ({
               'color',
               'background',
             ]}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(newValue: string, delta: any, sources: any) => {
+              setValue(newValue);
+              if (sources === 'user') {
+                commentAltered && commentAltered();
+              }
+            }}
             value={value}
-            onChange={setValue}
             readOnly={readOnly}
           />
         </div>

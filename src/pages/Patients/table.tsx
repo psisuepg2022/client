@@ -85,6 +85,7 @@ const PatientsTable = ({
                   <TableRow
                     sx={{
                       '& > *': { borderBottom: 'unset' },
+                      height: '53px !important',
                     }}
                     hover
                   >

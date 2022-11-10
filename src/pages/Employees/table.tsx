@@ -89,6 +89,7 @@ const EmployeesTable = ({
                   <TableRow
                     sx={{
                       '& > *': { borderBottom: 'unset' },
+                      height: '53px !important',
                     }}
                     hover
                   >

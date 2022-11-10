@@ -68,7 +68,6 @@ const ProfessionalsTable = ({
         <Table
           sx={{ minWidth: 750 }}
           aria-labelledby="professionalsTable"
-          size={'medium'}
           stickyHeader
         >
           <TableHead>
@@ -89,6 +88,7 @@ const ProfessionalsTable = ({
                   <TableRow
                     sx={{
                       '& > *': { borderBottom: 'unset' },
+                      height: '53px !important',
                     }}
                     hover
                   >

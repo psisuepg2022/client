@@ -229,7 +229,7 @@ const Professionals = (): JSX.Element => {
                 permissions.includes('DELETE_PROFESSIONAL') ||
                 permissions.includes('UPDATE_PROFESSIONAL')
                   ? columns
-                  : columns.filter((column) => column.id !== 5)
+                  : columns.filter((column) => column.id !== 4)
               }
               count={count}
               page={page}

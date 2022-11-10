@@ -42,12 +42,14 @@ export const Body = styled('div')`
   height: 100%;
   flex-direction: column;
   gap: 1rem;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
 `;
 
 export const StatusText = styled(Typography)`
   color: ${colors.TEXT};
-  font-size: 1.2rem;
+  font-size: 1rem;
+
+  text-align: justify;
 
   & span {
     color: ${colors.PRIMARY};
@@ -56,26 +58,14 @@ export const StatusText = styled(Typography)`
 `;
 
 export const EventPrimaryText = styled(Typography)`
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+  text-align: justify;
   color: ${colors.TEXT};
   font-weight: 600;
 `;
 
-export const AdditionalInfos = styled('div')`
-  display: flex;
-  align-items: center;
-  gap: 4rem;
-`;
-
-export const ScheduledAtContainer = styled('div')`
-  display: flex;
-  flex-direction: column;
-`;
-
 export const ScheduleAtText = styled('div')`
   color: ${colors.TEXT};
-`;
-
-export const ScheduleAtDate = styled('div')`
-  font-weight: 500;
+  text-align: justify;
+  font-size: 1rem;
 `;

@@ -1,20 +1,17 @@
 import React from 'react';
 import {
-  AdditionalInfos,
   Body,
   EventPrimaryText,
   Header,
-  ScheduleAtDate,
   ScheduleAtText,
-  ScheduledAtContainer,
   StatusText,
   StyledBox,
   StyledModal,
 } from './styles';
 import { MdOutlineClose } from 'react-icons/md';
-import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { IconButton } from '@mui/material';
+import SectionDivider from '@components/SectionDivider';
 
 type LiableHelpModalProps = {
   open: boolean;
@@ -42,22 +39,41 @@ const LiableHelpModal = ({
       <StyledBox>
         <Header>
           <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
-          <StatusText>Informação sobre responsável</StatusText>
+          <EventPrimaryText>Responsável</EventPrimaryText>
           <IconButton onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>
         </Header>
         <Body>
-          <EventPrimaryText>Primary</EventPrimaryText>
+          <div style={{ textIndent: '2rem' }}>
+            <StatusText>
+              {`Caso o paciente não possua um documento CPF ou necessite de um
+              responsável, a caixa "Paciente precisa de responsável" deve ser
+              marcada.`}
+            </StatusText>
+          </div>
 
-          <AdditionalInfos>
-            <AiFillSchedule style={{ fontSize: 70, color: colors.PRIMARY }} />
+          <SectionDivider>Responsável existente</SectionDivider>
 
-            <ScheduledAtContainer>
-              <ScheduleAtText>text</ScheduleAtText>
-              <ScheduleAtDate>date</ScheduleAtDate>
-            </ScheduledAtContainer>
-          </AdditionalInfos>
+          <div style={{ textIndent: '2rem' }}>
+            <ScheduleAtText>
+              O primeiro campo a ser preenchido é o nome do responsável, caso o
+              responsável já esteja cadastrado para outro paciente, é possível
+              buscá-lo no campo, digitando ao menos três caracteres e aguardar a
+              busca. As opções serão exibidas em seguida, basta selecionar o
+              responsável correspondente e os dados restantes serão preenchidos
+              automaticamente.
+            </ScheduleAtText>
+          </div>
+
+          <SectionDivider>Novo responsável</SectionDivider>
+
+          <div style={{ textIndent: '2rem' }}>
+            <ScheduleAtText>
+              {`No caso de um
+              novo cadastro, deve ser selecionada a opção para criar e dar continuidade ao preenchimento de dados.`}
+            </ScheduleAtText>
+          </div>
         </Body>
       </StyledBox>
     </StyledModal>

@@ -89,12 +89,13 @@ const ChangePassword = (): JSX.Element => {
             <SectionDivider>Escolha uma nova senha</SectionDivider>
           </div>
           <FormProvider {...formMethods}>
-            <Form id="form" onSubmit={handleSubmit(onSubmit)}>
+            <Form id="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               <PersonalInfo>
                 <ControlledInput
                   name="oldPassword"
                   type="password"
                   endFunction="password"
+                  required
                   label="Senha atual"
                   rules={{
                     required: {
@@ -108,6 +109,7 @@ const ChangePassword = (): JSX.Element => {
                   type="password"
                   endFunction="password"
                   label="Nova senha"
+                  required
                   rules={{
                     required: {
                       value: true,
@@ -120,6 +122,7 @@ const ChangePassword = (): JSX.Element => {
                   type="password"
                   endFunction="password"
                   label="Confirme a nova senha"
+                  required
                   rules={{
                     required: {
                       value: true,

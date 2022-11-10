@@ -43,6 +43,7 @@ import { showToast } from '@utils/showToast';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import AuxDataHelpModal from '@components/AuxDataHelpModal';
+import LiableHelpModal from '@components/LiableHelpModal';
 
 type FormProps = {
   name: string;
@@ -484,6 +485,13 @@ const PatientsForm = (): JSX.Element => {
                   />
                 </AuxDataSecond>
 
+                {liableHelpModal && (
+                  <LiableHelpModal
+                    open={liableHelpModal}
+                    handleClose={() => setLiableHelpModal(false)}
+                  />
+                )}
+
                 <div>
                   <FormControlLabel
                     style={{ maxWidth: 310 }}
@@ -496,7 +504,7 @@ const PatientsForm = (): JSX.Element => {
                     }
                     label="Paciente precisa de responsável"
                   />
-                  <IconButton>
+                  <IconButton onClick={() => setLiableHelpModal(true)}>
                     <AiOutlineQuestionCircle
                       style={{ color: colors.PRIMARY }}
                     />

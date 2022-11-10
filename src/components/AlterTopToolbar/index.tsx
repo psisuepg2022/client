@@ -66,7 +66,7 @@ const AlterTopToolbar = (): JSX.Element => {
               Alterar Senha
             </MenuItem>
             <hr />
-            <MenuItem onClick={signOut}>Logout</MenuItem>
+            <MenuItem onClick={signOut}>Sair</MenuItem>
           </Menu>
         </LatterContent>
       </Container>

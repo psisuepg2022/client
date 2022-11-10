@@ -16,6 +16,7 @@ import {
 } from './styles';
 import { MdOutlineClose } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
+import { BiLinkExternal } from 'react-icons/bi';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
 import { Event } from 'react-big-calendar';
@@ -28,7 +29,7 @@ import {
 import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter, isBefore } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
 
 type ConfirmedEventModalProps = {
@@ -171,7 +172,20 @@ const ConfirmedEventModal = ({
           </IconButton>
         </Header>
         <Body>
-          <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+            <Link
+              to={{ pathname: '/patients' }}
+              onClick={() => {
+                localStorage.setItem('@psis:goToPatient', `${eventInfo.title}`);
+              }}
+              target="_blank"
+            >
+              <IconButton>
+                <BiLinkExternal style={{ color: colors.PRIMARY }} />
+              </IconButton>
+            </Link>
+          </div>
           <EventPrimaryText>
             {dateFormat({
               date: eventInfo.start as Date,

@@ -16,6 +16,7 @@ import {
 } from './styles';
 import { MdOutlineClose } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
+import { BiLinkExternal } from 'react-icons/bi';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton } from '@mui/material';
 import { Event } from 'react-big-calendar';
@@ -29,6 +30,7 @@ import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
 import { useAuth } from '@contexts/Auth';
+import { Link } from 'react-router-dom';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -145,7 +147,20 @@ const ScheduledEventModal = ({
           </IconButton>
         </Header>
         <Body>
-          <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+            <Link
+              to={{ pathname: '/patients' }}
+              onClick={() => {
+                localStorage.setItem('@psis:goToPatient', `${eventInfo.title}`);
+              }}
+              target="_blank"
+            >
+              <IconButton>
+                <BiLinkExternal style={{ color: colors.PRIMARY }} />
+              </IconButton>
+            </Link>
+          </div>
           <EventPrimaryText>
             {dateFormat({
               date: eventInfo.start as Date,

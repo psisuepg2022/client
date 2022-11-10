@@ -67,7 +67,7 @@ const Patients = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
   const searchActive = useRef(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -75,6 +75,19 @@ const Patients = (): JSX.Element => {
   const [filter, setFilter] = useState<string>();
 
   useEffect(() => {
+    return () => {
+      localStorage.removeItem('@psis:goToPatient');
+    };
+  });
+
+  useEffect(() => {
+    const redirectName = localStorage.getItem('@psis:goToPatient');
+    if (redirectName && redirectName !== '') {
+      setValue('search_filter', redirectName);
+      onSubmit({ search_filter: redirectName });
+      return;
+    }
+
     if (searchActive.current) return;
     (async () => {
       try {

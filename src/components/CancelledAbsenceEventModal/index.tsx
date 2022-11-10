@@ -18,6 +18,8 @@ import { statusFromResource, updatedAtFromResource } from '@utils/schedule';
 import { Event } from 'react-big-calendar';
 import { dateFormat } from '@utils/dateFormat';
 import { AiFillSchedule } from 'react-icons/ai';
+import { BiLinkExternal } from 'react-icons/bi';
+import { Link } from 'react-router-dom';
 
 type CancelledAbsenceEventModalProps = {
   open: boolean;
@@ -76,7 +78,20 @@ const CancelledAbsenceEventModal = ({
           </IconButton>
         </Header>
         <Body>
-          <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+            <Link
+              to={{ pathname: '/patients' }}
+              onClick={() => {
+                localStorage.setItem('@psis:goToPatient', `${eventInfo.title}`);
+              }}
+              target="_blank"
+            >
+              <IconButton>
+                <BiLinkExternal style={{ color: colors.PRIMARY }} />
+              </IconButton>
+            </Link>
+          </div>
           <EventPrimaryText>
             {dateFormat({
               date: eventInfo.start as Date,

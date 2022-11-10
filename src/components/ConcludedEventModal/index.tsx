@@ -20,8 +20,9 @@ import { IconButton, Tooltip } from '@mui/material';
 import { Event } from 'react-big-calendar';
 import { statusFromResource, updatedAtFromResource } from '@utils/schedule';
 import { dateFormat } from '@utils/dateFormat';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
+import { BiLinkExternal } from 'react-icons/bi';
 
 type ConcludedEventModalProps = {
   open: boolean;
@@ -86,7 +87,20 @@ const ConcludedEventModal = ({
           </IconButton>
         </Header>
         <Body>
-          <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+            <Link
+              to={{ pathname: '/patients' }}
+              onClick={() => {
+                localStorage.setItem('@psis:goToPatient', `${eventInfo.title}`);
+              }}
+              target="_blank"
+            >
+              <IconButton>
+                <BiLinkExternal style={{ color: colors.PRIMARY }} />
+              </IconButton>
+            </Link>
+          </div>
           <EventPrimaryText>
             {dateFormat({
               date: eventInfo.start as Date,

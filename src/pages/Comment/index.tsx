@@ -14,7 +14,7 @@ import {
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { useSchedule } from '@contexts/Schedule';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -154,12 +154,14 @@ const Comment = (): JSX.Element => {
                 })}
               </AppointmentDate>
             </div>
-            <IconButton
-              onClick={() => setEditMode((prev) => !prev)}
-              style={{ justifySelf: 'flex-end' }}
-            >
-              <MdModeEdit size={40} />
-            </IconButton>
+            <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
+              <IconButton
+                onClick={() => setEditMode((prev) => !prev)}
+                style={{ justifySelf: 'flex-end' }}
+              >
+                <MdModeEdit size={40} />
+              </IconButton>
+            </Tooltip>
           </BoxHeader>
           <TextEditor
             comment={comment}

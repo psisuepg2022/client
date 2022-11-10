@@ -31,7 +31,7 @@ const TextEditor = ({
     <Container>
       <Content>
         <div>
-          <div id="toolbar">
+          <div id="toolbar" style={readOnly ? { visibility: 'hidden' } : {}}>
             <select
               className="ql-size"
               defaultValue="medium"

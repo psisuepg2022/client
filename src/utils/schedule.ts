@@ -139,8 +139,11 @@ export const statusFromResource = (
 export const lockFromResource = (resource: string): string =>
   resource.split('/')[0];
 
-export const idFromResource = (resource: string): string =>
+export const contactNumberFromResource = (resource: string): string =>
   resource.split('/')[1];
 
-export const updatedAtFromResource = (resource: string): string =>
+export const idFromResource = (resource: string): string =>
   resource.split('/')[2];
+
+export const updatedAtFromResource = (resource: string): string =>
+  resource.split('/')[3];

@@ -228,11 +228,6 @@ const Schedule = (): JSX.Element => {
             setCurrentEnd(initialEnd);
           }
 
-          // const weeklyScheduleEvents: ScheduleEvent[] = buildWeeklySchedule(
-          //   currentDate,
-          //   today
-          // ) as ScheduleEvent[];
-
           const weeklyScheduleLocksEventsFalsy: ScheduleEvent[] =
             !today.startTime && !today.endTime
               ? []
@@ -327,8 +322,8 @@ const Schedule = (): JSX.Element => {
                 end: endDate,
                 title: event.title,
                 resource: event?.updatedAt
-                  ? `${event.resource}/${event.id}/${event.updatedAt}`
-                  : `${event.resource}/${event.id}`,
+                  ? `${event.resource}/${event.contactNumber}/${event.id}/${event.updatedAt}`
+                  : `${event.resource}/${event.contactNumber}/${event.id}`,
               };
             }) as Event[];
 
@@ -507,8 +502,8 @@ const Schedule = (): JSX.Element => {
                     start: startDate,
                     end: endDate,
                     resource: event?.updatedAt
-                      ? `${event.resource}/${event.id}/${event.updatedAt}`
-                      : `${event.resource}/${event.id}`,
+                      ? `${event.resource}/${event.contactNumber}/${event.id}/${event.updatedAt}`
+                      : `${event.resource}/${event.contactNumber}/${event.id}`,
                   };
                 }
               ) as Event[];
@@ -805,8 +800,8 @@ const Schedule = (): JSX.Element => {
                     start: startDate,
                     end: endDate,
                     resource: event?.updatedAt
-                      ? `${event.resource}/${event.id}/${event.updatedAt}`
-                      : `${event.resource}/${event.id}`,
+                      ? `${event.resource}/${event.contactNumber}/${event.id}/${event.updatedAt}`
+                      : `${event.resource}/${event.contactNumber}/${event.id}`,
                   };
                 }
               ) as Event[];

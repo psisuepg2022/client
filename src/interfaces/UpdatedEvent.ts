@@ -5,4 +5,5 @@ export type UpdatedEvent = {
   title: string;
   updatedAt: string;
   resource: string;
+  contactNumber: string;
 };

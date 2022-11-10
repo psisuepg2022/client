@@ -83,7 +83,7 @@ const ScheduledEventModal = ({
                 idFromResource(event.resource) === content?.id
                   ? {
                       ...event,
-                      resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                      resource: `${content?.resource}/${content?.contactNumber}/${content?.id}/${content?.updatedAt}`,
                     }
                   : event
               );

@@ -329,8 +329,8 @@ const TopToolbar = ({
               end: endDate,
               title: event.title,
               resource: event?.updatedAt
-                ? `${event.resource}/${event.id}/${event.updatedAt}`
-                : `${event.resource}/${event.id}`,
+                ? `${event.resource}/${event.contactNumber}/${event.id}/${event.updatedAt}`
+                : `${event.resource}/${event.contactNumber}/${event.id}`,
             };
           }) as Event[];
 

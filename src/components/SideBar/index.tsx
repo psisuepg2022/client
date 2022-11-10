@@ -50,9 +50,11 @@ const SideBar = (): JSX.Element => {
     return (
       <CollapsedContainer>
         <CollapsedHeader>
-          <IconButton size="small" onClick={() => setSideBarExpanded(true)}>
-            <AiOutlineRight style={{ color: '#FFF', fontSize: 35 }} />
-          </IconButton>
+          <Tooltip title="Expandir">
+            <IconButton size="small" onClick={() => setSideBarExpanded(true)}>
+              <AiOutlineRight style={{ color: '#FFF', fontSize: 35 }} />
+            </IconButton>
+          </Tooltip>
         </CollapsedHeader>
         {renderLinks().map((item) => (
           <CollapsedNavItem
@@ -72,9 +74,11 @@ const SideBar = (): JSX.Element => {
   return (
     <Container>
       <Header>
-        <IconButton size="small" onClick={() => setSideBarExpanded(false)}>
-          <AiOutlineClose style={{ color: '#FFF', fontSize: 35 }} />
-        </IconButton>
+        <Tooltip title="Recolher">
+          <IconButton size="small" onClick={() => setSideBarExpanded(false)}>
+            <AiOutlineClose style={{ color: '#FFF', fontSize: 35 }} />
+          </IconButton>
+        </Tooltip>
       </Header>
       <UserNameContainer>
         {name ? (

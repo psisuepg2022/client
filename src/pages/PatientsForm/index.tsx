@@ -372,8 +372,96 @@ const PatientsForm = (): JSX.Element => {
                   </ControlledSelect>
                 </PersonalDataSecond>
 
+                <SectionDivider>Dados Auxiliares</SectionDivider>
+                <AuxDataFirst>
+                  <AsyncInput
+                    name="address.zipCode"
+                    label="CEP"
+                    onCompleteCep={handleCepComplete}
+                    inputLoading={inputLoading}
+                    defaultValue={''}
+                    maxLength={9}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{3})\d+?$/, '$1')}`
+                    }
+                  />
+                  <SimpleInput
+                    name="address.city"
+                    label="Cidade"
+                    contentEditable={false}
+                    value={cepInfos?.localidade || ''}
+                  />
+                  {cepInfos?.cep && !cepInfos?.logradouro ? (
+                    <ControlledInput
+                      name="address.publicArea"
+                      label="Logradouro"
+                      rules={{
+                        validate: (value) =>
+                          (cepInfos?.cep && value !== undefined) ||
+                          'O logradouro é obrigatório',
+                      }}
+                    />
+                  ) : (
+                    <SimpleInput
+                      name="address.publicArea"
+                      label="Logradouro"
+                      contentEditable={false}
+                      value={cepInfos?.logradouro || ''}
+                    />
+                  )}
+                </AuxDataFirst>
+                <AuxDataSecond>
+                  <SimpleInput
+                    name="address.state"
+                    label="Estado"
+                    contentEditable={false}
+                    value={cepInfos?.uf || ''}
+                  />
+                  {cepInfos?.cep && !cepInfos.bairro ? (
+                    <ControlledInput name="address.district" label="Bairro" />
+                  ) : (
+                    <SimpleInput
+                      name="address.district"
+                      label="Bairro"
+                      contentEditable={false}
+                      value={cepInfos?.bairro || ''}
+                    />
+                  )}
+                  <ControlledInput
+                    name="contactNumber"
+                    label="Telefone"
+                    style={{ width: '50%' }}
+                    rules={{
+                      maxLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      minLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      required: {
+                        value: true,
+                        message: 'Um número de telefone é obrigatório',
+                      },
+                    }}
+                    required
+                    maxLength={15}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{2})(\d)/, '($1) $2')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{4})\d+?$/, '$1')}`
+                    }
+                  />
+                </AuxDataSecond>
+
                 <FormControlLabel
-                  style={{ maxWidth: 400 }}
+                  style={{ maxWidth: 310 }}
                   control={
                     <StyledCheckbox
                       checked={needLiable}
@@ -486,94 +574,6 @@ const PatientsForm = (): JSX.Element => {
                     </PersonalDataSecond>
                   </>
                 )}
-
-                <SectionDivider>Dados Auxiliares</SectionDivider>
-                <AuxDataFirst>
-                  <AsyncInput
-                    name="address.zipCode"
-                    label="CEP"
-                    onCompleteCep={handleCepComplete}
-                    inputLoading={inputLoading}
-                    defaultValue={''}
-                    maxLength={9}
-                    mask={(s: string): string =>
-                      `${s
-                        .replace(/\D/g, '')
-                        .replace(/(\d{5})(\d)/, '$1-$2')
-                        .replace(/(-\d{3})\d+?$/, '$1')}`
-                    }
-                  />
-                  <SimpleInput
-                    name="address.city"
-                    label="Cidade"
-                    contentEditable={false}
-                    value={cepInfos?.localidade || ''}
-                  />
-                  {cepInfos?.cep && !cepInfos?.logradouro ? (
-                    <ControlledInput
-                      name="address.publicArea"
-                      label="Logradouro"
-                      rules={{
-                        validate: (value) =>
-                          (cepInfos?.cep && value !== undefined) ||
-                          'O logradouro é obrigatório',
-                      }}
-                    />
-                  ) : (
-                    <SimpleInput
-                      name="address.publicArea"
-                      label="Logradouro"
-                      contentEditable={false}
-                      value={cepInfos?.logradouro || ''}
-                    />
-                  )}
-                </AuxDataFirst>
-                <AuxDataSecond>
-                  <SimpleInput
-                    name="address.state"
-                    label="Estado"
-                    contentEditable={false}
-                    value={cepInfos?.uf || ''}
-                  />
-                  {cepInfos?.cep && !cepInfos.bairro ? (
-                    <ControlledInput name="address.district" label="Bairro" />
-                  ) : (
-                    <SimpleInput
-                      name="address.district"
-                      label="Bairro"
-                      contentEditable={false}
-                      value={cepInfos?.bairro || ''}
-                    />
-                  )}
-                  <ControlledInput
-                    name="contactNumber"
-                    label="Telefone"
-                    style={{ width: '50%' }}
-                    rules={{
-                      maxLength: {
-                        value: 15,
-                        message: 'Insira um telefone válido',
-                      },
-                      minLength: {
-                        value: 15,
-                        message: 'Insira um telefone válido',
-                      },
-                      required: {
-                        value: true,
-                        message: 'Um número de telefone é obrigatório',
-                      },
-                    }}
-                    required
-                    maxLength={15}
-                    mask={(s: string): string =>
-                      `${s
-                        .replace(/\D/g, '')
-                        .replace(/(\d{2})(\d)/, '($1) $2')
-                        .replace(/(\d{5})(\d)/, '$1-$2')
-                        .replace(/(-\d{4})\d+?$/, '$1')}`
-                    }
-                  />
-                </AuxDataSecond>
               </StyledForm>
             </FormProvider>
           </div>

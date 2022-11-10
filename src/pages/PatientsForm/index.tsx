@@ -492,9 +492,8 @@ const PatientsForm = (): JSX.Element => {
                   />
                 )}
 
-                <div>
+                <div style={{ display: 'flex' }}>
                   <FormControlLabel
-                    style={{ maxWidth: 310 }}
                     control={
                       <StyledCheckbox
                         checked={needLiable}

@@ -12,6 +12,11 @@ export const Container = styled('div')`
   align-items: stretch;
 `;
 
+export const LogoContainer = styled('img')`
+  width: 100px;
+  height: auto;
+`;
+
 export const Content = styled('div')`
   height: calc(100vh - 60px);
   background-color: ${colors.BACKGREY};

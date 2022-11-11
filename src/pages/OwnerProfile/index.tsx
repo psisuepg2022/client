@@ -36,6 +36,7 @@ import AsyncInput from '@components/AsyncInput';
 import SimpleInput from '@components/SimpleInput';
 import { User } from '@models/User';
 import { AiOutlineRight } from 'react-icons/ai';
+import { showToast } from '@utils/showToast';
 
 type ProfileFormProps = {
   clinic: {
@@ -167,10 +168,8 @@ const OwnerProfile = (): JSX.Element => {
         });
       }
 
-      showAlert({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: message,
+      showToast({
+        text: `${message}`,
       });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -354,7 +353,7 @@ const OwnerProfile = (): JSX.Element => {
                           return (
                             (!isAfter(date, currenDate) &&
                               !isEqual(date, currenDate)) ||
-                            'A Data escolhida não pode ser superior ou igual à data atual'
+                            'A data escolhida não pode ser superior ou igual à data atual'
                           );
                         },
                       }}

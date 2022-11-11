@@ -43,7 +43,7 @@ export const Body = styled('div')`
   justify-content: center;
   height: 100%;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   padding: 0 1rem;
 `;
 
@@ -61,6 +61,16 @@ export const EventPrimaryText = styled(Typography)`
   font-size: 1.5rem;
   color: ${colors.TEXT};
   font-weight: 600;
+`;
+
+export const ContactNumberText = styled(Typography)`
+  font-size: 1.1rem;
+  color: ${colors.TEXT};
+  font-weight: 400;
+
+  span {
+    font-weight: 500;
+  }
 `;
 
 export const AdditionalInfos = styled('div')`

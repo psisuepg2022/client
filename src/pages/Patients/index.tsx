@@ -1,10 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  FormControl,
-  IconButton,
-  SelectChangeEvent,
-  Tooltip,
-} from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import {
   BoxHeader,
@@ -17,9 +12,6 @@ import {
   TitleAndInputs,
   ButtonsContainer,
   InputsForm,
-  StyledSelect,
-  StyledMenuItem,
-  StyledInputLabel,
   NoRowsContainer,
   NoRowsText,
 } from './styles';
@@ -33,7 +25,6 @@ import { useNavigate } from 'react-router-dom';
 import { usePatients } from '@contexts/Patients';
 import { showAlert } from '@utils/showAlert';
 import { Column } from './types';
-import { SearchFilter } from '@interfaces/SearchFilter';
 import { PageSize } from '@global/constants';
 import { colors } from '@global/colors';
 import { Patient } from '@models/Patient';
@@ -76,15 +67,27 @@ const Patients = (): JSX.Element => {
   const {
     user: { permissions },
   } = useAuth();
-  const { handleSubmit, reset } = formMethods;
+  const { handleSubmit, setValue } = formMethods;
   const navigate = useNavigate();
   const searchActive = useRef(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [category, setCategory] = useState<string>('name');
   const [page, setPage] = useState<number>(0);
-  const [filter, setFilter] = useState<SearchFilter>();
+  const [filter, setFilter] = useState<string>();
 
   useEffect(() => {
+    return () => {
+      localStorage.removeItem('@psis:goToPatient');
+    };
+  });
+
+  useEffect(() => {
+    const redirectName = localStorage.getItem('@psis:goToPatient');
+    if (redirectName && redirectName !== '') {
+      setValue('search_filter', redirectName);
+      onSubmit({ search_filter: redirectName });
+      return;
+    }
+
     if (searchActive.current) return;
     (async () => {
       try {
@@ -93,13 +96,13 @@ const Patients = (): JSX.Element => {
           await professionalPatients({
             size: PageSize,
             page,
-            filter,
+            composed: filter,
           });
         } else {
           await list({
             size: PageSize,
             page,
-            filter,
+            composed: filter,
           });
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -115,9 +118,11 @@ const Patients = (): JSX.Element => {
   }, [page]);
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
-    const searchData: SearchFilter = data as SearchFilter;
+    const searchData: { search_filter: string } = data as {
+      search_filter: string;
+    };
 
-    setFilter(searchData);
+    setFilter(searchData?.search_filter || '');
 
     setLoading(true);
     searchActive.current = true;
@@ -127,22 +132,14 @@ const Patients = (): JSX.Element => {
         await professionalPatients({
           size: PageSize,
           page: 0,
-          filter: {
-            name: searchData?.name || '',
-            CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
-            email: searchData?.email || '',
-          },
+          composed: searchData?.search_filter || '',
         });
         return;
       }
       await list({
         size: PageSize,
-        filter: {
-          name: searchData?.name || '',
-          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
-          email: searchData?.email || '',
-        },
         page: 0,
+        composed: searchData?.search_filter || '',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -190,57 +187,6 @@ const Patients = (): JSX.Element => {
     }
   };
 
-  const getSearchInput = (): JSX.Element => {
-    if (category === 'name') {
-      return (
-        <ControlledInput
-          name={category}
-          label="Nome"
-          size="medium"
-          endFunction="clear"
-        />
-      );
-    }
-
-    if (category === 'CPF') {
-      return (
-        <ControlledInput
-          name={category}
-          label={category}
-          rules={{
-            maxLength: {
-              value: 14,
-              message: 'Insira um CPF válido',
-            },
-            minLength: {
-              value: 14,
-              message: 'Insira um CPF válido',
-            },
-          }}
-          maxLength={14}
-          mask={(s: string): string =>
-            `${s
-              .replace(/\D/g, '')
-              .replace(/(\d{3})(\d)/, '$1.$2')
-              .replace(/(\d{3})(\d)/, '$1.$2')
-              .replace(/(\d{3})(\d)/, '$1-$2')
-              .replace(/(-\d{2})\d+?$/, '$1')}`
-          }
-          endFunction="clear"
-        />
-      );
-    }
-
-    return (
-      <ControlledInput
-        name={category}
-        label="Email"
-        size="medium"
-        endFunction="clear"
-      />
-    );
-  };
-
   return (
     <Container>
       <AlterTopToolbar />
@@ -251,25 +197,12 @@ const Patients = (): JSX.Element => {
               <PageTitle>Lista de Pacientes</PageTitle>
               <FormProvider {...formMethods}>
                 <InputsForm id="search" onSubmit={handleSubmit(onSubmit)}>
-                  {getSearchInput()}
-                  <FormControl>
-                    <StyledInputLabel>Categoria</StyledInputLabel>
-                    <StyledSelect
-                      name="category"
-                      label="Categoria"
-                      notched
-                      defaultValue="name"
-                      onChange={(e: SelectChangeEvent<unknown>) => {
-                        setCategory(e.target.value as string);
-                        reset();
-                      }}
-                      value={category}
-                    >
-                      <StyledMenuItem value="name">Nome</StyledMenuItem>
-                      <StyledMenuItem value="CPF">CPF</StyledMenuItem>
-                      <StyledMenuItem value="email">Email</StyledMenuItem>
-                    </StyledSelect>
-                  </FormControl>
+                  <ControlledInput
+                    name="search_filter"
+                    label="Nome, CPF ou e-mail"
+                    size="medium"
+                    endFunction="clear"
+                  />
                 </InputsForm>
               </FormProvider>
             </TitleAndInputs>

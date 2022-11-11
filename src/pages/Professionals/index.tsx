@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FormControl, SelectChangeEvent } from '@mui/material';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import {
   BoxHeader,
@@ -12,9 +11,6 @@ import {
   TitleAndInputs,
   ButtonsContainer,
   InputsForm,
-  StyledSelect,
-  StyledMenuItem,
-  StyledInputLabel,
   NoRowsContainer,
   NoRowsText,
 } from './styles';
@@ -25,7 +21,6 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { showAlert } from '@utils/showAlert';
 import { Column } from './types';
-import { SearchFilter } from '@interfaces/SearchFilter';
 import { PageSize } from '@global/constants';
 import { colors } from '@global/colors';
 import ProfessionalsTable from './table';
@@ -62,16 +57,15 @@ const Professionals = (): JSX.Element => {
   const { professionals, list, count, remove } = useProfessionals();
   const formMethods = useForm();
   const { setCurrentProfessional } = useSchedule();
-  const { handleSubmit, reset } = formMethods;
+  const { handleSubmit } = formMethods;
   const navigate = useNavigate();
   const searchActive = useRef(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [category, setCategory] = useState<string>('name');
   const [page, setPage] = useState<number>(0);
   const {
     user: { permissions },
   } = useAuth();
-  const [filter, setFilter] = useState<SearchFilter>();
+  const [filter, setFilter] = useState<string>();
 
   useEffect(() => {
     if (searchActive.current) return;
@@ -81,7 +75,7 @@ const Professionals = (): JSX.Element => {
         await list({
           size: PageSize,
           page,
-          filter,
+          composed: filter || '',
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -96,9 +90,11 @@ const Professionals = (): JSX.Element => {
   }, [page]);
 
   const onSubmit = async (data: FieldValues): Promise<void> => {
-    const searchData: SearchFilter = data as SearchFilter;
+    const searchData: { search_filter: string } = data as {
+      search_filter: string;
+    };
 
-    setFilter(searchData);
+    setFilter(searchData?.search_filter || '');
 
     setLoading(true);
     searchActive.current = true;
@@ -106,12 +102,8 @@ const Professionals = (): JSX.Element => {
     try {
       await list({
         size: PageSize,
-        filter: {
-          name: searchData?.name || '',
-          CPF: (searchData?.CPF && searchData.CPF.trim()) || '',
-          email: searchData?.email || '',
-        },
         page: 0,
+        composed: searchData?.search_filter || '',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -178,57 +170,6 @@ const Professionals = (): JSX.Element => {
     }
   };
 
-  const getSearchInput = (): JSX.Element => {
-    if (category === 'name') {
-      return (
-        <ControlledInput
-          name={category}
-          label="Nome"
-          size="medium"
-          endFunction="clear"
-        />
-      );
-    }
-
-    if (category === 'CPF') {
-      return (
-        <ControlledInput
-          name={category}
-          label={category}
-          rules={{
-            maxLength: {
-              value: 14,
-              message: 'Insira um CPF válido',
-            },
-            minLength: {
-              value: 14,
-              message: 'Insira um CPF válido',
-            },
-          }}
-          maxLength={14}
-          mask={(s: string): string =>
-            `${s
-              .replace(/\D/g, '')
-              .replace(/(\d{3})(\d)/, '$1.$2')
-              .replace(/(\d{3})(\d)/, '$1.$2')
-              .replace(/(\d{3})(\d)/, '$1-$2')
-              .replace(/(-\d{2})\d+?$/, '$1')}`
-          }
-          endFunction="clear"
-        />
-      );
-    }
-
-    return (
-      <ControlledInput
-        name={category}
-        label="Email"
-        size="medium"
-        endFunction="clear"
-      />
-    );
-  };
-
   return (
     <Container>
       <AlterTopToolbar />
@@ -239,25 +180,12 @@ const Professionals = (): JSX.Element => {
               <PageTitle>Lista de Profissionais</PageTitle>
               <FormProvider {...formMethods}>
                 <InputsForm id="search" onSubmit={handleSubmit(onSubmit)}>
-                  {getSearchInput()}
-                  <FormControl>
-                    <StyledInputLabel>Categoria</StyledInputLabel>
-                    <StyledSelect
-                      name="category"
-                      label="Categoria"
-                      notched
-                      defaultValue="name"
-                      onChange={(e: SelectChangeEvent<unknown>) => {
-                        setCategory(e.target.value as string);
-                        reset();
-                      }}
-                      value={category}
-                    >
-                      <StyledMenuItem value="name">Nome</StyledMenuItem>
-                      <StyledMenuItem value="CPF">CPF</StyledMenuItem>
-                      <StyledMenuItem value="email">Email</StyledMenuItem>
-                    </StyledSelect>
-                  </FormControl>
+                  <ControlledInput
+                    name="search_filter"
+                    label="Nome, CPF ou e-mail"
+                    size="medium"
+                    endFunction="clear"
+                  />
                 </InputsForm>
               </FormProvider>
             </TitleAndInputs>
@@ -301,7 +229,7 @@ const Professionals = (): JSX.Element => {
                 permissions.includes('DELETE_PROFESSIONAL') ||
                 permissions.includes('UPDATE_PROFESSIONAL')
                   ? columns
-                  : columns.filter((column) => column.id !== 5)
+                  : columns.filter((column) => column.id !== 4)
               }
               count={count}
               page={page}

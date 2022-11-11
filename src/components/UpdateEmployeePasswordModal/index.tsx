@@ -100,6 +100,7 @@ const UpdateEmployeePasswordModal = ({
             <Form
               id={`${randomKey}-password`}
               onSubmit={handleSubmit(onSubmit)}
+              noValidate
             >
               <ControlledInput
                 rules={{
@@ -112,6 +113,7 @@ const UpdateEmployeePasswordModal = ({
                 endFunction="password"
                 name="newPassword"
                 label="Nova senha"
+                required
               />
               <ControlledInput
                 rules={{
@@ -124,6 +126,7 @@ const UpdateEmployeePasswordModal = ({
                 endFunction="password"
                 name="confirmNewPassword"
                 label="Confirme a senha"
+                required
               />
             </Form>
           </FormProvider>

@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
   SelectChangeEvent,
+  Tooltip,
 } from '@mui/material';
 import {
   CardContainer,
@@ -328,8 +329,8 @@ const TopToolbar = ({
               end: endDate,
               title: event.title,
               resource: event?.updatedAt
-                ? `${event.resource}/${event.id}/${event.updatedAt}`
-                : `${event.resource}/${event.id}`,
+                ? `${event.resource}/${event.contactNumber}/${event.id}/${event.updatedAt}`
+                : `${event.resource}/${event.contactNumber}/${event.id}`,
             };
           }) as Event[];
 
@@ -401,13 +402,17 @@ const TopToolbar = ({
         </EarlyContent>
 
         <MiddleContent>
-          <IconButton onClick={goToBack}>
-            <AiOutlineLeft style={{ color: '#FFF', fontSize: 30 }} />
-          </IconButton>
+          <Tooltip title="Anterior">
+            <IconButton onClick={goToBack}>
+              <AiOutlineLeft style={{ color: '#FFF', fontSize: 30 }} />
+            </IconButton>
+          </Tooltip>
           {dayLabel()}
-          <IconButton onClick={goToNext}>
-            <AiOutlineRight style={{ color: '#FFF', fontSize: 30 }} />
-          </IconButton>
+          <Tooltip title="Próximo">
+            <IconButton onClick={goToNext}>
+              <AiOutlineRight style={{ color: '#FFF', fontSize: 30 }} />
+            </IconButton>
+          </Tooltip>
         </MiddleContent>
 
         <LatterContent>
@@ -469,7 +474,7 @@ const TopToolbar = ({
               Alterar Senha
             </MenuItem>
             <hr />
-            <MenuItem onClick={signOut}>Logout</MenuItem>
+            <MenuItem onClick={signOut}>Sair</MenuItem>
           </Menu>
         </LatterContent>
       </Container>

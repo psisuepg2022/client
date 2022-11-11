@@ -3,6 +3,7 @@ import {
   AdditionalInfos,
   Body,
   ButtonsContainer,
+  ContactNumberText,
   EventPrimaryText,
   Header,
   ScheduleAtDate,
@@ -16,11 +17,13 @@ import {
 } from './styles';
 import { MdOutlineClose } from 'react-icons/md';
 import { AiFillSchedule } from 'react-icons/ai';
+import { BiLinkExternal } from 'react-icons/bi';
 import { colors } from '@global/colors';
-import { CircularProgress, IconButton } from '@mui/material';
+import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { Event } from 'react-big-calendar';
 import { useSchedule } from '@contexts/Schedule';
 import {
+  contactNumberFromResource,
   idFromResource,
   statusFromResource,
   updatedAtFromResource,
@@ -29,6 +32,7 @@ import { showAlert } from '@utils/showAlert';
 import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
 import { useAuth } from '@contexts/Auth';
+import { Link } from 'react-router-dom';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -83,7 +87,7 @@ const ScheduledEventModal = ({
                 idFromResource(event.resource) === content?.id
                   ? {
                       ...event,
-                      resource: `${content?.resource}/${content?.id}/${content?.updatedAt}`,
+                      resource: `${content?.resource}/${content?.contactNumber}/${content?.id}/${content?.updatedAt}`,
                     }
                   : event
               );
@@ -145,7 +149,61 @@ const ScheduledEventModal = ({
           </IconButton>
         </Header>
         <Body>
-          <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: '0px',
+              paddingTop: '1rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+              <Tooltip title="Navegar para detalhes do paciente">
+                <Link
+                  to={{ pathname: '/patients' }}
+                  onClick={() => {
+                    localStorage.setItem(
+                      '@psis:goToPatient',
+                      `${eventInfo.title}`
+                    );
+                  }}
+                  target="_blank"
+                >
+                  <BiLinkExternal
+                    style={{
+                      color: colors.PRIMARY,
+                      paddingLeft: 5,
+                      paddingTop: 5,
+                    }}
+                    size={20}
+                  />
+                </Link>
+              </Tooltip>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ContactNumberText>
+                Contato:
+                <span>
+                  {` ${contactNumberFromResource(eventInfo.resource)}`}
+                </span>
+              </ContactNumberText>
+            </div>
+          </div>
+
           <EventPrimaryText>
             {dateFormat({
               date: eventInfo.start as Date,

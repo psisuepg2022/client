@@ -91,7 +91,7 @@ export const CommentBox = styled('div')`
   height: 50px;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr 0.8fr;
+  grid-template-columns: 1.4fr 1.2fr 0.8fr 0.6fr;
   align-items: center;
 `;
 

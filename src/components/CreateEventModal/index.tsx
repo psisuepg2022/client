@@ -133,7 +133,7 @@ const CreateEventModal = ({
         title: `${currentPatient?.name}`,
         start: slotInfo.start,
         end: slotInfo.end,
-        resource: `${savedEvent.content?.status}/${savedEvent.content?.id}/${savedEvent.content?.updatedAt}`,
+        resource: `${savedEvent.content?.status}/${currentPatient?.contactNumber}/${savedEvent.content?.id}/${savedEvent.content?.updatedAt}`,
       };
 
       addNewEvent(newAppointment);
@@ -313,33 +313,31 @@ const CreateEventModal = ({
                     />
                   </ConditionalInputs>
                 )}
-                {currentPatient &&
-                  !currentPatient.CPF &&
-                  currentPatient?.liable && (
-                    <>
-                      <SectionDivider>Responsável</SectionDivider>
+                {currentPatient && currentPatient?.liable && (
+                  <>
+                    <SectionDivider>Responsável</SectionDivider>
+                    <SimpleInput
+                      name="liable-name"
+                      label="Nome"
+                      value={currentPatient.liable.name}
+                      contentEditable={false}
+                    />
+                    <ConditionalInputs>
                       <SimpleInput
-                        name="liable-name"
-                        label="Nome"
-                        value={currentPatient.liable.name}
+                        name="CPF"
+                        label="CPF"
+                        value={currentPatient.liable.CPF}
                         contentEditable={false}
                       />
-                      <ConditionalInputs>
-                        <SimpleInput
-                          name="CPF"
-                          label="CPF"
-                          value={currentPatient.liable.CPF}
-                          contentEditable={false}
-                        />
-                        <SimpleInput
-                          name="contactNumber"
-                          label="Telefone"
-                          value={currentPatient.contactNumber}
-                          contentEditable={false}
-                        />
-                      </ConditionalInputs>
-                    </>
-                  )}
+                      <SimpleInput
+                        name="contactNumber"
+                        label="Telefone"
+                        value={currentPatient.contactNumber}
+                        contentEditable={false}
+                      />
+                    </ConditionalInputs>
+                  </>
+                )}
                 <ButtonArea>
                   <StyledButton onClick={onSubmit}>
                     {loading ? (

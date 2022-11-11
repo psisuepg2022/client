@@ -172,6 +172,7 @@ const ConcludedAppointments = (): JSX.Element => {
               flexDirection: 'column',
               justifyContent: 'space-between',
               height: '100%',
+              paddingTop: '2rem',
             }}
           >
             {comments.length === 0 ? (
@@ -199,7 +200,7 @@ const ConcludedAppointments = (): JSX.Element => {
                 {comments.map((comment) => (
                   <CommentBox key={comment.appointmentDate}>
                     <ScheduleStatus>
-                      Data:{' '}
+                      Data da consulta:{' '}
                       <span>
                         {dateFormat({
                           date: isoToDate(`${comment.appointmentDate}`),
@@ -217,10 +218,10 @@ const ConcludedAppointments = (): JSX.Element => {
                       </span>
                     </ScheduleStatus>
                     <ScheduleStatus>
-                      Agendado em: <span>{comment.scheduledAt}</span>
+                      Agendada em: <span>{comment.scheduledAt}</span>
                     </ScheduleStatus>
                     <ScheduleStatus>
-                      Concluído em: <span>{comment.completedAt}</span>
+                      Concluída em: <span>{comment.completedAt}</span>
                     </ScheduleStatus>
                     <Tooltip title="Abrir anotação">
                       <IconButton

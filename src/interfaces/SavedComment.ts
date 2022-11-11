@@ -5,4 +5,10 @@ export type SavedComment = {
   text: string;
   updatedAt: string;
   status: EventStatus;
+  hasSameTimeToNextWeek: {
+    patientId: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+  } | null;
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AlterTopToolbar from '@components/AlterTopToolbar';
 import { Event } from 'react-big-calendar';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -14,7 +14,7 @@ import {
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { useSchedule } from '@contexts/Schedule';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -27,6 +27,8 @@ import { idFromResource } from '@utils/schedule';
 import TextEditor from '@components/TextEditor';
 import { MdModeEdit } from 'react-icons/md';
 import { useComments } from '@contexts/Comments';
+import { showToast } from '@utils/showToast';
+import { colors } from '@global/colors';
 
 const Comment = (): JSX.Element => {
   const { state }: { state: Event } = useLocation() as { state: Event };
@@ -38,7 +40,10 @@ const Comment = (): JSX.Element => {
   const { create } = useComments();
   const [loading, setLoading] = useState<boolean>(true);
   const [comment, setComment] = useState<string>('');
+  const [initialComment, setInitialComment] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [editorId, setEditorId] = useState<string>(`${Math.random()}`);
+  const changesRef = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -49,6 +54,7 @@ const Comment = (): JSX.Element => {
         const purifiedComment = DOMPurify.sanitize(content?.comments || '');
 
         setComment(`${parse(purifiedComment)}`);
+        setInitialComment(`${parse(purifiedComment)}`);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         showAlert({
@@ -68,6 +74,69 @@ const Comment = (): JSX.Element => {
     })();
   }, [state.resource]);
 
+  const commentAltered = (): void => {
+    changesRef.current = true;
+  };
+
+  const editAction = (): void => {
+    if (changesRef.current) {
+      showAlert({
+        title: 'Atenção!',
+        icon: 'warning',
+        text: 'Existem alterações não salvas, clique em "CANCELAR" para voltar à edição e salvar, ou clique em "NÃO SALVAR" para descartar as alterações.',
+        allowOutsideClick: false,
+        showCancelButton: true,
+        cancelButtonColor: colors.BACKGREY,
+        cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
+        confirmButtonText: 'NÃO SALVAR',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          setComment(initialComment);
+          setEditorId(`${Math.random()}`);
+          changesRef.current = false;
+          setEditMode(false);
+          return;
+        }
+        if (result.isDismissed) {
+          setEditMode(true);
+          return;
+        }
+      });
+      return;
+    }
+    setEditMode((prev) => !prev);
+  };
+
+  const goBackAction = (): void => {
+    if (changesRef.current) {
+      showAlert({
+        title: 'Atenção!',
+        icon: 'warning',
+        text: 'Existem alterações não salvas, clique em "CANCELAR" para voltar à edição e salvar, ou clique em "NÃO SALVAR" para descartar as alterações e voltar.',
+        allowOutsideClick: false,
+        showCancelButton: true,
+        cancelButtonColor: colors.BACKGREY,
+        cancelButtonText: '<span style="color: #000;"> CANCELAR</span>',
+        confirmButtonText: 'NÃO SALVAR',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          setComment(initialComment);
+          setEditorId(`${Math.random()}`);
+          changesRef.current = false;
+          setEditMode(false);
+          navigate(-1);
+          return;
+        }
+        if (result.isDismissed) {
+          setEditMode(true);
+          return;
+        }
+      });
+      return;
+    }
+    navigate(-1);
+  };
+
   const saveComment = async (text: string) => {
     try {
       const appointmentId = idFromResource(state.resource);
@@ -79,8 +148,13 @@ const Comment = (): JSX.Element => {
           icon: 'error',
           text: 'Ocorreu um problema ao atualizar a consulta',
         });
+      } else {
+        showToast({
+          text: 'Operação realizada com sucesso!',
+        });
       }
 
+      changesRef.current = false;
       setEditMode(false);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -119,7 +193,7 @@ const Comment = (): JSX.Element => {
         <CustomBox>
           <BoxHeader>
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <IconButton onClick={() => navigate(-1)}>
+              <IconButton onClick={goBackAction}>
                 <AiOutlineLeft size={40} />
               </IconButton>
               <CommentsTitle>Anotações</CommentsTitle>
@@ -149,17 +223,21 @@ const Comment = (): JSX.Element => {
                 })}
               </AppointmentDate>
             </div>
-            <IconButton
-              onClick={() => setEditMode((prev) => !prev)}
-              style={{ justifySelf: 'flex-end' }}
-            >
-              <MdModeEdit size={40} />
-            </IconButton>
+            <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
+              <IconButton
+                onClick={editAction}
+                style={{ justifySelf: 'flex-end' }}
+              >
+                <MdModeEdit size={40} />
+              </IconButton>
+            </Tooltip>
           </BoxHeader>
           <TextEditor
+            key={editorId}
             comment={comment}
             readOnly={!editMode}
             saveComment={saveComment}
+            commentAltered={commentAltered}
           />
         </CustomBox>
       </Content>

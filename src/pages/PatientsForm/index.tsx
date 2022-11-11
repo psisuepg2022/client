@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, FormControlLabel } from '@mui/material';
+import { CircularProgress, FormControlLabel, IconButton } from '@mui/material';
 import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -40,6 +40,11 @@ import { MartitalStatus } from '@interfaces/MaritalStatus';
 import { Gender } from '@interfaces/Gender';
 import { CepInfos } from '@interfaces/CepInfos';
 import { showToast } from '@utils/showToast';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
+import { colors } from '@global/colors';
+import AuxDataHelpModal from '@components/AuxDataHelpModal';
+import LiableHelpModal from '@components/LiableHelpModal';
+import PersonalDataHelpModal from '@components/PersonalDataHelpModal';
 
 type FormProps = {
   name: string;
@@ -104,6 +109,10 @@ const PatientsForm = (): JSX.Element => {
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const [personalDataHelpModal, setPersonalDataHelpModal] =
+    useState<boolean>(false);
+  const [auxDataHelpModal, setAuxDataHelpModal] = useState<boolean>(false);
+  const [liableHelpModal, setLiableHelpModal] = useState<boolean>(false);
   const { liable } = useWatch({ control });
 
   useEffect(() => {
@@ -265,7 +274,26 @@ const PatientsForm = (): JSX.Element => {
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
               >
-                <SectionDivider>Dados Pessoais</SectionDivider>
+                {personalDataHelpModal && (
+                  <PersonalDataHelpModal
+                    open={personalDataHelpModal}
+                    handleClose={() => setPersonalDataHelpModal(false)}
+                  />
+                )}
+                <SectionDivider
+                  help={
+                    <IconButton
+                      style={{ marginLeft: 5 }}
+                      onClick={() => setPersonalDataHelpModal(true)}
+                    >
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
+                  }
+                >
+                  Dados Pessoais
+                </SectionDivider>
                 <PersonalDataFirst>
                   <ControlledInput
                     rules={{
@@ -328,7 +356,7 @@ const PatientsForm = (): JSX.Element => {
                         return (
                           (!isAfter(date, currenDate) &&
                             !isEqual(date, currenDate)) ||
-                          'A Data escolhida não pode ser superior ou igual à data atual'
+                          'A data escolhida não pode ser superior ou igual à data atual'
                         );
                       },
                     }}
@@ -372,17 +400,137 @@ const PatientsForm = (): JSX.Element => {
                   </ControlledSelect>
                 </PersonalDataSecond>
 
-                <FormControlLabel
-                  style={{ maxWidth: 400 }}
-                  control={
-                    <StyledCheckbox
-                      checked={needLiable}
-                      onChange={() => setNeedLiable((prev) => !prev)}
-                      inputProps={{ 'aria-label': 'controlled' }}
-                    />
+                {auxDataHelpModal && (
+                  <AuxDataHelpModal
+                    open={auxDataHelpModal}
+                    handleClose={() => setAuxDataHelpModal(false)}
+                  />
+                )}
+                <SectionDivider
+                  help={
+                    <IconButton
+                      style={{ marginLeft: 5 }}
+                      onClick={() => setAuxDataHelpModal(true)}
+                    >
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
                   }
-                  label="Paciente precisa de responsável"
-                />
+                >
+                  Dados Auxiliares
+                </SectionDivider>
+                <AuxDataFirst>
+                  <AsyncInput
+                    name="address.zipCode"
+                    label="CEP"
+                    onCompleteCep={handleCepComplete}
+                    inputLoading={inputLoading}
+                    defaultValue={''}
+                    maxLength={9}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{3})\d+?$/, '$1')}`
+                    }
+                  />
+                  <SimpleInput
+                    name="address.city"
+                    label="Cidade"
+                    contentEditable={false}
+                    value={cepInfos?.localidade || ''}
+                  />
+                  {cepInfos?.cep && !cepInfos?.logradouro ? (
+                    <ControlledInput
+                      name="address.publicArea"
+                      label="Logradouro"
+                      rules={{
+                        validate: (value) =>
+                          (cepInfos?.cep && value !== undefined) ||
+                          'O logradouro é obrigatório',
+                      }}
+                    />
+                  ) : (
+                    <SimpleInput
+                      name="address.publicArea"
+                      label="Logradouro"
+                      contentEditable={false}
+                      value={cepInfos?.logradouro || ''}
+                    />
+                  )}
+                </AuxDataFirst>
+                <AuxDataSecond>
+                  <SimpleInput
+                    name="address.state"
+                    label="Estado"
+                    contentEditable={false}
+                    value={cepInfos?.uf || ''}
+                  />
+                  {cepInfos?.cep && !cepInfos.bairro ? (
+                    <ControlledInput name="address.district" label="Bairro" />
+                  ) : (
+                    <SimpleInput
+                      name="address.district"
+                      label="Bairro"
+                      contentEditable={false}
+                      value={cepInfos?.bairro || ''}
+                    />
+                  )}
+                  <ControlledInput
+                    name="contactNumber"
+                    label="Telefone"
+                    style={{ width: '50%' }}
+                    rules={{
+                      maxLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      minLength: {
+                        value: 15,
+                        message: 'Insira um telefone válido',
+                      },
+                      required: {
+                        value: true,
+                        message: 'Um número de telefone é obrigatório',
+                      },
+                    }}
+                    required
+                    maxLength={15}
+                    mask={(s: string): string =>
+                      `${s
+                        .replace(/\D/g, '')
+                        .replace(/(\d{2})(\d)/, '($1) $2')
+                        .replace(/(\d{5})(\d)/, '$1-$2')
+                        .replace(/(-\d{4})\d+?$/, '$1')}`
+                    }
+                  />
+                </AuxDataSecond>
+
+                {liableHelpModal && (
+                  <LiableHelpModal
+                    open={liableHelpModal}
+                    handleClose={() => setLiableHelpModal(false)}
+                  />
+                )}
+
+                <div style={{ display: 'flex' }}>
+                  <FormControlLabel
+                    control={
+                      <StyledCheckbox
+                        checked={needLiable}
+                        onChange={() => setNeedLiable((prev) => !prev)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    }
+                    label="Paciente precisa de responsável"
+                  />
+                  <IconButton onClick={() => setLiableHelpModal(true)}>
+                    <AiOutlineQuestionCircle
+                      style={{ color: colors.PRIMARY }}
+                    />
+                  </IconButton>
+                </div>
 
                 {needLiable && (
                   <>
@@ -478,7 +626,7 @@ const PatientsForm = (): JSX.Element => {
                             return (
                               !isAfter(date, currenDate) ||
                               isEqual(date, currenDate) ||
-                              'A Data escolhida não pode ser superior ou igual à data atual'
+                              'A data escolhida não pode ser superior ou igual à data atual'
                             );
                           },
                         }}
@@ -486,94 +634,6 @@ const PatientsForm = (): JSX.Element => {
                     </PersonalDataSecond>
                   </>
                 )}
-
-                <SectionDivider>Dados Auxiliares</SectionDivider>
-                <AuxDataFirst>
-                  <AsyncInput
-                    name="address.zipCode"
-                    label="CEP"
-                    onCompleteCep={handleCepComplete}
-                    inputLoading={inputLoading}
-                    defaultValue={''}
-                    maxLength={9}
-                    mask={(s: string): string =>
-                      `${s
-                        .replace(/\D/g, '')
-                        .replace(/(\d{5})(\d)/, '$1-$2')
-                        .replace(/(-\d{3})\d+?$/, '$1')}`
-                    }
-                  />
-                  <SimpleInput
-                    name="address.city"
-                    label="Cidade"
-                    contentEditable={false}
-                    value={cepInfos?.localidade || ''}
-                  />
-                  {cepInfos?.cep && !cepInfos?.logradouro ? (
-                    <ControlledInput
-                      name="address.publicArea"
-                      label="Logradouro"
-                      rules={{
-                        validate: (value) =>
-                          (cepInfos?.cep && value !== undefined) ||
-                          'O logradouro é obrigatório',
-                      }}
-                    />
-                  ) : (
-                    <SimpleInput
-                      name="address.publicArea"
-                      label="Logradouro"
-                      contentEditable={false}
-                      value={cepInfos?.logradouro || ''}
-                    />
-                  )}
-                </AuxDataFirst>
-                <AuxDataSecond>
-                  <SimpleInput
-                    name="address.state"
-                    label="Estado"
-                    contentEditable={false}
-                    value={cepInfos?.uf || ''}
-                  />
-                  {cepInfos?.cep && !cepInfos.bairro ? (
-                    <ControlledInput name="address.district" label="Bairro" />
-                  ) : (
-                    <SimpleInput
-                      name="address.district"
-                      label="Bairro"
-                      contentEditable={false}
-                      value={cepInfos?.bairro || ''}
-                    />
-                  )}
-                  <ControlledInput
-                    name="contactNumber"
-                    label="Telefone"
-                    style={{ width: '50%' }}
-                    rules={{
-                      maxLength: {
-                        value: 15,
-                        message: 'Insira um telefone válido',
-                      },
-                      minLength: {
-                        value: 15,
-                        message: 'Insira um telefone válido',
-                      },
-                      required: {
-                        value: true,
-                        message: 'Um número de telefone é obrigatório',
-                      },
-                    }}
-                    required
-                    maxLength={15}
-                    mask={(s: string): string =>
-                      `${s
-                        .replace(/\D/g, '')
-                        .replace(/(\d{2})(\d)/, '($1) $2')
-                        .replace(/(\d{5})(\d)/, '$1-$2')
-                        .replace(/(-\d{4})\d+?$/, '$1')}`
-                    }
-                  />
-                </AuxDataSecond>
               </StyledForm>
             </FormProvider>
           </div>

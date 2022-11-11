@@ -43,7 +43,7 @@ export const Body = styled('div')`
   justify-content: center;
   height: 100%;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   padding: 0 1rem;
 `;
 
@@ -80,6 +80,16 @@ export const ScheduleAtText = styled('div')`
 
 export const ScheduleAtDate = styled('div')`
   font-weight: 500;
+`;
+
+export const ContactNumberText = styled(Typography)`
+  font-size: 1.1rem;
+  color: ${colors.TEXT};
+  font-weight: 400;
+
+  span {
+    font-weight: 500;
+  }
 `;
 
 export const ButtonsContainer = styled('div')`

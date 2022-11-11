@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import {
   AdditionalInfos,
   Body,
@@ -78,19 +78,35 @@ const CancelledAbsenceEventModal = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
-            <Link
-              to={{ pathname: '/patients' }}
-              onClick={() => {
-                localStorage.setItem('@psis:goToPatient', `${eventInfo.title}`);
-              }}
-              target="_blank"
-            >
-              <IconButton>
-                <BiLinkExternal style={{ color: colors.PRIMARY }} />
-              </IconButton>
-            </Link>
+            <Tooltip title="Navegar para detalhes do paciente">
+              <Link
+                to={{ pathname: '/patients' }}
+                onClick={() => {
+                  localStorage.setItem(
+                    '@psis:goToPatient',
+                    `${eventInfo.title}`
+                  );
+                }}
+                target="_blank"
+              >
+                <BiLinkExternal
+                  style={{
+                    color: colors.PRIMARY,
+                    paddingLeft: 5,
+                    paddingTop: 5,
+                  }}
+                  size={20}
+                />
+              </Link>
+            </Tooltip>
           </div>
           <EventPrimaryText>
             {dateFormat({

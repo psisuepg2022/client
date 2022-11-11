@@ -3,6 +3,7 @@ import {
   AdditionalInfos,
   Body,
   ButtonsContainer,
+  ContactNumberText,
   EventPrimaryText,
   Header,
   ScheduleAtDate,
@@ -18,7 +19,11 @@ import { AiFillSchedule } from 'react-icons/ai';
 import { colors } from '@global/colors';
 import { IconButton, Tooltip } from '@mui/material';
 import { Event } from 'react-big-calendar';
-import { statusFromResource, updatedAtFromResource } from '@utils/schedule';
+import {
+  contactNumberFromResource,
+  statusFromResource,
+  updatedAtFromResource,
+} from '@utils/schedule';
 import { dateFormat } from '@utils/dateFormat';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@contexts/Auth';
@@ -87,19 +92,59 @@ const ConcludedEventModal = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
-            <Link
-              to={{ pathname: '/patients' }}
-              onClick={() => {
-                localStorage.setItem('@psis:goToPatient', `${eventInfo.title}`);
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: '0px',
+              paddingTop: '1rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
-              target="_blank"
             >
-              <IconButton>
-                <BiLinkExternal style={{ color: colors.PRIMARY }} />
-              </IconButton>
-            </Link>
+              <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+              <Tooltip title="Navegar para detalhes do paciente">
+                <Link
+                  to={{ pathname: '/patients' }}
+                  onClick={() => {
+                    localStorage.setItem(
+                      '@psis:goToPatient',
+                      `${eventInfo.title}`
+                    );
+                  }}
+                  target="_blank"
+                >
+                  <BiLinkExternal
+                    style={{
+                      color: colors.PRIMARY,
+                      paddingLeft: 5,
+                      paddingTop: 5,
+                    }}
+                    size={20}
+                  />
+                </Link>
+              </Tooltip>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ContactNumberText>
+                Contato:
+                <span>
+                  {` ${contactNumberFromResource(eventInfo.resource)}`}
+                </span>
+              </ContactNumberText>
+            </div>
           </div>
           <EventPrimaryText>
             {dateFormat({

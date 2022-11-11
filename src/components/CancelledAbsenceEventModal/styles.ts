@@ -43,7 +43,7 @@ export const Body = styled('div')`
   justify-content: center;
   height: 100%;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   padding: 0 1rem;
 `;
 

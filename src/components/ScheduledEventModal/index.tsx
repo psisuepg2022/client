@@ -16,7 +16,7 @@ import {
   StyledModal,
 } from './styles';
 import { MdOutlineClose } from 'react-icons/md';
-import { AiFillSchedule } from 'react-icons/ai';
+import { AiFillSchedule, AiOutlineWhatsApp } from 'react-icons/ai';
 import { BiLinkExternal } from 'react-icons/bi';
 import { colors } from '@global/colors';
 import { CircularProgress, IconButton, Tooltip } from '@mui/material';
@@ -128,6 +128,9 @@ const ScheduledEventModal = ({
     });
   };
 
+  const contactNumberToWhatsapp = (contactNumber: string): string =>
+    `55${contactNumber.replace(/\D/g, '')}`;
+
   return (
     <StyledModal
       open={open}
@@ -201,6 +204,17 @@ const ScheduledEventModal = ({
                   {` ${contactNumberFromResource(eventInfo.resource)}`}
                 </span>
               </ContactNumberText>
+              <IconButton>
+                <a
+                  href={`https://wa.me/${contactNumberToWhatsapp(
+                    contactNumberFromResource(eventInfo.resource)
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <AiOutlineWhatsApp style={{ color: colors.WHATSAPP }} />
+                </a>
+              </IconButton>
             </div>
           </div>
 

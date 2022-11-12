@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -31,6 +31,9 @@ import { CepInfos } from '@interfaces/CepInfos';
 import { useEmployees } from '@contexts/Employees';
 import { Employee, FormEmployee } from '@models/Employee';
 import { showToast } from '@utils/showToast';
+import AuxDataHelpModal from '@components/AuxDataHelpModal';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
+import { colors } from '@global/colors';
 
 type FormProps = {
   name: string;
@@ -71,6 +74,7 @@ const EmployeesForm = (): JSX.Element => {
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const [auxDataHelpModal, setAuxDataHelpModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (employeeToEdit && employeeToEdit.address) {
@@ -279,7 +283,26 @@ const EmployeesForm = (): JSX.Element => {
                   )}
                 </PersonalDataSecond>
 
-                <SectionDivider>Dados Auxiliares</SectionDivider>
+                {auxDataHelpModal && (
+                  <AuxDataHelpModal
+                    open={auxDataHelpModal}
+                    handleClose={() => setAuxDataHelpModal(false)}
+                  />
+                )}
+                <SectionDivider
+                  help={
+                    <IconButton
+                      style={{ marginLeft: 5 }}
+                      onClick={() => setAuxDataHelpModal(true)}
+                    >
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
+                  }
+                >
+                  Dados Auxiliares
+                </SectionDivider>
                 <AuxDataFirst>
                   <AsyncInput
                     name="address.zipCode"

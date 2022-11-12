@@ -107,7 +107,7 @@ const ControlledAutocompleteInput = ({
               : 'Insira no mínimo 3 caracteres para buscar'
           }
           filterOptions={(x) => x}
-          isOptionEqualToValue={(option, value) => option.name === value.name}
+          isOptionEqualToValue={(option, value) => option.name === value}
           getOptionLabel={(option) => `${(option as Person).name || option}`}
           onInputChange={(e, value, reason) => {
             if (reason === 'input') {
@@ -118,6 +118,7 @@ const ControlledAutocompleteInput = ({
             selectCallback(value);
             if (reason === 'clear') {
               if (cleanseAfterSelect) cleanseAfterSelect();
+              alreadyUsed.current = false;
               setOptions([]);
             }
           }}
@@ -132,7 +133,6 @@ const ControlledAutocompleteInput = ({
             </Box>
           )}
           selectOnFocus
-          freeSolo
           renderInput={(params) => (
             <StyledTextfield
               {...params}

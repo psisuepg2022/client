@@ -18,7 +18,7 @@ export const Container = styled('div')`
   left: 0;
   transition: 850ms;
   background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
-  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.48);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 `;
 
 export const CollapsedContainer = styled('div')`
@@ -32,7 +32,7 @@ export const CollapsedContainer = styled('div')`
   left: 0;
   transition: 850ms;
   background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
-  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.48);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 `;
 
 export const Header = styled('div')`

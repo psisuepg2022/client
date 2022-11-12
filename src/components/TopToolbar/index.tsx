@@ -493,6 +493,7 @@ const TopToolbar = ({
               name={professional.name}
               selected={professional.id === currentProfessional?.id}
               onSelect={() => onChangeProfessional(professional)}
+              professionals
             />
           ))}
         </CardContainer>

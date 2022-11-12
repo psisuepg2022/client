@@ -236,7 +236,7 @@ const ConcludedAppointments = (): JSX.Element => {
                             state: {
                               start: comment.appointmentDate,
                               title: state.name,
-                              resource: `CONCLUDED/${comment.id}`,
+                              resource: `CONCLUDED/${state.contactNumber}/${comment.id}`,
                             },
                           });
                         }}

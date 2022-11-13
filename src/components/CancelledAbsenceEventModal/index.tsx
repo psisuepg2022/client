@@ -3,8 +3,10 @@ import { IconButton, Tooltip } from '@mui/material';
 import {
   AdditionalInfos,
   Body,
+  ContactNumberText,
   EventPrimaryText,
   Header,
+  IconButtonArea,
   ScheduleAtDate,
   ScheduleAtText,
   ScheduledAtContainer,
@@ -14,12 +16,17 @@ import {
 } from './styles';
 import { MdOutlineClose } from 'react-icons/md';
 import { colors } from '@global/colors';
-import { statusFromResource, updatedAtFromResource } from '@utils/schedule';
+import {
+  contactNumberFromResource,
+  statusFromResource,
+  updatedAtFromResource,
+} from '@utils/schedule';
 import { Event } from 'react-big-calendar';
 import { dateFormat } from '@utils/dateFormat';
-import { AiFillSchedule } from 'react-icons/ai';
+import { AiFillSchedule, AiOutlineWhatsApp } from 'react-icons/ai';
 import { BiLinkExternal } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
+import { contactNumberToWhatsapp } from '@utils/whatsappContact';
 
 type CancelledAbsenceEventModalProps = {
   open: boolean;
@@ -81,32 +88,72 @@ const CancelledAbsenceEventModal = ({
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
+              flexDirection: 'column',
               justifyContent: 'center',
+              gap: '0px',
+              paddingTop: '1rem',
             }}
           >
-            <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
-            <Tooltip title="Navegar para detalhes do paciente">
-              <Link
-                to={{ pathname: '/patients' }}
-                onClick={() => {
-                  localStorage.setItem(
-                    '@psis:goToPatient',
-                    `${eventInfo.title}`
-                  );
-                }}
-                target="_blank"
-              >
-                <BiLinkExternal
-                  style={{
-                    color: colors.PRIMARY,
-                    paddingLeft: 5,
-                    paddingTop: 5,
-                  }}
-                  size={20}
-                />
-              </Link>
-            </Tooltip>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
+              <Tooltip title="Navegar para detalhes do paciente">
+                <IconButtonArea>
+                  <Link
+                    to={{ pathname: '/patients' }}
+                    onClick={() => {
+                      localStorage.setItem(
+                        '@psis:goToPatient',
+                        `${eventInfo.title}`
+                      );
+                    }}
+                    style={{ height: '20px', width: '20px' }}
+                    target="_blank"
+                  >
+                    <BiLinkExternal
+                      style={{
+                        color: colors.PRIMARY,
+                      }}
+                      size={20}
+                    />
+                  </Link>
+                </IconButtonArea>
+              </Tooltip>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 10,
+              }}
+            >
+              <ContactNumberText>
+                Contato:
+                <span>
+                  {` ${contactNumberFromResource(eventInfo.resource)}`}
+                </span>
+              </ContactNumberText>
+              <Tooltip title="Utilize este número diretamente no WhatsApp">
+                <IconButton>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://wa.me/${contactNumberToWhatsapp(
+                      contactNumberFromResource(eventInfo.resource)
+                    )}`}
+                    style={{ height: '1em', width: '1em' }}
+                  >
+                    <AiOutlineWhatsApp style={{ color: colors.WHATSAPP }} />
+                  </a>
+                </IconButton>
+              </Tooltip>
+            </div>
           </div>
           <EventPrimaryText>
             {dateFormat({

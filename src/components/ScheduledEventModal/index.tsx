@@ -6,6 +6,7 @@ import {
   ContactNumberText,
   EventPrimaryText,
   Header,
+  IconButtonArea,
   ScheduleAtDate,
   ScheduleAtText,
   ScheduledAtContainer,
@@ -33,6 +34,7 @@ import { dateFormat } from '@utils/dateFormat';
 import { isAfter } from 'date-fns';
 import { useAuth } from '@contexts/Auth';
 import { Link } from 'react-router-dom';
+import { contactNumberToWhatsapp } from '@utils/whatsappContact';
 
 type ScheduledEventModalProps = {
   open: boolean;
@@ -128,9 +130,6 @@ const ScheduledEventModal = ({
     });
   };
 
-  const contactNumberToWhatsapp = (contactNumber: string): string =>
-    `55${contactNumber.replace(/\D/g, '')}`;
-
   return (
     <StyledModal
       open={open}
@@ -170,25 +169,26 @@ const ScheduledEventModal = ({
             >
               <EventPrimaryText>{eventInfo.title}</EventPrimaryText>
               <Tooltip title="Navegar para detalhes do paciente">
-                <Link
-                  to={{ pathname: '/patients' }}
-                  onClick={() => {
-                    localStorage.setItem(
-                      '@psis:goToPatient',
-                      `${eventInfo.title}`
-                    );
-                  }}
-                  target="_blank"
-                >
-                  <BiLinkExternal
-                    style={{
-                      color: colors.PRIMARY,
-                      paddingLeft: 5,
-                      paddingTop: 5,
+                <IconButtonArea>
+                  <Link
+                    to={{ pathname: '/patients' }}
+                    onClick={() => {
+                      localStorage.setItem(
+                        '@psis:goToPatient',
+                        `${eventInfo.title}`
+                      );
                     }}
-                    size={20}
-                  />
-                </Link>
+                    style={{ height: '20px', width: '20px' }}
+                    target="_blank"
+                  >
+                    <BiLinkExternal
+                      style={{
+                        color: colors.PRIMARY,
+                      }}
+                      size={20}
+                    />
+                  </Link>
+                </IconButtonArea>
               </Tooltip>
             </div>
             <div
@@ -196,6 +196,7 @@ const ScheduledEventModal = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                gap: 10,
               }}
             >
               <ContactNumberText>
@@ -204,17 +205,20 @@ const ScheduledEventModal = ({
                   {` ${contactNumberFromResource(eventInfo.resource)}`}
                 </span>
               </ContactNumberText>
-              <IconButton>
-                <a
-                  href={`https://wa.me/${contactNumberToWhatsapp(
-                    contactNumberFromResource(eventInfo.resource)
-                  )}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <AiOutlineWhatsApp style={{ color: colors.WHATSAPP }} />
-                </a>
-              </IconButton>
+              <Tooltip title="Utilize este número diretamente no WhatsApp">
+                <IconButton>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://wa.me/${contactNumberToWhatsapp(
+                      contactNumberFromResource(eventInfo.resource)
+                    )}`}
+                    style={{ height: '1em', width: '1em' }}
+                  >
+                    <AiOutlineWhatsApp style={{ color: colors.WHATSAPP }} />
+                  </a>
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
 

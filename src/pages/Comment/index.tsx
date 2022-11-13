@@ -174,10 +174,9 @@ const Comment = (): JSX.Element => {
 
       const appointmentId = idFromResource(state.resource);
 
-      const { content } = await generatePDF(appointmentId);
+      const fileURL = await generatePDF(appointmentId);
 
-      console.log('DATA', content);
-      //window.open(content?.data, '_blank');
+      window.open(fileURL, '_blank');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

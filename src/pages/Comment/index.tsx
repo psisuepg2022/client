@@ -25,7 +25,7 @@ import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
 import TextEditor from '@components/TextEditor';
-import { MdModeEdit } from 'react-icons/md';
+import { MdModeEdit, MdOutlinePictureAsPdf } from 'react-icons/md';
 import { useComments } from '@contexts/Comments';
 import { showToast } from '@utils/showToast';
 import { colors } from '@global/colors';
@@ -37,7 +37,7 @@ const Comment = (): JSX.Element => {
     user: { baseDuration },
   } = useAuth();
   const { getById } = useSchedule();
-  const { create } = useComments();
+  const { create, generatePDF } = useComments();
   const [loading, setLoading] = useState<boolean>(true);
   const [comment, setComment] = useState<string>('');
   const [initialComment, setInitialComment] = useState<string>('');
@@ -168,6 +168,30 @@ const Comment = (): JSX.Element => {
     }
   };
 
+  const exportToPDF = async (): Promise<void> => {
+    try {
+      setLoading(true);
+
+      const appointmentId = idFromResource(state.resource);
+
+      const { content } = await generatePDF(appointmentId);
+
+      console.log('DATA', content);
+      //window.open(content?.data, '_blank');
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      showAlert({
+        icon: 'error',
+        text:
+          e?.response?.data?.message ||
+          'Ocorreu um problema ao exportar a anotação',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading)
     return (
       <div
@@ -223,14 +247,25 @@ const Comment = (): JSX.Element => {
                 })}
               </AppointmentDate>
             </div>
-            <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
-              <IconButton
-                onClick={editAction}
-                style={{ justifySelf: 'flex-end' }}
-              >
-                <MdModeEdit size={40} />
-              </IconButton>
-            </Tooltip>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <Tooltip title="Exportar PDF">
+                <IconButton
+                  onClick={exportToPDF}
+                  style={{ justifySelf: 'flex-end' }}
+                >
+                  <MdOutlinePictureAsPdf size={40} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
+                <IconButton
+                  onClick={editAction}
+                  style={{ justifySelf: 'flex-end' }}
+                >
+                  <MdModeEdit size={40} />
+                </IconButton>
+              </Tooltip>
+            </div>
           </BoxHeader>
           <TextEditor
             key={editorId}

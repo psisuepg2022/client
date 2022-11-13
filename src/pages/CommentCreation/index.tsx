@@ -95,7 +95,7 @@ const CommentCreation = (): JSX.Element => {
               showAlert({
                 title: 'Sucesso!',
                 icon: 'success',
-                text: message,
+                text: `${message} Após o redirecionamento esta anotação poderá ser exportada para um arquivo PDF.`,
                 allowOutsideClick: false,
                 confirmButtonText: 'RETORNAR À AGENDA',
               }).then(async (result) => {
@@ -118,7 +118,17 @@ const CommentCreation = (): JSX.Element => {
             return;
           }
           if (result.isDismissed) {
-            navigate('/schedule');
+            showAlert({
+              title: 'Sucesso!',
+              icon: 'success',
+              text: 'Após o redirecionamento esta anotação poderá ser exportada para um arquivo PDF.',
+              allowOutsideClick: false,
+              confirmButtonText: 'RETORNAR À AGENDA',
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                navigate('/schedule');
+              }
+            });
             return;
           }
         });
@@ -128,7 +138,7 @@ const CommentCreation = (): JSX.Element => {
       showAlert({
         title: 'Sucesso!',
         icon: 'success',
-        text: message,
+        text: `${message} Após o redirecionamento esta anotação poderá ser exportada para um arquivo PDF.`,
         allowOutsideClick: false,
         confirmButtonText: 'RETORNAR À AGENDA',
       }).then(async (result) => {

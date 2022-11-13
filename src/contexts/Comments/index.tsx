@@ -4,6 +4,7 @@ import { api } from '@service/index';
 import { ItemList } from '@interfaces/ItemList';
 import { SavedComment } from '@interfaces/SavedComment';
 import { ReadComments } from '@interfaces/ReadComments';
+import { PDFExport } from '@interfaces/PDFExport';
 
 type ListProps = {
   page?: number;
@@ -20,6 +21,7 @@ type CommentsContextData = {
     appointmentId: string,
     text: string
   ) => Promise<Response<SavedComment>>;
+  generatePDF: (appointmentId: string) => Promise<Response<PDFExport>>;
   comments: ReadComments[];
   count: number;
 };
@@ -73,12 +75,23 @@ export const CommentsProvider: React.FC<CommentsProviderProps> = ({
     return data;
   };
 
+  const generatePDF = async (
+    appointmentId: string
+  ): Promise<Response<PDFExport>> => {
+    const { data }: { data: Response<PDFExport> } = await api.get(
+      `comment/pdf/${appointmentId}`
+    );
+
+    return data;
+  };
+
   return (
     <CommentsContext.Provider
       value={{
         list,
         create,
         comments,
+        generatePDF,
         count,
       }}
     >

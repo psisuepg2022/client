@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, IconButton, Typography } from '@mui/material';
+import {
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -234,14 +239,16 @@ const ProfessionalProfile = (): JSX.Element => {
                 {name.split(' ')[0]}
               </Typography>
             </div>
-            <IconButton
-              disabled={loading || inputLoading || saveLoading}
-              onClick={() => navigate('/profile/professional_schedule')}
-            >
-              <AiOutlineClockCircle
-                style={{ color: colors.PRIMARY, fontSize: '2.5rem' }}
-              />
-            </IconButton>
+            <Tooltip title="Horários de atendimento">
+              <IconButton
+                disabled={loading || inputLoading || saveLoading}
+                onClick={() => navigate('/profile/professional_schedule')}
+              >
+                <AiOutlineClockCircle
+                  style={{ color: colors.PRIMARY, fontSize: '2.5rem' }}
+                />
+              </IconButton>
+            </Tooltip>
           </Header>
 
           <FormProvider {...formMethods}>

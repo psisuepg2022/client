@@ -1,4 +1,5 @@
 .ql-container {
   font-size: 1.2rem !important;
   font-family: Poppins !important;
+  max-height: 60vh !important;
 }

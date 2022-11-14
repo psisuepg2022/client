@@ -55,6 +55,7 @@ const ConcludedAppointments = (): JSX.Element => {
   });
   const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const searchActive = useRef(false);
 
@@ -85,7 +86,7 @@ const ConcludedAppointments = (): JSX.Element => {
   }, [page]);
 
   const onSubmit = async (data: SearchProps): Promise<void> => {
-    setLoading(true);
+    setSearchLoading(true);
     searchActive.current = true;
     setPage(0);
     try {
@@ -120,7 +121,7 @@ const ConcludedAppointments = (): JSX.Element => {
       });
     } finally {
       searchActive.current = false;
-      setLoading(false);
+      setSearchLoading(false);
     }
   };
 
@@ -175,7 +176,21 @@ const ConcludedAppointments = (): JSX.Element => {
               paddingTop: '2rem',
             }}
           >
-            {comments.length === 0 ? (
+            {searchLoading ? (
+              <div
+                style={{
+                  flexGrow: 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <CircularProgressWithContent
+                  content={<LogoContainer src={logoPSIS} />}
+                  size={200}
+                />
+              </div>
+            ) : comments.length === 0 ? (
               <div
                 style={{
                   display: 'flex',

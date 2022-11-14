@@ -14,7 +14,7 @@ import {
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton, Modal, Tooltip } from '@mui/material';
 import { useSchedule } from '@contexts/Schedule';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -35,10 +35,12 @@ const Comment = (): JSX.Element => {
   const navigate = useNavigate();
   const {
     user: { baseDuration },
+    sideBarExpanded,
   } = useAuth();
   const { getById } = useSchedule();
   const { create, generatePDF } = useComments();
   const [loading, setLoading] = useState<boolean>(true);
+  const [pdfLoading, setPdfLoading] = useState<boolean>(false);
   const [comment, setComment] = useState<string>('');
   const [initialComment, setInitialComment] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -170,7 +172,7 @@ const Comment = (): JSX.Element => {
 
   const exportToPDF = async (): Promise<void> => {
     try {
-      setLoading(true);
+      setPdfLoading(true);
 
       const appointmentId = idFromResource(state.resource);
 
@@ -187,7 +189,7 @@ const Comment = (): JSX.Element => {
           'Ocorreu um problema ao exportar a anotação',
       });
     } finally {
-      setLoading(false);
+      setPdfLoading(false);
     }
   };
 
@@ -211,6 +213,25 @@ const Comment = (): JSX.Element => {
 
   return (
     <Container>
+      <Modal
+        open={pdfLoading}
+        sx={{
+          display: 'flex',
+          height: '100%',
+          minWidth: sideBarExpanded
+            ? 'calc(100vw - 250px)'
+            : 'calc(100vw- 70px)',
+          justifyContent: 'center',
+          alignItems: 'center ',
+        }}
+      >
+        <>
+          <CircularProgressWithContent
+            content={<LogoContainer src={logoPSIS} />}
+            size={200}
+          />
+        </>
+      </Modal>
       <AlterTopToolbar />
       <Content>
         <CustomBox>
@@ -248,9 +269,10 @@ const Comment = (): JSX.Element => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <Tooltip title="Exportar PDF">
+              <Tooltip title="Gerar PDF">
                 <IconButton
                   onClick={exportToPDF}
+                  disabled={pdfLoading || editMode}
                   style={{ justifySelf: 'flex-end' }}
                 >
                   <MdOutlinePictureAsPdf size={40} />
@@ -259,6 +281,7 @@ const Comment = (): JSX.Element => {
               <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
                 <IconButton
                   onClick={editAction}
+                  disabled={pdfLoading}
                   style={{ justifySelf: 'flex-end' }}
                 >
                   <MdModeEdit size={40} />

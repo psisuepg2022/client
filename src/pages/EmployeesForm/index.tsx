@@ -34,6 +34,8 @@ import { showToast } from '@utils/showToast';
 import AuxDataHelpModal from '@components/AuxDataHelpModal';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { colors } from '@global/colors';
+import { useAuth } from '@contexts/Auth';
+import OwnerUsersCreationHelp from '@components/OwnerUsersCreationHelp';
 
 type FormProps = {
   name: string;
@@ -70,11 +72,15 @@ const EmployeesForm = (): JSX.Element => {
   });
   const { handleSubmit, reset } = formMethods;
   const { create } = useEmployees();
+  const {
+    user: { permissions },
+  } = useAuth();
   const navigate = useNavigate();
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [auxDataHelpModal, setAuxDataHelpModal] = useState<boolean>(false);
+  const [ownerHelpModal, setOwnerHelpModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (employeeToEdit && employeeToEdit.address) {
@@ -171,12 +177,30 @@ const EmployeesForm = (): JSX.Element => {
     <Container>
       <AlterTopToolbar />
       <Content>
+        {ownerHelpModal ? (
+          <OwnerUsersCreationHelp
+            open={ownerHelpModal}
+            handleClose={() => setOwnerHelpModal(false)}
+            employee
+          />
+        ) : null}
         <CustomBox>
           <div>
             <BoxHeader>
               <PageTitle>
                 {state ? 'Editar Funcionário' : 'Criar Funcionário'}
               </PageTitle>
+              {permissions.includes('USER_TYPE_OWNER') ? (
+                <IconButton
+                  style={{ marginLeft: 5 }}
+                  onClick={() => setOwnerHelpModal(true)}
+                >
+                  <AiOutlineQuestionCircle
+                    size={'2rem'}
+                    style={{ color: colors.PRIMARY }}
+                  />
+                </IconButton>
+              ) : null}
             </BoxHeader>
             <FormProvider {...formMethods}>
               <StyledForm

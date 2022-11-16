@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FormControl,
   IconButton,
@@ -45,6 +45,8 @@ import {
   subMonths,
   subWeeks,
 } from 'date-fns';
+import LiableHelpModal from '@components/LiableHelpModal';
+import { Holiday } from '@interfaces/Holiday';
 
 type CustomToolbarProps = {
   onRangeChange: (range: Date[], view?: View) => void;
@@ -76,9 +78,82 @@ const TopToolbar = ({
     setEvents,
     setCurrentEnd,
     setCurrentStart,
+    getHolidays,
+    setCurrentHoliday,
+    currentHoliday,
   } = useSchedule();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [holidayWarning, setHolidayWarning] = useState<boolean>(false);
+
+  useEffect(() => {
+    const gotDate = new Date(date);
+    gotDate.setHours(0, 0, 0, 0);
+
+    if (currentHoliday) {
+      const [prevYear, prevMonth, prevDay] = currentHoliday?.date.split('-');
+      const prevHoliday = new Date(
+        Number(prevYear),
+        Number(prevMonth) - 1,
+        Number(prevDay)
+      );
+
+      prevHoliday.setHours(0, 0, 0, 0);
+
+      if (isEqual(prevHoliday, gotDate)) return;
+    }
+
+    const year = date.getFullYear();
+    const storedYear = localStorage.getItem('@psis:holidaysYear');
+    if (`${year}` !== storedYear) {
+      (async () => {
+        try {
+          const holidays = await getHolidays(`${year}`);
+
+          localStorage.setItem('@psis:holidaysYear', `${year}`);
+          localStorage.setItem('@psis:holidays', JSON.stringify(holidays));
+
+          holidays.find((holiday) => {
+            const [year, month, day] = holiday.date.split('-');
+            const holidayDate = new Date(
+              Number(year),
+              Number(month) - 1,
+              Number(day)
+            );
+            if (isEqual(holidayDate, gotDate)) {
+              setCurrentHoliday(holiday);
+            } else {
+              currentHoliday !== undefined && setCurrentHoliday(undefined);
+            }
+          });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (e: any) {
+          console.log('ERROR', e);
+        }
+      })();
+
+      return;
+    }
+
+    const storedHolidays = localStorage.getItem('@psis:holidays');
+
+    if (storedHolidays) {
+      const holidays: Holiday[] = JSON.parse(storedHolidays) as Holiday[];
+      holidays.find((holiday) => {
+        const [year, month, day] = holiday.date.split('-');
+        const holidayDate = new Date(
+          Number(year),
+          Number(month) - 1,
+          Number(day)
+        );
+        if (isEqual(holidayDate, gotDate)) {
+          setCurrentHoliday(holiday);
+        } else {
+          currentHoliday !== undefined && setCurrentHoliday(undefined);
+        }
+      });
+    }
+  }, [date]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -397,6 +472,12 @@ const TopToolbar = ({
       }}
     >
       <Container>
+        {holidayWarning && (
+          <LiableHelpModal
+            open={holidayWarning}
+            handleClose={() => setHolidayWarning(false)}
+          />
+        )}
         <EarlyContent>
           <ClinicTitle>{clinic?.name}</ClinicTitle>
         </EarlyContent>

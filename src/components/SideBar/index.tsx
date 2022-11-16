@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import React, { useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import {
@@ -11,6 +12,9 @@ import {
   CollapsedHeader,
   UserName,
   UserNameContainer,
+  HolidayContianer,
+  HolidayText,
+  IconButtonArea,
 } from './styles';
 import { SideBarLinks, sideBarLinks } from './SideBarLinks';
 import { colors } from '@global/colors';
@@ -20,9 +24,12 @@ import {
   AiOutlineInfoCircle,
   AiOutlineQuestionCircle,
 } from 'react-icons/ai';
+import { FaCalendarDay } from 'react-icons/fa';
 import { useAuth } from '@contexts/Auth';
 import ScheduleLabelModal from '@components/ScheduleLabelModal';
 import ScheduleHelpModal from '@components/ScheduleHelpModal';
+import { useSchedule } from '@contexts/Schedule';
+import { dateFormat } from '@utils/dateFormat';
 
 const SideBar = (): JSX.Element => {
   const {
@@ -30,6 +37,7 @@ const SideBar = (): JSX.Element => {
     sideBarExpanded,
     setSideBarExpanded,
   } = useAuth();
+  const { currentHoliday } = useSchedule();
   const [labelModal, setLabelModal] = useState<boolean>(false);
   const [scheduleHelpModal, setScheduleHelpModal] = useState<boolean>(false);
 
@@ -74,6 +82,18 @@ const SideBar = (): JSX.Element => {
     );
   }
 
+  const formatHolidayDate = (date: string): string => {
+    const [year, month, day] = date.split('-');
+    const holidayDate = new Date(Number(year), Number(month) - 1, Number(day));
+
+    const formattedDate = dateFormat({
+      date: holidayDate,
+      stringFormat: "dd 'de' MMMM",
+    });
+
+    return formattedDate;
+  };
+
   return (
     <Container>
       <Header>
@@ -113,6 +133,19 @@ const SideBar = (): JSX.Element => {
             </NavItem>
           ))}
         </div>
+        {currentHoliday ? (
+          <HolidayContianer>
+            <Tooltip title="Aviso de feriado neste dia">
+              <IconButtonArea>
+                <FaCalendarDay size={30} style={{ color: '#FFF' }} />
+              </IconButtonArea>
+            </Tooltip>
+            <div />
+            <HolidayText>
+              {formatHolidayDate(currentHoliday.date)}: {currentHoliday.name}
+            </HolidayText>
+          </HolidayContianer>
+        ) : null}
         <div
           style={{
             justifySelf: 'flex-end',

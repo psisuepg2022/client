@@ -31,6 +31,7 @@ export const StyledBox = styled(Box)`
 export const Header = styled('div')`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
 export const Body = styled('div')`

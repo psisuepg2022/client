@@ -133,7 +133,7 @@ const SideBar = (): JSX.Element => {
             </NavItem>
           ))}
         </div>
-        {currentHoliday ? (
+        {location.pathname === '/schedule' && currentHoliday ? (
           <HolidayContianer>
             <Tooltip title="Aviso de feriado neste dia">
               <IconButtonArea>

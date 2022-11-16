@@ -117,6 +117,7 @@ export const UserName = styled(Typography)`
 export const HolidayContianer = styled('div')`
   display: grid;
   grid-template-columns: 4fr 1fr 8fr;
+  align-items: center;
   padding: 0 1rem;
 `;
 
@@ -142,6 +143,8 @@ export const IconButtonArea = styled('div')`
   border-radius: 50%;
   color: rgba(0, 0, 0, 0.54);
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  height: 46px;
+  width: 46px;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);

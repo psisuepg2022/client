@@ -62,7 +62,7 @@ const OwnerUsersCreationHelp = ({
           <div style={{ textIndent: '2rem' }}>
             <ScheduleAtText>
               {
-                'É possível criar, por exemplo, um usuário do tipo "Funcionário" e um usuário do tipo "Profissional" ambos com o mesmo CPF. Isso será permitido somente em caso de papéis diferentes.'
+                'É possível criar, por exemplo, um usuário do tipo "Funcionário" e um usuário do tipo "Profissional" ambos com o mesmo CPF. Isso será permitido somente em caso de papéis diferentes e caso o CPF não pertença a um paciente cadastrado.'
               }
             </ScheduleAtText>
           </div>

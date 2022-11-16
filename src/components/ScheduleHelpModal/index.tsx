@@ -129,6 +129,18 @@ const ScheduleHelpModal = ({
                 </ScheduleAtText>
               </div>
             </>
+          ) : permissions.includes('USER_TYPE_PROFESSIONAL') ? (
+            <>
+              <SectionDivider>Conclusão</SectionDivider>
+
+              <div style={{ textIndent: '2rem' }}>
+                <ScheduleAtText>
+                  {`Quando a consulta está com status "Confirmada", o botão "CONCLUIR" é liberado para o profissional. Ao clicar nele, será redirecionado para um editor de texto, caso queira
+                  fazer uma anotação sobre a consulta (também é possível deixar em branco) e concluir. Caso o mesmo horário da consulta a ser concluída esteja disponível na próxima semana,
+                  será oferecido um reagendamento da consulta antes da conclusão.`}
+                </ScheduleAtText>
+              </div>
+            </>
           ) : null}
 
           {permissions.includes('USER_TYPE_PROFESSIONAL') ? (

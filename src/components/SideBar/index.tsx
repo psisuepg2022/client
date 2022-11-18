@@ -18,9 +18,11 @@ import {
   AiOutlineRight,
   AiOutlineClose,
   AiOutlineInfoCircle,
+  AiOutlineQuestionCircle,
 } from 'react-icons/ai';
 import { useAuth } from '@contexts/Auth';
 import ScheduleLabelModal from '@components/ScheduleLabelModal';
+import ScheduleHelpModal from '@components/ScheduleHelpModal';
 
 const SideBar = (): JSX.Element => {
   const {
@@ -29,6 +31,7 @@ const SideBar = (): JSX.Element => {
     setSideBarExpanded,
   } = useAuth();
   const [labelModal, setLabelModal] = useState<boolean>(false);
+  const [scheduleHelpModal, setScheduleHelpModal] = useState<boolean>(false);
 
   const renderLinks = (): SideBarLinks[] => {
     const resultRoutes: SideBarLinks[] = [];
@@ -90,6 +93,12 @@ const SideBar = (): JSX.Element => {
         )}
       </UserNameContainer>
       <Content>
+        {scheduleHelpModal ? (
+          <ScheduleHelpModal
+            open={scheduleHelpModal}
+            handleClose={() => setScheduleHelpModal(false)}
+          />
+        ) : null}
         <div style={{ marginTop: 3 }}>
           {renderLinks().map((item) => (
             <NavItem
@@ -111,13 +120,23 @@ const SideBar = (): JSX.Element => {
             marginBottom: 20,
           }}
         >
-          {location.pathname === '/schedule' && (
-            <Tooltip title="Legenda de consultas da agenda">
-              <IconButton onClick={() => setLabelModal(true)}>
-                <AiOutlineInfoCircle size={40} style={{ color: '#FFF' }} />
-              </IconButton>
-            </Tooltip>
-          )}
+          {location.pathname === '/schedule' ? (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Tooltip title="Legenda de consultas da agenda">
+                <IconButton onClick={() => setLabelModal(true)}>
+                  <AiOutlineInfoCircle size={40} style={{ color: '#FFF' }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Ajuda para os itens da agenda">
+                <IconButton onClick={() => setScheduleHelpModal(true)}>
+                  <AiOutlineQuestionCircle
+                    size={40}
+                    style={{ color: '#FFF' }}
+                  />
+                </IconButton>
+              </Tooltip>
+            </div>
+          ) : null}
           {labelModal && (
             <ScheduleLabelModal
               open={labelModal}

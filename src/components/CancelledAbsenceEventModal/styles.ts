@@ -63,6 +63,16 @@ export const EventPrimaryText = styled(Typography)`
   font-weight: 600;
 `;
 
+export const ContactNumberText = styled(Typography)`
+  font-size: 1.1rem;
+  color: ${colors.TEXT};
+  font-weight: 400;
+
+  span {
+    font-weight: 500;
+  }
+`;
+
 export const AdditionalInfos = styled('div')`
   display: flex;
   align-items: center;
@@ -80,4 +90,22 @@ export const ScheduleAtText = styled('div')`
 
 export const ScheduleAtDate = styled('div')`
   font-weight: 500;
+`;
+
+export const IconButtonArea = styled('div')`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  text-align: center;
+  padding: 8px;
+  border-radius: 50%;
+  color: rgba(0, 0, 0, 0.54);
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
 `;

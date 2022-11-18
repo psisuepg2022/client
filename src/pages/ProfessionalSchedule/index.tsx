@@ -21,7 +21,11 @@ import {
   WorkHoursContainer,
 } from './styles';
 import { FiChevronLeft } from 'react-icons/fi';
-import { AiOutlinePlus, AiOutlineRight } from 'react-icons/ai';
+import {
+  AiOutlinePlus,
+  AiOutlineQuestionCircle,
+  AiOutlineRight,
+} from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import { colors } from '@global/colors';
 import { showAlert } from '@utils/showAlert';
@@ -41,6 +45,9 @@ import { dateFormat } from '@utils/dateFormat';
 import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
 import { showToast } from '@utils/showToast';
+import ProfessionalScheduleDaysHelp from '@components/ProfessionalScheduleDaysHelp';
+import ProfessionalScheduleWorkHoursHelp from '@components/ProfessionalScheduleWorkHoursHelp';
+import ProfessionalScheduleIntervalsHelp from '@components/ProfessionalScheduleIntervalsHelp';
 
 type FormLock = {
   id?: string;
@@ -70,6 +77,9 @@ const ProfessionalSchedule = (): JSX.Element => {
   const { startTime, endTime } = useWatch({
     control,
   });
+  const [daysHelp, setDaysHelp] = useState<boolean>(false);
+  const [workHoursHelp, setWorkHoursHelp] = useState<boolean>(false);
+  const [intervalsHelp, setIntervalsHelp] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -459,7 +469,24 @@ const ProfessionalSchedule = (): JSX.Element => {
               </Typography>
             </Header>
 
-            <SectionDivider>Dias da semana</SectionDivider>
+            {daysHelp && (
+              <ProfessionalScheduleDaysHelp
+                open={daysHelp}
+                handleClose={() => setDaysHelp(false)}
+              />
+            )}
+            <SectionDivider
+              help={
+                <IconButton
+                  style={{ marginLeft: 5 }}
+                  onClick={() => setDaysHelp(true)}
+                >
+                  <AiOutlineQuestionCircle style={{ color: colors.PRIMARY }} />
+                </IconButton>
+              }
+            >
+              Dias da semana
+            </SectionDivider>
 
             <DayHoursAndLocks>
               <div
@@ -488,7 +515,33 @@ const ProfessionalSchedule = (): JSX.Element => {
               {currentDay && (
                 <FormProvider {...formMethods}>
                   <form id="form" onSubmit={handleSubmit(onSubmit)}>
-                    <TimesLabel>Início e fim do expediente</TimesLabel>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '2rem 0 1rem 0',
+                      }}
+                    >
+                      {workHoursHelp && (
+                        <ProfessionalScheduleWorkHoursHelp
+                          open={workHoursHelp}
+                          handleClose={() => setWorkHoursHelp(false)}
+                        />
+                      )}
+                      <TimesLabel style={{ padding: 0 }}>
+                        Início e fim do expediente |{' '}
+                        <span>Duração base das consultas: </span>
+                        {user.baseDuration} <span>minutos.</span>
+                      </TimesLabel>
+                      <IconButton
+                        style={{ marginLeft: 5 }}
+                        onClick={() => setWorkHoursHelp(true)}
+                      >
+                        <AiOutlineQuestionCircle
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    </div>
                     <WorkHoursContainer>
                       <div onFocus={() => setChanges(true)}>
                         <ControlledTimePicker
@@ -551,11 +604,33 @@ const ProfessionalSchedule = (): JSX.Element => {
                     >
                       {counter !== -1 && (
                         <>
-                          <TimesLabel>
-                            {counter % 1 !== 0 || counter < 0
-                              ? 'Sem intervalos - Os horários não batem com a duração base'
-                              : `Intervalos - ${counter} restantes`}
-                          </TimesLabel>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: '2rem 0 1rem 0',
+                            }}
+                          >
+                            {intervalsHelp && (
+                              <ProfessionalScheduleIntervalsHelp
+                                open={intervalsHelp}
+                                handleClose={() => setIntervalsHelp(false)}
+                              />
+                            )}
+                            <TimesLabel style={{ padding: 0 }}>
+                              {counter % 1 !== 0 || counter < 0
+                                ? 'Sem intervalos - Os horários não batem com a duração base'
+                                : `Intervalos - ${counter} restantes`}
+                            </TimesLabel>
+                            <IconButton
+                              style={{ marginLeft: 5 }}
+                              onClick={() => setIntervalsHelp(true)}
+                            >
+                              <AiOutlineQuestionCircle
+                                style={{ color: colors.PRIMARY }}
+                              />
+                            </IconButton>
+                          </div>
 
                           <IconButton
                             size="small"

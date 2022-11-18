@@ -62,6 +62,10 @@ export const TimesLabel = styled(Typography)`
   font-weight: 600;
   font-size: 1rem;
   padding: 2rem 0 1rem 0;
+
+  span {
+    font-weight: 400;
+  }
 `;
 
 export const WorkHoursContainer = styled('div')`

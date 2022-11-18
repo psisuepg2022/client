@@ -34,7 +34,11 @@ import ControlledTimePicker from '@components/ControlledTimePicker';
 import CardSelector from '@components/CardSelector';
 import { CreateWeeklySchedule } from '@models/WeeklySchedule';
 import { timeToDate } from '@utils/timeToDate';
-import { AiOutlinePlus, AiOutlineRight } from 'react-icons/ai';
+import {
+  AiOutlinePlus,
+  AiOutlineQuestionCircle,
+  AiOutlineRight,
+} from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import {
   ConfigFormProps,
@@ -50,6 +54,11 @@ import { useNavigate } from 'react-router-dom';
 import { useProfessionals } from '@contexts/Professionals';
 import { DaysOfTheWeek } from '@interfaces/DaysOfTheWeek';
 import { api } from '@service/index';
+import ProfessionalScheduleDaysHelp from '@components/ProfessionalScheduleDaysHelp';
+import ProfessionalScheduleWorkHoursHelp from '@components/ProfessionalScheduleWorkHoursHelp';
+import ProfessionalScheduleIntervalsHelp from '@components/ProfessionalScheduleIntervalsHelp';
+import ProfessionalConfigPasswordHelp from '@components/ProfessionalConfigPasswordHelp';
+import ProfessionalConfigBaseDurationHelp from '@components/ProfessionalConfigBaseDurationHelp';
 
 const initialWeeklySchedule = createInitialWeeklySchedule();
 
@@ -86,6 +95,11 @@ const ProfessionalInitialConfig = (): JSX.Element => {
   const { baseDuration, startTime, endTime, ...formValues } = useWatch({
     control,
   });
+  const [daysHelp, setDaysHelp] = useState<boolean>(false);
+  const [workHoursHelp, setWorkHoursHelp] = useState<boolean>(false);
+  const [intervalsHelp, setIntervalsHelp] = useState<boolean>(false);
+  const [passwordHelp, setPasswordHelp] = useState<boolean>(false);
+  const [baseDurationHelp, setBaseDurationHelp] = useState<boolean>(false);
 
   useEffect(() => {
     if (!baseDuration) {
@@ -385,7 +399,26 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                     gap: '1rem',
                   }}
                 >
-                  <SectionDivider>Nova senha</SectionDivider>
+                  {passwordHelp && (
+                    <ProfessionalConfigPasswordHelp
+                      open={passwordHelp}
+                      handleClose={() => setPasswordHelp(false)}
+                    />
+                  )}
+                  <SectionDivider
+                    help={
+                      <IconButton
+                        style={{ marginLeft: 5 }}
+                        onClick={() => setPasswordHelp(true)}
+                      >
+                        <AiOutlineQuestionCircle
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    }
+                  >
+                    Nova senha
+                  </SectionDivider>
                   <PasswordSection>
                     <ControlledInput
                       rules={{
@@ -428,7 +461,26 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                     />
                   </PasswordSection>
 
-                  <SectionDivider>Duração das consultas</SectionDivider>
+                  {baseDurationHelp && (
+                    <ProfessionalConfigBaseDurationHelp
+                      open={baseDurationHelp}
+                      handleClose={() => setBaseDurationHelp(false)}
+                    />
+                  )}
+                  <SectionDivider
+                    help={
+                      <IconButton
+                        style={{ marginLeft: 5 }}
+                        onClick={() => setBaseDurationHelp(true)}
+                      >
+                        <AiOutlineQuestionCircle
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    }
+                  >
+                    Duração base
+                  </SectionDivider>
                   <BaseDurationSection>
                     <ControlledInput
                       name="baseDuration"
@@ -450,7 +502,27 @@ const ProfessionalInitialConfig = (): JSX.Element => {
 
                   {baseDuration && (
                     <>
-                      <SectionDivider>Horários da agenda</SectionDivider>
+                      {daysHelp && (
+                        <ProfessionalScheduleDaysHelp
+                          open={daysHelp}
+                          handleClose={() => setDaysHelp(false)}
+                          config
+                        />
+                      )}
+                      <SectionDivider
+                        help={
+                          <IconButton
+                            style={{ marginLeft: 5 }}
+                            onClick={() => setDaysHelp(true)}
+                          >
+                            <AiOutlineQuestionCircle
+                              style={{ color: colors.PRIMARY }}
+                            />
+                          </IconButton>
+                        }
+                      >
+                        Dias da semana
+                      </SectionDivider>
                       <DayHoursAndLocks>
                         <div
                           style={{
@@ -479,7 +551,33 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                         </div>
                         {currentDay && (
                           <>
-                            <TimesLabel>Início e fim do expediente</TimesLabel>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: '2rem 0 1rem 0',
+                              }}
+                            >
+                              {workHoursHelp && (
+                                <ProfessionalScheduleWorkHoursHelp
+                                  open={workHoursHelp}
+                                  handleClose={() => setWorkHoursHelp(false)}
+                                />
+                              )}
+                              <TimesLabel style={{ padding: 0 }}>
+                                Início e fim do expediente |{' '}
+                                <span>Duração base das consultas: </span>
+                                {baseDuration} <span>minutos.</span>
+                              </TimesLabel>
+                              <IconButton
+                                style={{ marginLeft: 5 }}
+                                onClick={() => setWorkHoursHelp(true)}
+                              >
+                                <AiOutlineQuestionCircle
+                                  style={{ color: colors.PRIMARY }}
+                                />
+                              </IconButton>
+                            </div>
                             <WorkHoursContainer>
                               <ControlledTimePicker
                                 label="Início"
@@ -575,11 +673,35 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                   }}
                                 >
                                   <>
-                                    <TimesLabel>
-                                      {counter - Math.floor(counter) === 0
-                                        ? `Intervalos - ${counter} restantes`
-                                        : 'Não é possível cadastrar intervalos com os atuais início e fim de expediente'}
-                                    </TimesLabel>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        padding: '2rem 0 1rem 0',
+                                      }}
+                                    >
+                                      {intervalsHelp && (
+                                        <ProfessionalScheduleIntervalsHelp
+                                          open={intervalsHelp}
+                                          handleClose={() =>
+                                            setIntervalsHelp(false)
+                                          }
+                                        />
+                                      )}
+                                      <TimesLabel style={{ padding: 0 }}>
+                                        {counter - Math.floor(counter) === 0
+                                          ? `Intervalos - ${counter} restantes`
+                                          : 'Não é possível cadastrar intervalos com os atuais início e fim de expediente'}
+                                      </TimesLabel>
+                                      <IconButton
+                                        style={{ marginLeft: 5 }}
+                                        onClick={() => setIntervalsHelp(true)}
+                                      >
+                                        <AiOutlineQuestionCircle
+                                          style={{ color: colors.PRIMARY }}
+                                        />
+                                      </IconButton>
+                                    </div>
 
                                     <IconButton
                                       size="small"

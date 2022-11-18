@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, IconButton, Typography } from '@mui/material';
+import {
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -31,10 +36,15 @@ import SimpleInput from '@components/SimpleInput';
 import { CepInfos } from '@interfaces/CepInfos';
 import AsyncInput from '@components/AsyncInput';
 import { searchForCep } from '@utils/zipCode';
-import { AiOutlineClockCircle, AiOutlineRight } from 'react-icons/ai';
+import {
+  AiOutlineClockCircle,
+  AiOutlineQuestionCircle,
+  AiOutlineRight,
+} from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
 import { useAuth } from '@contexts/Auth';
 import { showToast } from '@utils/showToast';
+import AuxDataHelpModal from '@components/AuxDataHelpModal';
 
 type ProfileFormProps = {
   name: string;
@@ -62,6 +72,7 @@ const ProfessionalProfile = (): JSX.Element => {
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
+  const [auxDataHelpModal, setAuxDataHelpModal] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -228,14 +239,16 @@ const ProfessionalProfile = (): JSX.Element => {
                 {name.split(' ')[0]}
               </Typography>
             </div>
-            <IconButton
-              disabled={loading || inputLoading || saveLoading}
-              onClick={() => navigate('/profile/professional_schedule')}
-            >
-              <AiOutlineClockCircle
-                style={{ color: colors.PRIMARY, fontSize: '2.5rem' }}
-              />
-            </IconButton>
+            <Tooltip title="Horários de atendimento">
+              <IconButton
+                disabled={loading || inputLoading || saveLoading}
+                onClick={() => navigate('/profile/professional_schedule')}
+              >
+                <AiOutlineClockCircle
+                  style={{ color: colors.PRIMARY, fontSize: '2.5rem' }}
+                />
+              </IconButton>
+            </Tooltip>
           </Header>
 
           <FormProvider {...formMethods}>
@@ -326,7 +339,26 @@ const ProfessionalProfile = (): JSX.Element => {
                 </PersonalInfoHalf>
               </PersonalInfo>
 
-              <SectionDivider>Dados Auxiliares</SectionDivider>
+              {auxDataHelpModal && (
+                <AuxDataHelpModal
+                  open={auxDataHelpModal}
+                  handleClose={() => setAuxDataHelpModal(false)}
+                />
+              )}
+              <SectionDivider
+                help={
+                  <IconButton
+                    style={{ marginLeft: 5 }}
+                    onClick={() => setAuxDataHelpModal(true)}
+                  >
+                    <AiOutlineQuestionCircle
+                      style={{ color: colors.PRIMARY }}
+                    />
+                  </IconButton>
+                }
+              >
+                Dados Auxiliares
+              </SectionDivider>
               <AuxDataFirst>
                 <AsyncInput
                   name="address.zipCode"

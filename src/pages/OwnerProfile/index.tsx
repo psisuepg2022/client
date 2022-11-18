@@ -35,8 +35,9 @@ import { searchForCep } from '@utils/zipCode';
 import AsyncInput from '@components/AsyncInput';
 import SimpleInput from '@components/SimpleInput';
 import { User } from '@models/User';
-import { AiOutlineRight } from 'react-icons/ai';
+import { AiOutlineQuestionCircle, AiOutlineRight } from 'react-icons/ai';
 import { showToast } from '@utils/showToast';
+import AuxDataHelpModal from '@components/AuxDataHelpModal';
 
 type ProfileFormProps = {
   clinic: {
@@ -72,6 +73,7 @@ const OwnerProfile = (): JSX.Element => {
   const [cepInfos, setCepInfos] = useState<CepInfos | undefined>(undefined);
   const [inputLoading, setInputLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
+  const [auxDataHelpModal, setAuxDataHelpModal] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -374,7 +376,26 @@ const OwnerProfile = (): JSX.Element => {
                   </PersonalInfoHalf>
                 </PersonalInfo>
 
-                <SectionDivider>Dados Auxiliares</SectionDivider>
+                {auxDataHelpModal && (
+                  <AuxDataHelpModal
+                    open={auxDataHelpModal}
+                    handleClose={() => setAuxDataHelpModal(false)}
+                  />
+                )}
+                <SectionDivider
+                  help={
+                    <IconButton
+                      style={{ marginLeft: 5 }}
+                      onClick={() => setAuxDataHelpModal(true)}
+                    >
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
+                  }
+                >
+                  Dados Auxiliares
+                </SectionDivider>
                 <AuxDataFirst>
                   <AsyncInput
                     name="address.zipCode"

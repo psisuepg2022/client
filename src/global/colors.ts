@@ -15,4 +15,5 @@ export const colors = {
   ABSENCE: '#C2C2C2',
   CANCELLED: '#B6A2A1',
   PAST: '#e3e3e3',
+  WHATSAPP: '#25D366',
 };

@@ -114,3 +114,21 @@ export const StyledConfirmButton = styled(Button)`
     background-color: ${colors.SECONDARY};
   }
 `;
+
+export const IconButtonArea = styled('div')`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  text-align: center;
+  padding: 8px;
+  border-radius: 50%;
+  color: rgba(0, 0, 0, 0.54);
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+`;

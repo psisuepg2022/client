@@ -20,6 +20,7 @@ type CommentsContextData = {
     appointmentId: string,
     text: string
   ) => Promise<Response<SavedComment>>;
+  generatePDF: (appointmentId: string) => Promise<string>;
   comments: ReadComments[];
   count: number;
 };
@@ -73,12 +74,28 @@ export const CommentsProvider: React.FC<CommentsProviderProps> = ({
     return data;
   };
 
+  const generatePDF = async (appointmentId: string): Promise<string> => {
+    const { data }: { data: BlobPart } = await api.get(
+      `comments/pdf/${appointmentId}`,
+      {
+        responseType: 'arraybuffer',
+      }
+    );
+
+    const file = new Blob([data], { type: 'application/pdf' });
+
+    const fileURL = URL.createObjectURL(file);
+
+    return fileURL;
+  };
+
   return (
     <CommentsContext.Provider
       value={{
         list,
         create,
         comments,
+        generatePDF,
         count,
       }}
     >

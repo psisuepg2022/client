@@ -269,7 +269,7 @@ const Comment = (): JSX.Element => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <Tooltip title="Gerar PDF">
+              {/* <Tooltip title="Gerar PDF">
                 <IconButton
                   onClick={exportToPDF}
                   disabled={pdfLoading || editMode}
@@ -277,7 +277,7 @@ const Comment = (): JSX.Element => {
                 >
                   <MdOutlinePictureAsPdf size={40} />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
                 <IconButton
                   onClick={editAction}

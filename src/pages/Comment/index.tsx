@@ -25,7 +25,7 @@ import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
 import TextEditor from '@components/TextEditor';
-import { MdModeEdit, MdOutlinePictureAsPdf } from 'react-icons/md';
+import { MdModeEdit /*, MdOutlinePictureAsPdf*/ } from 'react-icons/md';
 import { useComments } from '@contexts/Comments';
 import { showToast } from '@utils/showToast';
 import { colors } from '@global/colors';

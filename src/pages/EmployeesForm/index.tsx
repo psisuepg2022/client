@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, IconButton } from '@mui/material';
+import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -191,15 +191,17 @@ const EmployeesForm = (): JSX.Element => {
                 {state ? 'Editar Funcionário' : 'Criar Funcionário'}
               </PageTitle>
               {permissions.includes('USER_TYPE_OWNER') ? (
-                <IconButton
-                  style={{ marginLeft: 5 }}
-                  onClick={() => setOwnerHelpModal(true)}
-                >
-                  <AiOutlineQuestionCircle
-                    size={'2rem'}
-                    style={{ color: colors.PRIMARY }}
-                  />
-                </IconButton>
+                <Tooltip title="Ajuda">
+                  <IconButton
+                    style={{ marginLeft: 5 }}
+                    onClick={() => setOwnerHelpModal(true)}
+                  >
+                    <AiOutlineQuestionCircle
+                      size={'2rem'}
+                      style={{ color: colors.PRIMARY }}
+                    />
+                  </IconButton>
+                </Tooltip>
               ) : null}
             </BoxHeader>
             <FormProvider {...formMethods}>
@@ -315,14 +317,16 @@ const EmployeesForm = (): JSX.Element => {
                 )}
                 <SectionDivider
                   help={
-                    <IconButton
-                      style={{ marginLeft: 5 }}
-                      onClick={() => setAuxDataHelpModal(true)}
-                    >
-                      <AiOutlineQuestionCircle
-                        style={{ color: colors.PRIMARY }}
-                      />
-                    </IconButton>
+                    <Tooltip title="Ajuda">
+                      <IconButton
+                        style={{ marginLeft: 5 }}
+                        onClick={() => setAuxDataHelpModal(true)}
+                      >
+                        <AiOutlineQuestionCircle
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                   }
                 >
                   Dados Auxiliares

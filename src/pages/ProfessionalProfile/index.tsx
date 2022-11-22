@@ -347,14 +347,16 @@ const ProfessionalProfile = (): JSX.Element => {
               )}
               <SectionDivider
                 help={
-                  <IconButton
-                    style={{ marginLeft: 5 }}
-                    onClick={() => setAuxDataHelpModal(true)}
-                  >
-                    <AiOutlineQuestionCircle
-                      style={{ color: colors.PRIMARY }}
-                    />
-                  </IconButton>
+                  <Tooltip title="Ajuda">
+                    <IconButton
+                      style={{ marginLeft: 5 }}
+                      onClick={() => setAuxDataHelpModal(true)}
+                    >
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
+                  </Tooltip>
                 }
               >
                 Dados Auxiliares

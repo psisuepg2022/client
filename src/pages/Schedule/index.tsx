@@ -126,6 +126,7 @@ const Schedule = (): JSX.Element => {
     currentStart,
     setCurrentEnd,
     setCurrentStart,
+    setCurrentHoliday,
   } = useSchedule();
   const [currentSlotInfo, setCurrentSlotInfo] = useState<SlotInfo | undefined>(
     undefined
@@ -355,6 +356,7 @@ const Schedule = (): JSX.Element => {
       setCurrentProfessional({} as Professional);
       setEvents([]);
       setRetrievedWeeklySchedule([] as WeeklySchedule[]);
+      setCurrentHoliday(undefined);
     };
   }, []);
 

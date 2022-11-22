@@ -12,6 +12,7 @@ import { SavedLock } from '@interfaces/SavedLock';
 import { UpdatedEvent } from '@interfaces/UpdatedEvent';
 import { AppointmentComments } from '@interfaces/AppointmentComments';
 import { AppointmentSaveByProfessional } from '@interfaces/AppointmentSaveByProfessional';
+import { Holiday } from '@interfaces/Holiday';
 
 type ScheduleContextData = {
   getScheduleEvents: (
@@ -49,6 +50,9 @@ type ScheduleContextData = {
   setCurrentStart: React.Dispatch<React.SetStateAction<Date>>;
   currentEnd: Date;
   setCurrentEnd: React.Dispatch<React.SetStateAction<Date>>;
+  getHolidays: (year: string) => Promise<Holiday[]>;
+  currentHoliday: Holiday | undefined;
+  setCurrentHoliday: React.Dispatch<React.SetStateAction<Holiday | undefined>>;
 };
 
 type ScheduleProviderProps = {
@@ -75,6 +79,9 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   >([]);
   const [currentStart, setCurrentStart] = useState<Date>(new Date());
   const [currentEnd, setCurrentEnd] = useState<Date>(new Date());
+  const [currentHoliday, setCurrentHoliday] = useState<Holiday | undefined>(
+    undefined
+  );
 
   const getScheduleEvents = async (
     filter: {
@@ -173,6 +180,14 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     return data;
   };
 
+  const getHolidays = async (year: string): Promise<Holiday[]> => {
+    const { data }: { data: Holiday[] } = await api.get(
+      `https://brasilapi.com.br/api/feriados/v1/${year}`
+    );
+
+    return data;
+  };
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -197,6 +212,9 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
         currentEnd,
         setCurrentEnd,
         saveAppointmentByProfessional,
+        getHolidays,
+        currentHoliday,
+        setCurrentHoliday,
       }}
     >
       {children}

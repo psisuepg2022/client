@@ -113,3 +113,40 @@ export const UserName = styled(Typography)`
     font-weight: 600;
   }
 `;
+
+export const HolidayContianer = styled('div')`
+  display: grid;
+  grid-template-columns: 4fr 1fr 8fr;
+  align-items: center;
+  padding: 0 1rem;
+`;
+
+export const HolidayText = styled(Typography)`
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #fff;
+
+  span {
+    font-weight: 600;
+  }
+`;
+
+export const IconButtonArea = styled('div')`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  text-align: center;
+  padding: 8px;
+  border-radius: 50%;
+  color: rgba(0, 0, 0, 0.54);
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  height: 46px;
+  width: 46px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+`;

@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, IconButton, Typography } from '@mui/material';
+import {
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   AuxDataFirst,
   AuxDataSecond,
@@ -320,14 +325,16 @@ const EmployeeProfile = (): JSX.Element => {
                 )}
                 <SectionDivider
                   help={
-                    <IconButton
-                      style={{ marginLeft: 5 }}
-                      onClick={() => setAuxDataHelpModal(true)}
-                    >
-                      <AiOutlineQuestionCircle
-                        style={{ color: colors.PRIMARY }}
-                      />
-                    </IconButton>
+                    <Tooltip title="Ajuda">
+                      <IconButton
+                        style={{ marginLeft: 5 }}
+                        onClick={() => setAuxDataHelpModal(true)}
+                      >
+                        <AiOutlineQuestionCircle
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                   }
                 >
                   Dados Auxiliares

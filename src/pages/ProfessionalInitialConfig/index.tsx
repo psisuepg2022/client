@@ -7,6 +7,7 @@ import {
   CircularProgress,
   FormControlLabel,
   IconButton,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { showAlert } from '@utils/showAlert';
@@ -407,14 +408,16 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                   )}
                   <SectionDivider
                     help={
-                      <IconButton
-                        style={{ marginLeft: 5 }}
-                        onClick={() => setPasswordHelp(true)}
-                      >
-                        <AiOutlineQuestionCircle
-                          style={{ color: colors.PRIMARY }}
-                        />
-                      </IconButton>
+                      <Tooltip title="Ajuda">
+                        <IconButton
+                          style={{ marginLeft: 5 }}
+                          onClick={() => setPasswordHelp(true)}
+                        >
+                          <AiOutlineQuestionCircle
+                            style={{ color: colors.PRIMARY }}
+                          />
+                        </IconButton>
+                      </Tooltip>
                     }
                   >
                     Nova senha
@@ -469,14 +472,16 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                   )}
                   <SectionDivider
                     help={
-                      <IconButton
-                        style={{ marginLeft: 5 }}
-                        onClick={() => setBaseDurationHelp(true)}
-                      >
-                        <AiOutlineQuestionCircle
-                          style={{ color: colors.PRIMARY }}
-                        />
-                      </IconButton>
+                      <Tooltip title="Ajuda">
+                        <IconButton
+                          style={{ marginLeft: 5 }}
+                          onClick={() => setBaseDurationHelp(true)}
+                        >
+                          <AiOutlineQuestionCircle
+                            style={{ color: colors.PRIMARY }}
+                          />
+                        </IconButton>
+                      </Tooltip>
                     }
                   >
                     Duração base
@@ -511,14 +516,16 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                       )}
                       <SectionDivider
                         help={
-                          <IconButton
-                            style={{ marginLeft: 5 }}
-                            onClick={() => setDaysHelp(true)}
-                          >
-                            <AiOutlineQuestionCircle
-                              style={{ color: colors.PRIMARY }}
-                            />
-                          </IconButton>
+                          <Tooltip title="Ajuda">
+                            <IconButton
+                              style={{ marginLeft: 5 }}
+                              onClick={() => setDaysHelp(true)}
+                            >
+                              <AiOutlineQuestionCircle
+                                style={{ color: colors.PRIMARY }}
+                              />
+                            </IconButton>
+                          </Tooltip>
                         }
                       >
                         Dias da semana
@@ -569,14 +576,16 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                 <span>Duração base das consultas: </span>
                                 {baseDuration} <span>minutos.</span>
                               </TimesLabel>
-                              <IconButton
-                                style={{ marginLeft: 5 }}
-                                onClick={() => setWorkHoursHelp(true)}
-                              >
-                                <AiOutlineQuestionCircle
-                                  style={{ color: colors.PRIMARY }}
-                                />
-                              </IconButton>
+                              <Tooltip title="Ajuda">
+                                <IconButton
+                                  style={{ marginLeft: 5 }}
+                                  onClick={() => setWorkHoursHelp(true)}
+                                >
+                                  <AiOutlineQuestionCircle
+                                    style={{ color: colors.PRIMARY }}
+                                  />
+                                </IconButton>
+                              </Tooltip>
                             </div>
                             <WorkHoursContainer>
                               <ControlledTimePicker
@@ -693,14 +702,16 @@ const ProfessionalInitialConfig = (): JSX.Element => {
                                           ? `Intervalos - ${counter} restantes`
                                           : 'Não é possível cadastrar intervalos com os atuais início e fim de expediente'}
                                       </TimesLabel>
-                                      <IconButton
-                                        style={{ marginLeft: 5 }}
-                                        onClick={() => setIntervalsHelp(true)}
-                                      >
-                                        <AiOutlineQuestionCircle
-                                          style={{ color: colors.PRIMARY }}
-                                        />
-                                      </IconButton>
+                                      <Tooltip title="Ajuda">
+                                        <IconButton
+                                          style={{ marginLeft: 5 }}
+                                          onClick={() => setIntervalsHelp(true)}
+                                        >
+                                          <AiOutlineQuestionCircle
+                                            style={{ color: colors.PRIMARY }}
+                                          />
+                                        </IconButton>
+                                      </Tooltip>
                                     </div>
 
                                     <IconButton

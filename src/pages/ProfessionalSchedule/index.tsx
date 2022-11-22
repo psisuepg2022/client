@@ -3,6 +3,7 @@ import {
   CircularProgress,
   FormControlLabel,
   IconButton,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -477,12 +478,16 @@ const ProfessionalSchedule = (): JSX.Element => {
             )}
             <SectionDivider
               help={
-                <IconButton
-                  style={{ marginLeft: 5 }}
-                  onClick={() => setDaysHelp(true)}
-                >
-                  <AiOutlineQuestionCircle style={{ color: colors.PRIMARY }} />
-                </IconButton>
+                <Tooltip title="Ajuda">
+                  <IconButton
+                    style={{ marginLeft: 5 }}
+                    onClick={() => setDaysHelp(true)}
+                  >
+                    <AiOutlineQuestionCircle
+                      style={{ color: colors.PRIMARY }}
+                    />
+                  </IconButton>
+                </Tooltip>
               }
             >
               Dias da semana
@@ -533,14 +538,16 @@ const ProfessionalSchedule = (): JSX.Element => {
                         <span>Duração base das consultas: </span>
                         {user.baseDuration} <span>minutos.</span>
                       </TimesLabel>
-                      <IconButton
-                        style={{ marginLeft: 5 }}
-                        onClick={() => setWorkHoursHelp(true)}
-                      >
-                        <AiOutlineQuestionCircle
-                          style={{ color: colors.PRIMARY }}
-                        />
-                      </IconButton>
+                      <Tooltip title="Ajuda">
+                        <IconButton
+                          style={{ marginLeft: 5 }}
+                          onClick={() => setWorkHoursHelp(true)}
+                        >
+                          <AiOutlineQuestionCircle
+                            style={{ color: colors.PRIMARY }}
+                          />
+                        </IconButton>
+                      </Tooltip>
                     </div>
                     <WorkHoursContainer>
                       <div onFocus={() => setChanges(true)}>
@@ -622,14 +629,16 @@ const ProfessionalSchedule = (): JSX.Element => {
                                 ? 'Sem intervalos - Os horários não batem com a duração base'
                                 : `Intervalos - ${counter} restantes`}
                             </TimesLabel>
-                            <IconButton
-                              style={{ marginLeft: 5 }}
-                              onClick={() => setIntervalsHelp(true)}
-                            >
-                              <AiOutlineQuestionCircle
-                                style={{ color: colors.PRIMARY }}
-                              />
-                            </IconButton>
+                            <Tooltip title="Ajuda">
+                              <IconButton
+                                style={{ marginLeft: 5 }}
+                                onClick={() => setIntervalsHelp(true)}
+                              >
+                                <AiOutlineQuestionCircle
+                                  style={{ color: colors.PRIMARY }}
+                                />
+                              </IconButton>
+                            </Tooltip>
                           </div>
 
                           <IconButton

@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, FormControlLabel, IconButton } from '@mui/material';
+import {
+  CircularProgress,
+  FormControlLabel,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
 import { isAfter, isEqual, isValid } from 'date-fns';
 import { FieldValues, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -282,14 +287,16 @@ const PatientsForm = (): JSX.Element => {
                 )}
                 <SectionDivider
                   help={
-                    <IconButton
-                      style={{ marginLeft: 5 }}
-                      onClick={() => setPersonalDataHelpModal(true)}
-                    >
-                      <AiOutlineQuestionCircle
-                        style={{ color: colors.PRIMARY }}
-                      />
-                    </IconButton>
+                    <Tooltip title="Ajuda">
+                      <IconButton
+                        style={{ marginLeft: 5 }}
+                        onClick={() => setPersonalDataHelpModal(true)}
+                      >
+                        <AiOutlineQuestionCircle
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                   }
                 >
                   Dados Pessoais
@@ -408,14 +415,16 @@ const PatientsForm = (): JSX.Element => {
                 )}
                 <SectionDivider
                   help={
-                    <IconButton
-                      style={{ marginLeft: 5 }}
-                      onClick={() => setAuxDataHelpModal(true)}
-                    >
-                      <AiOutlineQuestionCircle
-                        style={{ color: colors.PRIMARY }}
-                      />
-                    </IconButton>
+                    <Tooltip title="Ajuda">
+                      <IconButton
+                        style={{ marginLeft: 5 }}
+                        onClick={() => setAuxDataHelpModal(true)}
+                      >
+                        <AiOutlineQuestionCircle
+                          style={{ color: colors.PRIMARY }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                   }
                 >
                   Dados Auxiliares
@@ -525,11 +534,13 @@ const PatientsForm = (): JSX.Element => {
                     }
                     label="Paciente precisa de responsável"
                   />
-                  <IconButton onClick={() => setLiableHelpModal(true)}>
-                    <AiOutlineQuestionCircle
-                      style={{ color: colors.PRIMARY }}
-                    />
-                  </IconButton>
+                  <Tooltip title="Ajuda">
+                    <IconButton onClick={() => setLiableHelpModal(true)}>
+                      <AiOutlineQuestionCircle
+                        style={{ color: colors.PRIMARY }}
+                      />
+                    </IconButton>
+                  </Tooltip>
                 </div>
 
                 {needLiable && (

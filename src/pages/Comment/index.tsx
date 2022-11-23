@@ -25,7 +25,7 @@ import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
 import TextEditor from '@components/TextEditor';
-import { MdModeEdit /*, MdOutlinePictureAsPdf*/ } from 'react-icons/md';
+import { MdModeEdit, MdOutlinePictureAsPdf } from 'react-icons/md';
 import { useComments } from '@contexts/Comments';
 import { showToast } from '@utils/showToast';
 import { colors } from '@global/colors';
@@ -269,7 +269,7 @@ const Comment = (): JSX.Element => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {/* <Tooltip title="Gerar PDF">
+              <Tooltip title="Gerar PDF">
                 <IconButton
                   onClick={exportToPDF}
                   disabled={pdfLoading || editMode}
@@ -277,7 +277,7 @@ const Comment = (): JSX.Element => {
                 >
                   <MdOutlinePictureAsPdf size={40} />
                 </IconButton>
-              </Tooltip> */}
+              </Tooltip>
               <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
                 <IconButton
                   onClick={editAction}

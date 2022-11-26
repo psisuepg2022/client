@@ -235,7 +235,7 @@ const ConfirmedEventModal = ({
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`https://wa.me/${contactNumberToWhatsapp(
+                    href={`${contactNumberToWhatsapp(
                       contactNumberFromResource(eventInfo.resource)
                     )}`}
                     style={{ height: '1em', width: '1em' }}

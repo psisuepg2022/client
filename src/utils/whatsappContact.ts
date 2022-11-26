@@ -1,2 +1,2 @@
 export const contactNumberToWhatsapp = (contactNumber: string): string =>
-  `55${contactNumber.replace(/\D/g, '')}`;
+  `https://web.whatsapp.com/send?phone=55${contactNumber.replace(/\D/g, '')}`;

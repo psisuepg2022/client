@@ -26,7 +26,7 @@ import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 type FormProps = {
-  accessCode: string;
+  accessCode: number;
   userName: string;
   password: string;
 };
@@ -45,7 +45,6 @@ const Login = (): JSX.Element => {
       setLoading(true);
       const user = await signIn({
         ...formData,
-        accessCode: Number(formData.accessCode.replace(/\D/g, '')),
       });
 
       if (user.permissions.includes('USER_TYPE_PROFESSIONAL_UNCONFIGURED')) {

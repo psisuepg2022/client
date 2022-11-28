@@ -76,7 +76,11 @@ const ControlledInput = ({
         <CustomTextField
           {...rest}
           autoComplete={autoComplete || 'off'}
-          onChange={onChange}
+          onChange={(
+            event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+          ) => {
+            onChange(mask ? mask(event.target.value) : event.target.value);
+          }}
           value={mask ? mask(value || '') : value || ''}
           required={required}
           disabled={disabled}

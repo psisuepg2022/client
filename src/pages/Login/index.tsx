@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import ControlledSelect from '@components/ControlledSelect';
 import { StyledMenuItem } from '@pages/Patients/styles';
 import { Clinic } from '@models/Clinic';
+import { colors } from '@global/colors';
 
 type FormProps = {
   clinic: string;
@@ -40,18 +41,19 @@ const Login = (): JSX.Element => {
   const { handleSubmit } = formMethods;
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
+  const [clinicRetrieveLoading, setClinicRetrieveLoading] =
+    useState<boolean>(true);
   const [clinics, setClinics] = useState<Clinic[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
         const { content } = await getClinics();
         setClinics(content?.items || []);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
       } finally {
-        setLoading(false);
+        setClinicRetrieveLoading(false);
       }
     })();
   }, []);
@@ -100,7 +102,7 @@ const Login = (): JSX.Element => {
           >
             <SubTitleRegular>Acesse o painel da sua clínica</SubTitleRegular>
             <PasswordBox>
-              {!loading && clinics.length === 0 ? (
+              {!clinicRetrieveLoading && clinics.length === 0 ? (
                 <ControlledInput
                   name="accessCode"
                   label="Código"
@@ -116,7 +118,7 @@ const Login = (): JSX.Element => {
               ) : (
                 <ControlledSelect
                   defaultValue={''}
-                  disabled={loading}
+                  disabled={loading || clinicRetrieveLoading}
                   name="clinic"
                   label="Clínica"
                   required
@@ -126,8 +128,27 @@ const Login = (): JSX.Element => {
                       message: 'É obrigatório selecionar uma clínica',
                     },
                   }}
+                  endAdornment={
+                    clinicRetrieveLoading && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          marginRight: 20,
+                        }}
+                      >
+                        <CircularProgress
+                          size={20}
+                          style={{
+                            color: colors.PRIMARY,
+                          }}
+                        />
+                      </div>
+                    )
+                  }
                 >
-                  {!loading && clinics
+                  {!clinicRetrieveLoading && clinics
                     ? clinics.map((clinic) => (
                         <StyledMenuItem key={clinic.code} value={clinic.code}>
                           {`${clinic.name}`}
@@ -139,7 +160,7 @@ const Login = (): JSX.Element => {
               <ControlledInput
                 name="userName"
                 label="Usuário"
-                disabled={loading}
+                disabled={loading || clinicRetrieveLoading}
                 required
                 rules={{
                   required: {
@@ -150,7 +171,7 @@ const Login = (): JSX.Element => {
               />
               <ControlledInput
                 type="password"
-                disabled={loading}
+                disabled={loading || clinicRetrieveLoading}
                 endFunction="password"
                 name="password"
                 label="Senha"

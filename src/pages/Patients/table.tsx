@@ -118,8 +118,13 @@ const PatientsTable = ({
                       >
                         <IconButton
                           id="copy-button"
-                          onClick={() => {
+                          onClick={async () => {
                             setCopied(row.name);
+                            if ('clipboard' in navigator) {
+                              await navigator.clipboard.writeText(row.name);
+                            } else {
+                              document.execCommand('copy', true, row.name);
+                            }
                             copyToClipboard(row.name);
                           }}
                         >

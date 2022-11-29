@@ -130,7 +130,7 @@ export const SubTitleRegular = styled(Typography)`
 
 export const InputsContainer = styled('form')`
   width: 40%;
-  height: 25%;
+  height: 30%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -156,7 +156,10 @@ export const CodeAndUser = styled('div')`
 export const PasswordBox = styled('div')`
   display: grid;
   grid-template-columns: 1fr;
+  gap: 1rem;
   width: 100%;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 `;
 
 export const StyledButton = styled(Button)`
@@ -166,7 +169,7 @@ export const StyledButton = styled(Button)`
   width: 100%;
   font-weight: 400;
   font-size: 1rem;
-  height: 50px;
+  min-height: 50px;
 
   :hover {
     background-color: ${colors.SECONDARY};

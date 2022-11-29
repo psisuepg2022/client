@@ -3,6 +3,8 @@ import decode from 'jwt-decode';
 import { Response } from '@interfaces/Response';
 import { User } from '@models/User';
 import { api } from '../../service';
+import { Clinic } from '@models/Clinic';
+import { ItemList } from '@interfaces/ItemList';
 
 type AuthCredentials = {
   accessCode: number;
@@ -16,6 +18,7 @@ type LoginResponse = {
 };
 
 type AuthContextData = {
+  getClinics: () => Promise<Response<ItemList<Clinic>>>;
   signIn: (credentials: AuthCredentials) => Promise<User>;
   signOut: () => void;
   user: User;
@@ -98,9 +101,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     return data;
   };
 
+  const getClinics = async (): Promise<Response<ItemList<Clinic>>> => {
+    const { data }: { data: Response<ItemList<Clinic>> } = await api.get(
+      '/auth/clinics'
+    );
+
+    return data;
+  };
+
   return (
     <AuthContext.Provider
       value={{
+        getClinics,
         signIn,
         signOut,
         user,

@@ -4,7 +4,6 @@ import {
   EventPrimaryText,
   Header,
   ScheduleAtText,
-  StatusText,
   StyledBox,
   StyledModal,
 } from './styles';

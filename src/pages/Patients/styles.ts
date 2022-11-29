@@ -128,6 +128,16 @@ export const StyledMenuItem = styled(MenuItem)`
 
 export const StyledTableCell = styled(TableCell)`
   padding: 6px;
+
+  &#name-row #copy-button {
+    margin-left: 5px;
+    visibility: hidden;
+  }
+  &:hover#name-row {
+    &#name-row #copy-button {
+      visibility: visible;
+    }
+  }
 `;
 
 export const NoRowsContainer = styled('div')`

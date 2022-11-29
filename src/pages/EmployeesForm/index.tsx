@@ -22,6 +22,7 @@ import {
   PageTitle,
   PersonalDataFirst,
   PersonalDataSecond,
+  RequiredFieldsHelp,
   StyledButton,
   StyledButtonInverted,
   StyledForm,
@@ -422,10 +423,13 @@ const EmployeesForm = (): JSX.Element => {
           </div>
 
           <ButtonsContainer>
+            <RequiredFieldsHelp>
+              Campos marcados com * são obrigatórios
+            </RequiredFieldsHelp>
             <StyledButton
               type="submit"
               form="form"
-              style={{ gridColumnStart: 3 }}
+              style={{ gridColumnStart: 2 }}
               disabled={loading}
             >
               {loading ? (
@@ -437,7 +441,7 @@ const EmployeesForm = (): JSX.Element => {
             <StyledButtonInverted
               disabled={loading}
               onClick={() => navigate('/employees', { replace: true })}
-              style={{ gridColumnStart: 4 }}
+              style={{ gridColumnStart: 3 }}
             >
               CANCELAR
             </StyledButtonInverted>

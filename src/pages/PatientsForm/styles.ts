@@ -115,9 +115,16 @@ export const StyledButtonInverted = styled(Button)`
 
 export const ButtonsContainer = styled('div')`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   column-gap: 1rem;
   padding: 2rem 0 0 0;
+`;
+
+export const RequiredFieldsHelp = styled(Typography)`
+  font-size: 1rem;
+  color: ${colors.TEXT};
+  font-weight: 500;
+  align-self: flex-end;
 `;
 
 export const StyledMenuItem = styled(MenuItem)`

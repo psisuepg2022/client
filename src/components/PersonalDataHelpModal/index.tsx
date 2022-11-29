@@ -47,7 +47,7 @@ const PersonalDataHelpModal = ({
         <Body>
           <SectionDivider>Estado civil</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
+          <div>
             <ScheduleAtText>
               União estável não consta na lista de opções por não ser um estado
               civil válido, a união estável é enquadrada na categoria de

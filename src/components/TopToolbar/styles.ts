@@ -128,7 +128,7 @@ export const CardContainer = styled(ImageList)`
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #419d78 22.4%, #009686 100%);
+    background: #419d78;
     border-radius: 2px;
   }
 `;

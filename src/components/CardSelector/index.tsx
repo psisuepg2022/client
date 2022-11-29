@@ -27,8 +27,10 @@ const CardSelector = ({
       style={
         selected
           ? {
-              borderBottom: '3px #419D78 solid',
-              backgroundColor: professionals ? colors.BACKGREY : '#FFF',
+              borderBottom: professionals
+                ? '3px #FFF  solid'
+                : '3px #419D78 solid',
+              backgroundColor: professionals ? colors.PRIMARY : '#FFF',
               borderRadius: 3,
               ...style,
             }
@@ -40,7 +42,9 @@ const CardSelector = ({
       <Tooltip enterDelay={1000} enterNextDelay={1000} title={name}>
         <CardName
           style={
-            selected ? { fontWeight: 500, ...textStyle } : { ...textStyle }
+            selected
+              ? { fontWeight: 500, color: '#FFF', ...textStyle }
+              : { ...textStyle }
           }
         >
           {name}

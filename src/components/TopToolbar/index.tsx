@@ -563,6 +563,7 @@ const TopToolbar = ({
         <CardContainer
           sx={{
             gridAutoFlow: 'column',
+            marginLeft: 1,
             gridTemplateColumns:
               'repeat(auto-fit, minmax(200px,1fr)) !important',
             gridAutoColumns: 'minmax(200px, 1fr)',

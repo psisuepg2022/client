@@ -50,12 +50,6 @@ const Login = (): JSX.Element => {
         setClinics(content?.items || []);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
-        showAlert({
-          text:
-            e?.response?.data?.message ||
-            'Ocorreu um problema ao recuperar as clínicas',
-          icon: 'error',
-        });
       } finally {
         setLoading(false);
       }

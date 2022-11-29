@@ -111,10 +111,11 @@ const Login = (): JSX.Element => {
                   name="accessCode"
                   label="Código"
                   disabled={loading}
+                  mask={(value: string) => value.replace(/\D/g, '')}
                   rules={{
                     required: {
                       value: true,
-                      message: 'O nome de usuário é obrigatório',
+                      message: 'O código é obrigatório',
                     },
                   }}
                 />

@@ -10,7 +10,7 @@ export const StyledModal = styled(Modal)`
 `;
 
 export const StyledBox = styled(Box)`
-  width: 35%;
+  width: 55%;
   height: auto;
   background-color: #fff;
   outline: none;

@@ -8,6 +8,10 @@ export const Container = styled(ButtonBase)`
   align-items: center;
   margin-bottom: 0.5rem;
   padding: 0.6rem;
+
+  &:hover {
+    background-color: ${colors.BACKGREY};
+  }
 `;
 
 export const CardName = styled(Typography)`

@@ -14,6 +14,7 @@ import {
   TitleAndSubTitle,
   TitleExtense,
   TitleThin,
+  StyledMenuItem,
 } from './styles';
 
 import logoPSIS from '@assets/PSIS-Logo-Transparente.png';
@@ -24,7 +25,6 @@ import { showAlert } from '@utils/showAlert';
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ControlledSelect from '@components/ControlledSelect';
-import { StyledMenuItem } from '@pages/Patients/styles';
 import { Clinic } from '@models/Clinic';
 import { colors } from '@global/colors';
 

@@ -1,4 +1,4 @@
-import { Button, Typography } from '@mui/material';
+import { Button, MenuItem, menuItemClasses, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { colors } from '@global/colors';
 
@@ -173,5 +173,13 @@ export const StyledButton = styled(Button)`
 
   :hover {
     background-color: ${colors.SECONDARY};
+  }
+`;
+
+export const StyledMenuItem = styled(MenuItem)`
+  transition: 300ms;
+
+  &.${menuItemClasses.selected} {
+    background-color: #d0d0d0;
   }
 `;

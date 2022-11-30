@@ -14,7 +14,7 @@ import {
 } from './style';
 import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 import { dateFormat } from '@utils/dateFormat';
-import { IconButton, Modal, Tooltip } from '@mui/material';
+import { IconButton, /*Modal,*/ Tooltip } from '@mui/material';
 import { useSchedule } from '@contexts/Schedule';
 import { showAlert } from '@utils/showAlert';
 import CircularProgressWithContent from '@components/CircularProgressWithContent';
@@ -25,7 +25,7 @@ import { isoToDate } from '@utils/isoToDate';
 import { useAuth } from '@contexts/Auth';
 import { idFromResource } from '@utils/schedule';
 import TextEditor from '@components/TextEditor';
-import { MdModeEdit, MdOutlinePictureAsPdf } from 'react-icons/md';
+import { MdModeEdit /*, MdOutlinePictureAsPdf */ } from 'react-icons/md';
 import { useComments } from '@contexts/Comments';
 import { showToast } from '@utils/showToast';
 import { colors } from '@global/colors';
@@ -35,12 +35,12 @@ const Comment = (): JSX.Element => {
   const navigate = useNavigate();
   const {
     user: { baseDuration },
-    sideBarExpanded,
+    /*sideBarExpanded,*/
   } = useAuth();
   const { getById } = useSchedule();
-  const { create, generatePDF } = useComments();
+  const { create /*, generatePDF*/ } = useComments();
   const [loading, setLoading] = useState<boolean>(true);
-  const [pdfLoading, setPdfLoading] = useState<boolean>(false);
+  // const [pdfLoading, setPdfLoading] = useState<boolean>(false);
   const [comment, setComment] = useState<string>('');
   const [initialComment, setInitialComment] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -170,28 +170,28 @@ const Comment = (): JSX.Element => {
     }
   };
 
-  const exportToPDF = async (): Promise<void> => {
-    try {
-      setPdfLoading(true);
+  // const exportToPDF = async (): Promise<void> => {
+  //   try {
+  //     setPdfLoading(true);
 
-      const appointmentId = idFromResource(state.resource);
+  //     const appointmentId = idFromResource(state.resource);
 
-      const fileURL = await generatePDF(appointmentId);
+  //     const fileURL = await generatePDF(appointmentId);
 
-      window.open(fileURL, '_blank');
+  //     window.open(fileURL, '_blank');
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      showAlert({
-        icon: 'error',
-        text:
-          e?.response?.data?.message ||
-          'Ocorreu um problema ao exportar a anotação',
-      });
-    } finally {
-      setPdfLoading(false);
-    }
-  };
+  //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   } catch (e: any) {
+  //     showAlert({
+  //       icon: 'error',
+  //       text:
+  //         e?.response?.data?.message ||
+  //         'Ocorreu um problema ao exportar a anotação',
+  //     });
+  //   } finally {
+  //     setPdfLoading(false);
+  //   }
+  // };
 
   if (loading)
     return (
@@ -213,7 +213,7 @@ const Comment = (): JSX.Element => {
 
   return (
     <Container>
-      <Modal
+      {/* <Modal
         open={pdfLoading}
         sx={{
           display: 'flex',
@@ -231,7 +231,7 @@ const Comment = (): JSX.Element => {
             size={200}
           />
         </>
-      </Modal>
+      </Modal> */}
       <AlterTopToolbar />
       <Content>
         <CustomBox>
@@ -269,7 +269,7 @@ const Comment = (): JSX.Element => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <Tooltip title="Gerar PDF">
+              {/* <Tooltip title="Gerar PDF">
                 <IconButton
                   onClick={exportToPDF}
                   disabled={pdfLoading || editMode}
@@ -277,11 +277,11 @@ const Comment = (): JSX.Element => {
                 >
                   <MdOutlinePictureAsPdf size={40} />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title={editMode ? 'Parar de editar' : 'Editar'}>
                 <IconButton
                   onClick={editAction}
-                  disabled={pdfLoading}
+                  //disabled={pdfLoading}
                   style={{ justifySelf: 'flex-end' }}
                 >
                   <MdModeEdit size={40} />

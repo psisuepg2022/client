@@ -26,8 +26,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { PageSize } from '@global/constants';
 import { useAuth } from '@contexts/Auth';
-import { AiOutlineCopy } from 'react-icons/ai';
-import { copyToClipboard } from '@utils/copyToClipboard';
+// import { AiOutlineCopy } from 'react-icons/ai';
+// import { copyToClipboard } from '@utils/copyToClipboard';
 
 type PatientsTableProps = {
   patients: Patient[];
@@ -51,7 +51,7 @@ const PatientsTable = ({
   } = useAuth();
   const [open, setOpen] = useState<string>('');
   const navigate = useNavigate();
-  const [copied, setCopied] = useState<string>('');
+  //const [copied, setCopied] = useState<string>('');
 
   return (
     <Paper
@@ -113,7 +113,7 @@ const PatientsTable = ({
                     </StyledTableCell>
                     <StyledTableCell id="name-row" component="th" scope="row">
                       {row.name}
-                      <Tooltip
+                      {/* <Tooltip
                         title={copied === row.name ? 'Copiado' : 'Copiar nome'}
                       >
                         <IconButton
@@ -130,7 +130,7 @@ const PatientsTable = ({
                         >
                           <AiOutlineCopy />
                         </IconButton>
-                      </Tooltip>
+                      </Tooltip> */}
                     </StyledTableCell>
                     <StyledTableCell align="left">
                       {!row.CPF && row.liable ? row.liable.CPF : row.CPF}

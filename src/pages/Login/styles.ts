@@ -122,6 +122,7 @@ export const TitleThin = styled(Typography)`
 export const SubTitleRegular = styled(Typography)`
   color: ${colors.PRIMARY};
   font-size: 1.6rem;
+  text-align: center;
 
   @media (max-width: 1440px) {
     font-size: 1.4rem;

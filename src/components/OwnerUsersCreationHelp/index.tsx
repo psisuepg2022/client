@@ -49,33 +49,27 @@ const OwnerUsersCreationHelp = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              {
-                'Como papéis separados, "Funcionário" e "Profissional", é possível que haja necessidade particular de uma mesma pessoa ter dois usuários de papéis diferentes. Portanto, algumas informações únicas podem ser reutilizadas em papéis diferentes.'
-              }
-            </StatusText>
-          </div>
+          <StatusText>
+            {
+              'Como papéis separados, "Funcionário" e "Profissional", é possível que haja necessidade particular de uma mesma pessoa ter dois usuários de papéis diferentes. Portanto, algumas informações únicas podem ser reutilizadas em papéis diferentes.'
+            }
+          </StatusText>
 
           <SectionDivider>CPF</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {
-                'É possível criar, por exemplo, um usuário do tipo "Funcionário" e um usuário do tipo "Profissional" ambos com o mesmo CPF. Isso será permitido somente em caso de papéis diferentes e caso o CPF não pertença a um paciente cadastrado.'
-              }
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            {
+              'É possível criar, por exemplo, um usuário do tipo "Funcionário" e um usuário do tipo "Profissional" ambos com o mesmo CPF. Isso será permitido somente em caso de papéis diferentes e caso o CPF não pertença a um paciente cadastrado.'
+            }
+          </ScheduleAtText>
 
           <SectionDivider>Nome de usuário</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {
-                'É possível criar, por exemplo, um usuário do tipo "Funcionário" e um usuário do tipo "Profissional" ambos com o mesmo nome de usuário. Isso será permitido somente em caso de papéis diferentes.'
-              }
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            {
+              'É possível criar, por exemplo, um usuário do tipo "Funcionário" e um usuário do tipo "Profissional" ambos com o mesmo nome de usuário. Isso será permitido somente em caso de papéis diferentes.'
+            }
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

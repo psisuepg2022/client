@@ -45,25 +45,21 @@ const ProfessionalConfigBaseDurationHelp = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              O profissional deve escolher uma duração base para suas consultas,
-              isto é, quanto tempo cada consulta irá durar. Este campo deve ser
-              preenchido na seção abaixo com a duração em minutos. Note o aviso
-              de que a duração não poderá ser alterada posteriormente pelo
-              usuário, necessitando de um contato com o administrador.
-            </StatusText>
-          </div>
+          <StatusText>
+            O profissional deve escolher uma duração base para suas consultas,
+            isto é, quanto tempo cada consulta irá durar. Este campo deve ser
+            preenchido na seção abaixo com a duração em minutos. Note o aviso de
+            que a duração não poderá ser alterada posteriormente pelo usuário,
+            necessitando de um contato com o administrador.
+          </StatusText>
 
           <SectionDivider>Por que existe a duração base?</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {
-                'A duração base das consultas serve para pavimentar a agenda, definindo os limites, as janelas de horário e intervalos. Toda a agenda do profissional será construída em volta dessa duração.'
-              }
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            {
+              'A duração base das consultas serve para pavimentar a agenda, definindo os limites, as janelas de horário e intervalos. Toda a agenda do profissional será construída em volta dessa duração.'
+            }
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

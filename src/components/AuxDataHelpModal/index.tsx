@@ -45,34 +45,27 @@ const AuxDataHelpModal = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              Dados auxiliares englobam informações sobre o endereço do paciente
-              e um número de telefone para contato.
-            </StatusText>
-          </div>
+          <StatusText>
+            Dados auxiliares englobam informações sobre o endereço do paciente e
+            um número de telefone para contato.
+          </StatusText>
 
           <SectionDivider>Endereço</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              É possível incluir o endereço do paciente, para isso é necessário
-              inserir primeiramente o CEP, pois ele irá preencher
-              automaticamente os outros campos. Caso o CEP em questão não possua
-              logradouro ou bairro, é possível preencher esses campos
-              manualmente.
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            É possível incluir o endereço do paciente, para isso é necessário
+            inserir primeiramente o CEP, pois ele irá preencher automaticamente
+            os outros campos. Caso o CEP em questão não possua logradouro ou
+            bairro, é possível preencher esses campos manualmente.
+          </ScheduleAtText>
 
           <SectionDivider>Contato</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              É necessário inserir um número de telefone válido (sem pontuação)
-              para contato com o paciente em caso de agendamento, confirmação ou
-              cancelamento de consultas.{' '}
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            É necessário inserir um número de telefone válido (sem pontuação)
+            para contato com o paciente em caso de agendamento, confirmação ou
+            cancelamento de consultas.{' '}
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

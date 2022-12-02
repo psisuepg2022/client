@@ -45,35 +45,29 @@ const LiableHelpModal = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              {`Caso o paciente não possua um documento CPF ou necessite de um
+          <StatusText>
+            {`Caso o paciente não possua um documento CPF ou necessite de um
               responsável, a caixa "Paciente precisa de responsável" deve ser
               marcada.`}
-            </StatusText>
-          </div>
+          </StatusText>
 
           <SectionDivider>Responsável existente</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              O primeiro campo a ser preenchido é o nome do responsável, caso o
-              responsável já esteja cadastrado para outro paciente, é possível
-              buscá-lo no campo, digitando ao menos três caracteres e aguardar a
-              busca. As opções serão exibidas em seguida, basta selecionar o
-              responsável correspondente e os dados restantes serão preenchidos
-              automaticamente.
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            O primeiro campo a ser preenchido é o nome do responsável, caso o
+            responsável já esteja cadastrado para outro paciente, é possível
+            buscá-lo no campo, digitando ao menos três caracteres e aguardar a
+            busca. As opções serão exibidas em seguida, basta selecionar o
+            responsável correspondente e os dados restantes serão preenchidos
+            automaticamente.
+          </ScheduleAtText>
 
           <SectionDivider>Novo responsável</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {`No caso de um
+          <ScheduleAtText>
+            {`No caso de um
               novo cadastro, deve ser selecionada a opção para criar e dar continuidade ao preenchimento de dados.`}
-            </ScheduleAtText>
-          </div>
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

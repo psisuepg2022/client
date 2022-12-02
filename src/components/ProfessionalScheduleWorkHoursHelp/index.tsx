@@ -45,35 +45,29 @@ const ProfessionalScheduleWorkHoursHelp = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              {`Para cada dia da semana estão disponíveis os campos para a
+          <StatusText>
+            {`Para cada dia da semana estão disponíveis os campos para a
               configuração dos horários de atendimento. O intervalo entre os
               horários deve respeitar a duração base da consulta, indicada na
               linha: "Início e fim do expediente".`}
-            </StatusText>
-          </div>
+          </StatusText>
 
           <SectionDivider>Início e fim do expediente</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {`Os campos "Início" e "Fim" devem ser preenchidos selecionando o
+          <ScheduleAtText>
+            {`Os campos "Início" e "Fim" devem ser preenchidos selecionando o
               ícone de relógio e escolhendo o horário na interface. Caso o dia
               não tenha expediente, é possível clicar na caixa de seleção "Dia
               da semana sem expediente".`}
-            </ScheduleAtText>
-          </div>
+          </ScheduleAtText>
 
           <SectionDivider>Intervalos</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              Caso o horário de expediente esteja correto e permita janelas do
-              mesmo tamanho da duração base das consultas, a escolha de
-              intervalos (horários sem atendimento) será liberada logo abaixo.
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            Caso o horário de expediente esteja correto e permita janelas do
+            mesmo tamanho da duração base das consultas, a escolha de intervalos
+            (horários sem atendimento) será liberada logo abaixo.
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

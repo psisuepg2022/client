@@ -47,45 +47,38 @@ const ProfessionalScheduleDaysHelp = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              Abaixo encontram-se representados os sete dias da semana, de
-              domingo à sábado. Para configurar seus horários de atendimento é
-              necessário clicar no dia que deseja alterar. O dia selecionado
-              ficará com uma borda inferior da cor verde.
-            </StatusText>
-          </div>
+          <StatusText>
+            Abaixo encontram-se representados os sete dias da semana, de domingo
+            à sábado. Para configurar seus horários de atendimento é necessário
+            clicar no dia que deseja alterar. O dia selecionado ficará com uma
+            borda inferior da cor verde.
+          </StatusText>
 
           <SectionDivider>Propagação de horários</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {
-                'Os horários escolhidos para cada dia da semana serão propagados para os mesmos dias de todas as semanas.'
-              }
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            {
+              'Os horários escolhidos para cada dia da semana serão propagados para os mesmos dias de todas as semanas.'
+            }
+          </ScheduleAtText>
 
           <SectionDivider>Salvando alterações</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            {config ? (
-              <ScheduleAtText>
-                Na etapa de configuração é preciso preencher todos os dias da
-                semana antes de salvar para prosseguir. Caso não tenha
-                preenchido algum dia e tente salvar, uma caixa de diálogo
-                aparecerá avisando.
-              </ScheduleAtText>
-            ) : (
-              <ScheduleAtText>
-                Ao alterar os horários por meio do perfil, deve-se salvar as
-                alterações para cada dia, antes de mudar o seletor do dia da
-                semana. Caso prossiga sem salvar antes, uma caixa de diálogo
-                será mostrada, dando a escolha de descartar as alterações ou
-                voltar para salvá-las.
-              </ScheduleAtText>
-            )}
-          </div>
+          {config ? (
+            <ScheduleAtText>
+              Na etapa de configuração é preciso preencher todos os dias da
+              semana antes de salvar para prosseguir. Caso não tenha preenchido
+              algum dia e tente salvar, uma caixa de diálogo aparecerá avisando.
+            </ScheduleAtText>
+          ) : (
+            <ScheduleAtText>
+              Ao alterar os horários por meio do perfil, deve-se salvar as
+              alterações para cada dia, antes de mudar o seletor do dia da
+              semana. Caso prossiga sem salvar antes, uma caixa de diálogo será
+              mostrada, dando a escolha de descartar as alterações ou voltar
+              para salvá-las.
+            </ScheduleAtText>
+          )}
         </Body>
       </StyledBox>
     </StyledModal>

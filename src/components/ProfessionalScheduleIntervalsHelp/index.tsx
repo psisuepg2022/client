@@ -45,34 +45,28 @@ const ProfessionalScheduleIntervalsHelp = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              {`Se o dia selecionado permitir janelas esta seção será desbloqueada.
+          <StatusText>
+            {`Se o dia selecionado permitir janelas esta seção será desbloqueada.
                Aqui é possível criar intervalos (horários sem atendimento) para o dia em questão. Estes intervalos,
                  assim como os horários de expedientes serão propagados para o dia da semana escolhido de todas as semanas. `}
-            </StatusText>
-          </div>
+          </StatusText>
 
           <SectionDivider>Duração</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {`A duração dos intervalos precisa seguir a duração base das consultas, mas o intervalo pode
+          <ScheduleAtText>
+            {`A duração dos intervalos precisa seguir a duração base das consultas, mas o intervalo pode
                 corresponder ao tempo de uma ou mais consultas.
               `}
-            </ScheduleAtText>
-          </div>
+          </ScheduleAtText>
 
           <SectionDivider>Remoção</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              É possível remover um intervalo apresentado na listagem clicando
-              no ícone de lixeira. No caso de intervalos já salvos, será preciso
-              uma confirmação de deleção. Para intervalos ainda não salvos,
-              estes serão tirados imediatamente da listagem e descartados.
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            É possível remover um intervalo apresentado na listagem clicando no
+            ícone de lixeira. No caso de intervalos já salvos, será preciso uma
+            confirmação de deleção. Para intervalos ainda não salvos, estes
+            serão tirados imediatamente da listagem e descartados.
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

@@ -45,24 +45,20 @@ const ProfessionalConfigPasswordHelp = ({
           </IconButton>
         </Header>
         <Body>
-          <div style={{ textIndent: '2rem' }}>
-            <StatusText>
-              Por motivos de segurança, é necessária a troca da senha dada ao
-              profissional pelo administrador. Insira a senha fornecida pelo
-              administrador e escolha uma nova senha diferente para ser usada
-              daqui em diante.
-            </StatusText>
-          </div>
+          <StatusText>
+            Por motivos de segurança, é necessária a troca da senha dada ao
+            profissional pelo administrador. Insira a senha fornecida pelo
+            administrador e escolha uma nova senha diferente para ser usada
+            daqui em diante.
+          </StatusText>
 
           <SectionDivider>Requisitos obrigatórios</SectionDivider>
 
-          <div style={{ textIndent: '2rem' }}>
-            <ScheduleAtText>
-              {
-                'A senha deve possuir no mínimo 8 caracteres, letras minúsculas, ao menos uma letra maiúscula e ao menos um número.'
-              }
-            </ScheduleAtText>
-          </div>
+          <ScheduleAtText>
+            {
+              'A senha deve possuir no mínimo 8 caracteres, letras minúsculas, ao menos uma letra maiúscula e ao menos um número.'
+            }
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

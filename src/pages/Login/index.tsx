@@ -11,7 +11,6 @@ import {
   RightContainer,
   StyledButton,
   SubTitleRegular,
-  TitleAndSubTitle,
   TitleExtense,
   TitleThin,
   StyledMenuItem,
@@ -89,10 +88,6 @@ const Login = (): JSX.Element => {
   return (
     <Container>
       <LeftContainer>
-        <TitleAndSubTitle>
-          <TitleThin>PSIS</TitleThin>
-        </TitleAndSubTitle>
-
         <FormProvider {...formMethods}>
           <InputsContainer
             id="form"
@@ -100,6 +95,7 @@ const Login = (): JSX.Element => {
             noValidate
             autoComplete="new-password"
           >
+            <TitleThin>PSIS</TitleThin>
             <SubTitleRegular>Acesse o painel da sua clínica</SubTitleRegular>
             <PasswordBox>
               {!clinicRetrieveLoading && clinics.length === 0 ? (

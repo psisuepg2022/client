@@ -107,12 +107,6 @@ export const LeftContainer = styled('div')`
   justify-content: center;
 `;
 
-export const TitleAndSubTitle = styled('div')`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
 export const TitleThin = styled(Typography)`
   font-weight: 100;
   font-size: 8rem;
@@ -135,7 +129,8 @@ export const InputsContainer = styled('form')`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
+  flex: 1;
 
   @media (max-width: 1440px) {
     width: 50%;

@@ -1,23 +1,13 @@
 import { EventStatus } from '@interfaces/EventStatus';
 import { WeeklySchedule } from '@models/WeeklySchedule';
 import { WeeklyScheduleLock } from '@models/WeeklyScheduleLock';
-import { eachDayOfInterval } from 'date-fns';
+import { eachDayOfInterval, endOfWeek, startOfWeek } from 'date-fns';
 import { Event } from 'react-big-calendar';
 
-export const weekRange = (day: Date): Date[] => {
-  const remainingDays = 7;
-
-  const currentDate = day;
-
-  const firstWeekDate = new Date(day);
-
-  firstWeekDate.setDate(currentDate.getDate() - currentDate.getDay());
-
-  const lastWeekDate = new Date(day);
-  lastWeekDate.setDate(firstWeekDate.getDate() + (remainingDays - 1));
-
-  return [firstWeekDate, lastWeekDate];
-};
+export const weekRange = (day: Date): Date[] => [
+  startOfWeek(day),
+  endOfWeek(day),
+];
 
 export const weekRangeDates = (start: Date, end: Date): Date[] => {
   return eachDayOfInterval({

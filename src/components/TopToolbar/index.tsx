@@ -451,7 +451,7 @@ const TopToolbar = ({
     return (
       <DayTitle>
         {dateFormat({ date: toFormatDate, stringFormat: "dd 'de' MMMM" })}{' '}
-        {dateFormat({ date: toFormatDate, stringFormat: 'yyyy' })}
+        {dateFormat({ date: toFormatDate, stringFormat: 'yyyy - EEEE' })}
       </DayTitle>
     );
   };

@@ -155,6 +155,13 @@ const ScheduleHelpModal = ({
               </ScheduleAtText>
             </>
           ) : null}
+          <SectionDivider>Situações das consultas na agenda</SectionDivider>
+
+          <ScheduleAtText>
+            {
+              'Para informações sobre as situações e cores representados na agenda, clique no ícone de informação na página da agenda, ao lado do ícone de ajuda.'
+            }
+          </ScheduleAtText>
         </Body>
       </StyledBox>
     </StyledModal>

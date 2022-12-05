@@ -40,7 +40,7 @@ const ScheduleLabelModal = ({
       <StyledBox>
         <Header>
           <MdOutlineClose style={{ fontSize: 35, color: 'transparent' }} />
-          <StatusText>Legenda para as cores do calendário</StatusText>
+          <StatusText>Legenda para as cores da agenda</StatusText>
           <IconButton onClick={() => closeAll('')}>
             <MdOutlineClose style={{ fontSize: 35, color: colors.PRIMARY }} />
           </IconButton>

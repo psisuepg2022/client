@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   FormControl,
   IconButton,
@@ -45,7 +45,6 @@ import {
   subMonths,
   subWeeks,
 } from 'date-fns';
-import LiableHelpModal from '@components/LiableHelpModal';
 import { Holiday } from '@interfaces/Holiday';
 
 type CustomToolbarProps = {
@@ -84,7 +83,6 @@ const TopToolbar = ({
   } = useSchedule();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const [holidayWarning, setHolidayWarning] = useState<boolean>(false);
 
   useEffect(() => {
     const gotDate = new Date(date);
@@ -472,12 +470,6 @@ const TopToolbar = ({
       }}
     >
       <Container>
-        {holidayWarning && (
-          <LiableHelpModal
-            open={holidayWarning}
-            handleClose={() => setHolidayWarning(false)}
-          />
-        )}
         <EarlyContent>
           <ClinicTitle>{clinic?.name}</ClinicTitle>
         </EarlyContent>

@@ -19,7 +19,7 @@ export const Container = styled('div')`
   height: 60px;
   background: linear-gradient(90deg, #419d78 0%, #009686 100%);
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 2fr 4fr 3fr;
   align-items: center;
   z-index: 99; // FOR SIDEBAR BOX-SHADOW ONLY
   position: relative; // FOR SIDEBAR BOX-SHADOW ONLY
@@ -32,15 +32,25 @@ export const EarlyContent = styled('div')`
 `;
 
 export const MiddleContent = styled('div')`
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 0.5fr 1.5fr 0.5fr;
+  justify-items: center;
   align-items: center;
+
+  @media (max-width: 1670px) {
+    grid-template-columns: 0.5fr 2fr 0.5fr;
+  }
 `;
 
 export const DayTitle = styled(Typography)`
   font-size: 1.3rem;
   color: #fff;
-  padding: 0 1rem;
+  text-align: center;
+  //padding: 0 1rem;
+
+  @media (max-width: 1366px) {
+    font-size: 1.2rem;
+  }
 
   @media (max-width: 1080px) {
     font-size: 1.1rem;
